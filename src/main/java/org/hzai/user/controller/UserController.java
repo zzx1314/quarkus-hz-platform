@@ -1,4 +1,4 @@
-package org.hzai.user.service;
+package org.hzai.user.controller;
 
 import java.util.Map;
 
@@ -12,7 +12,7 @@ import jakarta.ws.rs.core.MediaType;
 
 @Path("/userinfo")
 @Produces(MediaType.APPLICATION_JSON)
-public class UserInfoResource {
+public class UserController {
 
     @Inject
     SecurityIdentity identity;
