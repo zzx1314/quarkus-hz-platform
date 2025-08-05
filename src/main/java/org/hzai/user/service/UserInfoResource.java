@@ -3,6 +3,7 @@ package org.hzai.user.service;
 import java.util.Map;
 
 import io.quarkus.security.identity.SecurityIdentity;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -17,6 +18,7 @@ public class UserInfoResource {
     SecurityIdentity identity;
 
     @GET
+    @RolesAllowed({ "User", "Admin" })
     public Map<String, Object> getUserInfo() {
         return Map.of(
                 "user", identity.getPrincipal().getName(),

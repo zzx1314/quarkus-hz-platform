@@ -1,6 +1,8 @@
 package org.hzai.oauth;
 
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.hzai.user.service.UserService;
@@ -61,6 +63,7 @@ public class TokenResource {
         return Jwt.claims()
                 .issuer("https://quarkus-oauth2-server")
                 .subject(subject)
+                .groups(new HashSet<>(Arrays.asList("User", "Admin")))
                 .claim("role", role)
                 .expiresAt(Instant.now().plusSeconds(3600))
                 .sign();
