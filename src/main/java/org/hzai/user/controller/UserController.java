@@ -1,28 +1,26 @@
 package org.hzai.user.controller;
 
-import java.util.Map;
+import java.util.List;
 
-import io.quarkus.security.identity.SecurityIdentity;
-import jakarta.annotation.security.RolesAllowed;
+import org.hzai.user.entity.SysUser;
+import org.hzai.user.repository.SysUserRository;
+
+import io.quarkus.panache.common.Sort;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
-@Path("/userinfo")
+@Path("/sysUser")
 @Produces(MediaType.APPLICATION_JSON)
 public class UserController {
-
     @Inject
-    SecurityIdentity identity;
+    SysUserRository sysUserRepository;
 
     @GET
-    @RolesAllowed({ "User", "Admin" })
-    public Map<String, Object> getUserInfo() {
-        return Map.of(
-                "user", identity.getPrincipal().getName(),
-                "roles", identity.getRoles()
-        );
+    public List<SysUser> get() {
+        return sysUserRepository.listAll(Sort.by("createTime"));
     }
+    
 }
