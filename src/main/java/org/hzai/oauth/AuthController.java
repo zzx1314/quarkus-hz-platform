@@ -20,7 +20,7 @@ import jakarta.ws.rs.core.Response;
 @Path("/token")
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @Produces(MediaType.APPLICATION_JSON)
-public class TokenResource {
+public class AuthController {
     @Inject
     UserService userService;
 
