@@ -1,10 +1,18 @@
 package org.hzai.user.service;
 
-import jakarta.enterprise.context.ApplicationScoped;
+import java.util.List;
 
-@ApplicationScoped
-public class UserService {
-    public boolean authenticate(String username, String password) {
-        return "admin".equals(username) && "123456".equals(password);
-    }
+import org.hzai.user.entity.SysUser;
+import org.hzai.user.entity.dto.SysUserDto;
+import org.hzai.util.PageRequest;
+import org.hzai.util.PageResult;
+
+public interface UserService {
+   List<SysUser> listUsers();
+
+   List<SysUser> listUsersByDto(SysUserDto sysUserDto);
+
+   boolean authenticate(String username, String password);
+
+   PageResult<SysUser> listUserPage(SysUserDto dto, PageRequest pageRequest);
 }
