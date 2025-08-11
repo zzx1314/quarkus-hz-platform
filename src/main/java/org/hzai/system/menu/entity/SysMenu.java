@@ -1,8 +1,11 @@
 package org.hzai.system.menu.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import java.time.LocalDateTime;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -11,7 +14,8 @@ import jakarta.persistence.Table;
 @Data
 @Entity
 @Table(name = "p_sys_menu")
-public class SysMenu {
+@EqualsAndHashCode(callSuper=false)
+public class SysMenu extends PanacheEntity {
 	/**
 	 * 主键
 	 */
