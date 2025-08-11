@@ -1,10 +1,10 @@
-package org.hzai.user.service;
+package org.hzai.system.user.service;
 
 import java.util.List;
 
-import org.hzai.user.entity.SysUser;
-import org.hzai.user.entity.dto.SysUserDto;
-import org.hzai.user.repository.SysUserRository;
+import org.hzai.system.user.entity.SysUser;
+import org.hzai.system.user.entity.dto.SysUserDto;
+import org.hzai.system.user.repository.SysUserRository;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 

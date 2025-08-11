@@ -1,6 +1,6 @@
-package org.hzai.user.entity.dto;
+package org.hzai.system.user.entity.dto;
 
-import org.hzai.user.entity.SysUser;
+import org.hzai.system.user.entity.SysUser;
 
 import jakarta.ws.rs.QueryParam;
 import lombok.Data;

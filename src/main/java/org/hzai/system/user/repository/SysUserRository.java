@@ -1,9 +1,9 @@
-package org.hzai.user.repository;
+package org.hzai.system.user.repository;
 
 import java.util.List;
 
-import org.hzai.user.entity.SysUser;
-import org.hzai.user.entity.dto.SysUserDto;
+import org.hzai.system.user.entity.SysUser;
+import org.hzai.system.user.entity.dto.SysUserDto;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.QueryBuilder;

@@ -1,10 +1,10 @@
-package org.hzai.user.controller;
+package org.hzai.system.user.controller;
 
 import java.util.List;
 
-import org.hzai.user.entity.SysUser;
-import org.hzai.user.entity.dto.SysUserDto;
-import org.hzai.user.service.UserService;
+import org.hzai.system.user.entity.SysUser;
+import org.hzai.system.user.entity.dto.SysUserDto;
+import org.hzai.system.user.service.UserService;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 

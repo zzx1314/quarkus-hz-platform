@@ -1,0 +1,109 @@
+package org.hzai.system.menu.entity;
+
+import lombok.Data;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Data
+@Entity
+@Table(name = "p_sys_menu")
+public class SysMenu {
+	/**
+	 * 主键
+	 */
+	@Id
+    @GeneratedValue
+	private Integer id;
+
+	/**
+	 * 名称
+	 */
+	private String name;
+
+	/**
+	 * 编码
+	 */
+	private String code;
+
+	/**
+	 * 菜单权限标识
+	 */
+	private String permission;
+
+	/**
+	 * 菜单路径
+	 */
+	private String pathUrl;
+
+	/**
+	 * 图标
+	 */
+	private String icon;
+
+	/**
+	 * 父菜单ID
+	 */
+	private Integer parentId;
+
+	/**
+	 * VUE页面
+	 */
+	private String component;
+
+	/**
+	 * 排序
+	 */
+	private Integer sort;
+
+	/**
+	 * 状态：0-开启，1- 关闭
+	 */
+	private Integer keepAlive;
+
+	/**
+	 * 类型：1：菜单 2：按钮
+	 */
+	private Integer type;
+
+	/**
+	 * 创建时间
+	 */
+	private LocalDateTime createTime;
+
+	/**
+	 * 修改时间
+	 */
+	private LocalDateTime updateTime;
+
+	/**
+	 * 1 表示删除，0 表示未删除
+	 */
+	private Integer isDeleted;
+
+	/**
+	 * 备注
+	 */
+	private String remarks;
+
+	/**
+	 * 叶子节点
+	 */
+	private Integer leaf;
+
+	/**
+	 * 菜单所属角色
+	 */
+	private String roleCode;
+
+	/**
+	 * 是否禁用
+	 */
+	private Boolean disabled;
+
+	private Integer findAuthId;
+
+}

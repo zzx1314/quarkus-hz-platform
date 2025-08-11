@@ -1,7 +1,6 @@
-package org.hzai.user.entity;
+package org.hzai.system.user.entity;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +13,6 @@ import jakarta.ws.rs.QueryParam;
 @Data
 @Entity
 @Table(name = "p_sys_user")
-@EqualsAndHashCode(callSuper = false)
 public class SysUser{
 	/**
 	 * 主键
