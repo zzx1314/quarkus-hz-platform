@@ -1,9 +1,11 @@
 package org.hzai.system.user.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -13,7 +15,8 @@ import jakarta.ws.rs.QueryParam;
 @Data
 @Entity
 @Table(name = "p_sys_user")
-public class SysUser{
+@EqualsAndHashCode(callSuper=false)
+public class SysUser extends PanacheEntity{
 	/**
 	 * 主键
 	 */

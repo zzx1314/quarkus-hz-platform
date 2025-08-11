@@ -1,9 +1,11 @@
 package org.hzai.system.rolemenu.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -11,7 +13,8 @@ import jakarta.persistence.Table;
 
 @Data
 @Table(name = "p_sys_role_menu")
-public class SysRoleMenu  {
+@EqualsAndHashCode(callSuper=false)
+public class SysRoleMenu extends PanacheEntity {
 
 	/**
 	 * 主键

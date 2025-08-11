@@ -32,5 +32,9 @@ public class UserServiceImp implements UserService {
     public PageResult<SysUser> listUserPage(SysUserDto dto, PageRequest pageRequest) {
         return sysUserRepository.selectUserPage(dto, pageRequest);
     }
-
+    @Override
+    public Boolean registerUser(SysUser sysUserDto) {
+         sysUserRepository.persist(sysUserDto);
+         return true;
+    }
 }

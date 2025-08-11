@@ -1,9 +1,11 @@
 package org.hzai.system.org.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -12,7 +14,8 @@ import jakarta.persistence.Table;
 @Data
 @Entity
 @Table(name = "p_sys_org")
-public class SysOrg {
+@EqualsAndHashCode(callSuper=false)
+public class SysOrg extends PanacheEntity{
 
 	private String departmentQc;
 

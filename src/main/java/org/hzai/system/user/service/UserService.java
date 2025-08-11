@@ -15,4 +15,6 @@ public interface UserService {
    boolean authenticate(String username, String password);
 
    PageResult<SysUser> listUserPage(SysUserDto dto, PageRequest pageRequest);
+
+   Boolean registerUser(SysUser sysUserDto);
 }

@@ -7,6 +7,7 @@ import org.hzai.system.user.entity.dto.SysUserDto;
 import org.hzai.system.user.service.UserService;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
+import org.hzai.util.R;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BeanParam;
@@ -23,20 +24,24 @@ public class UserController {
 
     @GET
     @Path("/getPage")
-    public PageResult<SysUser> getPage(@BeanParam SysUserDto sysUserDto, @BeanParam PageRequest pageRequest) {
-        return userService.listUserPage(sysUserDto, pageRequest);
+    public R<PageResult<SysUser>> getPage(@BeanParam SysUserDto sysUserDto, @BeanParam PageRequest pageRequest) {
+        return R.ok(userService.listUserPage(sysUserDto, pageRequest));
     }
 
     @GET
     @Path("/getByDto")
-    public List<SysUser> getByDto(SysUserDto sysUserDto) {
-        return userService.listUsersByDto(sysUserDto);
+    public R<List<SysUser>> getByDto(SysUserDto sysUserDto) {
+        return R.ok(userService.listUsersByDto(sysUserDto));
     }
 
     @GET
     @Path("/getAll")
-    public List<SysUser> getAll() {
-        return userService.listUsers();
+    public R<List<SysUser>> getAll() {
+        return R.ok(userService.listUsers());
+    }
+
+    public R<Boolean> createUser(SysUserDto sysUserDto) {
+        return R.ok(userService.registerUser(sysUserDto));
     }
     
 }
