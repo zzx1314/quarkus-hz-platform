@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.hzai.system.user.entity.SysUser;
 import org.hzai.system.user.entity.dto.SysUserQueryDto;
-import org.hzai.system.user.repository.SysUserRository;
+import org.hzai.system.user.repository.SysUserRepository;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 
@@ -15,7 +15,7 @@ import jakarta.inject.Inject;
 @ApplicationScoped
 public class UserServiceImp implements UserService {
     @Inject
-    SysUserRository sysUserRepository;
+    SysUserRepository sysUserRepository;
     @Override
     public List<SysUser> listUsers() {
         return sysUserRepository.list("isDeleted = ?1", Sort.by("createTime"),  0);

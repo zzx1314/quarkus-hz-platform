@@ -1,9 +1,9 @@
-package org.hzai.system.user.repository;
+package org.hzai.system.org.repository;
 
 import java.util.List;
 
-import org.hzai.system.user.entity.SysUser;
-import org.hzai.system.user.entity.dto.SysUserQueryDto;
+import org.hzai.system.org.entity.SysOrg;
+import org.hzai.system.org.entity.dto.SysOrgQueryDto;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.QueryBuilder;
@@ -14,24 +14,23 @@ import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class SysUserRository implements PanacheRepository<SysUser> {
-    public List<SysUser> selectUserList(SysUserQueryDto sysUserDto) {
+public class SysOrgRepository implements PanacheRepository<SysOrg> {
+
+     public List<SysOrg> selectOrgList(SysOrgQueryDto sysOrgDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0)
-                .like("username", sysUserDto.getUsername())
-                .like("phone", sysUserDto.getPhone());
+                .like("name", sysOrgDto.getName());
         return find(qb.getQuery(), qb.getParams()).list();
     }
 
-    public PageResult<SysUser> selectUserPage(SysUserQueryDto dto, PageRequest pageRequest) {
+    public PageResult<SysOrg> selectUserPage(SysOrgQueryDto dto, PageRequest pageRequest) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0)
-                .like("username", dto.getUsername())
-                .like("phone", dto.getPhone())
+                .like("name", dto.getName())
                 .between("createTime", dto.getBeginTime(), dto.getEndTime())
                 .orderBy("createTime desc");
 
-        PanacheQuery<SysUser> query = find(qb.getQuery(), qb.getParams())
+        PanacheQuery<SysOrg> query = find(qb.getQuery(), qb.getParams())
                 .page(Page.of(pageRequest.getPageIndex(), pageRequest.getSize()));
 
         return new PageResult<>(
