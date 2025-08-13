@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -15,7 +15,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "p_sys_role")
 @EqualsAndHashCode(callSuper=false)
-public class SysRole extends PanacheEntity{
+public class SysRole extends PanacheEntityBase{
 
 	/**
 	 * 主键

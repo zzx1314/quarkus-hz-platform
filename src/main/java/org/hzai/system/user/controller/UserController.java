@@ -62,24 +62,25 @@ public class UserController {
     @PUT
     @Path("/update")
     @Transactional
-    public SysUser update(SysUserDto sysUserDto) {
+    public R<SysUser> update(SysUserDto sysUserDto) {
         SysUser entity = SysUser.findById(sysUserDto.getId());
         if(entity == null) {
             throw new NotFoundException();
         }
         entity = sysUserMapper.toEntity(sysUserDto);
-        return entity;
+        return R.ok(entity);
     }
 
     @DELETE
     @Path("/{id}")
     @Transactional
-    public void delete(@PathParam("id") Long id) {
+    public R<Void> delete(@PathParam("id") Long id) {
         SysUser entity = SysUser.findById(id);
         if (entity == null) {
             throw new NotFoundException();
         }
         entity.delete();
+        return R.ok();
     }
     
 }
