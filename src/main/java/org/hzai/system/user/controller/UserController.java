@@ -68,7 +68,7 @@ public class UserController {
         if(entity == null) {
             throw new NotFoundException();
         }
-        entity = sysUserMapper.toEntity(sysUserDto);
+        sysUserMapper.updateEntityFromDto(sysUserDto, entity);
         return R.ok(entity);
     }
 
