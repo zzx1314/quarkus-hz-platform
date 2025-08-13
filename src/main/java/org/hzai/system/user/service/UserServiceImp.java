@@ -3,7 +3,7 @@ package org.hzai.system.user.service;
 import java.util.List;
 
 import org.hzai.system.user.entity.SysUser;
-import org.hzai.system.user.entity.dto.SysUserDto;
+import org.hzai.system.user.entity.dto.SysUserQueryDto;
 import org.hzai.system.user.repository.SysUserRository;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
@@ -25,16 +25,16 @@ public class UserServiceImp implements UserService {
         return "admin".equals(username) && "123456".equals(password);
     }
     @Override
-    public List<SysUser> listUsersByDto(SysUserDto sysUserDto) {
+    public List<SysUser> listUsersByDto(SysUserQueryDto sysUserDto) {
         return sysUserRepository.selectUserList(sysUserDto);
     }
     @Override
-    public PageResult<SysUser> listUserPage(SysUserDto dto, PageRequest pageRequest) {
+    public PageResult<SysUser> listUserPage(SysUserQueryDto dto, PageRequest pageRequest) {
         return sysUserRepository.selectUserPage(dto, pageRequest);
     }
     @Override
-    public Boolean registerUser(SysUser sysUserDto) {
-         sysUserRepository.persist(sysUserDto);
+    public Boolean registerUser(SysUser sysUser) {
+         sysUserRepository.persist(sysUser);
          return true;
     }
 }

@@ -3,7 +3,7 @@ package org.hzai.system.user.repository;
 import java.util.List;
 
 import org.hzai.system.user.entity.SysUser;
-import org.hzai.system.user.entity.dto.SysUserDto;
+import org.hzai.system.user.entity.dto.SysUserQueryDto;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.QueryBuilder;
@@ -15,14 +15,14 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class SysUserRository implements PanacheRepository<SysUser> {
-    public List<SysUser> selectUserList(SysUserDto sysUserDto) {
+    public List<SysUser> selectUserList(SysUserQueryDto sysUserDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .like("username", sysUserDto.getUsername())
                 .like("phone", sysUserDto.getPhone());
         return find(qb.getQuery(), qb.getParams()).list();
     }
 
-    public PageResult<SysUser> selectUserPage(SysUserDto dto, PageRequest pageRequest) {
+    public PageResult<SysUser> selectUserPage(SysUserQueryDto dto, PageRequest pageRequest) {
         QueryBuilder qb = QueryBuilder.create()
                 .like("username", dto.getUsername())
                 .like("phone", dto.getPhone())

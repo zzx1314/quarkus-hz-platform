@@ -10,7 +10,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.ws.rs.QueryParam;
 
 @Data
 @Entity
@@ -27,25 +26,21 @@ public class SysUser extends PanacheEntityBase{
 	/**
 	 * 账号
 	 */
-	@QueryParam("username")
 	private String username;
 
 	/**
 	 * 电话
 	 */
-	@QueryParam("phone")
 	private String phone;
 
 	/**
 	 * 邮件
 	 */
-	@QueryParam("email")
 	private String email;
 
 	/**
 	 * 姓名
 	 */
-	@QueryParam("realName")
 	private String realName;
 
 	/**
