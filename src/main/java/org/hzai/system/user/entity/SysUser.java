@@ -86,7 +86,7 @@ public class SysUser extends PanacheEntityBase{
 	/**
 	 * 1 表示删除，0 表示未删除
 	 */
-	private Integer isDeleted;
+	private Integer isDeleted = 0;
 
 	/**
 	 * 备注

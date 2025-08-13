@@ -18,7 +18,7 @@ public class UserServiceImp implements UserService {
     SysUserRository sysUserRepository;
     @Override
     public List<SysUser> listUsers() {
-        return sysUserRepository.listAll(Sort.by("createTime"));
+        return sysUserRepository.list("isDeleted = ?1", Sort.by("createTime"),  0);
     }
     @Override
     public boolean authenticate(String username, String password) {

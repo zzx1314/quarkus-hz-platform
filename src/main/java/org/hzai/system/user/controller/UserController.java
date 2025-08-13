@@ -80,7 +80,8 @@ public class UserController {
         if (entity == null) {
             throw new NotFoundException();
         }
-        entity.delete();
+        entity.setIsDeleted(1);
+        entity.persist();
         return R.ok();
     }
     
