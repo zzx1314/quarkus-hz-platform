@@ -72,6 +72,17 @@
             <optional>true</optional>
             <version>1.18.38</version>
         </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>1.5.5.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <version>1.5.5.Final</version>
+            <scope>provided</scope>
+        </dependency>
         <!--langchain4j-->
         <dependency>
             <groupId>io.quarkiverse.langchain4j</groupId>

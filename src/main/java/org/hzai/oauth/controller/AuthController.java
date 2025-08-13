@@ -1,4 +1,4 @@
-package org.hzai.oauth;
+package org.hzai.oauth.controller;
 
 import java.time.Instant;
 import java.util.Arrays;
