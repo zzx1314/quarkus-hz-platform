@@ -6,7 +6,7 @@ import org.hzai.system.user.entity.SysUser;
 import org.hzai.system.user.entity.dto.SysUserDto;
 import org.hzai.system.user.entity.dto.SysUserQueryDto;
 import org.hzai.system.user.entity.mapper.SysUserMapper;
-import org.hzai.system.user.service.UserService;
+import org.hzai.system.user.service.SysUserService;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.R;
@@ -28,9 +28,9 @@ import jakarta.ws.rs.core.MediaType;
 @Path("/sysUser")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class UserController {
+public class SysUserController {
     @Inject
-    UserService userService;
+    SysUserService userService;
 
     @Inject
     SysUserMapper sysUserMapper;

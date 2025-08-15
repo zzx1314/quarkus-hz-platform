@@ -15,14 +15,14 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class SysMenuRepository implements PanacheRepository<SysMenu>{
-    public List<SysMenu> selectOrgList(SysMenuQueryDto sysMenuQueryDto) {
+    public List<SysMenu> selectMenuList(SysMenuQueryDto sysMenuQueryDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0)
                 .like("name", sysMenuQueryDto.getName());
         return find(qb.getQuery(), qb.getParams()).list();
     }
 
-    public PageResult<SysMenu> selectUserPage(SysMenuQueryDto dto, PageRequest pageRequest) {
+    public PageResult<SysMenu> selectMenuPage(SysMenuQueryDto dto, PageRequest pageRequest) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0)
                 .like("name", dto.getName())

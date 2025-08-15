@@ -23,7 +23,7 @@ public class SysOrgRepository implements PanacheRepository<SysOrg> {
         return find(qb.getQuery(), qb.getParams()).list();
     }
 
-    public PageResult<SysOrg> selectUserPage(SysOrgQueryDto dto, PageRequest pageRequest) {
+    public PageResult<SysOrg> selectOrgPage(SysOrgQueryDto dto, PageRequest pageRequest) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0)
                 .like("name", dto.getName())

@@ -13,7 +13,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 @ApplicationScoped
-public class UserServiceImp implements UserService {
+public class SysUserServiceImp implements SysUserService {
     @Inject
     SysUserRepository sysUserRepository;
     @Override

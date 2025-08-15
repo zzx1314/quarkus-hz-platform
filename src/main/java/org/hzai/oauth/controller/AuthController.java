@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.hzai.system.user.service.UserService;
+import org.hzai.system.user.service.SysUserService;
 
 import io.smallrye.jwt.build.Jwt;
 import jakarta.inject.Inject;
@@ -22,7 +22,7 @@ import jakarta.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 public class AuthController {
     @Inject
-    UserService userService;
+    SysUserService userService;
 
     private static final String VALID_CLIENT_ID = "myclient";
     private static final String VALID_CLIENT_SECRET = "mysecret";

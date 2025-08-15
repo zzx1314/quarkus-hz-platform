@@ -7,7 +7,7 @@ import org.hzai.system.user.entity.dto.SysUserQueryDto;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 
-public interface UserService {
+public interface SysUserService {
    List<SysUser> listUsers();
 
    List<SysUser> listUsersByDto(SysUserQueryDto sysUserDto);

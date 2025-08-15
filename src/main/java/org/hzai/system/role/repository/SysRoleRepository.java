@@ -16,14 +16,16 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class SysRoleRepository implements PanacheRepository<SysRole>{
 
-    public List<SysRole> selectOrgList(SysRoleQueryDto sysRoleQueryDto) {
+    public List<SysRole> selectRoleList(SysRoleQueryDto sysRoleQueryDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0)
                 .like("name", sysRoleQueryDto.getName());
-        return find(qb.getQuery(), qb.getParams()).list();
+
+        String baseQuery = "FROM SysRole r LEFT JOIN FETCH r.menus WHERE " + qb.getQuery();
+        return find(baseQuery, qb.getParams()).list();
     }
 
-    public PageResult<SysRole> selectUserPage(SysRoleQueryDto dto, PageRequest pageRequest) {
+    public PageResult<SysRole> selectRolePage(SysRoleQueryDto dto, PageRequest pageRequest) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0)
                 .like("name", dto.getName())
