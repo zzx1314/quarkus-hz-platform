@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.hzai.system.user.service.SysUserService;
+import org.hzai.system.sysuser.service.SysUserService;
 
 import io.smallrye.jwt.build.Jwt;
 import jakarta.inject.Inject;

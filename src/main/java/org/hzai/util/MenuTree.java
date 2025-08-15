@@ -1,6 +1,6 @@
 package org.hzai.util;
 
-import org.hzai.system.menu.entity.vo.MenuVo;
+import org.hzai.system.sysmenu.entity.vo.MenuVo;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
