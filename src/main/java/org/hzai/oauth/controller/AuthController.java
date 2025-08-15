@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Map;
 
 import org.hzai.system.sysuser.service.SysUserService;
+import org.hzai.util.CommonConstants;
+import org.hzai.util.R;
 
 import io.smallrye.jwt.build.Jwt;
 import jakarta.inject.Inject;
@@ -35,9 +37,10 @@ public class AuthController {
             @FormParam("client_secret") String clientSecret) {
 
         if ("password".equals(grantType)) {
-            if (!userService.authenticate(username, password)) {
+            R<String> checkResut = userService.authenticate(username, password);
+            if (checkResut.getCode() != CommonConstants.SUCCESS) {
                 return Response.status(401)
-                        .entity(Map.of("error", "invalid_grant", "error_description", "Invalid credentials"))
+                        .entity(checkResut)
                         .build();
             }
             String jwt = generateToken(username, "user");

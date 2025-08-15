@@ -1,12 +1,15 @@
 package org.hzai.system.sysuser.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.hzai.system.sysuser.entity.SysUser;
 import org.hzai.system.sysuser.entity.dto.SysUserQueryDto;
 import org.hzai.system.sysuser.repository.SysUserRepository;
+import org.hzai.util.MD5Util;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
+import org.hzai.util.R;
 
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -21,8 +24,18 @@ public class SysUserServiceImp implements SysUserService {
         return sysUserRepository.list("isDeleted = ?1", Sort.by("createTime"),  0);
     }
     @Override
-    public boolean authenticate(String username, String password) {
-        return "admin".equals(username) && "123456".equals(password);
+    public R<String> authenticate(String username, String password) {
+        Optional<SysUser> firstResultOptional = sysUserRepository.find("username = ?1", username).firstResultOptional();    
+        if (firstResultOptional.isEmpty()) {
+            return R.failed("error", "用户名不存在");
+        }
+        SysUser sysUser = firstResultOptional.get();
+
+        boolean verifyResult = MD5Util.verify(password, sysUser.getPassword());
+        if (!verifyResult) {
+            return R.failed("error", "密码错误");
+        }
+        return R.ok("登录成功");
     }
     @Override
     public List<SysUser> listUsersByDto(SysUserQueryDto sysUserDto) {
