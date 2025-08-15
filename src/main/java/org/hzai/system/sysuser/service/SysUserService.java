@@ -3,6 +3,7 @@ package org.hzai.system.sysuser.service;
 import java.util.List;
 
 import org.hzai.system.sysuser.entity.SysUser;
+import org.hzai.system.sysuser.entity.dto.SysUserDto;
 import org.hzai.system.sysuser.entity.dto.SysUserQueryDto;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
@@ -13,7 +14,7 @@ public interface SysUserService {
 
    List<SysUser> listUsersByDto(SysUserQueryDto sysUserDto);
 
-    R<String> authenticate(String username, String password);
+   R<SysUserDto> authenticate(String username, String password);
 
    PageResult<SysUser> listUserPage(SysUserQueryDto dto, PageRequest pageRequest);
 

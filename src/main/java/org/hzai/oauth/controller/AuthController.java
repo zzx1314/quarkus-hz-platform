@@ -1,10 +1,13 @@
 package org.hzai.oauth.controller;
 
 import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.hzai.system.sysuser.entity.dto.SysUserDto;
 import org.hzai.system.sysuser.service.SysUserService;
 import org.hzai.util.CommonConstants;
 import org.hzai.util.R;
@@ -29,6 +32,8 @@ public class AuthController {
     private static final String VALID_CLIENT_ID = "myclient";
     private static final String VALID_CLIENT_SECRET = "mysecret";
 
+    private static final long EXPIRES_IN = 3600L;
+
     @POST
     public Response token(@FormParam("grant_type") String grantType,
             @FormParam("username") String username,
@@ -37,14 +42,14 @@ public class AuthController {
             @FormParam("client_secret") String clientSecret) {
 
         if ("password".equals(grantType)) {
-            R<String> checkResut = userService.authenticate(username, password);
+            R<SysUserDto> checkResut = userService.authenticate(username, password);
             if (checkResut.getCode() != CommonConstants.SUCCESS) {
                 return Response.status(401)
                         .entity(checkResut)
                         .build();
             }
             String jwt = generateToken(username, "user");
-            return createTokenResponse(jwt);
+            return createTokenResponse(jwt, checkResut.getData());
 
         } else if ("client_credentials".equals(grantType)) {
             if (!VALID_CLIENT_ID.equals(clientId) || !VALID_CLIENT_SECRET.equals(clientSecret)) {
@@ -53,7 +58,7 @@ public class AuthController {
                         .build();
             }
             String jwt = generateToken(clientId, "client");
-            return createTokenResponse(jwt);
+            return createTokenResponse(jwt, null);
 
         } else {
             return Response.status(400)
@@ -72,11 +77,21 @@ public class AuthController {
                 .sign();
     }
 
-    private Response createTokenResponse(String jwt) {
+    private Response createTokenResponse(String jwt, SysUserDto userDto) {
+        ZonedDateTime expirationTime = ZonedDateTime.now().plusSeconds(EXPIRES_IN);
+        String expString = expirationTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+
         Map<String, Object> tokenResponse = Map.of(
                 "access_token", jwt,
+                "refresh_token", jwt,
                 "token_type", "Bearer",
-                "expires_in", 3600);
+                "exp", expString,
+                "expires_in", EXPIRES_IN,
+                "username", userDto.getUsername(),
+                "permissions", userDto.getPermissions(),
+                "user_id", userDto.getId(),
+                "roles", userDto.getRoles()
+                );
         return Response.ok(tokenResponse).build();
     }
 }

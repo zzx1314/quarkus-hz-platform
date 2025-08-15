@@ -9,6 +9,7 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "cdi")
 public interface SysUserMapper {
     SysUser toEntity(SysUserDto dto);
+    SysUserDto toDto(SysUser entity);
 
     @Mapping(target = "id", ignore = true)
     void updateEntityFromDto(SysUserDto dto, @MappingTarget SysUser entity);

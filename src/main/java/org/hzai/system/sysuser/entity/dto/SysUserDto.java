@@ -1,12 +1,20 @@
 package org.hzai.system.sysuser.entity.dto;
 
-import org.hzai.system.sysuser.entity.SysUser;
 
+import java.util.List;
+
+import org.hzai.system.sysrole.entity.SysRole;
+
+import io.vertx.core.json.JsonArray;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper=false)
-public class SysUserDto extends SysUser {
-   
+public class SysUserDto {
+   private Long id;
+
+	private String username;
+
+    private List<SysRole> roles;
+
+    private List<JsonArray> permissions;
 }
