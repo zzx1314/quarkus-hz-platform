@@ -9,12 +9,17 @@ JAVA_ROOT_DIR = '/home/zzx/IdeaProjects/CleverCopilot/src/main/java'  # Java 文
 TEMPLATES = {
     'dto': 'dto.java.j2',
     'query_dto': 'querydto.java.j2',
+    'mapper': 'mapper.java.j2',
+    'repository': 'repository.java.j2',
+    'service': 'service.java.j2',
+    'serviceImp': 'serviceImp.java.j2',
+    'controller': 'controller.java.j2',
 }
 
 # 数据模型
 data = {
-    "base_package_name": "org.hzai.system.sysmenu",
-    "entity_name": "SysMenu"
+    "base_package_name": "org.hzai.system.sysmenu", #修改
+    "entity_name": "SysMenu" #修改
 }
 
 # -------------------- 初始化 Jinja2 --------------------
@@ -59,3 +64,20 @@ if __name__ == "__main__":
 
     # QueryDTO 文件
     generate_file('query_dto', 'QueryDto.java', data, "entity/dto")
+
+    # Mapper 文件
+    generate_file('mapper', 'Mapper.java', data, "entity/mapper")
+
+    # repository 文件
+    generate_file('repository', 'Repository.java', data, "repository")
+
+    # service 文件
+    generate_file('service', 'Service.java', data, "service")
+
+    # serviceImp 文件
+    generate_file('serviceImp', 'ServiceImp.java', data, "service")
+
+
+    # controller 文件
+    generate_file('controller', 'Controller.java', data, "controller")
+

@@ -13,28 +13,27 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 @ApplicationScoped
-public class SysMenuServiceImp implements SysMenuService{
+public class SysMenuServiceImp implements SysMenuService {
     @Inject
-    SysMenuRepository sysMenuRepository;
-
+    SysMenuRepository repository;
     @Override
-    public List<SysMenu> listMenus() {
-        return sysMenuRepository.list("isDeleted = ?1", Sort.by("createTime"),  0);
+    public List<SysMenu> listEntitys() {
+        return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
     }
 
     @Override
-    public List<SysMenu> listMenusByDto(SysMenuQueryDto sysMenuDto) {
-        return sysMenuRepository.selectMenuList(sysMenuDto);
+    public List<SysMenu> listEntitysByDto(SysMenuQueryDto sysOrgDto) {
+        return repository.selectList(sysOrgDto);
     }
 
     @Override
-    public PageResult<SysMenu> listMenuPage(SysMenuQueryDto dto, PageRequest pageRequest) {
-        return sysMenuRepository.selectMenuPage(dto, pageRequest);
+    public PageResult<SysMenu> listPage(SysMenuQueryDto dto, PageRequest pageRequest) {
+        return repository.selectPage(dto, pageRequest);
     }
 
     @Override
-    public Boolean registerMenu(SysMenu sysMenu) {
-        sysMenuRepository.persist(sysMenu);
+    public Boolean register(SysMenu entity) {
+        repository.persist(entity);
         return true;
     }
 

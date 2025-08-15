@@ -1,14 +1,13 @@
-package org.hzai.system.sysorg.service;
+package {{ base_package_name }}.service;
 
 import java.util.List;
 
-import org.hzai.system.sysorg.entity.SysOrg;
-import org.hzai.system.sysorg.entity.dto.SysOrgQueryDto;
+import {{ base_package_name }}.entity.{{ entity_name }};
+import {{ base_package_name }}.entity.dto.{{ entity_name }}QueryDto;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 
 public interface {{ entity_name }}Service {
-    
    List<{{ entity_name }}> listEntitys();
 
    List<{{ entity_name }}> listEntitysByDto({{ entity_name }}QueryDto sysOrgDto);

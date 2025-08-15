@@ -7,7 +7,6 @@ import org.hzai.system.sysmenu.entity.dto.SysMenuDto;
 import org.hzai.system.sysmenu.entity.dto.SysMenuQueryDto;
 import org.hzai.system.sysmenu.entity.mapper.SysMenuMapper;
 import org.hzai.system.sysmenu.service.SysMenuService;
-import org.hzai.system.sysuser.entity.SysUser;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.R;
@@ -31,45 +30,46 @@ import jakarta.ws.rs.core.MediaType;
 @Consumes(MediaType.APPLICATION_JSON)
 public class SysMenuController {
     @Inject
-    SysMenuMapper sysMenuMapper;
+    SysMenuMapper mapper;
 
     @Inject
     SysMenuService sysMenuService;
 
-    @GET
+
+     @GET
     @Path("/getPage")
-    public R<PageResult<SysMenu>> getPage(@BeanParam SysMenuQueryDto sysMenuDto, @BeanParam PageRequest pageRequest) {
-        return R.ok(sysMenuService.listMenuPage(sysMenuDto, pageRequest));
+    public R<PageResult<SysMenu>> getPage(@BeanParam SysMenuQueryDto dto, @BeanParam PageRequest pageRequest) {
+        return R.ok(sysMenuService.listPage(dto, pageRequest));
     }
 
     @GET
     @Path("/getByDto")
-    public R<List<SysMenu>> getByDto(@BeanParam SysMenuQueryDto sysMenuDto) {
-        return R.ok(sysMenuService.listMenusByDto(sysMenuDto));
+    public R<List<SysMenu>> getByDto(@BeanParam SysMenuQueryDto dto) {
+        return R.ok(sysMenuService.listEntitysByDto(dto));
     }
 
     @GET
     @Path("/getAll")
     public R<List<SysMenu>> getAll() {
-        return R.ok(sysMenuService.listMenus());
+        return R.ok(sysMenuService.listEntitys());
     }
 
     @POST
     @Path("/create")
     @Transactional
-    public R<Boolean> createUser(SysMenu sysMenu) {
-        return R.ok(sysMenuService.registerMenu(sysMenu));
+    public R<Boolean> create(SysMenu entity) {
+        return R.ok(sysMenuService.register(entity));
     }
 
     @PUT
     @Path("/update")
     @Transactional
-    public R<SysMenu> update(SysMenuDto sysMenuDto) {
-        SysMenu entity = SysMenu.findById(sysMenuDto.getId());
+    public R<SysMenu> update(SysMenuDto dto) {
+        SysMenu entity = SysMenu.findById(dto.getId());
         if(entity == null) {
             throw new NotFoundException();
         }
-        sysMenuMapper.updateEntityFromDto(sysMenuDto, entity);
+        mapper.updateEntityFromDto(dto, entity);
         return R.ok(entity);
     }
 
@@ -77,7 +77,7 @@ public class SysMenuController {
     @Path("/{id}")
     @Transactional
     public R<Void> delete(@PathParam("id") Long id) {
-        SysUser entity = SysUser.findById(id);
+        SysMenu entity = SysMenu.findById(id);
         if (entity == null) {
             throw new NotFoundException();
         }
@@ -85,4 +85,5 @@ public class SysMenuController {
         entity.persist();
         return R.ok();
     }
+
 }

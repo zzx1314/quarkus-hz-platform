@@ -8,11 +8,11 @@ import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 
 public interface SysMenuService {
-    List<SysMenu> listMenus();
+   List<SysMenu> listEntitys();
 
-   List<SysMenu> listMenusByDto(SysMenuQueryDto sysMenuDto);
+   List<SysMenu> listEntitysByDto(SysMenuQueryDto sysOrgDto);
 
-   PageResult<SysMenu> listMenuPage(SysMenuQueryDto dto, PageRequest pageRequest);
+   PageResult<SysMenu> listPage(SysMenuQueryDto dto, PageRequest pageRequest);
 
-   Boolean registerMenu(SysMenu sysMenu);
+   Boolean register(SysMenu entity);
 }

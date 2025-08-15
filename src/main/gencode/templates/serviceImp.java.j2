@@ -23,7 +23,7 @@ public class {{ entity_name }}ServiceImp implements {{ entity_name }}Service {
 
     @Override
     public List<{{ entity_name }}> listEntitysByDto({{ entity_name }}QueryDto sysOrgDto) {
-        return repository.select(sysOrgDto);
+        return repository.selectList(sysOrgDto);
     }
 
     @Override

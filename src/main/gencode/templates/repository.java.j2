@@ -16,7 +16,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class {{ entity_name }}Repository implements PanacheRepository<{{ entity_name }}> {
 
-     public List<{{ entity_name }}> select{{ entity_name }}List({{ entity_name }}QueryDto queryDto) {
+     public List<{{ entity_name }}> selectList({{ entity_name }}QueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();

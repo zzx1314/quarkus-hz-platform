@@ -14,18 +14,17 @@ import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class SysMenuRepository implements PanacheRepository<SysMenu>{
-    public List<SysMenu> selectMenuList(SysMenuQueryDto sysMenuQueryDto) {
+public class SysMenuRepository implements PanacheRepository<SysMenu> {
+
+     public List<SysMenu> selectList(SysMenuQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
-                .equal("isDeleted", 0)
-                .like("name", sysMenuQueryDto.getName());
+                .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
     }
 
-    public PageResult<SysMenu> selectMenuPage(SysMenuQueryDto dto, PageRequest pageRequest) {
+    public PageResult<SysMenu> selectPage(SysMenuQueryDto dto, PageRequest pageRequest) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0)
-                .like("name", dto.getName())
                 .between("createTime", dto.getBeginTime(), dto.getEndTime())
                 .orderBy("createTime desc");
 
@@ -38,4 +37,5 @@ public class SysMenuRepository implements PanacheRepository<SysMenu>{
                 pageRequest.getPage(),
                 pageRequest.getSize());
     }
+
 }
