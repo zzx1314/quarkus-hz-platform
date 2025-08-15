@@ -1,5 +1,15 @@
 package org.hzai.system.sysmenu.entity.mapper;
 
-public class SysMenuMapper {
+import org.hzai.system.sysmenu.entity.SysMenu;
+import org.hzai.system.sysmenu.entity.dto.SysMenuDto;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
+@Mapper(componentModel = "cdi")
+public interface SysMenuMapper {
+    SysMenu toEntity(SysMenuDto dto);
+
+    @Mapping(target = "id", ignore = true)
+    void updateEntityFromDto(SysMenuDto dto, @MappingTarget SysMenu entity);
 }

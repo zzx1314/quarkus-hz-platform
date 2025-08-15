@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class OrgDto extends TreeNode {
+public class SysOrgTreeDto extends TreeNode {
 
 	private String name;
 
