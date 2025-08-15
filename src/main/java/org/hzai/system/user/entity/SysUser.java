@@ -4,11 +4,18 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hzai.system.role.entity.SysRole;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 @Data
@@ -122,5 +129,13 @@ public class SysUser extends PanacheEntityBase{
 	 * 性别
 	 */
 	private String sex;
+
+	 @ManyToMany
+    @JoinTable(
+        name = "p_sys_user_role",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    public List<SysRole> roles = new ArrayList<>();
 
 }

@@ -4,11 +4,19 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hzai.system.menu.entity.SysMenu;
+import org.hzai.system.user.entity.SysUser;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 @Data
@@ -73,5 +81,17 @@ public class SysRole extends PanacheEntityBase{
 	 * 数据权限作用范围
 	 */
 	private String dsScope;
+
+	@ManyToMany
+    @JoinTable(
+        name = "p_sys_role_menu",
+        joinColumns = @JoinColumn(name = "role_id"),
+        inverseJoinColumns = @JoinColumn(name = "menu_id")
+    )
+    public List<SysMenu> menus = new ArrayList<>();
+
+
+	@ManyToMany(mappedBy = "roles")
+    public List<SysUser> users = new ArrayList<>();
 
 }

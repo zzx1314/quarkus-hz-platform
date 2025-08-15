@@ -1,11 +1,10 @@
-package org.hzai.system.role.entity.dto;
+package org.hzai.system.menu.entity.dto;
 
 import jakarta.ws.rs.QueryParam;
 import lombok.Data;
 
 @Data
-public class SysRoleQueryDto {
-
+public class SysMenuQueryDto {
     @QueryParam("name")
     private String name;
 
@@ -14,4 +13,5 @@ public class SysRoleQueryDto {
 
     @QueryParam("endTime")
     private String endTime;
+
 }

@@ -1,0 +1,42 @@
+package org.hzai.system.role.repository;
+
+import java.util.List;
+
+import org.hzai.system.role.entity.SysRole;
+import org.hzai.system.role.entity.dto.SysRoleQueryDto;
+import org.hzai.util.PageRequest;
+import org.hzai.util.PageResult;
+import org.hzai.util.QueryBuilder;
+
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.panache.common.Page;
+import jakarta.enterprise.context.ApplicationScoped;
+
+@ApplicationScoped
+public class SysRoleRepository implements PanacheRepository<SysRole>{
+
+    public List<SysRole> selectOrgList(SysRoleQueryDto sysRoleQueryDto) {
+        QueryBuilder qb = QueryBuilder.create()
+                .equal("isDeleted", 0)
+                .like("name", sysRoleQueryDto.getName());
+        return find(qb.getQuery(), qb.getParams()).list();
+    }
+
+    public PageResult<SysRole> selectUserPage(SysRoleQueryDto dto, PageRequest pageRequest) {
+        QueryBuilder qb = QueryBuilder.create()
+                .equal("isDeleted", 0)
+                .like("name", dto.getName())
+                .between("createTime", dto.getBeginTime(), dto.getEndTime())
+                .orderBy("createTime desc");
+
+        PanacheQuery<SysRole> query = find(qb.getQuery(), qb.getParams())
+                .page(Page.of(pageRequest.getPageIndex(), pageRequest.getSize()));
+
+        return new PageResult<>(
+                query.list(),
+                query.count(),
+                pageRequest.getPage(),
+                pageRequest.getSize());
+    }
+}

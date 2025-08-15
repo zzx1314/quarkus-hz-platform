@@ -4,11 +4,16 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hzai.system.role.entity.SysRole;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 @Data
@@ -109,5 +114,8 @@ public class SysMenu extends PanacheEntityBase {
 	private Boolean disabled;
 
 	private Integer findAuthId;
+
+	@ManyToMany(mappedBy = "menus")
+    public List<SysRole> roles = new ArrayList<>();
 
 }
