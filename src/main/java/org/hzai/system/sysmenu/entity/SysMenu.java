@@ -101,7 +101,7 @@ public class SysMenu extends PanacheEntityBase {
 	/**
 	 * 叶子节点
 	 */
-	private Integer leaf;
+	private Boolean leaf;
 
 	/**
 	 * 菜单所属角色

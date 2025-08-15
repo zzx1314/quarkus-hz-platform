@@ -1,2 +1,108 @@
+-- 用户初始化
 INSERT INTO p_sys_user ( id, username, email, phone, password, org_id, lock_time, last_login_time, try_count, lock_flag, create_time, update_time, is_deleted, remarks, real_name, pass_update_time, card, is_show, enable, first_login, sex ) VALUES ( 1, 'sysadmin', null, null, '{MD5}afdd0b4ad2ec172c586e2150770fbf9e', 1, '2025-08-05 05:33:14', '2025-08-05 13:33:13', 0, 1, '2021-12-08 14:26:25', '2025-08-05 13:33:14', 0, null, '系统管理员', '2025-03-13 10:47:23', null, 1, 1, 1, '男' );
 ALTER SEQUENCE p_sys_user_seq RESTART WITH 2;
+
+-- 角色初始化
+INSERT INTO p_sys_role (id, name, code, create_time, update_time, is_deleted, remarks, description, is_edit, ds_type, ds_scope) VALUES (1, 'sysadm', '110', '2021-02-03 11:05:12', null, 0, '维护系统任务以及权限', '系统管理员', false, null, null);
+INSERT INTO p_sys_role (id, name, code, create_time, update_time, is_deleted, remarks, description, is_edit, ds_type, ds_scope) VALUES (2, 'common', '111', '2025-07-16 20:25:50', null, 0, null, '普通人员', true, null, null);
+ALTER SEQUENCE p_sys_role_seq RESTART WITH 3;
+
+-- 用户角色初始化
+INSERT INTO p_sys_user_role (user_id, role_id ) VALUES ( 1, 1 );
+
+-- 菜单初始化
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1000, '系统管理', null, null, '/system', 'ri/settings-3-line', -1, '', 1, 0, 1, '2020-09-18 14:17:36', '2025-05-30 11:31:42', 0, null, false, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1002, '用户管理', null, '', '/system/sysUser/index', 'ri/admin-line', 1000, 'sysUser', 1, 0, 3, '2021-03-11 16:15:54', '2025-05-30 11:31:48', 0, null, true, '110', null, 1007);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1003, '组织管理', null, null, '/system/sysOrg/index', 'ri/git-branch-line', 1000, 'sysOrg', 2, 0, 3, '2023-02-25 07:37:23', '2024-11-01 15:20:58', 0, null, true, '110', null, 1008);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1004, '角色管理', null, null, '/system/sysRole/index', 'ri/admin-fill', 1000, 'sysRole', 3, 0, 3, '2023-02-26 10:41:36', '2024-11-01 15:21:47', 0, null, true, '110', null, 1009);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1005, '菜单管理', null, null, '/system/sysMenu/index', 'ep/menu', 1000, 'sysMenu', 4, 0, 3, '2023-02-26 10:43:24', '2024-11-01 15:22:36', 0, null, true, '110', null, 1010);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1006, '权限管理', null, null, '/system/sysAuth/index', 'ep/lollipop', 1000, 'sysAuth', 5, 0, 3, '2023-03-02 15:44:17', '2024-11-01 15:23:32', 0, null, true, '110', null, 1011);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1007, '查询用户', null, 'user_find', null, null, 1002, '', 1, 0, 2, '2023-03-08 17:53:29', '2025-05-30 11:31:16', 0, null, false, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1008, '查询组织', null, 'org_find', null, null, 1003, '', 1, 0, 2, '2023-03-08 17:55:18', '2024-11-01 15:21:10', 0, null, false, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1009, '查询角色', null, 'role_find', null, null, 1004, '', 1, 0, 2, '2023-03-08 17:56:00', '2024-11-01 15:21:59', 0, null, false, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1010, '查询菜单', null, 'menu_find', null, null, 1005, '', 1, 0, 2, '2023-03-08 17:56:47', '2024-11-01 15:22:45', 0, null, false, '110', true, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1011, '查询权限', null, 'auth_find', null, null, 1006, '', 1, 0, 2, '2023-03-08 17:57:32', '2024-11-01 15:23:39', 0, null, false, '110', true, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1012, '添加用户', null, 'user_add', null, null, 1002, '', 2, 0, 2, '2023-03-13 10:49:59', '2025-05-30 11:31:22', 0, null, false, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1021, '修改用户', null, 'user_update', '', '', 1002, '', 3, 0, 2, '2024-08-07 17:09:36', '2024-11-01 15:20:35', 0, null, true, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1022, '删除用户', null, 'user_del', '', '', 1002, '', 4, 0, 2, '2024-08-07 17:10:48', '2024-11-01 15:20:41', 0, null, true, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1023, '添加组织', null, 'org_add', '', '', 1003, '', 2, 0, 2, '2024-08-07 17:11:56', '2024-11-01 15:21:17', 0, null, true, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1024, '修改组织', null, 'org_update', '', '', 1003, '', 3, 0, 2, '2024-08-07 17:12:32', '2024-11-01 15:21:25', 0, null, true, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1025, '删除组织', null, 'org_del', '', '', 1003, '', 4, 0, 2, '2024-08-07 17:13:07', '2024-11-01 15:21:31', 0, null, true, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1026, '添加角色', null, 'role_add', '', '', 1004, '', 2, 0, 2, '2024-08-07 17:13:38', '2024-11-01 15:22:06', 0, null, true, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1027, '修改角色', null, 'role_update', '', '', 1004, '', 1, 0, 2, '2024-08-07 17:14:05', '2024-11-01 15:22:14', 0, null, true, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1028, '删除角色', null, 'role_del', '', '', 1004, '', 4, 0, 2, '2024-08-07 17:14:43', '2024-11-01 15:22:23', 0, null, true, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1030, '修改菜单', null, 'menu_update', '', '', 1005, '', 3, 0, 2, '2024-08-07 17:16:40', '2024-11-01 15:23:13', 0, null, true, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1032, '添加权限', null, 'auth_add', '', '', 1006, '', 2, 0, 2, '2024-08-07 17:18:36', '2024-11-01 15:23:46', 0, null, true, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1033, '删除权限', null, 'auth_del', '', '', 1006, '', 3, 0, 2, '2024-08-07 17:19:17', '2024-11-01 15:23:54', 0, null, true, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1034, '修改权限', null, 'auth_update', '', '', 1006, '', 4, 0, 2, '2024-08-07 17:19:52', '2024-11-01 15:24:00', 0, null, true, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1043, '安全配置', null, '', '/system/sysSeting/index', 'tdesign/lock-on', 1000, 'sysSeting', 6, 0, 3, '2024-08-23 11:49:29', null, 0, null, true, '110', null, 1044);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1044, '查询安全配置', null, 'sys_seting_find', '', '', 1043, '', 1, 0, 2, '2024-08-23 11:59:22', '2024-09-11 11:30:23', 0, null, true, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1052, '保存安全配置', null, 'sys_seting_save', '', '', 1043, '', 1, 0, 2, '2024-09-11 11:26:21', '2024-09-11 11:30:37', 0, null, true, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1062, '重置密码', null, 're_set_pass', '', '', 1002, '', 1, 0, 2, '2024-09-11 14:13:44', null, 0, null, true, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1066, '启用禁用', null, 'user_stop_start', '', '', 1002, '', 1, 0, 2, '2024-09-23 17:52:11', null, 0, null, true, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1101, '日志管理', null, null, '/system/sysLog/index', 'ri/blogger-line', 1000, 'sysLog', 8, 0, 3, '2025-03-19 15:15:00', null, 0, null, true, '110', null, 1102);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1102, '查询日志', null, 'log_find', null, null, 1101, '', 1, 0, 2, '2025-03-19 15:17:42', null, 0, null, true, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1119, '知识库管理', null, null, '/kbase', 'ri/blogger-line', -1, '', 2, 0, 1, '2025-06-19 10:35:53', null, 0, null, false, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1120, '知识库', null, null, '/ai/knowledge/index', 'ep/notebook', 1119, 'knowledge', 1, 0, 3, '2025-06-19 11:25:02', null, 0, null, false, '110', null, 1121);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1121, '查询知识库', null, 'knowledge_find', null, null, 1120, '', 1, 0, 2, '2025-06-19 11:32:22', null, 0, null, false, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1122, '应用', null, null, '/ai/application/index', 'ep/box', 1126, 'application', 2, 0, 3, '2025-06-19 11:41:33', null, 0, null, false, '110', null, 1123);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1123, '查询应用', null, 'app_find', null, null, 1122, '', 1, 0, 2, '2025-06-19 11:45:03', null, 0, null, false, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1124, 'MCP插件', null, null, '/ai/mcp/index', 'ep/tools', 1127, '', 3, 0, 3, '2025-06-19 11:48:54', null, 0, null, false, '110', null, 1125);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1125, '查询MCP插件', null, 'mcp_find', null, null, 1124, '', 1, 0, 2, '2025-06-19 15:32:48', null, 0, null, false, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1126, '应用管理', null, null, '/apply', 'ep/box', -1, '', 3, 0, 1, '2025-06-19 10:35:53', null, 0, null, false, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1127, '插件管理', null, null, '/mcpplug', 'codicon/tools', -1, '', 4, 0, 1, '2025-06-19 10:35:53', null, 0, null, false, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1128, '模型管理', null, null, '/fmode', 'carbon/flow-modeler-reference', -1, '', 5, 0, 1, '2025-07-16 14:42:11', null, 0, null, false, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1129, '模型', null, null, '/ai/model/index', 'carbon/flow-modeler-reference', 1128, '', 1, 0, 3, '2025-07-16 14:45:53', null, 0, null, false, '110', null, 1130);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1130, '查询模型', null, 'mode_find', null, null, 1129, '', 1, 0, 2, '2025-07-16 14:48:07', null, 0, null, false, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1131, '微调管理', null, null, '/train', 'solar/tuning', -1, '', 6, 0, 1, '2025-06-19 10:35:53', null, 0, null, false, '110', null, null);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1132, '模型微调', null, null, '/ai/finetuning/index', 'solar/tuning', 1131, 'finetuning', 1, 0, 3, '2025-06-19 11:41:33', null, 0, null, false, '110', null, 1132);
+INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1133, '查询模型微调', null, 'finetuning_find', null, null, 1132, '', 1, 0, 2, '2025-06-19 11:45:03', null, 0, null, false, '110', null, null);
+ALTER SEQUENCE p_sys_menu_seq RESTART WITH 1134;
+
+-- 角色菜单初始化
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1024);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1025);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1026);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1027);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1028);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1030);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1032);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1033);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1034);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1101);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1102);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1043);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1044);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1052);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1119);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1120);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1121);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1122);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1123);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1124);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1125);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1126);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1062);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1127);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1000);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1128);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1129);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1002);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1066);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1130);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1003);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1131);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1004);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1132);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1005);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1133);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1006);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1007);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1008);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1009);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1010);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1011);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1012);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1021);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1022);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1023);

@@ -70,7 +70,7 @@ public class SysRole extends PanacheEntityBase{
 	/**
 	 * 编辑
 	 */
-	private Integer isEdit;
+	private Boolean isEdit;
 
 	/**
 	 * 数据权限类型
