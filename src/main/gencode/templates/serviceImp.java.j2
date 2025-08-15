@@ -1,0 +1,40 @@
+package {{ base_package_name }}.service;
+
+import java.util.List;
+
+import {{ base_package_name }}.entity.{{ entity_name }};
+import {{ base_package_name }}.entity.dto.{{ entity_name }}QueryDto;
+import {{ base_package_name }}.repository.{{ entity_name }}Repository;
+import org.hzai.util.PageRequest;
+import org.hzai.util.PageResult;
+
+import io.quarkus.panache.common.Sort;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+
+@ApplicationScoped
+public class {{ entity_name }}ServiceImp implements {{ entity_name }}Service {
+    @Inject
+    {{ entity_name }}Repository repository;
+    @Override
+    public List<{{ entity_name }}> listEntitys() {
+        return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
+    }
+
+    @Override
+    public List<{{ entity_name }}> listEntitysByDto({{ entity_name }}QueryDto sysOrgDto) {
+        return repository.select(sysOrgDto);
+    }
+
+    @Override
+    public PageResult<{{ entity_name }}> listPage({{ entity_name }}QueryDto dto, PageRequest pageRequest) {
+        return repository.selectPage(dto, pageRequest);
+    }
+
+    @Override
+    public Boolean register({{ entity_name }} entity) {
+        repository.persist(entity);
+        return true;
+    }
+
+}

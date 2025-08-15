@@ -1,0 +1,89 @@
+package {{ base_package_name }}.controller;
+
+import java.util.List;
+
+import {{ base_package_name }}.entity.{{ entity_name }};
+import {{ base_package_name }}.entity.dto.{{ entity_name }}Dto;
+import {{ base_package_name }}.entity.dto.{{ entity_name }}QueryDto;
+import {{ base_package_name }}.entity.mapper.{{ entity_name }}Mapper;
+import {{ base_package_name }}.service.{{ entity_name }}Service;
+import org.hzai.util.PageRequest;
+import org.hzai.util.PageResult;
+import org.hzai.util.R;
+
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.BeanParam;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+
+@Path("/{{ entity_name[0]|lower }}{{ entity_name[1:] }}")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class {{ entity_name }}Controller {
+    @Inject
+    {{ entity_name }}Mapper mapper;
+
+    @Inject
+    {{ entity_name }}Service {{ entity_name[0]|lower }}{{ entity_name[1:] }}Service;
+
+
+     @GET
+    @Path("/getPage")
+    public R<PageResult<{{ entity_name }}>> getPage(@BeanParam {{ entity_name }}QueryDto dto, @BeanParam PageRequest pageRequest) {
+        return R.ok({{ entity_name[0]|lower }}{{ entity_name[1:] }}Service.listPage(dto, pageRequest));
+    }
+
+    @GET
+    @Path("/getByDto")
+    public R<List<{{ entity_name }}>> getByDto(@BeanParam {{ entity_name }}QueryDto dto) {
+        return R.ok({{ entity_name[0]|lower }}{{ entity_name[1:] }}Service.listEntitysByDto(dto));
+    }
+
+    @GET
+    @Path("/getAll")
+    public R<List<{{ entity_name }}>> getAll() {
+        return R.ok({{ entity_name[0]|lower }}{{ entity_name[1:] }}Service.listEntitys());
+    }
+
+    @POST
+    @Path("/create")
+    @Transactional
+    public R<Boolean> create({{ entity_name }} entity) {
+        return R.ok({{ entity_name[0]|lower }}{{ entity_name[1:] }}Service.register(entity));
+    }
+
+    @PUT
+    @Path("/update")
+    @Transactional
+    public R<{{ entity_name }}> update({{ entity_name }}Dto dto) {
+        {{ entity_name }} entity = {{ entity_name }}.findById(dto.getId());
+        if(entity == null) {
+            throw new NotFoundException();
+        }
+        {{ entity_name[0]|lower }}{{ entity_name[1:] }}Mapper.updateEntityFromDto(dto, entity);
+        return R.ok(entity);
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @Transactional
+    public R<Void> delete(@PathParam("id") Long id) {
+        {{ entity_name }} entity = {{ entity_name }}.findById(id);
+        if (entity == null) {
+            throw new NotFoundException();
+        }
+        entity.setIsDeleted(1);
+        entity.persist();
+        return R.ok();
+    }
+
+}

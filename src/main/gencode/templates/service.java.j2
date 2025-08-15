@@ -1,0 +1,19 @@
+package org.hzai.system.sysorg.service;
+
+import java.util.List;
+
+import org.hzai.system.sysorg.entity.SysOrg;
+import org.hzai.system.sysorg.entity.dto.SysOrgQueryDto;
+import org.hzai.util.PageRequest;
+import org.hzai.util.PageResult;
+
+public interface {{ entity_name }}Service {
+    
+   List<{{ entity_name }}> listEntitys();
+
+   List<{{ entity_name }}> listEntitysByDto({{ entity_name }}QueryDto sysOrgDto);
+
+   PageResult<{{ entity_name }}> listPage({{ entity_name }}QueryDto dto, PageRequest pageRequest);
+
+   Boolean register({{ entity_name }} entity);
+}
