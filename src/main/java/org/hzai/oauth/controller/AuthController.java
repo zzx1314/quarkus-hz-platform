@@ -5,7 +5,9 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.hzai.system.sysuser.entity.dto.SysUserDto;
 import org.hzai.system.sysuser.service.SysUserService;
@@ -79,19 +81,20 @@ public class AuthController {
 
     private Response createTokenResponse(String jwt, SysUserDto userDto) {
         ZonedDateTime expirationTime = ZonedDateTime.now().plusSeconds(EXPIRES_IN);
-        String expString = expirationTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String expString = expirationTime.format(formatter);
 
-        Map<String, Object> tokenResponse = Map.of(
-                "access_token", jwt,
-                "refresh_token", jwt,
-                "token_type", "Bearer",
-                "exp", expString,
-                "expires_in", EXPIRES_IN,
-                "username", userDto.getUsername(),
-                "permissions", userDto.getPermissions(),
-                "user_id", userDto.getId(),
-                "roles", userDto.getRoles()
-                );
+        Map<String, Object> tokenResponse = Map.ofEntries(
+                Map.entry("access_token", Objects.requireNonNullElse(jwt, "")),
+                Map.entry("refresh_token", Objects.requireNonNullElse(jwt, "")),
+                Map.entry("token_type", "Bearer"),
+                Map.entry("exp", expString),
+                Map.entry("expires_in", EXPIRES_IN),
+                Map.entry("username", Objects.requireNonNullElse(userDto.getUsername(), "")),
+                Map.entry("permissions", Objects.requireNonNullElse(userDto.getPermissions(), List.of())),
+                Map.entry("user_id", Objects.requireNonNullElse(userDto.getId(), 0)),
+                Map.entry("roles", Objects.requireNonNullElse(userDto.getRoles(), List.of())));
+
         return Response.ok(tokenResponse).build();
     }
 }
