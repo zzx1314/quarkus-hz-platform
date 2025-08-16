@@ -8,6 +8,9 @@ public class SysUserQueryDto {
     @QueryParam("username")
 	private String username;
 
+	@QueryParam("orgId")
+	private Integer orgId;
+
 	/**
 	 * 电话
 	 */

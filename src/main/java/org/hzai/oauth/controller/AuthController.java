@@ -50,7 +50,7 @@ public class AuthController {
                         .entity(checkResut)
                         .build();
             }
-            String jwt = generateToken(username, "user");
+            String jwt = generateToken(username, checkResut.getData());
             return createTokenResponse(jwt, checkResut.getData());
 
         } else if ("client_credentials".equals(grantType)) {
@@ -59,7 +59,7 @@ public class AuthController {
                         .entity(Map.of("error", "invalid_client", "error_description", "Invalid client credentials"))
                         .build();
             }
-            String jwt = generateToken(clientId, "client");
+            String jwt = generateToken(clientId, null);
             return createTokenResponse(jwt, null);
 
         } else {
@@ -69,13 +69,13 @@ public class AuthController {
         }
     }
 
-    private String generateToken(String subject, String role) {
+    private String generateToken(String subject, SysUserDto userDto) {
         return Jwt.claims()
                 .issuer("https://quarkus-oauth2-server")
                 .subject(subject)
                 .groups(new HashSet<>(Arrays.asList("User", "Admin")))
-                .claim("role", role)
-                .expiresAt(Instant.now().plusSeconds(3600))
+                .claim("role", userDto != null ? userDto.getRoleIdList() : null)
+                .expiresAt(Instant.now().plusSeconds(EXPIRES_IN))
                 .sign();
     }
 
