@@ -41,4 +41,12 @@ public class SysUserRepository implements PanacheRepository<SysUser> {
                 pageRequest.getSize());
     }
 
+    public SysUser selectOne(SysUserQueryDto queryDto) {
+        QueryBuilder qb = QueryBuilder.create()
+                .equal("isDeleted", 0)
+                .like("username", queryDto.getUsername())
+                .like("phone", queryDto.getPhone());
+        return this.find(qb.getQuery(), qb.getParams()).firstResult();
+    }
+
 }

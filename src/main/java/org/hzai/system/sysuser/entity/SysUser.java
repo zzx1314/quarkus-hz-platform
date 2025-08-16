@@ -9,6 +9,8 @@ import java.util.List;
 
 import org.hzai.system.sysrole.entity.SysRole;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -54,6 +56,7 @@ public class SysUser extends PanacheEntityBase{
 	/**
 	 * 密码
 	 */
+	@JsonIgnore
 	private String password;
 
 	/**
@@ -137,6 +140,7 @@ public class SysUser extends PanacheEntityBase{
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
+	@JsonIgnore
     public List<SysRole> roles = new ArrayList<>();
 
 }

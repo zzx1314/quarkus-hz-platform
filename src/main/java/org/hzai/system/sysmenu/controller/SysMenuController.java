@@ -5,7 +5,6 @@ import java.util.List;
 import org.hzai.system.sysmenu.entity.SysMenu;
 import org.hzai.system.sysmenu.entity.dto.SysMenuDto;
 import org.hzai.system.sysmenu.entity.dto.SysMenuQueryDto;
-import org.hzai.system.sysmenu.entity.mapper.SysMenuMapper;
 import org.hzai.system.sysmenu.service.SysMenuService;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;

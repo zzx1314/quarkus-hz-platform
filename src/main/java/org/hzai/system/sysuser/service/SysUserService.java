@@ -14,9 +14,13 @@ public interface SysUserService {
 
    List<SysUser> listUsersByDto(SysUserQueryDto sysUserDto);
 
-   R<SysUserDto> authenticate(String username, String password);
-
    PageResult<SysUser> listUserPage(SysUserQueryDto dto, PageRequest pageRequest);
+
+
+   SysUser listOne(SysUserQueryDto queryDto);
+
+    R<SysUserDto> authenticate(String username, String password);
+
 
    Boolean registerUser(SysUser sysUser);
 }

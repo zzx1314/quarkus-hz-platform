@@ -47,7 +47,7 @@ public class SysUserServiceImp implements SysUserService {
     
         List<SysRole> sysRoleList = sysUser.getRoles();
         if (sysRoleList != null && !sysRoleList.isEmpty()) {
-            // 补充角色
+           // 补充角色
            List<Long> roleIdList = sysRoleList.stream().map(SysRole::getId).collect(Collectors.toList());
            sysUserDto.setRoleIdList(roleIdList);
 
@@ -77,5 +77,9 @@ public class SysUserServiceImp implements SysUserService {
     public Boolean registerUser(SysUser sysUser) {
          sysUserRepository.persist(sysUser);
          return true;
+    }
+    @Override
+    public SysUser listOne(SysUserQueryDto queryDto) {
+        return sysUserRepository.selectOne(queryDto);
     }
 }

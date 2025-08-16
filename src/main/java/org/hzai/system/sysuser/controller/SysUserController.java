@@ -1,10 +1,14 @@
 package org.hzai.system.sysuser.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.hzai.system.sysmenu.entity.SysMenu;
+import org.hzai.system.sysrole.entity.SysRole;
 import org.hzai.system.sysuser.entity.SysUser;
 import org.hzai.system.sysuser.entity.dto.SysUserDto;
 import org.hzai.system.sysuser.entity.dto.SysUserQueryDto;
+import org.hzai.system.sysuser.entity.dto.UserInfo;
 import org.hzai.system.sysuser.entity.mapper.SysUserMapper;
 import org.hzai.system.sysuser.service.SysUserService;
 import org.hzai.util.PageRequest;
@@ -46,6 +50,31 @@ public class SysUserController {
     public R<List<SysUser>> getByDto(@BeanParam SysUserQueryDto sysUserDto) {
         return R.ok(userService.listUsersByDto(sysUserDto));
     }
+
+    @GET
+    @Path("/getInfo")
+    public R<UserInfo> getInfo(@BeanParam SysUserQueryDto sysUserDto) {
+        UserInfo userInfo = new UserInfo();
+        SysUser users = userService.listOne(sysUserDto);
+        if (users == null) {
+            return R.failed(null, "用户不存在");
+        }
+        List<SysRole> sysRoleList = users.getRoles();
+        // 补充角色
+        List<Long> roleIdList = sysRoleList.stream().map(SysRole::getId).collect(Collectors.toList());
+        userInfo.setRoles(roleIdList);
+
+        // 补充权限
+        List<String> permissionList = sysRoleList.stream()
+                .flatMap(role -> role.getMenus().stream())
+                .filter(menu -> menu.getPermission() != null && menu.getPermission().length() > 0)
+                .map(SysMenu::getPermission)
+                .collect(Collectors.toList());
+        userInfo.setPermissions(permissionList);
+        userInfo.setSysUser(users);
+        return R.ok(userInfo);
+    }
+
 
     @GET
     @Path("/getAll")

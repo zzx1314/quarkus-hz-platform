@@ -9,6 +9,8 @@ import java.util.List;
 
 import org.hzai.system.sysrole.entity.SysRole;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -117,6 +119,7 @@ public class SysMenu extends PanacheEntityBase {
 	private Integer findAuthId;
 
 	@ManyToMany(mappedBy = "menus", fetch = FetchType.LAZY)
+	@JsonIgnore
     public List<SysRole> roles = new ArrayList<>();
 
 }

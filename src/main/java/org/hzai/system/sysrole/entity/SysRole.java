@@ -10,6 +10,8 @@ import java.util.List;
 import org.hzai.system.sysmenu.entity.SysMenu;
 import org.hzai.system.sysuser.entity.SysUser;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -89,10 +91,12 @@ public class SysRole extends PanacheEntityBase{
         joinColumns = @JoinColumn(name = "role_id"),
         inverseJoinColumns = @JoinColumn(name = "menu_id")
     )
+	@JsonIgnore
     public List<SysMenu> menus = new ArrayList<>();
 
 
 	@ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+	@JsonIgnore
     public List<SysUser> users = new ArrayList<>();
 
 }
