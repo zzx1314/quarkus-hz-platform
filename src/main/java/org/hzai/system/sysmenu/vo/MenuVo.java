@@ -5,6 +5,8 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.List;
 
+import org.hzai.util.MenuMeta;
+
 /**
  * @Classname MenuVO
  * @Description 菜单权限

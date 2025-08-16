@@ -1,14 +1,23 @@
 package org.hzai.system.sysmenu.controller;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.hzai.system.sysmenu.entity.SysMenu;
 import org.hzai.system.sysmenu.entity.dto.SysMenuDto;
 import org.hzai.system.sysmenu.entity.dto.SysMenuQueryDto;
+import org.hzai.system.sysmenu.entity.vo.MenuVo;
 import org.hzai.system.sysmenu.service.SysMenuService;
-import org.hzai.util.PageRequest;
-import org.hzai.util.PageResult;
+import org.hzai.util.CommonConstants;
+import org.hzai.util.MenuMeta;
+import org.hzai.util.MenuTree;
 import org.hzai.util.R;
+import org.hzai.util.SecurityUtil;
+import org.hzai.util.TreeUtil;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -31,11 +40,37 @@ public class SysMenuController {
     @Inject
     SysMenuService sysMenuService;
 
+    @Inject
+    SecurityUtil securityUtil;
+
+    private static final ObjectMapper mapper = new ObjectMapper();
+
 
     @GET
-    @Path("/getPage")
-    public R<PageResult<SysMenu>> getPage(@BeanParam SysMenuQueryDto dto, @BeanParam PageRequest pageRequest) {
-        return R.ok(sysMenuService.listPage(dto, pageRequest));
+    public R<Object> getUserMenu() {
+        // 获取符合条件的菜单
+        List<Long> roleIds  = securityUtil.getRole();
+        List<MenuVo> listMenuByRoleId = sysMenuService.listMenuByRoleId(roleIds.get(0));
+        if (listMenuByRoleId != null && !listMenuByRoleId.isEmpty()) {
+            List<MenuTree> menuTreeList = listMenuByRoleId.stream().map(one ->{
+                MenuMeta menuMeta = new MenuMeta();
+				menuMeta.setIcon(one.getIcon());
+				menuMeta.setRank(one.getSort());
+				menuMeta.setShowParent(one.getLeaf());
+				menuMeta.setTitle(one.getName());
+				menuMeta.setAuths(one.getAuths());
+				one.setMeta(menuMeta);
+				return one;
+            })
+            .filter(menuVo -> !CommonConstants.ACTION_BUTTON.equals(menuVo.getType()))
+				.map(MenuTree::new)
+				.sorted(Comparator.comparingInt(one -> one.getMeta().getRank()))
+            .collect(Collectors.toList());
+            ArrayNode arrayNode = mapper.convertValue(menuTreeList, ArrayNode.class);
+            return R.ok(TreeUtil.listToTree(arrayNode));
+        } else{
+            return R.failed();
+        }
     }
 
     @GET

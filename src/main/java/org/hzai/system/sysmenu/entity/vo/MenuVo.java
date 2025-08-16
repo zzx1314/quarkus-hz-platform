@@ -79,6 +79,7 @@ public class MenuVo implements Serializable {
 	 */
 	private String redirect;
 
+
 	/**
 	 * 菜单信息
 	 */
