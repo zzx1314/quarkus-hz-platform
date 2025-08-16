@@ -11,6 +11,7 @@ import org.hzai.system.sysuser.entity.dto.SysUserDto;
 import org.hzai.system.sysuser.entity.dto.SysUserQueryDto;
 import org.hzai.system.sysuser.entity.mapper.SysUserMapper;
 import org.hzai.system.sysuser.repository.SysUserRepository;
+import org.hzai.util.AESUtils;
 import org.hzai.util.MD5Util;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
@@ -35,6 +36,8 @@ public class SysUserServiceImp implements SysUserService {
     }
     @Override
     public R<SysUserDto> authenticate(String username, String password) {
+        // 先解密
+        password = AESUtils.decrypt(password, null);
         Optional<SysUser> firstResultOptional = sysUserRepository.find("username = ?1", username).firstResultOptional();    
         if (firstResultOptional.isEmpty()) {
             return R.failed(null, "用户名不存在");
