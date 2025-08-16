@@ -11,6 +11,7 @@ import org.hzai.system.sysrole.entity.SysRole;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
@@ -115,7 +116,7 @@ public class SysMenu extends PanacheEntityBase {
 
 	private Integer findAuthId;
 
-	@ManyToMany(mappedBy = "menus")
+	@ManyToMany(mappedBy = "menus", fetch = FetchType.LAZY)
     public List<SysRole> roles = new ArrayList<>();
 
 }

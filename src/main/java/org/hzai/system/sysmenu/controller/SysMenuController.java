@@ -30,13 +30,10 @@ import jakarta.ws.rs.core.MediaType;
 @Consumes(MediaType.APPLICATION_JSON)
 public class SysMenuController {
     @Inject
-    SysMenuMapper mapper;
-
-    @Inject
     SysMenuService sysMenuService;
 
 
-     @GET
+    @GET
     @Path("/getPage")
     public R<PageResult<SysMenu>> getPage(@BeanParam SysMenuQueryDto dto, @BeanParam PageRequest pageRequest) {
         return R.ok(sysMenuService.listPage(dto, pageRequest));
@@ -65,12 +62,7 @@ public class SysMenuController {
     @Path("/update")
     @Transactional
     public R<SysMenu> update(SysMenuDto dto) {
-        SysMenu entity = SysMenu.findById(dto.getId());
-        if(entity == null) {
-            throw new NotFoundException();
-        }
-        mapper.updateEntityFromDto(dto, entity);
-        return R.ok(entity);
+        return R.ok(sysMenuService.updateMenu(dto));
     }
 
     @DELETE

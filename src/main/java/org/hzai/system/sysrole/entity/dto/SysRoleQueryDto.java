@@ -6,6 +6,9 @@ import lombok.Data;
 @Data
 public class SysRoleQueryDto {
 
+    @QueryParam("id")
+    private Long id;
+
     @QueryParam("name")
     private String name;
 

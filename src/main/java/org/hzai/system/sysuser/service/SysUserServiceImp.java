@@ -2,7 +2,10 @@ package org.hzai.system.sysuser.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.hzai.system.sysmenu.entity.SysMenu;
+import org.hzai.system.sysrole.entity.SysRole;
 import org.hzai.system.sysuser.entity.SysUser;
 import org.hzai.system.sysuser.entity.dto.SysUserDto;
 import org.hzai.system.sysuser.entity.dto.SysUserQueryDto;
@@ -37,9 +40,22 @@ public class SysUserServiceImp implements SysUserService {
             return R.failed(null, "用户名不存在");
         }
         SysUser sysUser = firstResultOptional.get();
-
         SysUserDto sysUserDto = sysUserMapper.toDto(sysUser);
+    
+        List<SysRole> sysRoleList = sysUser.getRoles();
+        if (sysRoleList != null && !sysRoleList.isEmpty()) {
+            // 补充角色
+           List<Long> roleIdList = sysRoleList.stream().map(SysRole::getId).collect(Collectors.toList());
+           sysUserDto.setRoleIdList(roleIdList);
 
+           // 补充权限
+           List<String> permissionList = sysRoleList.stream()
+                    .flatMap(role -> role.getMenus().stream())
+                    .filter(menu -> menu.getPermission() != null && menu.getPermission().length() > 0)
+                    .map(SysMenu::getPermission)
+                    .collect(Collectors.toList());
+            sysUserDto.setPermissions(permissionList);
+        }
         boolean verifyResult = MD5Util.verify(password, sysUser.getPassword());
         if (!verifyResult) {
             return R.failed(null, "密码错误");

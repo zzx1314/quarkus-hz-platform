@@ -1,11 +1,9 @@
-package org.hzai.system.sysmenu.entity.vo;
+package org.hzai.system.sysmenu.vo;
 
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.List;
-
-import org.hzai.util.MenuMeta;
 
 /**
  * @Classname MenuVO
@@ -88,6 +86,11 @@ public class MenuVo implements Serializable {
 	 * 菜单权限标识
 	 */
 	private List<String> auths;
+
+	/**
+	 * 菜单所属角色
+	 */
+	private List<String> roles;
 
 	@Override
 	public int hashCode() {

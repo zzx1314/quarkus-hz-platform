@@ -3,9 +3,6 @@ package org.hzai.system.sysuser.entity.dto;
 
 import java.util.List;
 
-import org.hzai.system.sysrole.entity.SysRole;
-
-import io.vertx.core.json.JsonArray;
 import lombok.Data;
 
 @Data
@@ -14,7 +11,7 @@ public class SysUserDto {
 
 	private String username;
 
-    private List<SysRole> roles;
+    private List<Long> roleIdList;
 
-    private List<JsonArray> permissions;
+    private List<String> permissions;
 }

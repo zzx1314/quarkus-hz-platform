@@ -12,6 +12,7 @@ import org.hzai.system.sysuser.entity.SysUser;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -82,7 +83,7 @@ public class SysRole extends PanacheEntityBase{
 	 */
 	private String dsScope;
 
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "p_sys_role_menu",
         joinColumns = @JoinColumn(name = "role_id"),
@@ -91,7 +92,7 @@ public class SysRole extends PanacheEntityBase{
     public List<SysMenu> menus = new ArrayList<>();
 
 
-	@ManyToMany(mappedBy = "roles")
+	@ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
     public List<SysUser> users = new ArrayList<>();
 
 }

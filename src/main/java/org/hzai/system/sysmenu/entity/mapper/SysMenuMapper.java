@@ -2,6 +2,7 @@ package org.hzai.system.sysmenu.entity.mapper;
 
 import org.hzai.system.sysmenu.entity.SysMenu;
 import org.hzai.system.sysmenu.entity.dto.SysMenuDto;
+import org.hzai.system.sysmenu.entity.vo.MenuVo;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -9,6 +10,8 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "cdi")
 public interface SysMenuMapper {
     SysMenu toEntity(SysMenuDto dto);
+
+    MenuVo toMenuVo(SysMenu sysMenu);
 
     @Mapping(target = "id", ignore = true)
     void updateEntityFromDto(SysMenuDto dto, @MappingTarget SysMenu entity);

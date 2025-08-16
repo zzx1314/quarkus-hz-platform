@@ -18,6 +18,7 @@ public class SysRoleRepository implements PanacheRepository<SysRole>{
 
     public List<SysRole> selectRoleList(SysRoleQueryDto sysRoleQueryDto) {
         QueryBuilder qb = QueryBuilder.create()
+                .equal("id", sysRoleQueryDto.getId())
                 .equal("isDeleted", 0)
                 .like("name", sysRoleQueryDto.getName());
 

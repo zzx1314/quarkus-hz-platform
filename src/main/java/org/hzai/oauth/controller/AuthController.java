@@ -93,7 +93,7 @@ public class AuthController {
                 Map.entry("username", Objects.requireNonNullElse(userDto.getUsername(), "")),
                 Map.entry("permissions", Objects.requireNonNullElse(userDto.getPermissions(), List.of())),
                 Map.entry("user_id", Objects.requireNonNullElse(userDto.getId(), 0)),
-                Map.entry("roles", Objects.requireNonNullElse(userDto.getRoles(), List.of())));
+                Map.entry("roles", Objects.requireNonNullElse(userDto.getRoleIdList(), List.of())));
 
         return Response.ok(tokenResponse).build();
     }

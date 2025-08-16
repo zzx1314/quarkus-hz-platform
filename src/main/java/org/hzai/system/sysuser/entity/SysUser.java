@@ -11,6 +11,7 @@ import org.hzai.system.sysrole.entity.SysRole;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -130,7 +131,7 @@ public class SysUser extends PanacheEntityBase{
 	 */
 	private String sex;
 
-	 @ManyToMany
+	@ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "p_sys_user_role",
         joinColumns = @JoinColumn(name = "user_id"),
