@@ -1,0 +1,40 @@
+package org.hzai.system.sysdict.service;
+
+import java.util.List;
+
+import org.hzai.system.sysdict.entity.SysDict;
+import org.hzai.system.sysdict.entity.dto.SysDictQueryDto;
+import org.hzai.system.sysdict.repository.SysDictRepository;
+import org.hzai.util.PageRequest;
+import org.hzai.util.PageResult;
+
+import io.quarkus.panache.common.Sort;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+
+@ApplicationScoped
+public class SysDictServiceImp implements SysDictService {
+    @Inject
+    SysDictRepository repository;
+    @Override
+    public List<SysDict> listEntitys() {
+        return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
+    }
+
+    @Override
+    public List<SysDict> listEntitysByDto(SysDictQueryDto sysOrgDto) {
+        return repository.selectList(sysOrgDto);
+    }
+
+    @Override
+    public PageResult<SysDict> listPage(SysDictQueryDto dto, PageRequest pageRequest) {
+        return repository.selectPage(dto, pageRequest);
+    }
+
+    @Override
+    public Boolean register(SysDict entity) {
+        repository.persist(entity);
+        return true;
+    }
+
+}

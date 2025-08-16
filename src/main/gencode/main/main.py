@@ -18,8 +18,8 @@ TEMPLATES = {
 
 # 数据模型
 data = {
-    "base_package_name": "org.hzai.system.sysmenu", #修改
-    "entity_name": "SysMenu" #修改
+    "base_package_name": "org.hzai.system.syslog", #修改
+    "entity_name": "SysLog" #修改
 }
 
 # -------------------- 初始化 Jinja2 --------------------
