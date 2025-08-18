@@ -1,6 +1,5 @@
 package org.hzai.oauth.controller;
 
-
 import org.hzai.oauth.service.AuthService;
 import org.hzai.util.R;
 
@@ -32,8 +31,7 @@ public class AuthController {
             @FormParam("password") String password,
             @FormParam("client_id") String clientId,
             @FormParam("client_secret") String clientSecret) {
-                return authService.authenticate(grantType, username, password, clientId, clientSecret);
-       
+        return authService.authenticate(grantType, username, password, clientId, clientSecret);
     }
 
     @POST
@@ -41,8 +39,8 @@ public class AuthController {
     public R<Object> logout() {
         String authHeader = headers.getHeaderString("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-           String token = authHeader.substring(7);
-           return authService.logout(token);
+            String token = authHeader.substring(7);
+            return authService.logout(token);
         }
         return R.failed("Unauthorized");
     }
@@ -58,10 +56,10 @@ public class AuthController {
     public R<Object> checkToken() {
         String authHeader = headers.getHeaderString("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-           String token = authHeader.substring(7);
-           return authService.checkToken(token);
+            String token = authHeader.substring(7);
+            return authService.checkToken(token);
         }
         return R.failed("Unauthorized");
     }
-    
+
 }

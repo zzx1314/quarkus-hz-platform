@@ -13,6 +13,7 @@ import org.hzai.system.sysuser.entity.SysUser;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -63,6 +64,7 @@ public class SysRole extends PanacheEntityBase{
 	/**
 	 * 1 表示删除，0 表示未删除
 	 */
+	@Column(columnDefinition = "INT DEFAULT 0")
 	private Integer isDeleted;
 
 	/**

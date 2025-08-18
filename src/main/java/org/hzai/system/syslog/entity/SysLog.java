@@ -3,6 +3,7 @@ package org.hzai.system.syslog.entity;
 import java.util.Date;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -70,6 +71,7 @@ public class SysLog extends PanacheEntityBase {
 
 	private String ip;
 
+	@Column(columnDefinition = "INT DEFAULT 0")
 	private Integer isDeleted;
 
 }

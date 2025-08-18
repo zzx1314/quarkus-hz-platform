@@ -1,0 +1,15 @@
+package org.hzai.ai.aiparagraph.entity.mapper;
+
+import org.hzai.ai.aiparagraph.entity.AiParagraph;
+import org.hzai.ai.aiparagraph.entity.dto.AiParagraphDto;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+
+@Mapper(componentModel = "cdi")
+public interface AiParagraphMapper {
+    AiParagraph toEntity(AiParagraphDto dto);
+
+    @Mapping(target = "id", ignore = true)
+    void updateEntityFromDto(AiParagraphDto dto, @MappingTarget AiParagraph entity);
+}
