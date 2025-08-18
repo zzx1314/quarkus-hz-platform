@@ -3,7 +3,6 @@ package org.hzai.system.sysorg.controller;
 import java.util.List;
 
 import org.hzai.system.sysorg.entity.SysOrg;
-import org.hzai.system.sysorg.entity.dto.SysOrgDto;
 import org.hzai.system.sysorg.entity.dto.SysOrgQueryDto;
 import org.hzai.system.sysorg.entity.dto.SysOrgTreeDto;
 import org.hzai.system.sysorg.service.SysOrgService;
@@ -59,8 +58,8 @@ public class SysOrgController {
     @PUT
     @Path("/update")
     @Transactional
-    public R<SysOrg> update(SysOrgDto sysOrg) {
-         return R.ok();
+    public R<Object> update(SysOrgTreeDto sysOrg) {
+         return sysOrgService.updateOrg(sysOrg);
     }
 
     @DELETE

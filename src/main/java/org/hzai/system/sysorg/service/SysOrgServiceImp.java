@@ -32,7 +32,7 @@ public class SysOrgServiceImp implements SysOrgService {
     SysOrgMapper sysOrgMapper;
     @Override
     public List<SysOrg> listOrgs() {
-        return sysOrgRepository.list("isDeleted = ?1", Sort.by("createTime"),  0);
+        return sysOrgRepository.list("isDeleted = ?1", Sort.by("sort asc"),  0);
     }
 
     @Override
