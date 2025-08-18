@@ -80,6 +80,15 @@ public class AuthService {
         return R.ok("Logout successful");
     }
 
+    public R<Object> checkToken(String accessToken) {
+        String key = "access_token:" + accessToken;
+        if (!redisUtil.exists(key)) {
+            return R.failed("Access token is invalid or expired");
+        }
+        SysUserDto userDto = redisUtil.getObject(key, SysUserDto.class);
+        return R.ok(userDto);
+    }
+
     private Response createTokenResponse(String jwt, String refreshToken, SysUserDto userDto) {
         ZonedDateTime expirationTime = ZonedDateTime.now().plusSeconds(CommonConstants.EXPIRES_IN);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

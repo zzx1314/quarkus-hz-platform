@@ -52,5 +52,16 @@ public class AuthController {
     public Response refreshToken(@PathParam("refreshToken") String refreshToken) {
         return authService.refreshAccessToken(refreshToken);
     }
+
+    @POST
+    @Path("/check_token")
+    public R<Object> checkToken() {
+        String authHeader = headers.getHeaderString("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+           String token = authHeader.substring(7);
+           return authService.checkToken(token);
+        }
+        return R.failed("Unauthorized");
+    }
     
 }
