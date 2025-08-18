@@ -58,6 +58,28 @@ public class AuthService {
         }
     }
 
+    public Response refreshAccessToken(String refreshToken) {
+        String key = "refresh_token:" + refreshToken;
+        if (!redisUtil.exists(key)) {
+            throw new RuntimeException("Refresh token is invalid or expired");
+        }
+
+        SysUserDto userDto = redisUtil.getObject(key, SysUserDto.class);
+        // 生成新的 Access Token
+        String jwt =  generateToken(userDto.getUsername(), userDto);
+
+        return createTokenResponse(jwt, refreshToken, userDto);
+    }
+
+    public R<Object> logout(String accessToken) {
+        String key = "access_token:" + accessToken;
+        if (!redisUtil.exists(key)) {
+            return R.failed("Access token is invalid or expired");
+        }
+        redisUtil.del(key);
+        return R.ok("Logout successful");
+    }
+
     private Response createTokenResponse(String jwt, String refreshToken, SysUserDto userDto) {
         ZonedDateTime expirationTime = ZonedDateTime.now().plusSeconds(CommonConstants.EXPIRES_IN);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -97,18 +119,7 @@ public class AuthService {
         return refreshToken;
     }
 
-    public Response refreshAccessToken(String refreshToken) {
-        String key = "refresh_token:" + refreshToken;
-        if (!redisUtil.exists(key)) {
-            throw new RuntimeException("Refresh token is invalid or expired");
-        }
-
-        SysUserDto userDto = redisUtil.getObject(key, SysUserDto.class);
-        // 生成新的 Access Token
-        String jwt =  generateToken(userDto.getUsername(), userDto);
-
-        return createTokenResponse(jwt, refreshToken, userDto);
-    }
+  
 
 
 }

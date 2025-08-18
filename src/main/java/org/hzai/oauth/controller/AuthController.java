@@ -2,7 +2,9 @@ package org.hzai.oauth.controller;
 
 
 import org.hzai.oauth.service.AuthService;
+import org.hzai.util.R;
 
+import io.netty.handler.codec.http.HttpHeaders;
 import io.quarkus.websockets.next.PathParam;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
@@ -10,6 +12,7 @@ import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -19,6 +22,9 @@ import jakarta.ws.rs.core.Response;
 public class AuthController {
     @Inject
     public AuthService authService;
+
+    @Context
+    HttpHeaders headers;
 
     @POST
     public Response token(@FormParam("grant_type") String grantType,
@@ -30,6 +36,16 @@ public class AuthController {
        
     }
 
+    @POST
+    @Path("/logout")
+    public R<Object> logout() {
+        String authHeader = headers.get("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+           String token = authHeader.substring(7);
+           return authService.logout(token);
+        }
+        return R.failed("Unauthorized");
+    }
 
     @POST
     @Path("/refresh/{refreshToken}")
