@@ -42,6 +42,14 @@ public class QueryBuilder {
         return this;
     }
 
+     public QueryBuilder notEqual(String field, Object value) {
+        if (value != null) {
+            query.add(getFieldWithAlias(field) + " != :" + field);
+            params.put(field, value);
+        }
+        return this;
+    }
+
     public QueryBuilder in(String field, Collection<?> values) {
         if (values != null && !values.isEmpty()) {
             query.add(getFieldWithAlias(field) + " in (:" + field + ")");

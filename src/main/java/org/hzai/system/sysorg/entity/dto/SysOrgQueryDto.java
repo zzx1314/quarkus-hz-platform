@@ -9,9 +9,14 @@ public class SysOrgQueryDto {
     @QueryParam("name")
     private String name;
 
+    @QueryParam("type")
+    private String type;
+
     @QueryParam("beginTime")
     private String beginTime;
 
     @QueryParam("endTime")
     private String endTime;
+
+    private Integer notId;
 }

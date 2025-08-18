@@ -5,10 +5,8 @@ import java.util.List;
 import org.hzai.system.sysorg.entity.SysOrg;
 import org.hzai.system.sysorg.entity.dto.SysOrgDto;
 import org.hzai.system.sysorg.entity.dto.SysOrgQueryDto;
-import org.hzai.system.sysorg.entity.mapper.SysOrgMapper;
+import org.hzai.system.sysorg.entity.dto.SysOrgTreeDto;
 import org.hzai.system.sysorg.service.SysOrgService;
-import org.hzai.util.PageRequest;
-import org.hzai.util.PageResult;
 import org.hzai.util.R;
 
 import jakarta.inject.Inject;
@@ -30,16 +28,13 @@ import jakarta.ws.rs.core.MediaType;
 @Consumes(MediaType.APPLICATION_JSON)
 public class SysOrgController {
     @Inject
-    SysOrgMapper sysOrgMapper;
-
-    @Inject
     SysOrgService sysOrgService;
 
 
-     @GET
-    @Path("/getPage")
-    public R<PageResult<SysOrg>> getPage(@BeanParam SysOrgQueryDto sysOrgDto, @BeanParam PageRequest pageRequest) {
-        return R.ok(sysOrgService.listOrgsPage(sysOrgDto, pageRequest));
+    @GET
+    @Path("/tree")
+    public R<Object> tree(@BeanParam SysOrgQueryDto sysOrgDto) {
+        return R.ok(sysOrgService.listOrgTrees(sysOrgDto));
     }
 
     @GET
@@ -57,20 +52,15 @@ public class SysOrgController {
     @POST
     @Path("/create")
     @Transactional
-    public R<Boolean> createOrg(SysOrg sysOrg) {
-        return R.ok(sysOrgService.registerOrg(sysOrg));
+    public R<Object> createOrg(SysOrgTreeDto sysOrg) {
+        return sysOrgService.registerOrg(sysOrg);
     }
 
     @PUT
     @Path("/update")
     @Transactional
     public R<SysOrg> update(SysOrgDto sysOrg) {
-        SysOrg entity = SysOrg.findById(sysOrg.getId());
-        if(entity == null) {
-            throw new NotFoundException();
-        }
-        sysOrgMapper.updateEntityFromDto(sysOrg, entity);
-        return R.ok(entity);
+         return R.ok();
     }
 
     @DELETE

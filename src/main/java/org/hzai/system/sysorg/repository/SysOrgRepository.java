@@ -9,17 +9,20 @@ import org.hzai.util.PageResult;
 import org.hzai.util.QueryBuilder;
 
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class SysOrgRepository implements PanacheRepository<SysOrg> {
+public class SysOrgRepository implements PanacheRepositoryBase<SysOrg, Integer> {
 
      public List<SysOrg> selectOrgList(SysOrgQueryDto sysOrgDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0)
-                .like("name", sysOrgDto.getName());
+                .notEqual("id",sysOrgDto.getNotId())
+                .equal("type", sysOrgDto.getType())
+                .like("name", sysOrgDto.getName())
+                .orderBy("sort asc");
         return find(qb.getQuery(), qb.getParams()).list();
     }
 

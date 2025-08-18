@@ -4,16 +4,21 @@ import java.util.List;
 
 import org.hzai.system.sysorg.entity.SysOrg;
 import org.hzai.system.sysorg.entity.dto.SysOrgQueryDto;
-import org.hzai.util.PageRequest;
-import org.hzai.util.PageResult;
+import org.hzai.system.sysorg.entity.dto.SysOrgTreeDto;
+import org.hzai.system.sysorg.entity.vo.SysOrgVo;
+import org.hzai.util.R;
 
 public interface SysOrgService {
     
-    List<SysOrg> listOrgs();
+   List<SysOrg> listOrgs();
 
    List<SysOrg> listOrgsByDto(SysOrgQueryDto sysOrgDto);
 
-   PageResult<SysOrg> listOrgsPage(SysOrgQueryDto dto, PageRequest pageRequest);
+   List<SysOrgTreeDto> listOrgTrees(SysOrgQueryDto dto);
 
-   Boolean registerOrg(SysOrg sysOrg);
+   List<SysOrgVo> listAllOrgVo(SysOrgQueryDto queryDto);
+
+   R<Object> registerOrg(SysOrgTreeDto sysOrg);
+
+   R<Object> updateOrg(SysOrgTreeDto sysOrg);
 }
