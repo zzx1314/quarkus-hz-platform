@@ -15,4 +15,8 @@ public interface AiApplicationService {
    PageResult<AiApplication> listPage(AiApplicationQueryDto dto, PageRequest pageRequest);
 
    Boolean register(AiApplication entity);
+
+   List<Long> getApplicationCount();
+
+   long count();
 }

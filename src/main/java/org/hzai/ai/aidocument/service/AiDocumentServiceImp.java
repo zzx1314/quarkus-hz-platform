@@ -1,10 +1,14 @@
 package org.hzai.ai.aidocument.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 
 import org.hzai.ai.aidocument.entity.AiDocument;
 import org.hzai.ai.aidocument.entity.dto.AiDocumentQueryDto;
 import org.hzai.ai.aidocument.repository.AiDocumentRepository;
+import org.hzai.ai.aistatistics.util.DateUtil;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 
@@ -35,6 +39,37 @@ public class AiDocumentServiceImp implements AiDocumentService {
     public Boolean register(AiDocument entity) {
         repository.persist(entity);
         return true;
+    }
+
+    @Override
+    public List<Long> getDocumentCount() {
+        List<Long> data = new ArrayList<>();
+		List<Map<String, Object>> documentCountByDay = repository.getDocumentCountByDay();
+
+		List<String> lastSevenDays = DateUtil.getLastSevenDays();
+
+		if (!documentCountByDay.isEmpty()) {
+			// 将数据库统计结果转为 Map<date, count>
+			Map<String, Object> countMap = new HashMap<>();
+			for (Map<String, Object> map : documentCountByDay) {
+				countMap.put(map.get("date").toString(), map.get("count"));
+			}
+			// 按照最近7天顺序填充数据，缺失的日期设为0
+			for (String date : lastSevenDays) {
+				data.add(Long.valueOf(countMap.getOrDefault(date, 0L).toString()));
+			}
+		} else {
+			// 如果没有数据，则全部填充0
+			for (int i = 0; i < 7; i++) {
+				data.add(0L);
+			}
+		}
+		return data;
+    }
+
+    @Override
+    public long count() {
+        return repository.count();
     }
 
 }

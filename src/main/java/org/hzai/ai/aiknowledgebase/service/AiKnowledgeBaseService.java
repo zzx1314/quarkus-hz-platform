@@ -15,4 +15,8 @@ public interface AiKnowledgeBaseService {
    PageResult<AiKnowledgeBase> listPage(AiKnowledgeBaseQueryDto dto, PageRequest pageRequest);
 
    Boolean register(AiKnowledgeBase entity);
+
+   List<Long> getKnowledgeBaseCount();
+
+   long count();
 }

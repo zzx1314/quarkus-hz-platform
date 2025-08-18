@@ -1,6 +1,18 @@
 package org.hzai.ai.aistatistics.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hzai.ai.aiapplication.service.AiApplicationService;
+import org.hzai.ai.aidocument.service.AiDocumentService;
+import org.hzai.ai.aiknowledgebase.service.AiKnowledgeBaseService;
+import org.hzai.ai.aimcp.service.AiMcpService;
+import org.hzai.ai.aistatistics.entity.ChartData;
+import org.hzai.util.R;
+
+import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -9,5 +21,154 @@ import jakarta.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class AiStatisticsController {
+    @Inject
+    AiDocumentService aiDocumentService;
 
+    @Inject
+    AiKnowledgeBaseService aiKnowledgeBaseService;
+
+    @Inject
+    AiApplicationService aiApplicationService;
+
+    @Inject
+    AiMcpService aiMcpService;
+    
+
+    @GET
+    @Path("/statisticsAll")
+	public R<Object> statistics() {
+        List<ChartData> chartDataList = new ArrayList<>();
+		// 知识库统计
+		ChartData knowledgeBaseCount = getKnowledgeBaseCount();
+		chartDataList.add(knowledgeBaseCount);
+		// MCP统计
+		ChartData mcpCount = getMcpCount();
+		chartDataList.add(mcpCount);
+		// 应用统计
+		ChartData applicationCount = getApplicationCount();
+		chartDataList.add(applicationCount);
+		// 文档统计
+		ChartData documentCount = getDocumentCount();
+		chartDataList.add(documentCount);
+		return R.ok(chartDataList);
+    }
+
+    /**
+	 * 统计一周内，知识库，MCP，应用，文档创建的数量
+	 */
+    @GET
+	@Path("statisticsAllType")
+	public R<Object> statisticsAllNum() {
+        return R.ok();
+    }
+
+    /**
+	 * 统计在知识库中文档的数量
+	 */
+    @GET
+	@Path("statisticsDocNumber")
+	public R<Object> statisticDocumentCountInKb() {
+        return R.ok();
+    }
+        
+
+    /**
+	 * 获取 MCP 统计数据
+	 */
+	private ChartData getMcpCount() {
+		ChartData chartData = new ChartData();
+		List<Long> mcpCountList = aiMcpService.getMcpCount();
+		long totalMcpCount = aiMcpService.count();
+
+		Long todayMcpCount = 0L;
+		if (!mcpCountList.isEmpty()) {
+			todayMcpCount = mcpCountList.get(6); // 最后一天是今天
+		}
+		double ratio = ((double) todayMcpCount / totalMcpCount) * 100;
+
+		chartData.setName("MCP");
+		chartData.setIcon("Question");
+		chartData.setBgColor("#fff5f4");
+		chartData.setColor("#e85f33");
+		chartData.setDuration(1600);
+		chartData.setValue(totalMcpCount);
+		chartData.setData(mcpCountList);
+		chartData.setPercent("+" + String.format("%.2f", ratio) + "%");
+		return chartData;
+	}
+
+	/**
+	 * 获取应用统计
+	 */
+	private ChartData getApplicationCount() {
+		ChartData chartData = new ChartData();
+		List<Long> applicationCountList = aiApplicationService.getApplicationCount();
+		long totalApplicationCount = aiApplicationService.count(); // 获取总数量
+
+		Long todayApplicationCount = 0L;
+		if (!applicationCountList.isEmpty()) {
+			todayApplicationCount = applicationCountList.get(6); // 最后一天是今天
+		}
+
+		double ratio = ((double) todayApplicationCount / totalApplicationCount) * 100;
+
+		chartData.setName("应用");
+		chartData.setIcon("AppstoreLine");
+		chartData.setBgColor("#eff8f4");
+		chartData.setColor("#26ce83");
+		chartData.setDuration(1800);
+		chartData.setValue(totalApplicationCount);
+		chartData.setData(applicationCountList);
+		chartData.setPercent("+" + String.format("%.2f", ratio) + "%");
+
+		return chartData;
+	}
+
+
+    /**
+	 * 获取知识库统计
+	 */
+	private ChartData getKnowledgeBaseCount() {
+		ChartData chartData = new ChartData();
+		List<Long> knowledgeBaseCount = aiKnowledgeBaseService.getKnowledgeBaseCount();
+		long countNum = aiKnowledgeBaseService.count();
+		Long today = knowledgeBaseCount.get(6);
+		double ratio = ((double) today / countNum) * 100;
+		chartData.setName("知识库");
+		chartData.setIcon("GroupLine");
+		chartData.setBgColor("#effaff");
+		chartData.setColor("#41b6ff");
+		chartData.setDuration(2200);
+		chartData.setValue(countNum);
+		chartData.setData(knowledgeBaseCount);
+		chartData.setPercent("+" + String.format("%.2f", ratio) + "%");
+		return chartData;
+	}
+
+    /**
+	 * 获取文档统计
+	 */
+	private ChartData getDocumentCount() {
+		ChartData chartData = new ChartData();
+		List<Long> documentCountList = aiDocumentService.getDocumentCount();
+		long totalDocumentCount = aiDocumentService.count(); // 获取总数量
+
+		Long todayDocumentCount = 0L;
+		if (!documentCountList.isEmpty()) {
+			todayDocumentCount = documentCountList.get(6); // 最后一天是今天
+		}
+
+		double ratio = ((double) todayDocumentCount / totalDocumentCount) * 100;
+
+		chartData.setName("文档");
+		chartData.setIcon("FileTextLine"); // 图标名称可自定义
+		chartData.setBgColor("#fffaf0");
+		chartData.setColor("#ff9900");
+		chartData.setDuration(1900);
+		chartData.setValue(totalDocumentCount);
+		chartData.setData(documentCountList);
+		chartData.setPercent("+" + String.format("%.2f", ratio) + "%");
+
+		return chartData;
+	}
 }

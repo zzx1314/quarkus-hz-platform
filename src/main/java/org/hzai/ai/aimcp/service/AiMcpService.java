@@ -15,4 +15,8 @@ public interface AiMcpService {
    PageResult<AiMcp> listPage(AiMcpQueryDto dto, PageRequest pageRequest);
 
    Boolean register(AiMcp entity);
+
+   List<Long> getMcpCount();
+
+   long count();
 }

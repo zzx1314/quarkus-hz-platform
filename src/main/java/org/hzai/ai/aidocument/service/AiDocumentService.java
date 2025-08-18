@@ -15,4 +15,8 @@ public interface AiDocumentService {
    PageResult<AiDocument> listPage(AiDocumentQueryDto dto, PageRequest pageRequest);
 
    Boolean register(AiDocument entity);
+
+   List<Long> getDocumentCount();
+
+   long count();
 }
