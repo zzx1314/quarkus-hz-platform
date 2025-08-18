@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.Data;
@@ -20,6 +21,7 @@ import lombok.experimental.Accessors;
  * @since 2025-08-06
  */
 @Data
+@Entity
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper=false)
 public class AiFineTuning extends PanacheEntityBase {
