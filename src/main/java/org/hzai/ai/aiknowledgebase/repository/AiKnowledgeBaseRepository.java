@@ -1,7 +1,10 @@
 package org.hzai.ai.aiknowledgebase.repository;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.hibernate.query.NativeQuery;
 import org.hzai.ai.aiknowledgebase.entity.AiKnowledgeBase;
 import org.hzai.ai.aiknowledgebase.entity.dto.AiKnowledgeBaseQueryDto;
 import org.hzai.util.PageRequest;
@@ -36,6 +39,30 @@ public class AiKnowledgeBaseRepository implements PanacheRepository<AiKnowledgeB
                 query.count(),
                 pageRequest.getPage(),
                 pageRequest.getSize());
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> getKnowledgeBaseCountByDay() {
+        String sql = """
+            SELECT 
+                TO_CHAR(date_trunc('day', create_time), 'YYYY-MM-DD') AS date,
+                COUNT(*) AS count
+            FROM ai_knowledge_base
+            WHERE create_time >= NOW() - INTERVAL '14 days'
+            GROUP BY date_trunc('day', create_time)
+            ORDER BY date ASC
+        """;
+        return getEntityManager()
+        .createNativeQuery(sql, Object[].class)
+        .unwrap(NativeQuery.class)
+        .setTupleTransformer((tuple, aliases) -> {
+            Map<String, Object> map = new LinkedHashMap<>();
+            for (int i = 0; i < aliases.length; i++) {
+                map.put(aliases[i], tuple[i]);
+            }
+            return map;
+        })
+        .getResultList();
     }
 
 }
