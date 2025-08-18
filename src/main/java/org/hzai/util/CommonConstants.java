@@ -2,25 +2,9 @@ package org.hzai.util;
 
 public interface CommonConstants {
 
-	/**
-	 * 删除
-	 */
-	String STATUS_DEL = "1";
+	String VALID_CLIENT_ID = "myclient";
 
-	/**
-	 * 正常
-	 */
-	String STATUS_NORMAL = "0";
-
-	/**
-	 * 未锁定
-	 */
-	Integer USER_STATUS_NORMAL = 1;
-
-	/**
-	 * 锁定
-	 */
-	Integer USER_STATUS_LOCK = 2;
+    String VALID_CLIENT_SECRET = "mysecret";
 
 	/**
 	 * 菜单
@@ -33,14 +17,14 @@ public interface CommonConstants {
 	Integer ACTION_BUTTON = 2;
 
 	/**
-	 * 编码
+	 * 生效时间
 	 */
-	String UTF8 = "UTF-8";
+    long EXPIRES_IN = 3600L;
 
 	/**
-	 * JSON 资源
+	 * 刷新 token 生效时间
 	 */
-	String CONTENT_TYPE = "application/json; charset=utf-8";
+	long REFRESH_EXPIRES_IN = 7200L;
 
 	/**
 	 * 成功标记
@@ -51,11 +35,6 @@ public interface CommonConstants {
 	 * 失败标记
 	 */
 	Integer FAIL = 10400;
-
-	/**
-	 * 后端工程名
-	 */
-	String BACK_END_PROJECT = "th";
 
 	/**
 	 * 安全策略
@@ -81,35 +60,5 @@ public interface CommonConstants {
 	 * 密码修改周期
 	 */
 	String SYS_PASS_CHANE = "sysPassChange";
-
-	/**
-	 * headers中版本信息
-	 */
-	String VERSION = "VERSION";
-
-	/**
-	 * header 中租户ID
-	 */
-	String TENANT_ID = "TENANT-ID";
-
-	/**
-	 * 默认租户ID
-	 */
-	Integer TENANT_ID_1 = 1;
-
-	/**
-	 * 当前页
-	 */
-	String CURRENT = "current";
-
-	/**
-	 * size
-	 */
-	String SIZE = "size";
-
-	/**
-	 * 请求开始时间
-	 */
-	String REQUEST_START_TIME = "REQUEST-START-TIME";
 
 }

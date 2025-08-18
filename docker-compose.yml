@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   postgres:
     image: postgres:17
@@ -9,3 +8,14 @@ services:
       POSTGRES_DB: quarkus_test
     ports:
       - "5433:5432"
+  redis:
+    image: redis:8
+    container_name: quarkus-redis
+    command: ["redis-server", "--requirepass", "123456"]
+    ports:
+      - "6378:6379"
+    volumes:
+      - redis_data:/home/zzx/dockerdata/redis
+
+volumes:
+  redis_data:
