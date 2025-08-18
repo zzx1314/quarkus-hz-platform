@@ -95,21 +95,21 @@ public class AuthService {
                 Map.entry("permissions", Objects.requireNonNullElse(userDto.getPermissions(), List.of())),
                 Map.entry("user_id", Objects.requireNonNullElse(userDto.getId(), 0)),
                 Map.entry("roles", Objects.requireNonNullElse(userDto.getRoleIdList(), List.of())));
-
-        redisUtil.set("access_token:" + jwt, jwt, CommonConstants.EXPIRES_IN);
-        redisUtil.set("refresh_token:" + refreshToken, refreshToken, CommonConstants.REFRESH_EXPIRES_IN);
         return Response.ok(tokenResponse).build();
     }
     
 
     private String generateToken(String subject, SysUserDto userDto) {
-        return Jwt.claims()
+        String jwt =  Jwt.claims()
                 .issuer("https://quarkus-oauth2-server")
                 .subject(subject)
                 .groups(new HashSet<>(Arrays.asList("User", "Admin")))
                 .claim("role", userDto != null ? userDto.getRoleIdList() : null)
                 .expiresAt(Instant.now().plusSeconds(CommonConstants.EXPIRES_IN))
                 .sign();
+
+        redisUtil.set("access_token:" + jwt, jwt, CommonConstants.EXPIRES_IN);
+        return jwt;
     }
 
     public String generateRefreshToken(SysUserDto userDto) {
