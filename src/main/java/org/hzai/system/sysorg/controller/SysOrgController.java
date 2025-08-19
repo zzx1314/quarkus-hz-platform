@@ -48,6 +48,13 @@ public class SysOrgController {
         return R.ok(sysOrgService.listOrgs());
     }
 
+
+    @GET
+    @Path("/allList")
+	public R<Object> allList(@BeanParam SysOrgQueryDto queryDto) {
+		return R.ok(sysOrgService.listAllOrgVo(queryDto));
+	}
+
     @POST
     @Path("/create")
     @Transactional
