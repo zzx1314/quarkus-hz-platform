@@ -35,7 +35,7 @@ public class AuthController {
         return authService.authenticate(grantType, username, password, clientId, clientSecret);
     }
 
-    @POST
+    @GET
     @Path("/logout")
     public R<Object> logout() {
         String authHeader = headers.getHeaderString("Authorization");

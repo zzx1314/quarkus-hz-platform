@@ -1,5 +1,7 @@
 package org.hzai.system.sysuser.entity.dto;
 
+import java.util.List;
+
 import jakarta.ws.rs.QueryParam;
 import lombok.Data;
 
@@ -10,6 +12,10 @@ public class SysUserQueryDto {
 
 	@QueryParam("orgId")
 	private Integer orgId;
+
+
+	@QueryParam("orgIds")
+	private List<Integer> orgIds;
 
 	/**
 	 * 电话
