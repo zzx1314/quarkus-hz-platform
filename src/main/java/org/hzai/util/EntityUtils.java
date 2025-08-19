@@ -34,12 +34,16 @@ public class EntityUtils {
 	 * @param collector 收集器的类型
 	 * @return 变换后存储新元素的集合实例
 	 */
-	public static <R, S, T, A> R collectCommon(final Collection<S> source, Function<? super S, ? extends T> action,
-			Collector<? super T, A, R> collector) {
+	public static <Result, Source, Item, Accum> Result collectCommon(
+			final Collection<Source> source,
+			Function<? super Source, ? extends Item> action,
+			Collector<? super Item, Accum, Result> collector) {
+
 		Objects.requireNonNull(source);
 		Objects.requireNonNull(collector);
 		return source.stream().map(action).collect(collector);
 	}
+
 
 	/**
 	 * 将对象集合按照一定规则映射后收集为另一种形式的集合
@@ -88,7 +92,10 @@ public class EntityUtils {
 	 * @param action 映射Lmabda表达式
 	 * @return 变换后的类型，如果source为null,则返回null
 	 */
-	public static <T, R> R toObj(final T source, final Function<? super T, ? extends R> action) {
+	public static <Source, Result> Result toObj(
+			final Source source,
+			final Function<? super Source, ? extends Result> action) {
+
 		Objects.requireNonNull(action);
 		return Optional.ofNullable(source).map(action).orElse(null);
 	}
@@ -138,13 +145,19 @@ public class EntityUtils {
 	 * @param action 映射Lmabda表达式
 	 * @return 变换后的类型集合，如果source为null,则返回空集合
 	 */
-	public static <T, R> List<R> toList(final Collection<T> source, final Function<? super T, ? extends R> action) {
+	public static <Source, Result> List<Result> toList(
+			final Collection<Source> source,
+			final Function<? super Source, ? extends Result> action) {
+
 		Objects.requireNonNull(action);
 		if (Objects.nonNull(source)) {
-			return source.stream().map(action).collect(Collectors.toList());
+			return source.stream()
+					.map(action)
+					.collect(Collectors.toList());
 		}
 		return new ArrayList<>();
 	}
+
 
 	/**
 	 * 将Array数组以一种类型转换成另一种类型
@@ -155,13 +168,21 @@ public class EntityUtils {
 	 * @return 变换后的类型集合，如果source为null,则返回空集合
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T, R> R[] toArray(final T[] source, final Function<? super T, ? extends R> action) {
+	public static <Source, Result> Result[] toArray(
+			final Source[] source,
+			final Function<? super Source, ? extends Result> action) {
+
 		Objects.requireNonNull(action);
+
 		if (Objects.nonNull(source)) {
-			return (R[]) Arrays.stream(source).map(action).toArray();
+			// 使用 toArray(IntFunction) 创建泛型数组
+			return Arrays.stream(source)
+						.map(action)
+						.toArray(size -> (Result[]) new Object[size]);
 		}
-		return (R[]) new ArrayList<R>().toArray();
+		return (Result[]) new Object[0];
 	}
+
 
 	/**
 	 * 将集合转化成Map
@@ -189,10 +210,16 @@ public class EntityUtils {
 	 * @param action 映射Lmabda表达式
 	 * @return 变换后的类型集合，如果source为null,则返回空集合
 	 */
-	public static <T, R> Set<R> toSet(final Collection<T> source, final Function<? super T, ? extends R> action) {
+	public static <Source, Result> Set<Result> toSet(
+			final Collection<Source> source,
+			final Function<? super Source, ? extends Result> action) {
+
 		Objects.requireNonNull(action);
+
 		if (Objects.nonNull(source)) {
-			return source.stream().map(action).collect(Collectors.toSet());
+			return source.stream()
+					.map(action)
+					.collect(Collectors.toSet());
 		}
 		return new HashSet<>();
 	}
