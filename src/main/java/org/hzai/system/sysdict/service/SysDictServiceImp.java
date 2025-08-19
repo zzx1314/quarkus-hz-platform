@@ -42,7 +42,7 @@ public class SysDictServiceImp implements SysDictService {
 
     @Override
     public List<SysDictItem> getItemByType(String type) {
-         SysDict oneDict = repository.find("type := ?1", type).singleResult();
+         SysDict oneDict = repository.find("type = ?1", type).singleResult();
          return oneDict.getSysDictItems();
     }
 

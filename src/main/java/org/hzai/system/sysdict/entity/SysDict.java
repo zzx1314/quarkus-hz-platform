@@ -59,6 +59,10 @@ public class SysDict extends PanacheEntityBase{
 
 	private LocalDateTime updateTime;
 
+	private Boolean allowDeletion;
+
+	private Boolean isShow;
+
 	/**
 	 * 1 表示删除，0 表示未删除
 	 */

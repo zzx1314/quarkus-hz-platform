@@ -81,6 +81,8 @@ public class SysDictItem extends PanacheEntityBase {
 	 */
 	private String remarks;
 
+	private Boolean allowDeletion;
+
 
 	/**
 	 * 所属字典ID
