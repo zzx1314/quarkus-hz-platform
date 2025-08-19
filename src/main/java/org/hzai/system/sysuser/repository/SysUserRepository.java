@@ -7,6 +7,7 @@ import org.hzai.system.sysuser.entity.dto.SysUserQueryDto;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.QueryBuilder;
+import org.jboss.logging.Logger;
 
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
@@ -15,6 +16,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class SysUserRepository implements PanacheRepository<SysUser> {
+    private static final Logger logger = Logger.getLogger(SysUserRepository.class);
     public List<SysUser> selectUserList(SysUserQueryDto sysUserDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0)
@@ -27,9 +29,11 @@ public class SysUserRepository implements PanacheRepository<SysUser> {
     }
 
     public PageResult<SysUser> selectUserPage(SysUserQueryDto dto, PageRequest pageRequest) {
+        logger.info(dto.toString());
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0)
                 .equal("orgId", dto.getOrgId())
+                .in("orgId", dto.getOrgIds())
                 .greaterThan("createTime", dto.getBeginTime())
                 .lessThan("createTime", dto.getEndTime())
                 .like("username", dto.getUsername())
