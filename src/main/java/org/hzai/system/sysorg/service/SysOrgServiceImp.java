@@ -1,5 +1,6 @@
 package org.hzai.system.sysorg.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -156,7 +157,8 @@ public class SysOrgServiceImp implements SysOrgService {
 		if (this.checkOrgName(sysOrg.getName(), parentId)) {
 			// 代表存在相同的
 			SysOrg entity = sysOrgMapper.toEntity(sysOrg);
-			sysOrgRepository.persist(entity);
+			entity.setCreateTime(LocalDateTime.now());
+       		sysOrgRepository.persist(entity);
 			return R.ok();
 		}
 		return R.failed("本层级下已存在:" + sysOrg.getName() + "部门");

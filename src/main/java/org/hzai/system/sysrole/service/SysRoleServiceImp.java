@@ -1,5 +1,6 @@
 package org.hzai.system.sysrole.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hzai.system.sysrole.entity.SysRole;
@@ -34,8 +35,9 @@ public class SysRoleServiceImp implements SysRoleService {
 
     @Override
     public Boolean registerRole(SysRole sysRole) {
-         sysRoleRepository.persist(sysRole);
-         return true;
+        sysRole.setCreateTime(LocalDateTime.now());
+        sysRoleRepository.persist(sysRole);
+        return true;
     }
 
 }

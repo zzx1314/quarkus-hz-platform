@@ -1,5 +1,6 @@
 package org.hzai.ai.aidocument.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +38,7 @@ public class AiDocumentServiceImp implements AiDocumentService {
 
     @Override
     public Boolean register(AiDocument entity) {
+        entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);
         return true;
     }

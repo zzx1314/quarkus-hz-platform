@@ -1,5 +1,6 @@
 package org.hzai.system.sysrole.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hzai.system.sysorg.entity.SysOrg;
@@ -70,6 +71,7 @@ public class SysRoleController {
         if(entity == null) {
             throw new NotFoundException();
         }
+        entity.setUpdateTime(LocalDateTime.now());
         sysRoleMapper.updateEntityFromDto(sysRoleDto, entity);
         return R.ok(entity);
     }

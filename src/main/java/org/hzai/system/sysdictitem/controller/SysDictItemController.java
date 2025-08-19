@@ -1,5 +1,6 @@
 package org.hzai.system.sysdictitem.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hzai.system.sysdictitem.entity.SysDictItem;
@@ -69,6 +70,7 @@ public class SysDictItemController {
         if(entity == null) {
             throw new NotFoundException();
         }
+        entity.setUpdateTime(LocalDateTime.now());
         mapper.updateEntityFromDto(dto, entity);
         return R.ok(entity);
     }

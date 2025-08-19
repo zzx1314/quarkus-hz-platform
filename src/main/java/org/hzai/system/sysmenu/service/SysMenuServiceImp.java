@@ -1,5 +1,6 @@
 package org.hzai.system.sysmenu.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -50,6 +51,7 @@ public class SysMenuServiceImp implements SysMenuService {
 
     @Override
     public Boolean register(SysMenu entity) {
+        entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);
         return true;
     }
@@ -87,6 +89,7 @@ public class SysMenuServiceImp implements SysMenuService {
         if(entity == null) {
             throw new NotFoundException();
         }
+        entity.setUpdateTime(LocalDateTime.now());
         sysMenuMapper.updateEntityFromDto(dto, entity);
         return entity;
     }

@@ -1,5 +1,6 @@
 package org.hzai.system.syslog.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hzai.system.syslog.entity.SysLog;
@@ -33,6 +34,7 @@ public class SysLogServiceImp implements SysLogService {
 
     @Override
     public Boolean register(SysLog entity) {
+        entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);
         return true;
     }

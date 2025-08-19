@@ -1,5 +1,6 @@
 package org.hzai.ai.aimcp.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hzai.ai.aimcp.entity.AiMcp;
@@ -69,6 +70,7 @@ public class AiMcpController {
         if(entity == null) {
             throw new NotFoundException();
         }
+        entity.setUpdateTime(LocalDateTime.now());
         mapper.updateEntityFromDto(dto, entity);
         return R.ok(entity);
     }

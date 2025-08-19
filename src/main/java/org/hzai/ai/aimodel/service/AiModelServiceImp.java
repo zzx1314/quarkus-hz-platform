@@ -1,5 +1,6 @@
 package org.hzai.ai.aimodel.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hzai.ai.aimodel.entity.AiModel;
@@ -33,6 +34,7 @@ public class AiModelServiceImp implements AiModelService {
 
     @Override
     public Boolean register(AiModel entity) {
+        entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);
         return true;
     }

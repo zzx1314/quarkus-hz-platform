@@ -1,5 +1,6 @@
 package org.hzai.ai.aifinetuning.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hzai.ai.aifinetuning.entity.AiFineTuning;
@@ -33,6 +34,7 @@ public class AiFineTuningServiceImp implements AiFineTuningService {
 
     @Override
     public Boolean register(AiFineTuning entity) {
+        entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);
         return true;
     }

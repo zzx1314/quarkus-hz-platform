@@ -1,6 +1,7 @@
 package {{ base_package_name }}.controller;
 
 import java.util.List;
+import java.time.LocalDateTime;
 
 import {{ base_package_name }}.entity.{{ entity_name }};
 import {{ base_package_name }}.entity.dto.{{ entity_name }}Dto;
@@ -69,6 +70,7 @@ public class {{ entity_name }}Controller {
         if(entity == null) {
             throw new NotFoundException();
         }
+        entity.setUpdateTime(LocalDateTime.now());
         mapper.updateEntityFromDto(dto, entity);
         return R.ok(entity);
     }

@@ -1,5 +1,6 @@
 package org.hzai.system.sysuser.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -97,6 +98,7 @@ public class SysUserController {
         if(entity == null) {
             throw new NotFoundException();
         }
+        entity.setUpdateTime(LocalDateTime.now());
         sysUserMapper.updateEntityFromDto(sysUserDto, entity);
         return R.ok(entity);
     }

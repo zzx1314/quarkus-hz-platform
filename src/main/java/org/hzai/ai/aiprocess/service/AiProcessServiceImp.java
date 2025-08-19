@@ -1,5 +1,6 @@
 package org.hzai.ai.aiprocess.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hzai.ai.aiprocess.entity.AiProcess;
@@ -33,6 +34,7 @@ public class AiProcessServiceImp implements AiProcessService {
 
     @Override
     public Boolean register(AiProcess entity) {
+        entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);
         return true;
     }

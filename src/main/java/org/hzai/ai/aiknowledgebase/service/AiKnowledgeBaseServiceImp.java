@@ -1,5 +1,6 @@
 package org.hzai.ai.aiknowledgebase.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +38,7 @@ public class AiKnowledgeBaseServiceImp implements AiKnowledgeBaseService {
 
     @Override
     public Boolean register(AiKnowledgeBase entity) {
+        entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);
         return true;
     }

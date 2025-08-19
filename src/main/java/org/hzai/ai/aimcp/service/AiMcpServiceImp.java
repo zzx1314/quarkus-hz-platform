@@ -1,5 +1,6 @@
 package org.hzai.ai.aimcp.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +38,7 @@ public class AiMcpServiceImp implements AiMcpService {
 
     @Override
     public Boolean register(AiMcp entity) {
+        entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);
         return true;
     }

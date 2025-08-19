@@ -1,5 +1,6 @@
 package org.hzai.system.sysdictitem.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hzai.system.sysdictitem.entity.SysDictItem;
@@ -33,6 +34,7 @@ public class SysDictItemServiceImp implements SysDictItemService {
 
     @Override
     public Boolean register(SysDictItem entity) {
+        entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);
         return true;
     }

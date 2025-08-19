@@ -1,6 +1,6 @@
 package org.hzai.system.syslog.entity;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
@@ -60,7 +60,7 @@ public class SysLog extends PanacheEntityBase {
 	/**
 	 * 日志的创建时间
 	 */
-	private Date createTime;
+	private LocalDateTime createTime;
 
 	/**
 	 * 日志的额外信息

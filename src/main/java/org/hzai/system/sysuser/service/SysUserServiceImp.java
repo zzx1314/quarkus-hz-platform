@@ -1,5 +1,6 @@
 package org.hzai.system.sysuser.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -75,8 +76,9 @@ public class SysUserServiceImp implements SysUserService {
     }
     @Override
     public Boolean registerUser(SysUser sysUser) {
-         sysUserRepository.persist(sysUser);
-         return true;
+        sysUser.setCreateTime(LocalDateTime.now());
+        sysUserRepository.persist(sysUser);
+        return true;
     }
     @Override
     public SysUser listOne(SysUserQueryDto queryDto) {
