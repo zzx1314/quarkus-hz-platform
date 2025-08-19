@@ -18,8 +18,6 @@ import jakarta.persistence.Table;
 @EqualsAndHashCode(callSuper=false)
 public class SysOrg extends PanacheEntityBase{
 
-	private String departmentQc;
-
 	/**
 	 * 主键
 	 */
