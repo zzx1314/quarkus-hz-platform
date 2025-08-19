@@ -14,5 +14,8 @@ public interface SysRoleService {
 
    PageResult<SysRole> listRolePage(SysRoleQueryDto dto, PageRequest pageRequest);
 
+
+   SysRole listRoleByDto(SysRoleQueryDto sysRoleQueryDto);
+
    Boolean registerRole(SysRole sysRole);
 }

@@ -18,7 +18,11 @@ public class SysMenuRepository implements PanacheRepository<SysMenu> {
 
      public List<SysMenu> selectList(SysMenuQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
-                .equal("isDeleted", 0);
+        .in("id", queryDto.getIds())
+        .equal("type", queryDto.getType())
+        .equal("roleCode", queryDto.getRoleCode())
+        .equal("parentId", queryDto.getParentId())
+        .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
     }
 

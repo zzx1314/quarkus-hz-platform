@@ -12,6 +12,9 @@ public class SysRoleQueryDto {
     @QueryParam("name")
     private String name;
 
+    @QueryParam("code")
+    private String code;
+
     @QueryParam("beginTime")
     private String beginTime;
 

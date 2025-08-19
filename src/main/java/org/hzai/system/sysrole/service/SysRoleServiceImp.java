@@ -40,4 +40,9 @@ public class SysRoleServiceImp implements SysRoleService {
         return true;
     }
 
+    @Override
+    public SysRole listRoleByDto(SysRoleQueryDto sysRoleQueryDto) {
+        return sysRoleRepository.selectOne(sysRoleQueryDto);
+    }
+
 }

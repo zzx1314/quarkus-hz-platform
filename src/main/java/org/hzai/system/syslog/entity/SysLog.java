@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -11,6 +12,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
+@Entity
 @Table(name = "p_sys_logrecord")
 @EqualsAndHashCode(callSuper = false)
 public class SysLog extends PanacheEntityBase {

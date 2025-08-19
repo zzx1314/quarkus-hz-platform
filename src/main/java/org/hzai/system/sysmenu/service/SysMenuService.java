@@ -12,7 +12,7 @@ import org.hzai.util.PageResult;
 public interface SysMenuService {
    List<SysMenu> listEntitys();
 
-   List<SysMenu> listEntitysByDto(SysMenuQueryDto sysOrgDto);
+   List<SysMenu> listEntitysByDto(SysMenuQueryDto dto);
 
    PageResult<SysMenu> listPage(SysMenuQueryDto dto, PageRequest pageRequest);
 

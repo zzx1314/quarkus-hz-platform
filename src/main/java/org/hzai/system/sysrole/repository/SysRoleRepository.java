@@ -43,4 +43,16 @@ public class SysRoleRepository implements PanacheRepository<SysRole>{
                 pageRequest.getPage(),
                 pageRequest.getSize());
     }
+
+    public SysRole selectOne(SysRoleQueryDto sysRoleQueryDto) {
+        QueryBuilder qb = QueryBuilder.create()
+                .alias("r")
+                .equal("code", sysRoleQueryDto.getCode())
+                .equal("id", sysRoleQueryDto.getId())
+                .equal("isDeleted", 0)
+                .like("name", sysRoleQueryDto.getName());
+
+        String baseQuery = "FROM SysRole r LEFT JOIN FETCH r.menus WHERE " + qb.getQuery();
+        return find(baseQuery, qb.getParams()).singleResult();
+    }
 }
