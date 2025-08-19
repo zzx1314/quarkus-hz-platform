@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hzai.system.sysdict.entity.SysDict;
 import org.hzai.system.sysdict.entity.dto.SysDictQueryDto;
+import org.hzai.system.sysdictitem.entity.SysDictItem;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 
@@ -15,4 +16,6 @@ public interface SysDictService {
    PageResult<SysDict> listPage(SysDictQueryDto dto, PageRequest pageRequest);
 
    Boolean register(SysDict entity);
+
+   List<SysDictItem> getItemByType(String string);
 }

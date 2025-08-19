@@ -38,5 +38,4 @@ public class SysDictItemServiceImp implements SysDictItemService {
         repository.persist(entity);
         return true;
     }
-
 }

@@ -8,10 +8,12 @@ import org.hzai.system.sysdict.entity.dto.SysDictDto;
 import org.hzai.system.sysdict.entity.dto.SysDictQueryDto;
 import org.hzai.system.sysdict.entity.mapper.SysDictMapper;
 import org.hzai.system.sysdict.service.SysDictService;
+import org.hzai.system.sysdictitem.entity.SysDictItem;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.R;
 
+import io.vertx.core.json.JsonObject;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BeanParam;
@@ -54,6 +56,23 @@ public class SysDictController {
     public R<List<SysDict>> getAll() {
         return R.ok(sysDictService.listEntitys());
     }
+
+    @GET
+    @Path("/getSafePolicy")
+	public R<Object> getSafePolicy() {
+		// 安全策略
+		List<SysDictItem> safePolity = sysDictService.getItemByType("sys_security_policy");
+		JsonObject result = new JsonObject();
+		for (SysDictItem sysDictItem : safePolity) {
+			if ("sysOvertime".equals(sysDictItem.getType())) {
+				result.put(sysDictItem.getType(), Integer.parseInt(sysDictItem.getValue()) + "");
+			}
+			else {
+				result.put(sysDictItem.getType(), sysDictItem.getValue());
+			}
+		}
+		return R.ok(result);
+	}
 
     @POST
     @Path("/create")

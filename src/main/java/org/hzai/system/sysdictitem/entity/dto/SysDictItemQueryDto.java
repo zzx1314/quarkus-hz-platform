@@ -13,4 +13,7 @@ public class SysDictItemQueryDto {
 
     @QueryParam("endTime")
     private String endTime;
+
+    @QueryParam("dicType")
+    private String dicType;
 }

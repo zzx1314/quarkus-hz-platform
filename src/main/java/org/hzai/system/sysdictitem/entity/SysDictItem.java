@@ -5,11 +5,16 @@ import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
+import org.hzai.system.sysdict.entity.SysDict;
+
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Data
@@ -39,11 +44,6 @@ public class SysDictItem extends PanacheEntityBase {
 	 * 标签名
 	 */
 	private String label;
-
-	/**
-	 * 所属字典ID
-	 */
-	private Integer dictId;
 
 	/**
 	 * 数据值
@@ -80,5 +80,13 @@ public class SysDictItem extends PanacheEntityBase {
 	 * 备注
 	 */
 	private String remarks;
+
+
+	/**
+	 * 所属字典ID
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dict_id")
+	private SysDict sysDict;
 
 }

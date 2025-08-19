@@ -106,3 +106,28 @@ INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1012);
 INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1021);
 INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1022);
 INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1023);
+
+-- 字典初始化
+INSERT INTO p_sys_dict (id, type, dict_type, description, remarks, create_time, update_time, is_deleted, allow_deletion, is_show) VALUES (28, 'sys_security_policy', '系统类', '安全策略配置', '安全策略配置', '2020-09-01 16:17:18', null, 0, true, true);
+ALTER SEQUENCE p_sys_dict_seq RESTART WITH 29;
+
+
+-- 字典项初始化
+INSERT INTO p_sys_dict_item (id, type, label, dict_id, value, sort, description, create_time, update_time, is_deleted, remarks, allow_deletion) VALUES (126, 'sysLoginMaxLockTime', '锁定时常', 28, '5', 1, '锁定时常', '2020-09-08 17:02:43', null, 0, '锁定时常', null);
+INSERT INTO p_sys_dict_item (id, type, label, dict_id, value, sort, description, create_time, update_time, is_deleted, remarks, allow_deletion) VALUES (127, 'sysLoginMaxTryCount', '最大尝试次数', 28, '5', 2, '最大尝试次数', '2020-09-08 17:03:12', null, 0, '最大尝试次数', null);
+INSERT INTO p_sys_dict_item (id, type, label, dict_id, value, sort, description, create_time, update_time, is_deleted, remarks, allow_deletion) VALUES (128, 'sysPassLength', '密码长度', 28, '13', 3, '密码长度', '2020-09-08 17:04:04', null, 0, '密码长度', null);
+INSERT INTO p_sys_dict_item (id, type, label, dict_id, value, sort, description, create_time, update_time, is_deleted, remarks, allow_deletion) VALUES (129, 'sysPassChange', '密码更换周期', 28, '30', 15, '密码更换周期', '2020-09-08 17:04:28', null, 0, '密码更换周期', null);
+INSERT INTO p_sys_dict_item (id, type, label, dict_id, value, sort, description, create_time, update_time, is_deleted, remarks, allow_deletion) VALUES (130, 'sysOvertime', '超时时间', 28, '900', 5, '超时时间', '2020-09-08 17:05:01', null, 0, '超时时间', null);
+INSERT INTO p_sys_dict_item (id, type, label, dict_id, value, sort, description, create_time, update_time, is_deleted, remarks, allow_deletion) VALUES (131, 'sysPassShortLength', '密码最短长度', 28, '8', 10, '密码最短长度', '2020-10-14 11:05:58', '2020-11-26 10:16:08', 0, '密码最短长度', null);
+INSERT INTO p_sys_dict_item (id, type, label, dict_id, value, sort, description, create_time, update_time, is_deleted, remarks, allow_deletion) VALUES (132, 'passCom', '密码复杂度', 28, '2', 7, '密码复杂度', '2020-10-14 11:06:37', null, 0, '密码复杂度', null);
+ALTER SEQUENCE p_sys_dict_item_seq RESTART WITH 133;
+
+--初始化组织
+INSERT INTO p_sys_org (id, name, sort, parent_id, create_time, update_time, is_deleted, remarks, org_duty, desrc, type, parent_name, mq_id, mq_pid, department_qc) VALUES (1, '华郅集团', 1, 0, '2022-10-25 16:58:38', '2024-09-04 17:16:47', 0, '', '', '', 'top', '', null, null, null);
+INSERT INTO p_sys_org (id, name, sort, parent_id, create_time, update_time, is_deleted, remarks, org_duty, desrc, type, parent_name, mq_id, mq_pid, department_qc) VALUES (2, '华郅北京公司', 3, 1, '2022-10-25 17:30:16', '2025-02-13 17:47:16', 0, '北京分公司', '', '', 'company', '华郅集团', null, null, null);
+INSERT INTO p_sys_org (id, name, sort, parent_id, create_time, update_time, is_deleted, remarks, org_duty, desrc, type, parent_name, mq_id, mq_pid, department_qc) VALUES (3, '华郅西安公司', 3, 1, '2022-11-09 09:58:59', '2024-09-05 09:39:33', 0, '备注', '', '', 'company', '顶部门', null, null, null);
+INSERT INTO p_sys_org (id, name, sort, parent_id, create_time, update_time, is_deleted, remarks, org_duty, desrc, type, parent_name, mq_id, mq_pid, department_qc) VALUES (18, '销售部-能源', 3, 3, '2025-01-13 16:31:17', null, 0, '专门负责华东和江南地区能源领域销售推广', null, null, 'common', '', null, null, null);
+INSERT INTO p_sys_org (id, name, sort, parent_id, create_time, update_time, is_deleted, remarks, org_duty, desrc, type, parent_name, mq_id, mq_pid, department_qc) VALUES (19, '华郅成都公司', 1, 1, '2025-01-19 13:34:01', '2025-01-19 13:36:00', 0, '香港分公司 负责香港地区业务', null, null, 'company', '华郅集团', null, null, null);
+INSERT INTO p_sys_org (id, name, sort, parent_id, create_time, update_time, is_deleted, remarks, org_duty, desrc, type, parent_name, mq_id, mq_pid, department_qc) VALUES (22, '技术支持部', 1, 19, '2025-01-19 13:35:37', '2025-01-19 13:41:21', 0, '', null, null, 'common', '华郅香港公司', null, null, null);
+INSERT INTO p_sys_org (id, name, sort, parent_id, create_time, update_time, is_deleted, remarks, org_duty, desrc, type, parent_name, mq_id, mq_pid, department_qc) VALUES (23, '方案开发部', 1, 2, '2025-03-05 15:51:04', '2025-03-05 15:51:22', 0, '负责对外客户的方案开发', null, null, 'common', '华郅北京公司', null, null, null);
+ALTER SEQUENCE p_sys_org_seq RESTART WITH 24;

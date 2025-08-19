@@ -6,6 +6,7 @@ import java.util.List;
 import org.hzai.system.sysdict.entity.SysDict;
 import org.hzai.system.sysdict.entity.dto.SysDictQueryDto;
 import org.hzai.system.sysdict.repository.SysDictRepository;
+import org.hzai.system.sysdictitem.entity.SysDictItem;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 
@@ -37,6 +38,12 @@ public class SysDictServiceImp implements SysDictService {
         entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);
         return true;
+    }
+
+    @Override
+    public List<SysDictItem> getItemByType(String type) {
+         SysDict oneDict = repository.find("type := ?1", type).singleResult();
+         return oneDict.getSysDictItems();
     }
 
 }
