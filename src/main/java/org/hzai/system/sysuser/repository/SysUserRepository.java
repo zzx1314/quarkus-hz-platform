@@ -19,6 +19,8 @@ public class SysUserRepository implements PanacheRepository<SysUser> {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0)
                 .equal("orgId", sysUserDto.getOrgId())
+                .greaterThan("createTime", sysUserDto.getBeginTime())
+                .lessThan("createTime", sysUserDto.getEndTime())
                 .like("username", sysUserDto.getUsername())
                 .like("phone", sysUserDto.getPhone());
         return find(qb.getQuery(), qb.getParams()).list();
@@ -28,6 +30,8 @@ public class SysUserRepository implements PanacheRepository<SysUser> {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0)
                 .equal("orgId", dto.getOrgId())
+                .greaterThan("createTime", dto.getBeginTime())
+                .lessThan("createTime", dto.getEndTime())
                 .like("username", dto.getUsername())
                 .like("phone", dto.getPhone())
                 .between("createTime", dto.getBeginTime(), dto.getEndTime())

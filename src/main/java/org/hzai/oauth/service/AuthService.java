@@ -85,8 +85,7 @@ public class AuthService {
         if (!redisUtil.exists(key)) {
             return R.failed("Access token is invalid or expired");
         }
-        SysUserDto userDto = redisUtil.getObject(key, SysUserDto.class);
-        return R.ok(userDto);
+        return R.ok();
     }
 
     private Response createTokenResponse(String jwt, String refreshToken, SysUserDto userDto) {

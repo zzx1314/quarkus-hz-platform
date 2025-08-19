@@ -7,6 +7,7 @@ import io.quarkus.websockets.next.PathParam;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.FormParam;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -51,7 +52,7 @@ public class AuthController {
         return authService.refreshAccessToken(refreshToken);
     }
 
-    @POST
+    @GET
     @Path("/check_token")
     public R<Object> checkToken() {
         String authHeader = headers.getHeaderString("Authorization");
