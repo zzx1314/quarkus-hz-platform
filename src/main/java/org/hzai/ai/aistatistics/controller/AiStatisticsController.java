@@ -2,12 +2,15 @@ package org.hzai.ai.aistatistics.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.hzai.ai.aiapplication.service.AiApplicationService;
 import org.hzai.ai.aidocument.service.AiDocumentService;
 import org.hzai.ai.aiknowledgebase.service.AiKnowledgeBaseService;
 import org.hzai.ai.aimcp.service.AiMcpService;
+import org.hzai.ai.aistatistics.entity.BarChartData;
 import org.hzai.ai.aistatistics.entity.ChartData;
+import org.hzai.ai.aistatistics.entity.DocChatData;
 import org.hzai.util.R;
 
 import jakarta.inject.Inject;
@@ -59,7 +62,30 @@ public class AiStatisticsController {
     @GET
 	@Path("statisticsAllType")
 	public R<Object> statisticsAllNum() {
-        return R.ok();
+        List<BarChartData> barChartDataList = new ArrayList<>();
+		// 上周的数据
+		BarChartData barChartDataBefore = new BarChartData();
+		List<Long> knowledgeBaseCountBefore = aiKnowledgeBaseService.getKnowledgeBaseCountBefore();
+		barChartDataBefore.setKnowledgeBaseCount(knowledgeBaseCountBefore);
+		List<Long> mcpCountBefore = aiMcpService.getMcpCountBefore();
+		barChartDataBefore.setMcpCount(mcpCountBefore);
+		List<Long> documentCountBefore = aiDocumentService.getDocumentCountBefore();
+		barChartDataBefore.setDocumentCount(documentCountBefore);
+		List<Long> applicationCountBefore = aiApplicationService.getApplicationCountBefore();
+		barChartDataBefore.setApplicationCount(applicationCountBefore);
+		barChartDataList.add(barChartDataBefore);
+		// 本周的数据
+		BarChartData barChartData = new BarChartData();
+		List<Long> knowledgeBaseCount = aiKnowledgeBaseService.getKnowledgeBaseCount();
+		barChartData.setKnowledgeBaseCount(knowledgeBaseCount);
+		List<Long> mcpCount = aiMcpService.getMcpCount();
+		barChartData.setMcpCount(mcpCount);
+		List<Long> documentCount = aiDocumentService.getDocumentCount();
+		barChartData.setDocumentCount(documentCount);
+		List<Long> applicationCount = aiApplicationService.getApplicationCount();
+		barChartData.setApplicationCount(applicationCount);
+		barChartDataList.add(barChartData);
+		return R.ok(barChartDataList);
     }
 
     /**
@@ -68,7 +94,20 @@ public class AiStatisticsController {
     @GET
 	@Path("statisticsDocNumber")
 	public R<Object> statisticDocumentCountInKb() {
-        return R.ok();
+        List<Map<String, Object>> result = aiDocumentService.countDocumentsByKnowledgeBase();
+
+		List<String> names = new ArrayList<>();
+		List<Integer> counts = new ArrayList<>();
+
+		for (Map<String, Object> map : result) {
+			names.add((String) map.get("name"));
+			counts.add(((Number) map.get("count")).intValue());
+		}
+
+		DocChatData docChatData = new DocChatData();
+		docChatData.setXData(names);
+		docChatData.setYData(counts);
+		return R.ok(docChatData);
     }
         
 

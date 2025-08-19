@@ -18,5 +18,7 @@ public interface AiKnowledgeBaseService {
 
    List<Long> getKnowledgeBaseCount();
 
+   List<Long> getKnowledgeBaseCountBefore();
+
    long count();
 }

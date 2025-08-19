@@ -1,6 +1,8 @@
 package org.hzai.ai.aiparagraph.repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hzai.ai.aiparagraph.entity.AiParagraph;
 import org.hzai.ai.aiparagraph.entity.dto.AiParagraphQueryDto;
@@ -36,6 +38,31 @@ public class AiParagraphRepository implements PanacheRepository<AiParagraph> {
                 query.count(),
                 pageRequest.getPage(),
                 pageRequest.getSize());
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> getApplicationCountByDay(){
+        String sql = """
+            SELECT 
+                TO_CHAR(date_trunc('day', create_time), 'YYYY-MM-DD') AS date,
+                COUNT(*) AS count
+            FROM ai_application
+            WHERE create_time >= NOW() - INTERVAL '14 days'
+            GROUP BY date_trunc('day', create_time)
+            ORDER BY date ASC
+        """;
+
+        return getEntityManager()
+                .createNativeQuery(sql)
+                .unwrap(org.hibernate.query.NativeQuery.class)
+                .setTupleTransformer((tuple, aliases) -> {
+                    Map<String, Object> map = new HashMap<>();
+                    for (int i = 0; i < aliases.length; i++) {
+                        map.put(aliases[i], tuple[i]);
+                    }
+                    return map;
+                })
+                .getResultList();
     }
 
 }

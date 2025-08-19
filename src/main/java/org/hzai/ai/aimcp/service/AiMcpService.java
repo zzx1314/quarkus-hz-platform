@@ -18,5 +18,7 @@ public interface AiMcpService {
 
    List<Long> getMcpCount();
 
+   List<Long> getMcpCountBefore();
+
    long count();
 }

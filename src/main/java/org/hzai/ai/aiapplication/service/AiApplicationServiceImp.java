@@ -72,4 +72,30 @@ public class AiApplicationServiceImp implements AiApplicationService {
         return repository.count();
     }
 
+    @Override
+    public List<Long> getApplicationCountBefore() {
+        List<Long> data = new ArrayList<>();
+		List<Map<String, Object>> applicationCountByDay = repository.getApplicationCountByDay();
+
+		List<String> lastSevenDays = DateUtil.getLast14DaysToLast7Days();
+
+		if (!applicationCountByDay.isEmpty()) {
+			// 将数据库统计结果转为 Map<date, count>
+			Map<String, Object> countMap = new HashMap<>();
+			for (Map<String, Object> map : applicationCountByDay) {
+				countMap.put(map.get("date").toString(), map.get("count"));
+			}
+			// 按照最近7天顺序填充数据，缺失的日期设为0
+			for (String date : lastSevenDays) {
+				data.add(Long.valueOf(countMap.getOrDefault(date, 0L).toString()));
+			}
+		} else {
+			// 如果没有数据，则全部填充0
+			for (int i = 0; i < 7; i++) {
+				data.add(0L);
+			}
+		}
+		return data;
+    }
+
 }

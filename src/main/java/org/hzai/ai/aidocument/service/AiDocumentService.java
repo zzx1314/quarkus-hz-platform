@@ -1,6 +1,7 @@
 package org.hzai.ai.aidocument.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.hzai.ai.aidocument.entity.AiDocument;
 import org.hzai.ai.aidocument.entity.dto.AiDocumentQueryDto;
@@ -16,7 +17,11 @@ public interface AiDocumentService {
 
    Boolean register(AiDocument entity);
 
+   List<Map<String, Object>> countDocumentsByKnowledgeBase();
+
    List<Long> getDocumentCount();
+
+   List<Long> getDocumentCountBefore();
 
    long count();
 }

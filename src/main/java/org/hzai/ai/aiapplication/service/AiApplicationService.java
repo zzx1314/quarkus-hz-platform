@@ -18,5 +18,7 @@ public interface AiApplicationService {
 
    List<Long> getApplicationCount();
 
+   List<Long> getApplicationCountBefore();
+
    long count();
 }

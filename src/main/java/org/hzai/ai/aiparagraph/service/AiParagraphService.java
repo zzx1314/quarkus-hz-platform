@@ -15,4 +15,6 @@ public interface AiParagraphService {
    PageResult<AiParagraph> listPage(AiParagraphQueryDto dto, PageRequest pageRequest);
 
    Boolean register(AiParagraph entity);
+
+   List<Long> getApplicationCountBefore();
 }
