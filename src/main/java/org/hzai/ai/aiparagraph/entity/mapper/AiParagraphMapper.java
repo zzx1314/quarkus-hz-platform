@@ -12,4 +12,7 @@ public interface AiParagraphMapper {
 
     @Mapping(target = "id", ignore = true)
     void updateEntityFromDto(AiParagraphDto dto, @MappingTarget AiParagraph entity);
+
+    @Mapping(target = "id", ignore = true)
+    void updateEntity(AiParagraph dto, @MappingTarget AiParagraph entity);
 }

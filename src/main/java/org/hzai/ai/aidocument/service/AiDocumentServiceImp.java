@@ -13,6 +13,7 @@ import org.hzai.ai.aidocument.entity.AiDocument;
 import org.hzai.ai.aidocument.entity.dto.AiDocumentQueryDto;
 import org.hzai.ai.aidocument.entity.dto.AiDocumentStoreDto;
 import org.hzai.ai.aidocument.entity.dto.ParagraphsDto;
+import org.hzai.ai.aidocument.entity.dto.PreviewFileDto;
 import org.hzai.ai.aidocument.entity.dto.SplitterStrategy;
 import org.hzai.ai.aidocument.entity.mapper.AiDocumentMapper;
 import org.hzai.ai.aidocument.entity.vo.ParagraphVo;
@@ -23,6 +24,7 @@ import org.hzai.ai.aiparagraph.entity.AiParagraph;
 import org.hzai.ai.aiparagraph.entity.dto.AiParagraphQueryDto;
 import org.hzai.ai.aiparagraph.repository.AiParagraphRepository;
 import org.hzai.ai.aistatistics.util.DateUtil;
+import org.hzai.ai.assistant.StreamedAssistant;
 import org.hzai.util.FileUtil;
 import org.hzai.util.IdUtil;
 import org.hzai.util.JsonUtil;
@@ -31,18 +33,25 @@ import org.hzai.util.PageResult;
 import org.hzai.util.R;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
-import org.jose4j.json.internal.json_simple.JSONObject;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.document.loader.FileSystemDocumentLoader;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
+import dev.langchain4j.memory.chat.MessageWindowChatMemory;
+import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.output.Response;
+import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
+import dev.langchain4j.service.AiServices;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import io.quarkus.panache.common.Sort;
 import io.quarkus.runtime.util.StringUtil;
+import io.smallrye.mutiny.Multi;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -70,14 +79,17 @@ public class AiDocumentServiceImp implements AiDocumentService {
 
 	@Inject
 	EmbeddingModel embeddingModel;
+
+	@Inject
+	StreamingChatModel streamingChatModel;
     @Override
     public List<AiDocument> listEntitys() {
         return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
     }
 
     @Override
-    public List<AiDocument> listEntitysByDto(AiDocumentQueryDto sysOrgDto) {
-        return repository.selectList(sysOrgDto);
+    public List<AiDocument> listEntitysByDto(AiDocumentQueryDto dto) {
+        return repository.selectList(dto);
     }
 
     @Override
@@ -225,7 +237,7 @@ public class AiDocumentServiceImp implements AiDocumentService {
 				String embeddingId = knowledgeStore.add(embed.content(), textSegment);
 				aiParagraph.setVectorId(embeddingId);
 				Map<String, Object> metadataMap = metadata.toMap();
-				aiParagraph.setMetadata(JSONObject.toJSONString(metadataMap));
+				aiParagraph.setMetadata(JsonUtil.toJson(metadataMap));
 				aiParagraphs.add(aiParagraph);
 				index++;
 			}
@@ -290,5 +302,79 @@ public class AiDocumentServiceImp implements AiDocumentService {
 			aiParagraphRepository.deleteByDocumentId(aiDocument.getId());
 		}
 		return aiDocument;
+	}
+
+	@Override
+	public void removeVertices(Long knowledgeId, List<String> embeddingStoreIds) {
+		EmbeddingStore<TextSegment> embeddingStore = embeddingStoreRegistry.getStore(knowledgeId);
+		embeddingStore.removeAll(embeddingStoreIds);
+	}
+
+	@Override
+	public String vectorParagraph(Long knowledgeId, String content, Metadata metadata) {
+		EmbeddingStore<Object> knowledgeStore = embeddingStoreRegistry.getStore(knowledgeId);
+		Response<Embedding> embed = embeddingModel.embed(content);
+		TextSegment textSegment = new TextSegment(content, metadata);
+		return knowledgeStore.add(embed.content(), textSegment);
+	}
+
+	@Override
+	public R<Object> uploadFileDoc(FileUpload file, String strategyStr) throws Exception {
+		JsonNode jsonObject = JsonUtil.toJsonObject(strategyStr);
+		List<AiDocumentStoreDto> storeDtos = new ArrayList<>();
+		// 上传文档
+		R<JsonObject> objectR = this.uploadFile(file, strategyStr);
+		AiDocumentStoreDto storeDto = new AiDocumentStoreDto();
+		storeDto.setId(objectR.getData().getLong("id"));
+		storeDto.setKnowledgeBaseId(jsonObject.get("knowledgeBaseId").asLong());
+		storeDto.setStrategy(jsonObject.get("strategy").asText());
+		storeDto.setFlag(jsonObject.get("flag").asText());
+		storeDto.setLength(jsonObject.get("length").asText());
+		storeDto.setFileName(file.fileName());
+		storeDto.setTempFilePath(objectR.getData().getString("tempFilePath"));
+		JsonArray content = objectR.getData().getJsonArray("content");
+
+		List<ParagraphsDto> paragraphsDtos = JsonUtil.fromJsonToList(content.toString(), ParagraphsDto.class);
+		storeDto.setParagraphs(paragraphsDtos);
+		storeDtos.add(storeDto);
+		return this.vectorDocument(storeDtos);
+	}
+
+	@Override
+	public JsonObject getParagraphs(PreviewFileDto previewFileDto) {
+		Document document = FileSystemDocumentLoader.loadDocument(previewFileDto.getPath());
+		Map<String, Object> params = new HashMap<>();
+		params.put("segmentSize", previewFileDto.getLength());
+		params.put("flag", previewFileDto.getFlag());
+		DocumentSplittingStrategy strategy = documentSplitterFactory.getStrategy(previewFileDto.getStrategy(), params);
+		List<TextSegment> split = strategy.getSplitter().split(document);
+		List<JsonObject> jsonParagraphs = split.stream().map(textSegment -> {
+			String paragraph = textSegment.text();
+			JsonObject jsonObject = new JsonObject();
+			if (textSegment.metadata() != null && textSegment.metadata().containsKey("HEADING")) {
+				jsonObject.put("title", textSegment.metadata().getString("HEADING"));
+			} else {
+				jsonObject.put("title", paragraph.substring(0, Math.min(10, paragraph.length())));
+			}
+			jsonObject.put("content", paragraph);
+			jsonObject.put("length", paragraph.length());
+			return jsonObject;
+		}).toList();
+		JsonObject result = new JsonObject();
+		result.put("name", previewFileDto.getFileName());
+		result.put("content", jsonParagraphs);
+		result.put("tempFilePath", previewFileDto.getPath());
+		return result;
+	}
+
+	@Override
+	public Multi<String> hitTest(String message, Long knowledgeBaseId) {
+		EmbeddingStore<TextSegment> embeddingStore = embeddingStoreRegistry.getStore(knowledgeBaseId);
+		StreamedAssistant assistant = AiServices.builder(StreamedAssistant.class)
+				.streamingChatModel(streamingChatModel)
+				.chatMemory(MessageWindowChatMemory.withMaxMessages(10))
+				.contentRetriever(EmbeddingStoreContentRetriever.from(embeddingStore))
+				.build();
+		return assistant.respondToQuestion(message);
 	}
 }

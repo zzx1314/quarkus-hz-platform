@@ -3,6 +3,7 @@ package org.hzai.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
@@ -59,6 +60,26 @@ public class JsonUtil {
             return objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {});
         } catch (Exception e) {
             throw new RuntimeException("JSON 转 Map 失败", e);
+        }
+    }
+
+    /**
+     * 字符串转 JsonNode（相当于 JsonObject）
+     */
+    public static JsonNode toJsonObject(String jsonStr) {
+        try {
+            return objectMapper.readTree(jsonStr);
+        } catch (Exception e) {
+            throw new RuntimeException("JSON 解析失败: " + jsonStr, e);
+        }
+    }
+
+    public static <T> List<T> toList(String json, Class<T> clazz) {
+        try {
+            return objectMapper.readValue(json,
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, clazz));
+        } catch (Exception e) {
+            throw new RuntimeException("JSON 解析失败: " + json, e);
         }
     }
 }

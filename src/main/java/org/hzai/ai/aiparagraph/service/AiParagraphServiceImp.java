@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hzai.ai.aiparagraph.entity.AiParagraph;
+import org.hzai.ai.aiparagraph.entity.dto.AiParagraphDto;
 import org.hzai.ai.aiparagraph.entity.dto.AiParagraphQueryDto;
 import org.hzai.ai.aiparagraph.repository.AiParagraphRepository;
 import org.hzai.ai.aistatistics.util.DateUtil;
@@ -67,6 +68,36 @@ public class AiParagraphServiceImp implements AiParagraphService {
 			}
 		}
 		return data;
+    }
+
+    @Override
+    public void removeByDocumentId(Long documentId) {
+        repository.delete("docId", documentId);
+    }
+
+    @Override
+    public AiParagraph listOne(AiParagraphQueryDto sAiParagraphQueryDto) {
+        return repository.selectOne(sAiParagraphQueryDto);
+    }
+
+    @Override
+    public AiParagraph listById(Long id) {
+        return repository.findById(id);
+    }
+
+    @Override
+    public void removeById(Long id) {
+        repository.deleteById(id);
+    }
+
+    @Override
+    public void replaceById(AiParagraph aiParagraph) {
+        repository.updateById(aiParagraph);
+    }
+
+    @Override
+    public void replaceByDto(AiParagraphDto dto) {
+        repository.updateByDto(dto);
     }
 
 }
