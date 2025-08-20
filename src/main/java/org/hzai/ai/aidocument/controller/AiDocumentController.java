@@ -181,7 +181,7 @@ public class AiDocumentController {
     @GET
 	@Path(value = "/hitTest")
     @Produces("text/stream;charset=UTF-8")
-	public Multi<String> hitTest(String message, Integer knowledgeBaseId) {
+	public Multi<String> hitTest(String message, Long knowledgeBaseId) {
 		return aiDocumentService.hitTest(message, knowledgeBaseId);
 	}
     @PUT
