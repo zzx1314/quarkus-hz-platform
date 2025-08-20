@@ -12,4 +12,7 @@ public interface AiApplicationMapper {
 
     @Mapping(target = "id", ignore = true)
     void updateEntityFromDto(AiApplicationDto dto, @MappingTarget AiApplication entity);
+
+    @Mapping(target = "id", ignore = true)
+    void updateEntity(AiApplication dto, @MappingTarget AiApplication entity);
 }

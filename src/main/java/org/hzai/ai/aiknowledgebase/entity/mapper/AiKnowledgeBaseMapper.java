@@ -12,4 +12,7 @@ public interface AiKnowledgeBaseMapper {
 
     @Mapping(target = "id", ignore = true)
     void updateEntityFromDto(AiKnowledgeBaseDto dto, @MappingTarget AiKnowledgeBase entity);
+
+    @Mapping(target = "id", ignore = true)
+    void updateEntity(AiKnowledgeBase dto, @MappingTarget AiKnowledgeBase entity);
 }

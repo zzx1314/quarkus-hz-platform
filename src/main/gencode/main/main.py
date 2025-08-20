@@ -3,7 +3,7 @@ import os
 
 # -------------------- 配置 --------------------
 TEMPLATE_DIR = '../templates/'  # 模板根目录
-JAVA_ROOT_DIR = '/home/zzx/IdeaProjects/CleverCopilot/src/main/java'  # Java 文件根目录
+JAVA_ROOT_DIR = '/demo/CleverCopilot/src/main/java'  # Java 文件根目录
 
 # 定义模板和对应生成文件后缀
 TEMPLATES = {
@@ -18,8 +18,8 @@ TEMPLATES = {
 
 # 数据模型
 data = {
-    "base_package_name": "org.hzai.ai.aiprocess", #修改
-    "entity_name": "AiProcess" #修改
+    "base_package_name": "org.hzai.ai.aiapplication", #修改
+    "entity_name": "AiApplication" #修改
 }
 
 # -------------------- 初始化 Jinja2 --------------------

@@ -1,12 +1,11 @@
 package org.hzai.ai.aiprocess.controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.time.LocalDateTime;
 
 import org.hzai.ai.aiprocess.entity.AiProcess;
 import org.hzai.ai.aiprocess.entity.dto.AiProcessDto;
 import org.hzai.ai.aiprocess.entity.dto.AiProcessQueryDto;
-import org.hzai.ai.aiprocess.entity.mapper.AiProcessMapper;
 import org.hzai.ai.aiprocess.service.AiProcessService;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
@@ -30,9 +29,6 @@ import jakarta.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class AiProcessController {
-    @Inject
-    AiProcessMapper mapper;
-
     @Inject
     AiProcessService aiProcessService;
 
@@ -64,15 +60,9 @@ public class AiProcessController {
 
     @PUT
     @Path("/update")
-    @Transactional
     public R<AiProcess> update(AiProcessDto dto) {
-        AiProcess entity = AiProcess.findById(dto.getId());
-        if(entity == null) {
-            throw new NotFoundException();
-        }
-        entity.setUpdateTime(LocalDateTime.now());
-        mapper.updateEntityFromDto(dto, entity);
-        return R.ok(entity);
+        aiProcessService.replaceByDto(dto);
+        return R.ok();
     }
 
     @DELETE

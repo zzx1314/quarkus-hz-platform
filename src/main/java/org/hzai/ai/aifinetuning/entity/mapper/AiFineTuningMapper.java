@@ -12,4 +12,7 @@ public interface AiFineTuningMapper {
 
     @Mapping(target = "id", ignore = true)
     void updateEntityFromDto(AiFineTuningDto dto, @MappingTarget AiFineTuning entity);
+
+    @Mapping(target = "id", ignore = true)
+    void updateEntity(AiFineTuning dto, @MappingTarget AiFineTuning entity);
 }

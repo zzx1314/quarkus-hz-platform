@@ -12,4 +12,7 @@ public interface AiModelMapper {
 
     @Mapping(target = "id", ignore = true)
     void updateEntityFromDto(AiModelDto dto, @MappingTarget AiModel entity);
+
+    @Mapping(target = "id", ignore = true)
+    void updateEntity(AiModel dto, @MappingTarget AiModel entity);
 }

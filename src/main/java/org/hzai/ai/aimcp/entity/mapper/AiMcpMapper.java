@@ -12,4 +12,7 @@ public interface AiMcpMapper {
 
     @Mapping(target = "id", ignore = true)
     void updateEntityFromDto(AiMcpDto dto, @MappingTarget AiMcp entity);
+
+    @Mapping(target = "id", ignore = true)
+    void updateEntity(AiMcp dto, @MappingTarget AiMcp entity);
 }

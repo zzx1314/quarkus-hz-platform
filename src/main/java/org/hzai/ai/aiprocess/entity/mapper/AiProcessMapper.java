@@ -12,4 +12,7 @@ public interface AiProcessMapper {
 
     @Mapping(target = "id", ignore = true)
     void updateEntityFromDto(AiProcessDto dto, @MappingTarget AiProcess entity);
+
+    @Mapping(target = "id", ignore = true)
+    void updateEntity(AiProcess dto, @MappingTarget AiProcess entity);
 }

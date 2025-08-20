@@ -1,12 +1,10 @@
 package org.hzai.ai.aimcp.repository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.hzai.ai.aimcp.entity.AiMcp;
 import org.hzai.ai.aimcp.entity.dto.AiMcpQueryDto;
+import org.hzai.ai.aimcp.entity.mapper.AiMcpMapper;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.QueryBuilder;
@@ -18,11 +16,20 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class AiMcpRepository implements PanacheRepository<AiMcp> {
+    @Inject
+    AiMcpMapper mapper;
 
      public List<AiMcp> selectList(AiMcpQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
+    }
+
+    public AiMcp selectOne(AiMcpQueryDto queryDto) {
+        QueryBuilder qb = QueryBuilder.create()
+                .equal("id", queryDto.getId())
+                .equal("isDeleted", 0);
+        return find(qb.getQuery(), qb.getParams()).singleResult();
     }
 
     public PageResult<AiMcp> selectPage(AiMcpQueryDto dto, PageRequest pageRequest) {
@@ -41,27 +48,27 @@ public class AiMcpRepository implements PanacheRepository<AiMcp> {
                 pageRequest.getSize());
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Map<String, Object>> getMcpCountByDay() {
-        String sql = """
-            SELECT
-                TO_CHAR(date_trunc('day', create_time), 'YYYY-MM-DD') AS date,
-                COUNT(*) AS count
-            FROM ai_mcp
-            WHERE create_time >= NOW() - INTERVAL '14 days'
-            GROUP BY date_trunc('day', create_time)
-            ORDER BY date ASC
-        """;
+    @Transactional
+    public void updateById(AiMcp dto) {
+        AiMcp entity = this.findById(dto.getId());
+        mapper.updateEntity(aiParagraph, entity);
+        entity.setUpdateTime(LocalDateTime.now());
+    }
 
-        List<Object[]> rows = getEntityManager().createNativeQuery(sql).getResultList();
-        List<Map<String, Object>> result = new ArrayList<>();
-        for (Object[] row : rows) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("date", row[0]);
-            map.put("count", ((Number) row[1]).longValue());
-            result.add(map);
+    @Transactional
+    public void updateByDto(AiMcpDto dto) {
+        AiParagraph entity = this.findById(dto.getId());
+        mapper.updateEntityFromDto(dto, entity);
+        entity.setUpdateTime(LocalDateTime.now());
+    }
+
+    @Transactional
+    public void deleteByIds(List<Long> ids) {
+        if (ids != null && !ids.isEmpty()) {
+            for (Long id : ids) {
+                this.deleteById(id);
+            }
         }
-        return result;
     }
 
 }

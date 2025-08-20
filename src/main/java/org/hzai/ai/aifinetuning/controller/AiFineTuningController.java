@@ -1,12 +1,11 @@
 package org.hzai.ai.aifinetuning.controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.time.LocalDateTime;
 
 import org.hzai.ai.aifinetuning.entity.AiFineTuning;
 import org.hzai.ai.aifinetuning.entity.dto.AiFineTuningDto;
 import org.hzai.ai.aifinetuning.entity.dto.AiFineTuningQueryDto;
-import org.hzai.ai.aifinetuning.entity.mapper.AiFineTuningMapper;
 import org.hzai.ai.aifinetuning.service.AiFineTuningService;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
@@ -30,9 +29,6 @@ import jakarta.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class AiFineTuningController {
-    @Inject
-    AiFineTuningMapper mapper;
-
     @Inject
     AiFineTuningService aiFineTuningService;
 
@@ -64,15 +60,9 @@ public class AiFineTuningController {
 
     @PUT
     @Path("/update")
-    @Transactional
     public R<AiFineTuning> update(AiFineTuningDto dto) {
-        AiFineTuning entity = AiFineTuning.findById(dto.getId());
-        if(entity == null) {
-            throw new NotFoundException();
-        }
-        entity.setUpdateTime(LocalDateTime.now());
-        mapper.updateEntityFromDto(dto, entity);
-        return R.ok(entity);
+        aiFineTuningService.replaceByDto(dto);
+        return R.ok();
     }
 
     @DELETE

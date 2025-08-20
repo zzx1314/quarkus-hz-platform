@@ -1,15 +1,10 @@
 package org.hzai.ai.aiapplication.repository;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.hzai.ai.aiapplication.entity.AiApplication;
 import org.hzai.ai.aiapplication.entity.dto.AiApplicationQueryDto;
+import org.hzai.ai.aiapplication.entity.mapper.AiApplicationMapper;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.QueryBuilder;
@@ -21,11 +16,20 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class AiApplicationRepository implements PanacheRepository<AiApplication> {
+    @Inject
+    AiApplicationMapper mapper;
 
      public List<AiApplication> selectList(AiApplicationQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
+    }
+
+    public AiApplication selectOne(AiApplicationQueryDto queryDto) {
+        QueryBuilder qb = QueryBuilder.create()
+                .equal("id", queryDto.getId())
+                .equal("isDeleted", 0);
+        return find(qb.getQuery(), qb.getParams()).singleResult();
     }
 
     public PageResult<AiApplication> selectPage(AiApplicationQueryDto dto, PageRequest pageRequest) {
@@ -44,72 +48,27 @@ public class AiApplicationRepository implements PanacheRepository<AiApplication>
                 pageRequest.getSize());
     }
 
-    public Map<Long, Map<String, Object>> getAppCountByKbIdList(List<Integer> kbIdList) {
-        if (kbIdList == null || kbIdList.isEmpty()) {
-            return Collections.emptyMap();
-        }
-
-        // 动态拼接 VALUES
-        String valuesSql = kbIdList.stream()
-                .map(id -> "(" + id + ")")
-                .collect(Collectors.joining(", "));
-
-        String sql = """
-            SELECT
-                items.item AS knowledgeId,
-                COUNT(*) AS count
-            FROM (
-                SELECT
-                    ai_application.id,
-                    ai_application.knowledge_ids
-                FROM ai_application
-                WHERE ai_application.is_deleted = 0
-            ) AS subquery,
-            (VALUES %s) AS items(item)
-            WHERE items.item::text = ANY(string_to_array(subquery.knowledge_ids, ','))
-            GROUP BY items.item
-            """.formatted(valuesSql);
-
-        @SuppressWarnings("unchecked")
-        List<Object[]> resultList = getEntityManager().createNativeQuery(sql).getResultList();
-
-        // 转换成 Map<Long, Map<String, Object>>
-        Map<Long, Map<String, Object>> result = new LinkedHashMap<>();
-        for (Object[] row : resultList) {
-            Long knowledgeId = ((Number) row[0]).longValue();
-            Long count = ((Number) row[1]).longValue();
-
-            Map<String, Object> data = new HashMap<>();
-            data.put("knowledgeId", knowledgeId);
-            data.put("count", count);
-
-            result.put(knowledgeId, data);
-        }
-        return result;
+    @Transactional
+    public void updateById(AiApplication dto) {
+        AiApplication entity = this.findById(dto.getId());
+        mapper.updateEntity(aiParagraph, entity);
+        entity.setUpdateTime(LocalDateTime.now());
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Map<String, Object>> getApplicationCountByDay() {
-        String sql = """
-            SELECT
-                TO_CHAR(date_trunc('day', create_time), 'YYYY-MM-DD') AS date,
-                COUNT(*) AS count
-            FROM ai_application
-            WHERE create_time >= NOW() - INTERVAL '14 days'
-            GROUP BY date_trunc('day', create_time)
-            ORDER BY date ASC
-        """;
+    @Transactional
+    public void updateByDto(AiApplicationDto dto) {
+        AiParagraph entity = this.findById(dto.getId());
+        mapper.updateEntityFromDto(dto, entity);
+        entity.setUpdateTime(LocalDateTime.now());
+    }
 
-        List<Object[]> rows = getEntityManager().createNativeQuery(sql).getResultList();
-
-        List<Map<String, Object>> result = new ArrayList<>();
-        for (Object[] row : rows) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("date", row[0]);
-            map.put("count", ((Number) row[1]).longValue());
-            result.add(map);
+    @Transactional
+    public void deleteByIds(List<Long> ids) {
+        if (ids != null && !ids.isEmpty()) {
+            for (Long id : ids) {
+                this.deleteById(id);
+            }
         }
-        return result;
     }
 
 }

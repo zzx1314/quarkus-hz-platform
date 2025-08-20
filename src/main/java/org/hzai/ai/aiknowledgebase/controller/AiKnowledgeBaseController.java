@@ -1,12 +1,11 @@
 package org.hzai.ai.aiknowledgebase.controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.time.LocalDateTime;
 
 import org.hzai.ai.aiknowledgebase.entity.AiKnowledgeBase;
 import org.hzai.ai.aiknowledgebase.entity.dto.AiKnowledgeBaseDto;
 import org.hzai.ai.aiknowledgebase.entity.dto.AiKnowledgeBaseQueryDto;
-import org.hzai.ai.aiknowledgebase.entity.mapper.AiKnowledgeBaseMapper;
 import org.hzai.ai.aiknowledgebase.service.AiKnowledgeBaseService;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
@@ -30,9 +29,6 @@ import jakarta.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class AiKnowledgeBaseController {
-    @Inject
-    AiKnowledgeBaseMapper mapper;
-
     @Inject
     AiKnowledgeBaseService aiKnowledgeBaseService;
 
@@ -64,15 +60,9 @@ public class AiKnowledgeBaseController {
 
     @PUT
     @Path("/update")
-    @Transactional
     public R<AiKnowledgeBase> update(AiKnowledgeBaseDto dto) {
-        AiKnowledgeBase entity = AiKnowledgeBase.findById(dto.getId());
-        if(entity == null) {
-            throw new NotFoundException();
-        }
-        entity.setUpdateTime(LocalDateTime.now());
-        mapper.updateEntityFromDto(dto, entity);
-        return R.ok(entity);
+        aiKnowledgeBaseService.replaceByDto(dto);
+        return R.ok();
     }
 
     @DELETE

@@ -49,14 +49,14 @@ public class {{ entity_name }}Repository implements PanacheRepository<{{ entity_
     }
 
     @Transactional
-    public void updateById({{ entity_name }} entity) {
-        {{ entity_name }} entity = this.findById(entity.getId());
+    public void updateById({{ entity_name }} dto) {
+        {{ entity_name }} entity = this.findById(dto.getId());
         mapper.updateEntity(aiParagraph, entity);
         entity.setUpdateTime(LocalDateTime.now());
     }
 
     @Transactional
-    public void updateByDto(AiParagraphDto dto) {
+    public void updateByDto({{ entity_name }}Dto dto) {
         AiParagraph entity = this.findById(dto.getId());
         mapper.updateEntityFromDto(dto, entity);
         entity.setUpdateTime(LocalDateTime.now());

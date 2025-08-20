@@ -1,10 +1,11 @@
 package org.hzai.ai.aiprocess.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.time.LocalDateTime;
 
 import org.hzai.ai.aiprocess.entity.AiProcess;
 import org.hzai.ai.aiprocess.entity.dto.AiProcessQueryDto;
+import org.hzai.ai.aiprocess.entity.dto.AiProcessDto;
 import org.hzai.ai.aiprocess.repository.AiProcessRepository;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
@@ -23,8 +24,13 @@ public class AiProcessServiceImp implements AiProcessService {
     }
 
     @Override
-    public List<AiProcess> listEntitysByDto(AiProcessQueryDto sysOrgDto) {
-        return repository.selectList(sysOrgDto);
+    public List<AiProcess> listEntitysByDto(AiProcessQueryDto dto) {
+        return repository.selectList(dto);
+    }
+
+    @Override
+    public AiProcess listOne(AiProcessQueryDto dto) {
+        return repository.selectOne(dto);
     }
 
     @Override
@@ -37,6 +43,26 @@ public class AiProcessServiceImp implements AiProcessService {
         entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);
         return true;
+    }
+
+    @Override
+    public void replaceById(AiProcess entity) {
+        repository.updateById(entity);
+    }
+
+    @Override
+    public void replaceByDto(AiProcessDto dto) {
+        repository.updateByDto(dto);
+    }
+
+    @Override
+    public void removeById(Long id) {
+        repository.deleteById(id);
+    }
+
+    @Override
+    public void removeByIds(List<Long> ids) {
+        repository.deleteByIds(ids);
     }
 
 }

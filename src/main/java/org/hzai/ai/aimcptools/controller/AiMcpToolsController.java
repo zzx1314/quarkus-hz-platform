@@ -1,12 +1,11 @@
 package org.hzai.ai.aimcptools.controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.time.LocalDateTime;
 
 import org.hzai.ai.aimcptools.entity.AiMcpTools;
 import org.hzai.ai.aimcptools.entity.dto.AiMcpToolsDto;
 import org.hzai.ai.aimcptools.entity.dto.AiMcpToolsQueryDto;
-import org.hzai.ai.aimcptools.entity.mapper.AiMcpToolsMapper;
 import org.hzai.ai.aimcptools.service.AiMcpToolsService;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
@@ -30,9 +29,6 @@ import jakarta.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class AiMcpToolsController {
-    @Inject
-    AiMcpToolsMapper mapper;
-
     @Inject
     AiMcpToolsService aiMcpToolsService;
 
@@ -64,15 +60,9 @@ public class AiMcpToolsController {
 
     @PUT
     @Path("/update")
-    @Transactional
     public R<AiMcpTools> update(AiMcpToolsDto dto) {
-        AiMcpTools entity = AiMcpTools.findById(dto.getId());
-        if(entity == null) {
-            throw new NotFoundException();
-        }
-        entity.setUpdateTime(LocalDateTime.now());
-        mapper.updateEntityFromDto(dto, entity);
-        return R.ok(entity);
+        aiMcpToolsService.replaceByDto(dto);
+        return R.ok();
     }
 
     @DELETE

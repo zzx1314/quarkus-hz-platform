@@ -1,12 +1,11 @@
 package org.hzai.ai.aimodel.controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.time.LocalDateTime;
 
 import org.hzai.ai.aimodel.entity.AiModel;
 import org.hzai.ai.aimodel.entity.dto.AiModelDto;
 import org.hzai.ai.aimodel.entity.dto.AiModelQueryDto;
-import org.hzai.ai.aimodel.entity.mapper.AiModelMapper;
 import org.hzai.ai.aimodel.service.AiModelService;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
@@ -30,9 +29,6 @@ import jakarta.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class AiModelController {
-    @Inject
-    AiModelMapper mapper;
-
     @Inject
     AiModelService aiModelService;
 
@@ -64,15 +60,9 @@ public class AiModelController {
 
     @PUT
     @Path("/update")
-    @Transactional
     public R<AiModel> update(AiModelDto dto) {
-        AiModel entity = AiModel.findById(dto.getId());
-        if(entity == null) {
-            throw new NotFoundException();
-        }
-        entity.setUpdateTime(LocalDateTime.now());
-        mapper.updateEntityFromDto(dto, entity);
-        return R.ok(entity);
+        aiModelService.replaceByDto(dto);
+        return R.ok();
     }
 
     @DELETE

@@ -1,10 +1,11 @@
 package org.hzai.ai.aimcptools.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.time.LocalDateTime;
 
 import org.hzai.ai.aimcptools.entity.AiMcpTools;
 import org.hzai.ai.aimcptools.entity.dto.AiMcpToolsQueryDto;
+import org.hzai.ai.aimcptools.entity.dto.AiMcpToolsDto;
 import org.hzai.ai.aimcptools.repository.AiMcpToolsRepository;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
@@ -23,8 +24,13 @@ public class AiMcpToolsServiceImp implements AiMcpToolsService {
     }
 
     @Override
-    public List<AiMcpTools> listEntitysByDto(AiMcpToolsQueryDto sysOrgDto) {
-        return repository.selectList(sysOrgDto);
+    public List<AiMcpTools> listEntitysByDto(AiMcpToolsQueryDto dto) {
+        return repository.selectList(dto);
+    }
+
+    @Override
+    public AiMcpTools listOne(AiMcpToolsQueryDto dto) {
+        return repository.selectOne(dto);
     }
 
     @Override
@@ -37,6 +43,26 @@ public class AiMcpToolsServiceImp implements AiMcpToolsService {
         entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);
         return true;
+    }
+
+    @Override
+    public void replaceById(AiMcpTools entity) {
+        repository.updateById(entity);
+    }
+
+    @Override
+    public void replaceByDto(AiMcpToolsDto dto) {
+        repository.updateByDto(dto);
+    }
+
+    @Override
+    public void removeById(Long id) {
+        repository.deleteById(id);
+    }
+
+    @Override
+    public void removeByIds(List<Long> ids) {
+        repository.deleteByIds(ids);
     }
 
 }

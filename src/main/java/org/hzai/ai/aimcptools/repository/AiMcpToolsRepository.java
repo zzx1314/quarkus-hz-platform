@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hzai.ai.aimcptools.entity.AiMcpTools;
 import org.hzai.ai.aimcptools.entity.dto.AiMcpToolsQueryDto;
+import org.hzai.ai.aimcptools.entity.mapper.AiMcpToolsMapper;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.QueryBuilder;
@@ -15,11 +16,20 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class AiMcpToolsRepository implements PanacheRepository<AiMcpTools> {
+    @Inject
+    AiMcpToolsMapper mapper;
 
      public List<AiMcpTools> selectList(AiMcpToolsQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
+    }
+
+    public AiMcpTools selectOne(AiMcpToolsQueryDto queryDto) {
+        QueryBuilder qb = QueryBuilder.create()
+                .equal("id", queryDto.getId())
+                .equal("isDeleted", 0);
+        return find(qb.getQuery(), qb.getParams()).singleResult();
     }
 
     public PageResult<AiMcpTools> selectPage(AiMcpToolsQueryDto dto, PageRequest pageRequest) {
@@ -36,6 +46,29 @@ public class AiMcpToolsRepository implements PanacheRepository<AiMcpTools> {
                 query.count(),
                 pageRequest.getPage(),
                 pageRequest.getSize());
+    }
+
+    @Transactional
+    public void updateById(AiMcpTools dto) {
+        AiMcpTools entity = this.findById(dto.getId());
+        mapper.updateEntity(aiParagraph, entity);
+        entity.setUpdateTime(LocalDateTime.now());
+    }
+
+    @Transactional
+    public void updateByDto(AiMcpToolsDto dto) {
+        AiParagraph entity = this.findById(dto.getId());
+        mapper.updateEntityFromDto(dto, entity);
+        entity.setUpdateTime(LocalDateTime.now());
+    }
+
+    @Transactional
+    public void deleteByIds(List<Long> ids) {
+        if (ids != null && !ids.isEmpty()) {
+            for (Long id : ids) {
+                this.deleteById(id);
+            }
+        }
     }
 
 }

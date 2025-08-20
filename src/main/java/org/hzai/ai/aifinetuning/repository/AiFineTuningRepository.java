@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hzai.ai.aifinetuning.entity.AiFineTuning;
 import org.hzai.ai.aifinetuning.entity.dto.AiFineTuningQueryDto;
+import org.hzai.ai.aifinetuning.entity.mapper.AiFineTuningMapper;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.QueryBuilder;
@@ -15,11 +16,20 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class AiFineTuningRepository implements PanacheRepository<AiFineTuning> {
+    @Inject
+    AiFineTuningMapper mapper;
 
      public List<AiFineTuning> selectList(AiFineTuningQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
+    }
+
+    public AiFineTuning selectOne(AiFineTuningQueryDto queryDto) {
+        QueryBuilder qb = QueryBuilder.create()
+                .equal("id", queryDto.getId())
+                .equal("isDeleted", 0);
+        return find(qb.getQuery(), qb.getParams()).singleResult();
     }
 
     public PageResult<AiFineTuning> selectPage(AiFineTuningQueryDto dto, PageRequest pageRequest) {
@@ -36,6 +46,29 @@ public class AiFineTuningRepository implements PanacheRepository<AiFineTuning> {
                 query.count(),
                 pageRequest.getPage(),
                 pageRequest.getSize());
+    }
+
+    @Transactional
+    public void updateById(AiFineTuning dto) {
+        AiFineTuning entity = this.findById(dto.getId());
+        mapper.updateEntity(aiParagraph, entity);
+        entity.setUpdateTime(LocalDateTime.now());
+    }
+
+    @Transactional
+    public void updateByDto(AiFineTuningDto dto) {
+        AiParagraph entity = this.findById(dto.getId());
+        mapper.updateEntityFromDto(dto, entity);
+        entity.setUpdateTime(LocalDateTime.now());
+    }
+
+    @Transactional
+    public void deleteByIds(List<Long> ids) {
+        if (ids != null && !ids.isEmpty()) {
+            for (Long id : ids) {
+                this.deleteById(id);
+            }
+        }
     }
 
 }
