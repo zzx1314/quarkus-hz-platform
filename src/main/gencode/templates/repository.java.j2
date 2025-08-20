@@ -4,6 +4,7 @@ import java.util.List;
 
 import {{ base_package_name }}.entity.{{ entity_name }};
 import {{ base_package_name }}.entity.dto.{{ entity_name }}QueryDto;
+import {{ base_package_name }}.entity.mapper.{{ entity_name }}Mapper;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.QueryBuilder;
@@ -15,11 +16,20 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class {{ entity_name }}Repository implements PanacheRepository<{{ entity_name }}> {
+    @Inject
+    {{ entity_name }}Mapper mapper;
 
      public List<{{ entity_name }}> selectList({{ entity_name }}QueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
+    }
+
+    public {{ entity_name }} selectOne({{ entity_name }}QueryDto queryDto) {
+        QueryBuilder qb = QueryBuilder.create()
+                .equal("id", queryDto.getId())
+                .equal("isDeleted", 0);
+        return find(qb.getQuery(), qb.getParams()).singleResult();
     }
 
     public PageResult<{{ entity_name }}> selectPage({{ entity_name }}QueryDto dto, PageRequest pageRequest) {
@@ -36,6 +46,29 @@ public class {{ entity_name }}Repository implements PanacheRepository<{{ entity_
                 query.count(),
                 pageRequest.getPage(),
                 pageRequest.getSize());
+    }
+
+    @Transactional
+    public void updateById({{ entity_name }} entity) {
+        {{ entity_name }} entity = this.findById(entity.getId());
+        mapper.updateEntity(aiParagraph, entity);
+        entity.setUpdateTime(LocalDateTime.now());
+    }
+
+    @Transactional
+    public void updateByDto(AiParagraphDto dto) {
+        AiParagraph entity = this.findById(dto.getId());
+        mapper.updateEntityFromDto(dto, entity);
+        entity.setUpdateTime(LocalDateTime.now());
+    }
+
+    @Transactional
+    public void deleteByIds(List<Long> ids) {
+        if (ids != null && !ids.isEmpty()) {
+            for (Long id : ids) {
+                this.deleteById(id);
+            }
+        }
     }
 
 }

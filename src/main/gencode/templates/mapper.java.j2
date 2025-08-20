@@ -12,4 +12,7 @@ public interface {{ entity_name }}Mapper {
 
     @Mapping(target = "id", ignore = true)
     void updateEntityFromDto({{ entity_name }}Dto dto, @MappingTarget {{ entity_name }} entity);
+
+    @Mapping(target = "id", ignore = true)
+    void updateEntity({{ entity_name }} dto, @MappingTarget {{ entity_name }} entity);
 }

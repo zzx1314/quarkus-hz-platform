@@ -3,6 +3,7 @@ package {{ base_package_name }}.service;
 import java.util.List;
 
 import {{ base_package_name }}.entity.{{ entity_name }};
+import {{ base_package_name }}.entity.dto.{{ entity_name }}Dto;
 import {{ base_package_name }}.entity.dto.{{ entity_name }}QueryDto;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
@@ -12,7 +13,17 @@ public interface {{ entity_name }}Service {
 
    List<{{ entity_name }}> listEntitysByDto({{ entity_name }}QueryDto sysOrgDto);
 
+   {{ entity_name }} listOne({{ entity_name }}QueryDto dto);
+
    PageResult<{{ entity_name }}> listPage({{ entity_name }}QueryDto dto, PageRequest pageRequest);
 
    Boolean register({{ entity_name }} entity);
+
+   replaceById({{ entity_name }} entity);
+
+   replaceByDto({{ entity_name }}Dto dto);
+
+   removeById(Long id);
+
+   removeByIds(List<Long> ids);
 }

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 import {{ base_package_name }}.entity.{{ entity_name }};
 import {{ base_package_name }}.entity.dto.{{ entity_name }}QueryDto;
+import {{ base_package_name }}.entity.dto.{{ entity_name }}Dto;
 import {{ base_package_name }}.repository.{{ entity_name }}Repository;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
@@ -23,8 +24,13 @@ public class {{ entity_name }}ServiceImp implements {{ entity_name }}Service {
     }
 
     @Override
-    public List<{{ entity_name }}> listEntitysByDto({{ entity_name }}QueryDto sysOrgDto) {
-        return repository.selectList(sysOrgDto);
+    public List<{{ entity_name }}> listEntitysByDto({{ entity_name }}QueryDto dto) {
+        return repository.selectList(dto);
+    }
+
+    @Override
+    public {{ entity_name }} listOne({{ entity_name }}QueryDto dto) {
+        return repository.selectOne(dto);
     }
 
     @Override
@@ -37,6 +43,26 @@ public class {{ entity_name }}ServiceImp implements {{ entity_name }}Service {
         entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);
         return true;
+    }
+
+    @Override
+    public void replaceById({{ entity_name }} entity) {
+        repository.updateById(entity);
+    }
+
+    @Override
+    public void replaceByDto({{ entity_name }}Dto dto) {
+        repository.updateByDto(dto);
+    }
+
+    @Override
+    public void removeById(Long id) {
+        repository.deleteById(id);
+    }
+
+    @Override
+    public void removeByIds(List<Long> ids) {
+        repository.deleteByIds(ids);
     }
 
 }

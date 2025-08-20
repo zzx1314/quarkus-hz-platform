@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import {{ base_package_name }}.entity.{{ entity_name }};
 import {{ base_package_name }}.entity.dto.{{ entity_name }}Dto;
 import {{ base_package_name }}.entity.dto.{{ entity_name }}QueryDto;
-import {{ base_package_name }}.entity.mapper.{{ entity_name }}Mapper;
 import {{ base_package_name }}.service.{{ entity_name }}Service;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
@@ -30,9 +29,6 @@ import jakarta.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class {{ entity_name }}Controller {
-    @Inject
-    {{ entity_name }}Mapper mapper;
-
     @Inject
     {{ entity_name }}Service {{ entity_name[0]|lower }}{{ entity_name[1:] }}Service;
 
@@ -64,15 +60,9 @@ public class {{ entity_name }}Controller {
 
     @PUT
     @Path("/update")
-    @Transactional
     public R<{{ entity_name }}> update({{ entity_name }}Dto dto) {
-        {{ entity_name }} entity = {{ entity_name }}.findById(dto.getId());
-        if(entity == null) {
-            throw new NotFoundException();
-        }
-        entity.setUpdateTime(LocalDateTime.now());
-        mapper.updateEntityFromDto(dto, entity);
-        return R.ok(entity);
+        {{ entity_name[0]|lower }}{{ entity_name[1:] }}Service.replaceByDto(dto);
+        return R.ok();
     }
 
     @DELETE
