@@ -14,12 +14,14 @@ import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class AiParagraphRepository implements PanacheRepository<AiParagraph> {
 
      public List<AiParagraph> selectList(AiParagraphQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
+                .equal("docId", queryDto.getDocId())
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
     }
@@ -63,6 +65,27 @@ public class AiParagraphRepository implements PanacheRepository<AiParagraph> {
                     return map;
                 })
                 .getResultList();
+    }
+
+    @Transactional
+    public void insertList(List<AiParagraph> lists) {
+        for (AiParagraph entity : lists) {
+            this.persist(entity);
+        }
+    }
+
+    @Transactional
+    public void deleteByIds(List<Long> ids) {
+        if (ids != null && !ids.isEmpty()) {
+            for (Long id : ids) {
+                 this.deleteById(id);
+            }
+        }
+    }
+
+    @Transactional
+    public void deleteByDocumentId(Long id) {
+         this.delete("documentId", id);
     }
 
 }

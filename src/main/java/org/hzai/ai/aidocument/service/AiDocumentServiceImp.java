@@ -1,5 +1,8 @@
 package org.hzai.ai.aidocument.service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,19 +11,65 @@ import java.util.List;
 
 import org.hzai.ai.aidocument.entity.AiDocument;
 import org.hzai.ai.aidocument.entity.dto.AiDocumentQueryDto;
+import org.hzai.ai.aidocument.entity.dto.AiDocumentStoreDto;
+import org.hzai.ai.aidocument.entity.dto.ParagraphsDto;
+import org.hzai.ai.aidocument.entity.dto.SplitterStrategy;
+import org.hzai.ai.aidocument.entity.mapper.AiDocumentMapper;
+import org.hzai.ai.aidocument.entity.vo.ParagraphVo;
 import org.hzai.ai.aidocument.repository.AiDocumentRepository;
+import org.hzai.ai.aidocument.service.factory.DocumentSplitterFactory;
+import org.hzai.ai.aidocument.service.strategy.DocumentSplittingStrategy;
+import org.hzai.ai.aiparagraph.entity.AiParagraph;
+import org.hzai.ai.aiparagraph.entity.dto.AiParagraphQueryDto;
+import org.hzai.ai.aiparagraph.repository.AiParagraphRepository;
 import org.hzai.ai.aistatistics.util.DateUtil;
+import org.hzai.util.FileUtil;
+import org.hzai.util.IdUtil;
+import org.hzai.util.JsonUtil;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
+import org.hzai.util.R;
+import org.jboss.logging.Logger;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
+import org.jose4j.json.internal.json_simple.JSONObject;
 
+import dev.langchain4j.data.document.Document;
+import dev.langchain4j.data.document.Metadata;
+import dev.langchain4j.data.document.loader.FileSystemDocumentLoader;
+import dev.langchain4j.data.embedding.Embedding;
+import dev.langchain4j.data.segment.TextSegment;
+import dev.langchain4j.model.embedding.EmbeddingModel;
+import dev.langchain4j.model.output.Response;
+import dev.langchain4j.store.embedding.EmbeddingStore;
 import io.quarkus.panache.common.Sort;
+import io.quarkus.runtime.util.StringUtil;
+import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.NotFoundException;
 
 @ApplicationScoped
 public class AiDocumentServiceImp implements AiDocumentService {
+	private static final Logger logger = Logger.getLogger(AiDocumentServiceImp.class);
+
+	@Inject
+    AiDocumentMapper mapper;
+
     @Inject
     AiDocumentRepository repository;
+
+	@Inject
+	AiParagraphRepository aiParagraphRepository;
+
+	@Inject
+    DocumentSplitterFactory documentSplitterFactory;
+
+	@Inject
+	EmbeddingStoreRegistry embeddingStoreRegistry;
+
+	@Inject
+	EmbeddingModel embeddingModel;
     @Override
     public List<AiDocument> listEntitys() {
         return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
@@ -104,4 +153,142 @@ public class AiDocumentServiceImp implements AiDocumentService {
     public List<Map<String, Object>> countDocumentsByKnowledgeBase() {
         return repository.countDocumentsByKnowledgeBase();
     }
+
+	@Override
+	@Transactional
+    public AiDocument updateById(AiDocument aiDocument) {
+        AiDocument entity = AiDocument.findById(aiDocument.getId());
+        if(entity == null) {
+            throw new NotFoundException();
+        }
+        mapper.updateEntity(aiDocument, entity);
+        entity.setUpdateTime(LocalDateTime.now());
+        return entity;
+    }
+
+	@Override
+	public R<JsonObject> uploadFile(FileUpload file, String strategyStr) {
+        String defaultStrategy = "regexSplitter";
+		if (StringUtil.isNullOrEmpty(defaultStrategy)) {
+			SplitterStrategy strategy = JsonUtil.fromJson(defaultStrategy, SplitterStrategy.class);
+            defaultStrategy = strategy.getStrategy();
+		}
+		Path saveFile = FileUtil.saveFile(file, "/temp");
+        Document document = FileSystemDocumentLoader.loadDocument(saveFile);
+
+        DocumentSplittingStrategy strategy = documentSplitterFactory.getStrategy(defaultStrategy, null);
+        List<TextSegment> split = strategy.getSplitter().split(document);
+        List<ParagraphVo> jsonParagraphs = split.stream().map(textSegment -> {
+			String paragraph = textSegment.text();
+			ParagraphVo paragraphVo = new ParagraphVo();
+            paragraphVo.setContent(paragraph);
+            paragraphVo.setLength(paragraph.length());
+            paragraphVo.setTitle(paragraph.substring(0, Math.min(10, paragraph.length())));
+			return paragraphVo;
+		}).toList();
+		JsonObject result = new JsonObject();
+		result.put("name", file.fileName());
+		result.put("content", jsonParagraphs);
+		result.put("tempFilePath", saveFile.toAbsolutePath().toString());
+		return R.ok(result);
+    }
+
+	@Override
+	public R<Object> vectorDocument(List<AiDocumentStoreDto> storeDtos) throws Exception {
+		checkDocName(storeDtos);
+		for (AiDocumentStoreDto storeDto : storeDtos) {
+			// 保存文档
+			AiDocument aiDocument = saveDocument(storeDto);
+			// 临时文档
+			File tempFile = new File(storeDto.getTempFilePath());
+			String fileName = "%s%s%s".formatted(IdUtil.simpleUUID(), '_', storeDto.getFileName());
+			FileUtil.saveFile("knowledge/" + aiDocument.getId(), fileName, new FileInputStream(tempFile));
+
+			EmbeddingStore<Object> knowledgeStore = embeddingStoreRegistry.getStore(aiDocument.getKnowledgeId());
+			// 保存段落
+			List<AiParagraph> aiParagraphs = new ArrayList<>();
+			int index = 0;
+			for (ParagraphsDto paragraphsDto : storeDto.getParagraphs()) {
+				AiParagraph aiParagraph = new AiParagraph();
+				aiParagraph.setContent(paragraphsDto.getContent());
+				aiParagraph.setDocId(aiDocument.getId());
+				aiParagraph.setCharacterNumber(paragraphsDto.getLength());
+				// 在每个段落添加标签
+				String content = paragraphsDto.getContent();
+				content = "%s%s".formatted("标签:"+storeDto.getFileName() + "\n" , content);
+				Response<Embedding> embed = embeddingModel.embed(content);
+				Metadata metadata = new Metadata();
+				metadata.put("fileName", storeDto.getFileName());
+				metadata.put("index", index);
+				metadata.put("bucketName", "knowledge/" + aiDocument.getId());
+				TextSegment textSegment = new TextSegment(content, metadata);
+				String embeddingId = knowledgeStore.add(embed.content(), textSegment);
+				aiParagraph.setVectorId(embeddingId);
+				Map<String, Object> metadataMap = metadata.toMap();
+				aiParagraph.setMetadata(JSONObject.toJSONString(metadataMap));
+				aiParagraphs.add(aiParagraph);
+				index++;
+			}
+			aiParagraphRepository.insertList(aiParagraphs);
+			// 删除临时文件
+			boolean deleted = tempFile.delete();
+			if (!deleted) {
+				logger.error("Failed to delete temporary file: " + tempFile.getAbsolutePath());
+			}
+		}
+		return R.ok();
+	}
+
+	/**
+	 * check document name is unique
+	 * delete repeated document in database, and save new document
+	 */
+	private void checkDocName(List<AiDocumentStoreDto> storeDtos) {
+		for (AiDocumentStoreDto storeDto : storeDtos) {
+			AiDocumentQueryDto query = new AiDocumentQueryDto();
+			query.setFileName(storeDto.getFileName());
+			query.setKnowledgeId(storeDto.getKnowledgeBaseId());
+			List<AiDocument> list = repository.selectList(query);
+			if (!list.isEmpty()) {
+				// delete repeated document
+				List<Long> docIds = list.stream().map(AiDocument::getId).toList();
+				repository.deleteByIds(docIds);
+				// delete paragraphs
+				List<String> vertexIds = new ArrayList<>();
+				for (Long docId : docIds) {
+					AiParagraphQueryDto paragraphQueryDto = new AiParagraphQueryDto();
+					paragraphQueryDto.setDocId(docId);
+					List<AiParagraph> paragraphs = aiParagraphRepository.selectList(paragraphQueryDto);
+					vertexIds.addAll(paragraphs.stream().map(AiParagraph::getVectorId).toList());
+					aiParagraphRepository.deleteByIds(paragraphs.stream().map(AiParagraph::getId).toList());;
+				}
+				// delete vertices
+				if (!vertexIds.isEmpty()){
+					embeddingStoreRegistry.getStore(storeDto.getKnowledgeBaseId()).removeAll(vertexIds);
+				}
+			}
+		}
+	}
+
+	private AiDocument saveDocument(AiDocumentStoreDto storeDto) {
+		AiDocument aiDocument = new AiDocument();
+		aiDocument.setId(storeDto.getId());
+		aiDocument.setKnowledgeId(storeDto.getKnowledgeBaseId());
+		aiDocument.setDocName(storeDto.getFileName());
+		aiDocument.setCharacterNumber(storeDto.getParagraphs().stream().mapToInt(ParagraphsDto::getLength).sum());
+		aiDocument.setSectionNumber(storeDto.getParagraphs().size());
+		aiDocument.setStatus("成功");
+		aiDocument.setEnableStatus("启用");
+		aiDocument.setSplitterFlag(storeDto.getFlag());
+		aiDocument.setSplitterLength(storeDto.getLength());
+		aiDocument.setSplitterStrategy(storeDto.getStrategy());
+		if (aiDocument.getId() == null){
+			repository.persist(aiDocument);
+		} else {
+			this.updateById(aiDocument);
+			// 将关联的段落删除，后面会新增新的段落
+			aiParagraphRepository.deleteByDocumentId(aiDocument.getId());
+		}
+		return aiDocument;
+	}
 }

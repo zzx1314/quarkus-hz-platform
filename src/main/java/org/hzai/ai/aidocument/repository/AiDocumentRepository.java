@@ -15,12 +15,15 @@ import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class AiDocumentRepository implements PanacheRepository<AiDocument> {
 
      public List<AiDocument> selectList(AiDocumentQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
+                .equal("knowledgeId", queryDto.getKnowledgeId())
+                .equal("fileName", queryDto.getFileName())
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
     }
@@ -89,6 +92,15 @@ public class AiDocumentRepository implements PanacheRepository<AiDocument> {
         }
 
         return result;
+    }
+
+    @Transactional
+    public void deleteByIds(List<Long> ids) {
+        if (ids != null && !ids.isEmpty()) {
+            for (Long id : ids) {
+                this.deleteById(id);
+            }
+        }
     }
 
 }

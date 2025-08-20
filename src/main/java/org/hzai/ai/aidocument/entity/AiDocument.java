@@ -30,7 +30,7 @@ public class AiDocument extends PanacheEntityBase {
 	@GeneratedValue
 	private Long id;
 
-	private Integer knowledgeId;
+	private Long knowledgeId;
 
 	private String docName;
 

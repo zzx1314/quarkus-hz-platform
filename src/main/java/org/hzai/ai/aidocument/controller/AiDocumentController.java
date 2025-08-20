@@ -1,17 +1,16 @@
 package org.hzai.ai.aidocument.controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hzai.ai.aidocument.entity.AiDocument;
-import org.hzai.ai.aidocument.entity.dto.AiDocumentDto;
 import org.hzai.ai.aidocument.entity.dto.AiDocumentQueryDto;
-import org.hzai.ai.aidocument.entity.mapper.AiDocumentMapper;
 import org.hzai.ai.aidocument.service.AiDocumentService;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.R;
+import org.jboss.resteasy.reactive.RestForm;
 
+import io.vertx.core.json.JsonObject;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BeanParam;
@@ -20,19 +19,17 @@ import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
+import org.jboss.resteasy.reactive.multipart.FileUpload;
+
 @Path("/aiDocument")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class AiDocumentController {
-    @Inject
-    AiDocumentMapper mapper;
-
     @Inject
     AiDocumentService aiDocumentService;
 
@@ -62,19 +59,6 @@ public class AiDocumentController {
         return R.ok(aiDocumentService.register(entity));
     }
 
-    @PUT
-    @Path("/update")
-    @Transactional
-    public R<AiDocument> update(AiDocumentDto dto) {
-        AiDocument entity = AiDocument.findById(dto.getId());
-        if(entity == null) {
-            throw new NotFoundException();
-        }
-        entity.setUpdateTime(LocalDateTime.now());
-        mapper.updateEntityFromDto(dto, entity);
-        return R.ok(entity);
-    }
-
     @DELETE
     @Path("/{id}")
     @Transactional
@@ -86,6 +70,16 @@ public class AiDocumentController {
         entity.setIsDeleted(1);
         entity.persist();
         return R.ok();
+    }
+
+     /**
+	 * 文件上传-预览分段
+	 */
+    @POST
+    @Path("/uploadFile")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public R<JsonObject> uploadFile(@RestForm("file") FileUpload file, @RestForm("strategy") String strategy) {
+        return aiDocumentService.uploadFile(file, strategy);
     }
 
 }

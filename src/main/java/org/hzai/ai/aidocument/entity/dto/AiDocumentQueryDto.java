@@ -13,4 +13,10 @@ public class AiDocumentQueryDto {
 
     @QueryParam("endTime")
     private String endTime;
+
+    @QueryParam("knowledgeId")
+    private Long knowledgeId;
+
+    @QueryParam("fileName")
+    private String fileName;
 }

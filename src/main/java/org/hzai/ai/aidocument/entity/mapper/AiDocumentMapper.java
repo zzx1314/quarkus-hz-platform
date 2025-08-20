@@ -12,4 +12,7 @@ public interface AiDocumentMapper {
 
     @Mapping(target = "id", ignore = true)
     void updateEntityFromDto(AiDocumentDto dto, @MappingTarget AiDocument entity);
+
+    @Mapping(target = "id", ignore = true)
+    void updateEntity(AiDocument dto, @MappingTarget AiDocument entity);
 }

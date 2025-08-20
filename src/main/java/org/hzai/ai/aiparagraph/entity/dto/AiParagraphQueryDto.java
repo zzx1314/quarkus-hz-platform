@@ -8,6 +8,9 @@ public class AiParagraphQueryDto {
     @QueryParam("id")
     private Long id;
 
+    @QueryParam("docId")
+    private Long docId;
+
     @QueryParam("beginTime")
     private String beginTime;
 
