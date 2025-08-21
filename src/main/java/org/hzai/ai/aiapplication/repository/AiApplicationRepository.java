@@ -45,7 +45,7 @@ public class AiApplicationRepository implements PanacheRepository<AiApplication>
                 pageRequest.getSize());
     }
 
-    public Map<Long, Map<String, Object>> getAppCountByKbIdList(List<Integer> kbIdList) {
+    public Map<Long, Map<String, Object>> getAppCountByKbIdList(List<Long> kbIdList) {
         if (kbIdList == null || kbIdList.isEmpty()) {
             return Collections.emptyMap();
         }

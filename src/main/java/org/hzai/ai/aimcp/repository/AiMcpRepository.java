@@ -8,8 +8,6 @@ import java.util.Map;
 
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import org.hzai.ai.aifinetuning.entity.AiFineTuning;
-import org.hzai.ai.aifinetuning.entity.mapper.AiFineTuningMapper;
 import org.hzai.ai.aimcp.entity.AiMcp;
 import org.hzai.ai.aimcp.entity.dto.AiMcpDto;
 import org.hzai.ai.aimcp.entity.dto.AiMcpQueryDto;

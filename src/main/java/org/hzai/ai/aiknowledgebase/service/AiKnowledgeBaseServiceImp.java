@@ -9,6 +9,7 @@ import java.util.Map;
 import org.hzai.ai.aiknowledgebase.entity.AiKnowledgeBase;
 import org.hzai.ai.aiknowledgebase.entity.dto.AiKnowledgeBaseDto;
 import org.hzai.ai.aiknowledgebase.entity.dto.AiKnowledgeBaseQueryDto;
+import org.hzai.ai.aiknowledgebase.entity.vo.AiKnowledgeBaseVo;
 import org.hzai.ai.aiknowledgebase.repository.AiKnowledgeBaseRepository;
 import org.hzai.ai.aistatistics.util.DateUtil;
 import org.hzai.util.PageRequest;
@@ -38,7 +39,7 @@ public class AiKnowledgeBaseServiceImp implements AiKnowledgeBaseService {
     }
 
     @Override
-    public PageResult<AiKnowledgeBase> listPage(AiKnowledgeBaseQueryDto dto, PageRequest pageRequest) {
+    public PageResult<AiKnowledgeBaseVo> listPage(AiKnowledgeBaseQueryDto dto, PageRequest pageRequest) {
         return repository.selectPage(dto, pageRequest);
     }
 

@@ -1,12 +1,17 @@
 package org.hzai.ai.aiknowledgebase.repository;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.inject.Inject;
 import org.hibernate.query.NativeQuery;
+import org.hzai.ai.aiapplication.repository.AiApplicationRepository;
 import org.hzai.ai.aiknowledgebase.entity.AiKnowledgeBase;
 import org.hzai.ai.aiknowledgebase.entity.dto.AiKnowledgeBaseQueryDto;
+import org.hzai.ai.aiknowledgebase.entity.mapper.AiKnowledgeBaseMapper;
+import org.hzai.ai.aiknowledgebase.entity.vo.AiKnowledgeBaseVo;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.QueryBuilder;
@@ -18,6 +23,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class AiKnowledgeBaseRepository implements PanacheRepository<AiKnowledgeBase> {
+    @Inject
+    AiApplicationRepository aiApplicationService;
+
+    @Inject
+    AiKnowledgeBaseMapper aiKnowledgeBaseMapper;
 
      public List<AiKnowledgeBase> selectList(AiKnowledgeBaseQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
@@ -25,7 +35,7 @@ public class AiKnowledgeBaseRepository implements PanacheRepository<AiKnowledgeB
         return find(qb.getQuery(), qb.getParams()).list();
     }
 
-    public PageResult<AiKnowledgeBase> selectPage(AiKnowledgeBaseQueryDto dto, PageRequest pageRequest) {
+    public PageResult<AiKnowledgeBaseVo> selectPage(AiKnowledgeBaseQueryDto dto, PageRequest pageRequest) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0)
                 .between("createTime", dto.getBeginTime(), dto.getEndTime())
@@ -34,8 +44,25 @@ public class AiKnowledgeBaseRepository implements PanacheRepository<AiKnowledgeB
         PanacheQuery<AiKnowledgeBase> query = find(qb.getQuery(), qb.getParams())
                 .page(Page.of(pageRequest.getPageIndex(), pageRequest.getSize()));
 
+        List<AiKnowledgeBase> records = query.list();
+        List<AiKnowledgeBaseVo> result = new ArrayList<>();
+        if (!records.isEmpty()) {
+            List<Long> kbIdList = records.stream().map(AiKnowledgeBase::getId).toList();
+            Map<Long, Map<String, Object>> appCountByKbIdList = aiApplicationService.getAppCountByKbIdList(kbIdList);
+            for (AiKnowledgeBase aiKnowledgeBase : records) {
+                AiKnowledgeBaseVo aiKnowledgeBaseVo = aiKnowledgeBaseMapper.toVo(aiKnowledgeBase);
+                if (appCountByKbIdList != null && appCountByKbIdList.get(Long.valueOf(aiKnowledgeBase.getId().toString())) != null) {
+                    Object count = appCountByKbIdList.get(Long.valueOf(aiKnowledgeBase.getId().toString())).get("count");
+                    aiKnowledgeBaseVo.setAppCount(Long.valueOf(count.toString()));
+                } else {
+                    aiKnowledgeBaseVo.setAppCount(0L);
+                }
+                result.add(aiKnowledgeBaseVo);
+            }
+        }
+
         return new PageResult<>(
-                query.list(),
+                result,
                 query.count(),
                 pageRequest.getPage(),
                 pageRequest.getSize());

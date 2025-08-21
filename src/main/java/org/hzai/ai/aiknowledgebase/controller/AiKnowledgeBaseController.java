@@ -5,6 +5,7 @@ import java.util.List;
 import org.hzai.ai.aiknowledgebase.entity.AiKnowledgeBase;
 import org.hzai.ai.aiknowledgebase.entity.dto.AiKnowledgeBaseDto;
 import org.hzai.ai.aiknowledgebase.entity.dto.AiKnowledgeBaseQueryDto;
+import org.hzai.ai.aiknowledgebase.entity.vo.AiKnowledgeBaseVo;
 import org.hzai.ai.aiknowledgebase.service.AiKnowledgeBaseService;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
@@ -34,7 +35,7 @@ public class AiKnowledgeBaseController {
 
     @GET
     @Path("/getPage")
-    public R<PageResult<AiKnowledgeBase>> getPage(@BeanParam AiKnowledgeBaseQueryDto dto, @BeanParam PageRequest pageRequest) {
+    public R<PageResult<AiKnowledgeBaseVo>> getPage(@BeanParam AiKnowledgeBaseQueryDto dto, @BeanParam PageRequest pageRequest) {
         return R.ok(aiKnowledgeBaseService.listPage(dto, pageRequest));
     }
 

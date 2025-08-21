@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.Formula;
 
 /**
  * <p>
@@ -47,6 +48,10 @@ public class AiKnowledgeBase extends PanacheEntityBase {
 	private Integer acquaintanceLevel;
 
 	private String hitHandle;
+
+
+	@Formula("(select count(d.id) from ai_document d where d.knowledge_id = id)")
+	private Long documentCount;
 
 
 }
