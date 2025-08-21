@@ -19,11 +19,17 @@ public interface AiKnowledgeBaseService {
 
    Boolean register(AiKnowledgeBase entity);
 
-   replaceById(AiKnowledgeBase entity);
+   void replaceById(AiKnowledgeBase entity);
 
-   replaceByDto(AiKnowledgeBaseDto dto);
+   void replaceByDto(AiKnowledgeBaseDto dto);
 
-   removeById(Long id);
+   void removeById(Long id);
 
-   removeByIds(List<Long> ids);
+   void removeByIds(List<Long> ids);
+
+   List<Long> getKnowledgeBaseCount();
+
+   List<Long> getKnowledgeBaseCountBefore();
+
+   long count();
 }

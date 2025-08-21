@@ -19,11 +19,11 @@ public interface AiProcessService {
 
    Boolean register(AiProcess entity);
 
-   replaceById(AiProcess entity);
+   void replaceById(AiProcess entity);
 
-   replaceByDto(AiProcessDto dto);
+   void replaceByDto(AiProcessDto dto);
 
-   removeById(Long id);
+   void removeById(Long id);
 
-   removeByIds(List<Long> ids);
+   void removeByIds(List<Long> ids);
 }

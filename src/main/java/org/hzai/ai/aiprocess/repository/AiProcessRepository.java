@@ -1,8 +1,10 @@
 package org.hzai.ai.aiprocess.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hzai.ai.aiprocess.entity.AiProcess;
+import org.hzai.ai.aiprocess.entity.dto.AiProcessDto;
 import org.hzai.ai.aiprocess.entity.dto.AiProcessQueryDto;
 import org.hzai.ai.aiprocess.entity.mapper.AiProcessMapper;
 import org.hzai.util.PageRequest;
@@ -13,6 +15,8 @@ import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class AiProcessRepository implements PanacheRepository<AiProcess> {
@@ -51,13 +55,13 @@ public class AiProcessRepository implements PanacheRepository<AiProcess> {
     @Transactional
     public void updateById(AiProcess dto) {
         AiProcess entity = this.findById(dto.getId());
-        mapper.updateEntity(aiParagraph, entity);
+        mapper.updateEntity(dto, entity);
         entity.setUpdateTime(LocalDateTime.now());
     }
 
     @Transactional
     public void updateByDto(AiProcessDto dto) {
-        AiParagraph entity = this.findById(dto.getId());
+        AiProcess entity = this.findById(dto.getId());
         mapper.updateEntityFromDto(dto, entity);
         entity.setUpdateTime(LocalDateTime.now());
     }

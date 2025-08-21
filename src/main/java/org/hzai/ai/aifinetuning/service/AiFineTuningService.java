@@ -19,11 +19,11 @@ public interface AiFineTuningService {
 
    Boolean register(AiFineTuning entity);
 
-   replaceById(AiFineTuning entity);
+   void replaceById(AiFineTuning entity);
 
-   replaceByDto(AiFineTuningDto dto);
+   void replaceByDto(AiFineTuningDto dto);
 
-   removeById(Long id);
+   void removeById(Long id);
 
-   removeByIds(List<Long> ids);
+   void removeByIds(List<Long> ids);
 }

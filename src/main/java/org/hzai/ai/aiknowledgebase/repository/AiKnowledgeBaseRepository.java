@@ -1,10 +1,12 @@
 package org.hzai.ai.aiknowledgebase.repository;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.hibernate.query.NativeQuery;
 import org.hzai.ai.aiknowledgebase.entity.AiKnowledgeBase;
 import org.hzai.ai.aiknowledgebase.entity.dto.AiKnowledgeBaseQueryDto;
-import org.hzai.ai.aiknowledgebase.entity.mapper.AiKnowledgeBaseMapper;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.QueryBuilder;
@@ -16,20 +18,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class AiKnowledgeBaseRepository implements PanacheRepository<AiKnowledgeBase> {
-    @Inject
-    AiKnowledgeBaseMapper mapper;
 
      public List<AiKnowledgeBase> selectList(AiKnowledgeBaseQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
-    }
-
-    public AiKnowledgeBase selectOne(AiKnowledgeBaseQueryDto queryDto) {
-        QueryBuilder qb = QueryBuilder.create()
-                .equal("id", queryDto.getId())
-                .equal("isDeleted", 0);
-        return find(qb.getQuery(), qb.getParams()).singleResult();
     }
 
     public PageResult<AiKnowledgeBase> selectPage(AiKnowledgeBaseQueryDto dto, PageRequest pageRequest) {
@@ -48,27 +41,28 @@ public class AiKnowledgeBaseRepository implements PanacheRepository<AiKnowledgeB
                 pageRequest.getSize());
     }
 
-    @Transactional
-    public void updateById(AiKnowledgeBase dto) {
-        AiKnowledgeBase entity = this.findById(dto.getId());
-        mapper.updateEntity(aiParagraph, entity);
-        entity.setUpdateTime(LocalDateTime.now());
-    }
-
-    @Transactional
-    public void updateByDto(AiKnowledgeBaseDto dto) {
-        AiParagraph entity = this.findById(dto.getId());
-        mapper.updateEntityFromDto(dto, entity);
-        entity.setUpdateTime(LocalDateTime.now());
-    }
-
-    @Transactional
-    public void deleteByIds(List<Long> ids) {
-        if (ids != null && !ids.isEmpty()) {
-            for (Long id : ids) {
-                this.deleteById(id);
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> getKnowledgeBaseCountByDay() {
+        String sql = """
+            SELECT 
+                TO_CHAR(date_trunc('day', create_time), 'YYYY-MM-DD') AS date,
+                COUNT(*) AS count
+            FROM ai_knowledge_base
+            WHERE create_time >= NOW() - INTERVAL '14 days'
+            GROUP BY date_trunc('day', create_time)
+            ORDER BY date ASC
+        """;
+        return getEntityManager()
+        .createNativeQuery(sql, Object[].class)
+        .unwrap(NativeQuery.class)
+        .setTupleTransformer((tuple, aliases) -> {
+            Map<String, Object> map = new LinkedHashMap<>();
+            for (int i = 0; i < aliases.length; i++) {
+                map.put(aliases[i], tuple[i]);
             }
-        }
+            return map;
+        })
+        .getResultList();
     }
 
 }

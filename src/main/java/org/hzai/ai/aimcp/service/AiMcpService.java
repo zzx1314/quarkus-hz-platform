@@ -13,17 +13,15 @@ public interface AiMcpService {
 
    List<AiMcp> listEntitysByDto(AiMcpQueryDto sysOrgDto);
 
-   AiMcp listOne(AiMcpQueryDto dto);
-
    PageResult<AiMcp> listPage(AiMcpQueryDto dto, PageRequest pageRequest);
 
    Boolean register(AiMcp entity);
 
-   replaceById(AiMcp entity);
+   List<Long> getMcpCount();
 
-   replaceByDto(AiMcpDto dto);
+   List<Long> getMcpCountBefore();
 
-   removeById(Long id);
+   long count();
 
-   removeByIds(List<Long> ids);
+   void replaceByDto(AiMcpDto dto);
 }

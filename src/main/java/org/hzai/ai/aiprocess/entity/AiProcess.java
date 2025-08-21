@@ -27,7 +27,7 @@ public class AiProcess extends PanacheEntityBase {
 
 	@Id
 	@GeneratedValue
-	private Integer id;
+	private Long id;
 
 	private String nodes;
 

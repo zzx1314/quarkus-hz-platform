@@ -28,7 +28,7 @@ public class AiFineTuning extends PanacheEntityBase {
 
 	@Id
 	@GeneratedValue
-	private Integer id;
+	private Long id;
 
 	private String taskName;
 

@@ -19,11 +19,11 @@ public interface {{ entity_name }}Service {
 
    Boolean register({{ entity_name }} entity);
 
-   replaceById({{ entity_name }} entity);
+   void replaceById({{ entity_name }} entity);
 
-   replaceByDto({{ entity_name }}Dto dto);
+   void replaceByDto({{ entity_name }}Dto dto);
 
-   removeById(Long id);
+   void removeById(Long id);
 
-   removeByIds(List<Long> ids);
+   void removeByIds(List<Long> ids);
 }

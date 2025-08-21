@@ -1,12 +1,16 @@
 package org.hzai.ai.aimcp.service;
 
-import java.util.List;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.hzai.ai.aimcp.entity.AiMcp;
-import org.hzai.ai.aimcp.entity.dto.AiMcpQueryDto;
 import org.hzai.ai.aimcp.entity.dto.AiMcpDto;
+import org.hzai.ai.aimcp.entity.dto.AiMcpQueryDto;
 import org.hzai.ai.aimcp.repository.AiMcpRepository;
+import org.hzai.ai.aistatistics.util.DateUtil;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 
@@ -24,13 +28,8 @@ public class AiMcpServiceImp implements AiMcpService {
     }
 
     @Override
-    public List<AiMcp> listEntitysByDto(AiMcpQueryDto dto) {
-        return repository.selectList(dto);
-    }
-
-    @Override
-    public AiMcp listOne(AiMcpQueryDto dto) {
-        return repository.selectOne(dto);
+    public List<AiMcp> listEntitysByDto(AiMcpQueryDto sysOrgDto) {
+        return repository.selectList(sysOrgDto);
     }
 
     @Override
@@ -46,23 +45,67 @@ public class AiMcpServiceImp implements AiMcpService {
     }
 
     @Override
-    public void replaceById(AiMcp entity) {
-        repository.updateById(entity);
+    public List<Long> getMcpCount() {
+         List<Long> data = new ArrayList<>();
+		List<Map<String, Object>> mcpCountByDay = repository.getMcpCountByDay();
+
+		List<String> lastSevenDays = DateUtil.getLastSevenDays();
+
+		if (!mcpCountByDay.isEmpty()) {
+			// 将数据库统计结果转为 Map<date, count>
+			Map<String, Object> countMap = new HashMap<>();
+			for (Map<String, Object> map : mcpCountByDay) {
+				countMap.put(map.get("date").toString(), map.get("count"));
+			}
+			// 按照最近7天顺序填充数据，缺失的日期设为0
+			for (String date : lastSevenDays) {
+				data.add(Long.valueOf(countMap.getOrDefault(date, 0L).toString()));
+			}
+		} else {
+			// 如果没有数据，则全部填充0
+			for (int i = 0; i < 7; i++) {
+				data.add(0L);
+			}
+		}
+
+		return data;
+    }
+
+    @Override
+    public long count() {
+        return repository.count();
     }
 
     @Override
     public void replaceByDto(AiMcpDto dto) {
-        repository.updateByDto(dto);
+        repository.updateById(dto);
     }
 
     @Override
-    public void removeById(Long id) {
-        repository.deleteById(id);
-    }
+    public List<Long> getMcpCountBefore() {
+         List<Long> data = new ArrayList<>();
+		List<Map<String, Object>> mcpCountByDay = repository.getMcpCountByDay();
 
-    @Override
-    public void removeByIds(List<Long> ids) {
-        repository.deleteByIds(ids);
+		List<String> lastSevenDays = DateUtil.getLast14DaysToLast7Days();
+
+		if (!mcpCountByDay.isEmpty()) {
+			// 将数据库统计结果转为 Map<date, count>
+			Map<String, Object> countMap = new HashMap<>();
+			for (Map<String, Object> map : mcpCountByDay) {
+				countMap.put(map.get("date").toString(), map.get("count"));
+			}
+			// 按照最近7天顺序填充数据，缺失的日期设为0
+			for (String date : lastSevenDays) {
+				data.add(Long.valueOf(countMap.getOrDefault(date, 0L).toString()));
+			}
+		} else {
+			// 如果没有数据，则全部填充0
+			for (int i = 0; i < 7; i++) {
+				data.add(0L);
+			}
+		}
+
+		return data;
     }
 
 }

@@ -1,7 +1,6 @@
 package org.hzai.ai.aiapplication.controller;
 
 import java.util.List;
-import java.time.LocalDateTime;
 
 import org.hzai.ai.aiapplication.entity.AiApplication;
 import org.hzai.ai.aiapplication.entity.dto.AiApplicationDto;
@@ -56,13 +55,6 @@ public class AiApplicationController {
     @Transactional
     public R<Boolean> create(AiApplication entity) {
         return R.ok(aiApplicationService.register(entity));
-    }
-
-    @PUT
-    @Path("/update")
-    public R<AiApplication> update(AiApplicationDto dto) {
-        aiApplicationService.replaceByDto(dto);
-        return R.ok();
     }
 
     @DELETE

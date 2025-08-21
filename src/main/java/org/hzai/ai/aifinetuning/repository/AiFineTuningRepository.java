@@ -1,8 +1,10 @@
 package org.hzai.ai.aifinetuning.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hzai.ai.aifinetuning.entity.AiFineTuning;
+import org.hzai.ai.aifinetuning.entity.dto.AiFineTuningDto;
 import org.hzai.ai.aifinetuning.entity.dto.AiFineTuningQueryDto;
 import org.hzai.ai.aifinetuning.entity.mapper.AiFineTuningMapper;
 import org.hzai.util.PageRequest;
@@ -13,6 +15,8 @@ import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class AiFineTuningRepository implements PanacheRepository<AiFineTuning> {
@@ -51,13 +55,13 @@ public class AiFineTuningRepository implements PanacheRepository<AiFineTuning> {
     @Transactional
     public void updateById(AiFineTuning dto) {
         AiFineTuning entity = this.findById(dto.getId());
-        mapper.updateEntity(aiParagraph, entity);
+        mapper.updateEntity(dto, entity);
         entity.setUpdateTime(LocalDateTime.now());
     }
 
     @Transactional
     public void updateByDto(AiFineTuningDto dto) {
-        AiParagraph entity = this.findById(dto.getId());
+        AiFineTuning entity = this.findById(dto.getId());
         mapper.updateEntityFromDto(dto, entity);
         entity.setUpdateTime(LocalDateTime.now());
     }

@@ -19,11 +19,11 @@ public interface AiModelService {
 
    Boolean register(AiModel entity);
 
-   replaceById(AiModel entity);
+   void replaceById(AiModel entity);
 
-   replaceByDto(AiModelDto dto);
+   void replaceByDto(AiModelDto dto);
 
-   removeById(Long id);
+   void removeById(Long id);
 
-   removeByIds(List<Long> ids);
+   void removeByIds(List<Long> ids);
 }

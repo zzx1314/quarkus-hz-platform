@@ -19,11 +19,11 @@ public interface AiMcpToolsService {
 
    Boolean register(AiMcpTools entity);
 
-   replaceById(AiMcpTools entity);
+   void replaceById(AiMcpTools entity);
 
-   replaceByDto(AiMcpToolsDto dto);
+   void replaceByDto(AiMcpToolsDto dto);
 
-   removeById(Long id);
+   void removeById(Long id);
 
-   removeByIds(List<Long> ids);
+   void removeByIds(List<Long> ids);
 }

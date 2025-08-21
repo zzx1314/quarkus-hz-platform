@@ -1,8 +1,10 @@
 package org.hzai.ai.aimcptools.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hzai.ai.aimcptools.entity.AiMcpTools;
+import org.hzai.ai.aimcptools.entity.dto.AiMcpToolsDto;
 import org.hzai.ai.aimcptools.entity.dto.AiMcpToolsQueryDto;
 import org.hzai.ai.aimcptools.entity.mapper.AiMcpToolsMapper;
 import org.hzai.util.PageRequest;
@@ -13,6 +15,8 @@ import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class AiMcpToolsRepository implements PanacheRepository<AiMcpTools> {
@@ -51,13 +55,13 @@ public class AiMcpToolsRepository implements PanacheRepository<AiMcpTools> {
     @Transactional
     public void updateById(AiMcpTools dto) {
         AiMcpTools entity = this.findById(dto.getId());
-        mapper.updateEntity(aiParagraph, entity);
+        mapper.updateEntity(dto, entity);
         entity.setUpdateTime(LocalDateTime.now());
     }
 
     @Transactional
     public void updateByDto(AiMcpToolsDto dto) {
-        AiParagraph entity = this.findById(dto.getId());
+        AiMcpTools entity = this.findById(dto.getId());
         mapper.updateEntityFromDto(dto, entity);
         entity.setUpdateTime(LocalDateTime.now());
     }
