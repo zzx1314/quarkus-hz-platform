@@ -1,5 +1,6 @@
 package org.hzai.ai.aiknowledgebase.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hzai.ai.aiknowledgebase.entity.AiKnowledgeBase;
@@ -7,6 +8,7 @@ import org.hzai.ai.aiknowledgebase.entity.dto.AiKnowledgeBaseDto;
 import org.hzai.ai.aiknowledgebase.entity.dto.AiKnowledgeBaseQueryDto;
 import org.hzai.ai.aiknowledgebase.entity.vo.AiKnowledgeBaseVo;
 import org.hzai.ai.aiknowledgebase.service.AiKnowledgeBaseService;
+import org.hzai.ai.common.SelectOption;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.R;
@@ -91,5 +93,19 @@ public class AiKnowledgeBaseController {
         entity.persist();
         return R.ok();
     }
+
+    @GET
+    @Path("allSelectOption")
+	public R<Object> findAllBySelectOption() {
+		List<SelectOption> selectOption = new ArrayList<>();
+		List<AiKnowledgeBase> list = aiKnowledgeBaseService.listEntitys();
+		for (AiKnowledgeBase aiKnowledgeBase : list) {
+			SelectOption option = new SelectOption();
+			option.setLabel(aiKnowledgeBase.getKnowledgeBaseName());
+			option.setValue(aiKnowledgeBase.getId());
+			selectOption.add(option);
+		}
+		return R.ok(selectOption);
+	}
 
 }
