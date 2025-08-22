@@ -35,7 +35,7 @@ public class AiKnowledgeBaseServiceImp implements AiKnowledgeBaseService {
 
     @Override
     public AiKnowledgeBase listOne(AiKnowledgeBaseQueryDto dto) {
-        return null;
+        return repository.selectOne(dto);
     }
 
     @Override
@@ -52,22 +52,22 @@ public class AiKnowledgeBaseServiceImp implements AiKnowledgeBaseService {
 
     @Override
     public void replaceById(AiKnowledgeBase entity) {
-
+        repository.updateById(entity);
     }
 
     @Override
     public void replaceByDto(AiKnowledgeBaseDto dto) {
-
+        repository.updateByDto(dto);
     }
 
     @Override
     public void removeById(Long id) {
-
+        repository.deleteById(id);
     }
 
     @Override
     public void removeByIds(List<Long> ids) {
-
+        repository.deleteByIds(ids);
     }
 
     @Override

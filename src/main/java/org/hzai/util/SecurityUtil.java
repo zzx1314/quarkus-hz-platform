@@ -29,4 +29,8 @@ public class SecurityUtil {
         return new ArrayList<>();
     }
 
+    public String getUserName () {
+        return jwt.getSubject();
+    }
+
 }

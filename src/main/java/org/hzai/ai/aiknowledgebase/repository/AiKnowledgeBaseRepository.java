@@ -1,14 +1,18 @@
 package org.hzai.ai.aiknowledgebase.repository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+
 import org.hibernate.query.NativeQuery;
 import org.hzai.ai.aiapplication.repository.AiApplicationRepository;
 import org.hzai.ai.aiknowledgebase.entity.AiKnowledgeBase;
+import org.hzai.ai.aiknowledgebase.entity.dto.AiKnowledgeBaseDto;
 import org.hzai.ai.aiknowledgebase.entity.dto.AiKnowledgeBaseQueryDto;
 import org.hzai.ai.aiknowledgebase.entity.mapper.AiKnowledgeBaseMapper;
 import org.hzai.ai.aiknowledgebase.entity.vo.AiKnowledgeBaseVo;
@@ -33,6 +37,13 @@ public class AiKnowledgeBaseRepository implements PanacheRepository<AiKnowledgeB
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
+    }
+
+    public AiKnowledgeBase selectOne(AiKnowledgeBaseQueryDto queryDto) {
+        QueryBuilder qb = QueryBuilder.create()
+                .equal("id", queryDto.getId())
+                .equal("isDeleted", 0);
+        return find(qb.getQuery(), qb.getParams()).singleResult();
     }
 
     public PageResult<AiKnowledgeBaseVo> selectPage(AiKnowledgeBaseQueryDto dto, PageRequest pageRequest) {
@@ -90,6 +101,29 @@ public class AiKnowledgeBaseRepository implements PanacheRepository<AiKnowledgeB
             return map;
         })
         .getResultList();
+    }
+
+    @Transactional
+    public void updateById(AiKnowledgeBase dto) {
+        AiKnowledgeBase entity = this.findById(dto.getId());
+        aiKnowledgeBaseMapper.updateEntity(dto, entity);
+        entity.setUpdateTime(LocalDateTime.now());
+    }
+
+    @Transactional
+    public void updateByDto(AiKnowledgeBaseDto dto) {
+        AiKnowledgeBase entity = this.findById(dto.getId());
+        aiKnowledgeBaseMapper.updateEntityFromDto(dto, entity);
+        entity.setUpdateTime(LocalDateTime.now());
+    }
+
+    @Transactional
+    public void deleteByIds(List<Long> ids) {
+        if (ids != null && !ids.isEmpty()) {
+            for (Long id : ids) {
+                this.deleteById(id);
+            }
+        }
     }
 
 }

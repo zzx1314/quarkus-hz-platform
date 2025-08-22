@@ -10,6 +10,7 @@ import org.hzai.ai.aiknowledgebase.service.AiKnowledgeBaseService;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.R;
+import org.hzai.util.SecurityUtil;
 
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -32,6 +33,9 @@ public class AiKnowledgeBaseController {
     @Inject
     AiKnowledgeBaseService aiKnowledgeBaseService;
 
+    @Inject
+    SecurityUtil securityUtil;
+
 
     @GET
     @Path("/getPage")
@@ -51,10 +55,20 @@ public class AiKnowledgeBaseController {
         return R.ok(aiKnowledgeBaseService.listEntitys());
     }
 
+    @GET
+    @Path("/getById/{id}")
+	public R<Object> getById(@PathParam("id") Long id) {
+        AiKnowledgeBaseQueryDto queryDto = new AiKnowledgeBaseQueryDto();
+        queryDto.setId(id);
+		AiKnowledgeBase one = aiKnowledgeBaseService.listOne(queryDto);
+		return R.ok(one);
+	}
+
     @POST
     @Path("/create")
     @Transactional
     public R<Boolean> create(AiKnowledgeBase entity) {
+        entity.setCreateUser(securityUtil.getUserName());
         return R.ok(aiKnowledgeBaseService.register(entity));
     }
 
