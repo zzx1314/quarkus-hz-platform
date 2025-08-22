@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -15,13 +14,13 @@ public class SecurityUtil {
     @Inject
     JsonWebToken jwt;
 
-
     public List<Long> getRole() {
         Object roleObj = jwt.getClaim("role");
         if (roleObj instanceof List<?> list) {
             return list.stream()
                     .map(o -> {
-                        if (o instanceof Number n) return n.longValue();
+                        if (o instanceof Number n)
+                            return n.longValue();
                         return Long.valueOf(o.toString());
                     })
                     .toList();
@@ -29,8 +28,12 @@ public class SecurityUtil {
         return new ArrayList<>();
     }
 
-    public String getUserName () {
+    public String getUserName() {
         return jwt.getSubject();
+    }
+
+    public Long getUserId() {
+        return Long.valueOf(jwt.getClaim("userId").toString());
     }
 
 }

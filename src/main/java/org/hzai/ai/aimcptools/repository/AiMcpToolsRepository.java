@@ -75,4 +75,23 @@ public class AiMcpToolsRepository implements PanacheRepository<AiMcpTools> {
         }
     }
 
+    @Transactional
+    public void updateList(List<AiMcpTools> toolsToUpdate) {
+        for (AiMcpTools tool : toolsToUpdate) {
+            AiMcpTools entity = this.findById(tool.getId());
+            if (entity != null) {
+                mapper.updateEntity(tool, entity);
+                entity.setUpdateTime(LocalDateTime.now());
+            }
+        }
+    }
+
+    public void insertBatch(List<AiMcpTools> toolsToInsert) {
+        for (AiMcpTools tool : toolsToInsert) {
+            tool.setCreateTime(LocalDateTime.now());
+            tool.setUpdateTime(LocalDateTime.now());
+            this.persist(tool);
+        }
+    }
+
 }

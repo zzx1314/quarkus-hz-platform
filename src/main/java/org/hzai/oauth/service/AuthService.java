@@ -113,6 +113,7 @@ public class AuthService {
                 .subject(subject)
                 .groups(new HashSet<>(Arrays.asList("User", "Admin")))
                 .claim("role", userDto != null ? userDto.getRoleIdList() : null)
+                .claim("userId", userDto.getId())
                 .expiresAt(Instant.now().plusSeconds(CommonConstants.EXPIRES_IN))
                 .sign();
 

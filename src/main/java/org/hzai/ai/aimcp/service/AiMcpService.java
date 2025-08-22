@@ -7,6 +7,8 @@ import org.hzai.ai.aimcp.entity.dto.AiMcpDto;
 import org.hzai.ai.aimcp.entity.dto.AiMcpQueryDto;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
+import org.hzai.util.R;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
 
 public interface AiMcpService {
    List<AiMcp> listEntitys();
@@ -24,4 +26,6 @@ public interface AiMcpService {
    long count();
 
    void replaceByDto(AiMcpDto dto);
+
+   R<Object> uploadFile(FileUpload file, AiMcp aiMcp) throws Exception;
 }

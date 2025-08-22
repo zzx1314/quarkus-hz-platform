@@ -8,6 +8,9 @@ public class AiMcpToolsQueryDto {
     @QueryParam("id")
     private Long id;
 
+    @QueryParam("mcpId")
+    private Long mcpId;
+
     @QueryParam("beginTime")
     private String beginTime;
 

@@ -78,4 +78,12 @@ public class AiMcpRepository implements PanacheRepository<AiMcp> {
         entity.setUpdateTime(LocalDateTime.now());
     }
 
+
+    @Transactional
+    public void updateById(AiMcp dto) {
+        AiMcp entity = this.findById(dto.getId());
+        mapper.updateEntity(dto, entity);
+        entity.setUpdateTime(LocalDateTime.now());
+    }
+
 }

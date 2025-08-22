@@ -44,7 +44,7 @@ public class AiMcpTools extends PanacheEntityBase {
 	@Column(columnDefinition = "INT DEFAULT 0")
 	private Integer isDeleted;
 
-	private Integer mcpId;
+	private Long mcpId;
 
 
 }
