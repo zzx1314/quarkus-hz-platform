@@ -10,7 +10,9 @@ import java.util.stream.Collectors;
 
 import org.hzai.ai.aiapplication.entity.AiApplication;
 import org.hzai.ai.aiapplication.entity.IntentRecognition;
+import org.hzai.ai.aiapplication.entity.dto.AiApplicationDto;
 import org.hzai.ai.aiapplication.entity.dto.AiApplicationQueryDto;
+import org.hzai.ai.aiapplication.entity.mapper.AiApplicationMapper;
 import org.hzai.ai.aiapplication.repository.AiApplicationRepository;
 import org.hzai.ai.aiapplication.service.flow.FlowEngine;
 import org.hzai.ai.aidocument.service.EmbeddingStoreRegistry;
@@ -19,7 +21,9 @@ import org.hzai.ai.aiknowledgebase.service.AiKnowledgeBaseService;
 import org.hzai.ai.aimcp.entity.AiMcp;
 import org.hzai.ai.aimcp.service.AiMcpService;
 import org.hzai.ai.aimodel.service.AiModelService;
+import org.hzai.ai.aiprocess.entity.AiProcess;
 import org.hzai.ai.aiprocess.entity.NodeEntity;
+import org.hzai.ai.aiprocess.entity.dto.AiProcessQueryDto;
 import org.hzai.ai.aiprocess.entity.vo.AiProcessNet;
 import org.hzai.ai.aiprocess.service.AiProcessService;
 import org.hzai.ai.aistatistics.util.DateUtil;
@@ -85,6 +89,9 @@ public class AiApplicationServiceImp implements AiApplicationService {
 
 	@Inject
 	SecurityUtil securityUtil;
+
+	@Inject
+	AiApplicationMapper aiApplicationMapper;
     @Override
     public List<AiApplication> listEntitys() {
         return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
@@ -101,9 +108,30 @@ public class AiApplicationServiceImp implements AiApplicationService {
     }
 
     @Override
-    public Boolean register(AiApplication entity) {
+    public Boolean register(AiApplicationDto aiApplicationDto) {
+		AiApplication entity = aiApplicationMapper.toEntity(aiApplicationDto);
         entity.setCreateTime(LocalDateTime.now());
-        repository.persist(entity);
+
+		entity.setCreateId(securityUtil.getUserId());
+		entity.setRoles(String.join(",", aiApplicationDto.getRoleIdList()));
+
+		if ("简单应用".equals(aiApplicationDto.getType())) {
+			entity.setKnowledgeIds(String.join(",", aiApplicationDto.getKnowledgeIdList()));
+			if (!aiApplicationDto.getMcpIdList().isEmpty()){
+				entity.setMcpIds(String.join(",", aiApplicationDto.getMcpIdList()));
+			}
+
+			repository.persist(entity);
+		} else {
+			repository.persist(entity);
+			// 复杂应用处理，添加流程
+			AiProcess aiProcess = new AiProcess();
+			aiProcess.setAppId(entity.getId());
+			aiProcess.setNodes(aiApplicationDto.getNodes());
+			aiProcess.setEdges(aiApplicationDto.getEdges());
+			aiProcessService.register(aiProcess);
+		}
+
         return true;
     }
 
@@ -314,6 +342,22 @@ public class AiApplicationServiceImp implements AiApplicationService {
 	@Override
 	public void replaceById(AiApplication aiApplication) {
 		repository.updateById(aiApplication);
+	}
+
+	@Override
+	public void replaceData(AiApplicationDto aiApplication) {
+		if ("简单应用".equals(aiApplication.getType())) {
+			repository.updateByDto(aiApplication);
+		} else { 
+			// 复杂应用的修改
+		    repository.updateByDto(aiApplication);
+			AiProcessQueryDto dto = new AiProcessQueryDto();
+			dto.setAppId(aiApplication.getId());
+			AiProcess onepRrocess = aiProcessService.listOne(dto);
+			onepRrocess.setNodes(aiApplication.getNodes());
+			onepRrocess.setEdges(aiApplication.getEdges());
+			aiProcessService.replaceById(onepRrocess);
+		}
 	}
 
 }

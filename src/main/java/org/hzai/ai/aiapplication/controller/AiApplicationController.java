@@ -3,6 +3,7 @@ package org.hzai.ai.aiapplication.controller;
 import java.util.List;
 
 import org.hzai.ai.aiapplication.entity.AiApplication;
+import org.hzai.ai.aiapplication.entity.dto.AiApplicationDto;
 import org.hzai.ai.aiapplication.entity.dto.AiApplicationQueryDto;
 import org.hzai.ai.aiapplication.service.AiApplicationService;
 import org.hzai.util.FileUtil;
@@ -21,6 +22,7 @@ import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -56,9 +58,17 @@ public class AiApplicationController {
     @POST
     @Path("/create")
     @Transactional
-    public R<Boolean> create(AiApplication entity) {
+    public R<Boolean> create(AiApplicationDto entity) {
         return R.ok(aiApplicationService.register(entity));
     }
+
+    @PUT
+    @Path("update")
+	public R<Object> update(AiApplicationDto aiApplication) {
+		aiApplicationService.replaceData(aiApplication);
+		return R.ok();
+	}
+
 
     @DELETE
     @Path("/{id}")

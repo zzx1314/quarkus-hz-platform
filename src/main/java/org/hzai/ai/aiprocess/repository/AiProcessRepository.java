@@ -32,6 +32,7 @@ public class AiProcessRepository implements PanacheRepository<AiProcess> {
     public AiProcess selectOne(AiProcessQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("id", queryDto.getId())
+                .equal("appId", queryDto.getAppId())
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).singleResult();
     }

@@ -1,5 +1,6 @@
 package org.hzai.ai.aiapplication.repository;
 
+import java.beans.Transient;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.hzai.ai.aiapplication.entity.AiApplication;
+import org.hzai.ai.aiapplication.entity.dto.AiApplicationDto;
 import org.hzai.ai.aiapplication.entity.dto.AiApplicationQueryDto;
 import org.hzai.ai.aiapplication.entity.mapper.AiApplicationMapper;
 import org.hzai.util.PageRequest;
@@ -118,9 +120,17 @@ public class AiApplicationRepository implements PanacheRepository<AiApplication>
         return result;
     }
 
+    @Transient
     public void updateById(AiApplication dto) {
         AiApplication entity = this.findById(dto.getId());
         mapper.updateEntity(dto, entity);
+        entity.setUpdateTime(LocalDateTime.now());
+    }
+
+    @Transient
+    public void updateByDto(AiApplicationDto aiApplication) {
+        AiApplication entity = this.findById(aiApplication.getId());
+        mapper.updateEntityFromDto(aiApplication, entity);
         entity.setUpdateTime(LocalDateTime.now());
     }
 

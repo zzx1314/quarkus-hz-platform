@@ -33,7 +33,7 @@ public class AiProcess extends PanacheEntityBase {
 
 	private String edges;
 
-	private Integer appId;
+	private Long appId;
 
 	private LocalDateTime createTime;
 
