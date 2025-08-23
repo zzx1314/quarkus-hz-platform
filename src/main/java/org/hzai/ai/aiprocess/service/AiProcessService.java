@@ -5,6 +5,7 @@ import java.util.List;
 import org.hzai.ai.aiprocess.entity.AiProcess;
 import org.hzai.ai.aiprocess.entity.dto.AiProcessDto;
 import org.hzai.ai.aiprocess.entity.dto.AiProcessQueryDto;
+import org.hzai.ai.aiprocess.entity.vo.AiProcessNet;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 
@@ -26,4 +27,7 @@ public interface AiProcessService {
    void removeById(Long id);
 
    void removeByIds(List<Long> ids);
+
+   AiProcessNet getAiProcessNet(Long appId);
+
 }

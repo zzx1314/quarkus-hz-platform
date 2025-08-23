@@ -8,6 +8,8 @@ public class AiProcessQueryDto {
     @QueryParam("id")
     private Long id;
 
+    private Long appId;
+
     @QueryParam("beginTime")
     private String beginTime;
 
