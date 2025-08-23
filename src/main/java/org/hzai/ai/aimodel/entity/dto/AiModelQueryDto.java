@@ -8,6 +8,8 @@ public class AiModelQueryDto {
     @QueryParam("id")
     private Long id;
 
+    private String enable;
+
     @QueryParam("beginTime")
     private String beginTime;
 

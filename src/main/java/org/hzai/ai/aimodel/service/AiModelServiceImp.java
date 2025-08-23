@@ -1,5 +1,6 @@
 package org.hzai.ai.aimodel.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDateTime;
 
@@ -7,6 +8,7 @@ import org.hzai.ai.aimodel.entity.AiModel;
 import org.hzai.ai.aimodel.entity.dto.AiModelQueryDto;
 import org.hzai.ai.aimodel.entity.dto.AiModelDto;
 import org.hzai.ai.aimodel.repository.AiModelRepository;
+import org.hzai.ai.common.SelectOption;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 
@@ -63,6 +65,21 @@ public class AiModelServiceImp implements AiModelService {
     @Override
     public void removeByIds(List<Long> ids) {
         repository.deleteByIds(ids);
+    }
+
+    @Override
+    public Object findAllBySelectOption() {
+        AiModelQueryDto queryDto = new AiModelQueryDto();
+        queryDto.setEnable("true");
+        List<AiModel> list = repository.selectList(queryDto);
+		List<SelectOption> selectOption = new ArrayList<>();
+		for (AiModel aiMcp : list) {
+			SelectOption option = new SelectOption();
+			option.setLabel(aiMcp.getModelName());
+			option.setValue(aiMcp.getId());
+			selectOption.add(option);
+		}
+		return selectOption;
     }
 
 }

@@ -26,4 +26,6 @@ public interface AiModelService {
    void removeById(Long id);
 
    void removeByIds(List<Long> ids);
+
+   Object findAllBySelectOption();
 }

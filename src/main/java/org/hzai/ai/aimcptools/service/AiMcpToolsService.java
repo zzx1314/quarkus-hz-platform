@@ -26,4 +26,6 @@ public interface AiMcpToolsService {
    void removeById(Long id);
 
    void removeByIds(List<Long> ids);
+
+   Object findAllBySelectOption(Long id);
 }

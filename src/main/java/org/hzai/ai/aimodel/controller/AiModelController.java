@@ -77,4 +77,11 @@ public class AiModelController {
         return R.ok();
     }
 
+    @GET
+    @Path("allSelectOption")
+	public R<Object> findAllBySelectOption() {
+		return R.ok(aiModelService.findAllBySelectOption());
+	}
+
+
 }

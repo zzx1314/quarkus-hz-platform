@@ -25,6 +25,8 @@ public class AiModelRepository implements PanacheRepository<AiModel> {
 
      public List<AiModel> selectList(AiModelQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
+                .equal("id", queryDto.getId())
+                .equal("enable", queryDto.getEnable())
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
     }

@@ -1,5 +1,6 @@
 package org.hzai.ai.aimcptools.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDateTime;
 
@@ -7,6 +8,7 @@ import org.hzai.ai.aimcptools.entity.AiMcpTools;
 import org.hzai.ai.aimcptools.entity.dto.AiMcpToolsQueryDto;
 import org.hzai.ai.aimcptools.entity.dto.AiMcpToolsDto;
 import org.hzai.ai.aimcptools.repository.AiMcpToolsRepository;
+import org.hzai.ai.common.SelectOption;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 
@@ -63,6 +65,21 @@ public class AiMcpToolsServiceImp implements AiMcpToolsService {
     @Override
     public void removeByIds(List<Long> ids) {
         repository.deleteByIds(ids);
+    }
+
+    @Override
+    public Object findAllBySelectOption(Long id) {
+        AiMcpToolsQueryDto queryDto = new AiMcpToolsQueryDto();
+        queryDto.setMcpId(id);
+        List<AiMcpTools> list = repository.selectList(queryDto);
+		List<SelectOption> selectOption = new ArrayList<>();
+		for (AiMcpTools aiMcp : list) {
+			SelectOption option = new SelectOption();
+			option.setLabel(aiMcp.getName());
+			option.setValue(aiMcp.getId());
+			selectOption.add(option);
+		}
+		return selectOption;
     }
 
 }

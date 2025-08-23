@@ -77,4 +77,10 @@ public class AiMcpToolsController {
         return R.ok();
     }
 
+    @GET
+    @Path("allSelectOption/{mcpId}")
+	public R<Object> findAllBySelectOption(@PathParam("mcpId") Long id) {
+		return R.ok(aiMcpToolsService.findAllBySelectOption(id));
+	}
+
 }
