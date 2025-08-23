@@ -5,6 +5,7 @@ import java.util.List;
 import org.hzai.ai.aiapplication.entity.AiApplication;
 import org.hzai.ai.aiapplication.entity.dto.AiApplicationDto;
 import org.hzai.ai.aiapplication.entity.dto.AiApplicationQueryDto;
+import org.hzai.ai.aiapplication.entity.vo.AiApplicationVo;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 
@@ -15,7 +16,7 @@ public interface AiApplicationService {
 
    List<AiApplication> listEntitysByDto(AiApplicationQueryDto sysOrgDto);
 
-   PageResult<AiApplication> listPage(AiApplicationQueryDto dto, PageRequest pageRequest);
+   PageResult<AiApplicationVo> listPage(AiApplicationQueryDto dto, PageRequest pageRequest);
 
    Boolean register(AiApplicationDto entity);
 

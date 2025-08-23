@@ -5,6 +5,7 @@ import java.util.List;
 import org.hzai.ai.aiapplication.entity.AiApplication;
 import org.hzai.ai.aiapplication.entity.dto.AiApplicationDto;
 import org.hzai.ai.aiapplication.entity.dto.AiApplicationQueryDto;
+import org.hzai.ai.aiapplication.entity.vo.AiApplicationVo;
 import org.hzai.ai.aiapplication.service.AiApplicationService;
 import org.hzai.util.FileUtil;
 import org.hzai.util.PageRequest;
@@ -39,7 +40,7 @@ public class AiApplicationController {
 
     @GET
     @Path("/getPage")
-    public R<PageResult<AiApplication>> getPage(@BeanParam AiApplicationQueryDto dto, @BeanParam PageRequest pageRequest) {
+    public R<PageResult<AiApplicationVo>> getPage(@BeanParam AiApplicationQueryDto dto, @BeanParam PageRequest pageRequest) {
         return R.ok(aiApplicationService.listPage(dto, pageRequest));
     }
 

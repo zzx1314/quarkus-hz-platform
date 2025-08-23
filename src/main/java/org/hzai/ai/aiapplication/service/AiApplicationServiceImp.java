@@ -13,6 +13,7 @@ import org.hzai.ai.aiapplication.entity.IntentRecognition;
 import org.hzai.ai.aiapplication.entity.dto.AiApplicationDto;
 import org.hzai.ai.aiapplication.entity.dto.AiApplicationQueryDto;
 import org.hzai.ai.aiapplication.entity.mapper.AiApplicationMapper;
+import org.hzai.ai.aiapplication.entity.vo.AiApplicationVo;
 import org.hzai.ai.aiapplication.repository.AiApplicationRepository;
 import org.hzai.ai.aiapplication.service.flow.FlowEngine;
 import org.hzai.ai.aidocument.service.EmbeddingStoreRegistry;
@@ -103,8 +104,10 @@ public class AiApplicationServiceImp implements AiApplicationService {
     }
 
     @Override
-    public PageResult<AiApplication> listPage(AiApplicationQueryDto dto, PageRequest pageRequest) {
-        return repository.selectPage(dto, pageRequest);
+    public PageResult<AiApplicationVo> listPage(AiApplicationQueryDto queryDto, PageRequest pageRequest) {
+		queryDto.setCreateId(securityUtil.getUserId());
+		queryDto.setRoleIdList(securityUtil.getRole());
+        return repository.selectPage(queryDto, pageRequest);
     }
 
     @Override
