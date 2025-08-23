@@ -28,6 +28,9 @@ public class AiMcpRepository implements PanacheRepository<AiMcp> {
 
      public List<AiMcp> selectList(AiMcpQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
+                .equal("id", queryDto.getId())
+                .equal("enable", queryDto.getEnable())
+                .like("name", queryDto.getName())
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
     }

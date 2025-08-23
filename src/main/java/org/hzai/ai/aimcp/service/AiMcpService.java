@@ -27,5 +27,10 @@ public interface AiMcpService {
 
    void replaceByDto(AiMcpDto dto);
 
+
+   void replaceById(AiMcp entity);
+
    R<Object> uploadFile(FileUpload file, AiMcp aiMcp) throws Exception;
+
+   Object findAllBySelectOption();
 }

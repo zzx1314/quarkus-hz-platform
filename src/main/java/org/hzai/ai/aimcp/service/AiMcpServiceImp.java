@@ -23,6 +23,7 @@ import org.hzai.ai.aimcptools.entity.AiMcpTools;
 import org.hzai.ai.aimcptools.entity.dto.AiMcpToolsQueryDto;
 import org.hzai.ai.aimcptools.repository.AiMcpToolsRepository;
 import org.hzai.ai.aistatistics.util.DateUtil;
+import org.hzai.ai.common.SelectOption;
 import org.hzai.config.FileConfig;
 import org.hzai.util.CommonConstants;
 import org.hzai.util.FileUtil;
@@ -216,9 +217,31 @@ public class AiMcpServiceImp implements AiMcpService {
                 aiMcpToolsRepository.delete("mcpId = ?1 and name in (?2) ", aiMcp.getId(), String.join(",", toDeleteNames));
 			}
         } else {
-           
+           // insert
+			aiMcp.setEnable("启用");
+			aiMcp.setOriginFileName(file.fileName());
+			aiMcp.setToolNum(toolSpecifications.size());
+			repository.persist(aiMcp);
+
+			List<AiMcpTools> aiMcpTools = new ArrayList<>();
+			for (ToolSpecification toolSpecification : toolSpecifications) {
+				AiMcpTools oneTool = new AiMcpTools();
+				oneTool.setMcpId(aiMcp.getId());
+				oneTool.setName(toolSpecification.name());
+				oneTool.setDescription(toolSpecification.description());
+				JsonObjectSchema parameters = toolSpecification.parameters();
+				ObjectMapper objectMapper = new ObjectMapper();
+				AiMcpParamDto aiMcpParamDto = new AiMcpParamDto();
+				aiMcpParamDto.setProperties(String.valueOf(parameters.properties()));
+				aiMcpParamDto.setRequired(String.valueOf(parameters.required()));
+				String inputjson = objectMapper.writeValueAsString(aiMcpParamDto);
+				oneTool.setParameters(getPatameters(inputjson));
+				aiMcpTools.add(oneTool);
+			}
+			aiMcpToolsRepository.insertBatch(aiMcpTools);
         }
-        return R.ok();
+        mapClientRegistry.register(aiMcp.getId(), mcpClient);
+	    return R.ok("上传成功！");
     }
 
     private R<Object> checkFile(FileUpload file, AiMcp aiMcp) {
@@ -326,6 +349,26 @@ public class AiMcpServiceImp implements AiMcpService {
 
         // 输出结果
         return mapper.writeValueAsString(resultList);
+    }
+
+    @Override
+    public void replaceById(AiMcp entity) {
+        repository.updateById(entity);
+    }
+
+    @Override
+    public Object findAllBySelectOption() {
+        AiMcpQueryDto queryDto = new AiMcpQueryDto();
+        queryDto.setEnable("启用");
+        List<AiMcp> list = repository.selectList(queryDto);
+		List<SelectOption> selectOption = new ArrayList<>();
+		for (AiMcp aiMcp : list) {
+			SelectOption option = new SelectOption();
+			option.setLabel(aiMcp.getName());
+			option.setValue(aiMcp.getId());
+			selectOption.add(option);
+		}
+		return selectOption;
     }
 
 }

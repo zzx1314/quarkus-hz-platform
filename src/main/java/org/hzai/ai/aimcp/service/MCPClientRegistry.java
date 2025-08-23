@@ -24,7 +24,7 @@ public class MCPClientRegistry {
 		return clientMap.values();
 	}
 
-	public boolean contains(Integer name) {
+	public boolean contains(Long name) {
 		return clientMap.containsKey(name);
 	}
 }

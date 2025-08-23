@@ -6,9 +6,12 @@ import org.hzai.ai.aimcp.entity.AiMcp;
 import org.hzai.ai.aimcp.entity.dto.AiMcpDto;
 import org.hzai.ai.aimcp.entity.dto.AiMcpQueryDto;
 import org.hzai.ai.aimcp.service.AiMcpService;
+import org.hzai.util.JsonUtil;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.R;
+import org.jboss.resteasy.reactive.RestForm;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
 
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -63,6 +66,30 @@ public class AiMcpController {
         aiMcpService.replaceByDto(dto);
         return R.ok();
     }
+
+    @POST
+    @Path(value = "/uploadFile")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+	public R<Object> uploadFile(@RestForm("file") FileUpload file, @RestForm String aiMcp) throws Exception {
+		AiMcp aiMcpObj = JsonUtil.fromJson(aiMcp, AiMcp.class);
+		return aiMcpService.uploadFile(file, aiMcpObj);
+	}
+
+    @PUT
+    @Path("enableMcp/{id}/{status}")
+	public R<Object> enableMcp(@PathParam("id") Long id, @PathParam("status") String status) {
+		AiMcp aiMcp = new AiMcp();
+		aiMcp.setEnable(status);
+		aiMcp.setId(id);
+		aiMcpService.register(aiMcp);
+		return R.ok();
+	}
+
+    @GET
+    @Path("allSelectOption")
+	public R<Object> findAllBySelectOption() {
+		return R.ok(aiMcpService.findAllBySelectOption());
+	}
 
     @DELETE
     @Path("/{id}")
