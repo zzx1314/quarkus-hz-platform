@@ -33,4 +33,6 @@ public interface AiMcpService {
    R<Object> uploadFile(FileUpload file, AiMcp aiMcp) throws Exception;
 
    Object findAllBySelectOption();
+
+   String callMcpTools(Long mcpId, Long mcpToolId, String arguments, String question);
 }

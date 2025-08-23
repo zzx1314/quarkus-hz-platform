@@ -20,6 +20,7 @@ import org.hzai.ai.aimcp.repository.AiMcpRepository;
 import org.hzai.ai.aimcp.service.strategy.CommandEnvStrategy;
 import org.hzai.ai.aimcp.service.strategy.CommandEnvStrategyFactory;
 import org.hzai.ai.aimcptools.entity.AiMcpTools;
+import org.hzai.ai.aimcptools.entity.dto.AiMcpToolParam;
 import org.hzai.ai.aimcptools.entity.dto.AiMcpToolsQueryDto;
 import org.hzai.ai.aimcptools.repository.AiMcpToolsRepository;
 import org.hzai.ai.aistatistics.util.DateUtil;
@@ -37,6 +38,7 @@ import org.jboss.resteasy.reactive.multipart.FileUpload;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import dev.langchain4j.agent.tool.ToolExecutionRequest;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.mcp.client.DefaultMcpClient;
 import dev.langchain4j.mcp.client.McpClient;
@@ -44,10 +46,14 @@ import dev.langchain4j.mcp.client.transport.McpTransport;
 import dev.langchain4j.mcp.client.transport.stdio.StdioMcpTransport;
 import dev.langchain4j.model.chat.request.json.JsonObjectSchema;
 import io.quarkus.panache.common.Sort;
+import io.quarkus.runtime.util.StringUtil;
+import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 
 @ApplicationScoped
+@Slf4j
 public class AiMcpServiceImp implements AiMcpService {
     @Inject
     AiMcpRepository repository;
@@ -370,5 +376,31 @@ public class AiMcpServiceImp implements AiMcpService {
 		}
 		return selectOption;
     }
+
+    @Override
+    public String callMcpTools(Long mcpId, Long mcpToolId, String arguments, String question) {
+		AiMcp aiMcp = repository.findById(mcpId);
+		AiMcpTools oneTool = aiMcpToolsRepository.findById(mcpToolId);
+		JsonObject paramObject = new JsonObject();
+		if (StringUtil.isNullOrEmpty(oneTool.getParameters())) {
+			// 提取参数
+			List<AiMcpToolParam> params = JsonUtil.fromJsonToList(oneTool.getParameters(), AiMcpToolParam.class);
+			for (AiMcpToolParam param : params) {
+				if ("question".equals(param.getProperty())) {
+					paramObject.put(param.getProperty(), question);
+				}
+			}
+		}
+		if (!paramObject.isEmpty()) {
+			arguments = paramObject.toString();
+		}
+		log.info("mcp执行参数：name{},arguments: {}", oneTool.getName(), arguments);
+		McpClient mcpClient = getMcpClient(aiMcp);
+		ToolExecutionRequest toolExecutionRequest = ToolExecutionRequest.builder()
+				.name(oneTool.getName())
+				.arguments(arguments)
+				.build();
+		return mcpClient.executeTool(toolExecutionRequest);
+	}
 
 }

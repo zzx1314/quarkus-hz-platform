@@ -8,6 +8,8 @@ import java.util.Map;
 
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+
 import org.hzai.ai.aimcp.entity.AiMcp;
 import org.hzai.ai.aimcp.entity.dto.AiMcpDto;
 import org.hzai.ai.aimcp.entity.dto.AiMcpQueryDto;
@@ -15,13 +17,13 @@ import org.hzai.ai.aimcp.entity.mapper.AiMcpMapper;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.QueryBuilder;
-
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
+@Slf4j
 public class AiMcpRepository implements PanacheRepository<AiMcp> {
     @Inject
     AiMcpMapper mapper;

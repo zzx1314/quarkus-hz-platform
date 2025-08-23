@@ -47,6 +47,8 @@ import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.output.Response;
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
 import dev.langchain4j.service.AiServices;
+import dev.langchain4j.store.embedding.EmbeddingSearchRequest;
+import dev.langchain4j.store.embedding.EmbeddingSearchResult;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import io.quarkus.panache.common.Sort;
 import io.quarkus.runtime.util.StringUtil;
@@ -376,5 +378,28 @@ public class AiDocumentServiceImp implements AiDocumentService {
 				.contentRetriever(EmbeddingStoreContentRetriever.from(embeddingStore))
 				.build();
 		return assistant.respondToQuestion(message);
+	}
+
+	@Override
+	public List<String> getParagraphsByKnowledgeBaseId(Long knowledgeBaseId, String text, Integer maxResult,
+			Double minScore) {
+		List<String> result = new ArrayList<>();
+		// 需要查询的内容 向量化
+		Embedding queryEmbedding = embeddingModel.embed(text).content();
+		EmbeddingStore<TextSegment> embeddingStore = embeddingStoreRegistry.getStore(knowledgeBaseId);
+
+		// 去向量数据库查询
+		// 构建查询条件
+		EmbeddingSearchRequest build = EmbeddingSearchRequest.builder()
+				.queryEmbedding(queryEmbedding)
+				.maxResults(maxResult)
+				.minScore(minScore)
+				.build();
+
+		EmbeddingSearchResult<TextSegment> segmentEmbeddingSearchResult = embeddingStore.search(build);
+		segmentEmbeddingSearchResult.matches().forEach(embeddingMatch -> {
+			result.add(embeddingMatch.embedded().text());
+		});
+		return result;
 	}
 }

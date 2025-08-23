@@ -56,4 +56,7 @@ public interface AiDocumentService {
    JsonObject getParagraphs(PreviewFileDto previewFileDto);
 
    Multi<String> hitTest(String message, Long knowledgeBaseId);
+
+
+   List<String> getParagraphsByKnowledgeBaseId(Long knowledgeBaseId, String text, Integer maxResult, Double minScore);
 }
