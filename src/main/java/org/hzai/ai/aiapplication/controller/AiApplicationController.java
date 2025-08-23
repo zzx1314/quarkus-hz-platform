@@ -5,10 +5,14 @@ import java.util.List;
 import org.hzai.ai.aiapplication.entity.AiApplication;
 import org.hzai.ai.aiapplication.entity.dto.AiApplicationQueryDto;
 import org.hzai.ai.aiapplication.service.AiApplicationService;
+import org.hzai.util.FileUtil;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.R;
+import org.jboss.resteasy.reactive.RestForm;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
 
+import io.smallrye.mutiny.Multi;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BeanParam;
@@ -21,6 +25,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 @Path("/aiApplication")
 @Produces(MediaType.APPLICATION_JSON)
@@ -67,5 +72,38 @@ public class AiApplicationController {
         entity.persist();
         return R.ok();
     }
+
+    @GET
+    @Path("/isEnable/{id}/{isEnable}")
+	public R<Object> findById(@PathParam("id") Long id, @PathParam("isEnable") Boolean isEnable) {
+		AiApplication aiApplication = new AiApplication();
+		aiApplication.setId(id);
+		aiApplication.setIsSetup(isEnable);
+		aiApplicationService.replaceById(aiApplication);
+		return R.ok();
+	}
+
+    @GET
+    @Produces("text/stream;charset=UTF-8")
+    @Path(value = "/chat")
+	public Multi<String> chatStream(Long appId, String message) {
+		return aiApplicationService.chat(appId, message, null);
+	}
+
+    @POST
+    @Produces("text/stream;charset=UTF-8")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Path(value = "/chatFile")
+	public Multi<String> uploadFile(@RestForm("file") FileUpload file, @RestForm Long appId,
+			@RestForm(value = "message") String message) throws Exception {
+		String filepath = FileUtil.saveFile(file, "/temp/file").toString();
+		return aiApplicationService.chat(appId, message, filepath);
+	}
+
+    @GET
+    @Path("/downFile")
+	public Response downloadByPath(String filePath) {
+		 return FileUtil.downloadFile(filePath);
+	 }
 
 }

@@ -33,4 +33,6 @@ public interface AiKnowledgeBaseService {
    List<Long> getKnowledgeBaseCountBefore();
 
    long count();
+
+   List<AiKnowledgeBase> listByIds(List<Long> knowledgeIds);
 }

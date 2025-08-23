@@ -7,6 +7,8 @@ import org.hzai.ai.aiapplication.entity.dto.AiApplicationQueryDto;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 
+import io.smallrye.mutiny.Multi;
+
 public interface AiApplicationService {
    List<AiApplication> listEntitys();
 
@@ -21,4 +23,8 @@ public interface AiApplicationService {
    List<Long> getApplicationCountBefore();
 
    long count();
+
+   Multi<String> chat(Long appId, String question, String filepath);
+
+   void replaceById(AiApplication aiApplication);
 }

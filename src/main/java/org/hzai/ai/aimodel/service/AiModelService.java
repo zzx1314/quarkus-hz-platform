@@ -8,6 +8,9 @@ import org.hzai.ai.aimodel.entity.dto.AiModelQueryDto;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
+
 public interface AiModelService {
    List<AiModel> listEntitys();
 
@@ -26,6 +29,10 @@ public interface AiModelService {
    void removeById(Long id);
 
    void removeByIds(List<Long> ids);
+
+   ChatModel getChatModel();
+
+   StreamingChatModel getStreamingChatModel();
 
    Object findAllBySelectOption();
 }

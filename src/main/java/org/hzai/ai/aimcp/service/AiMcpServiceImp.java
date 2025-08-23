@@ -220,7 +220,7 @@ public class AiMcpServiceImp implements AiMcpService {
 					.filter(name -> !newToolNames.contains(name))
 					.collect(Collectors.toList());
 			if (!toDeleteNames.isEmpty()) {
-                aiMcpToolsRepository.delete("mcpId = ?1 and name in (?2) ", aiMcp.getId(), String.join(",", toDeleteNames));
+                aiMcpToolsRepository.delete("mcpId = ?1 and name in (?2) ", aiMcp.getId(), toDeleteNames);
 			}
         } else {
            // insert
@@ -402,5 +402,21 @@ public class AiMcpServiceImp implements AiMcpService {
 				.build();
 		return mcpClient.executeTool(toolExecutionRequest);
 	}
+
+    @Override
+    public McpClient getMcpClientById(AiMcp aiMcp) {
+        if (mapClientRegistry.get(aiMcp.getId()) != null) {
+			return mapClientRegistry.get(aiMcp.getId());
+		} else {
+			McpClient mcpClient = getMcpClient(aiMcp);
+			mapClientRegistry.register(aiMcp.getId(), mcpClient);
+			return mcpClient;
+		}
+    }
+
+    @Override
+    public AiMcp listEntityById(Long oneId) {
+       return repository.findById(oneId);
+    }
 
 }

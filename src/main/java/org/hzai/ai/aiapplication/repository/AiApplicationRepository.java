@@ -1,5 +1,6 @@
 package org.hzai.ai.aiapplication.repository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.hzai.ai.aiapplication.entity.AiApplication;
 import org.hzai.ai.aiapplication.entity.dto.AiApplicationQueryDto;
+import org.hzai.ai.aiapplication.entity.mapper.AiApplicationMapper;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.QueryBuilder;
@@ -18,9 +20,12 @@ import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class AiApplicationRepository implements PanacheRepository<AiApplication> {
+    @Inject
+    AiApplicationMapper mapper;
 
      public List<AiApplication> selectList(AiApplicationQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
@@ -111,6 +116,12 @@ public class AiApplicationRepository implements PanacheRepository<AiApplication>
             result.add(map);
         }
         return result;
+    }
+
+    public void updateById(AiApplication dto) {
+        AiApplication entity = this.findById(dto.getId());
+        mapper.updateEntity(dto, entity);
+        entity.setUpdateTime(LocalDateTime.now());
     }
 
 }

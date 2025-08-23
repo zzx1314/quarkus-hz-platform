@@ -12,6 +12,10 @@ import org.hzai.ai.common.SelectOption;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
+import dev.langchain4j.model.openai.OpenAiChatModel;
+import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -80,6 +84,35 @@ public class AiModelServiceImp implements AiModelService {
 			selectOption.add(option);
 		}
 		return selectOption;
+    }
+
+    @Override
+    public ChatModel getChatModel() {
+        AiModelQueryDto queryDto = new AiModelQueryDto();
+        queryDto.setEnable("true");
+        queryDto.setModelType("chat");
+        AiModel mode = repository.selectOne(queryDto);
+		return OpenAiChatModel.builder()
+				.baseUrl(mode.getBaseUrl())
+				.temperature(mode.getTemperature())
+				.maxTokens(mode.getMaxTokens())
+				.frequencyPenalty(mode.getFrequencyPenalty())
+				.apiKey(mode.getApiKey())
+				.modelName(mode.getModelName())
+				.build();
+    }
+
+    @Override
+    public StreamingChatModel getStreamingChatModel() {
+        AiModelQueryDto queryDto = new AiModelQueryDto();
+        queryDto.setEnable("true");
+        queryDto.setModelType("chat");
+        AiModel mode = repository.selectOne(queryDto);
+		return OpenAiStreamingChatModel.builder()
+				.baseUrl(mode.getBaseUrl())
+				.apiKey(mode.getApiKey())
+				.modelName(mode.getModelName())
+				.build();
     }
 
 }

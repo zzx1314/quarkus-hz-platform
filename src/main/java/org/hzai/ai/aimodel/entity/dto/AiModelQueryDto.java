@@ -10,6 +10,8 @@ public class AiModelQueryDto {
 
     private String enable;
 
+    private String modelType;
+
     @QueryParam("beginTime")
     private String beginTime;
 

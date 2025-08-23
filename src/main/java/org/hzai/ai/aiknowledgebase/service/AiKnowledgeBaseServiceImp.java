@@ -129,4 +129,9 @@ public class AiKnowledgeBaseServiceImp implements AiKnowledgeBaseService {
 		return data;
     }
 
+    @Override
+    public List<AiKnowledgeBase> listByIds(List<Long> knowledgeIds) {
+        return repository.list("id in (?1)", knowledgeIds);
+    }
+
 }

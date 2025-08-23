@@ -10,6 +10,8 @@ import org.hzai.util.PageResult;
 import org.hzai.util.R;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 
+import dev.langchain4j.mcp.client.McpClient;
+
 public interface AiMcpService {
    List<AiMcp> listEntitys();
 
@@ -32,7 +34,11 @@ public interface AiMcpService {
 
    R<Object> uploadFile(FileUpload file, AiMcp aiMcp) throws Exception;
 
+   McpClient getMcpClientById(AiMcp aiMcp);
+
    Object findAllBySelectOption();
 
    String callMcpTools(Long mcpId, Long mcpToolId, String arguments, String question);
+
+   AiMcp listEntityById(Long oneId);
 }
