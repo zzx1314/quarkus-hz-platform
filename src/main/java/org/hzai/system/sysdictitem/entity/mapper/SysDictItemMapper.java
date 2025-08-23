@@ -5,8 +5,9 @@ import org.hzai.system.sysdictitem.entity.dto.SysDictItemDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "cdi")
+@Mapper(componentModel = "cdi" , unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface SysDictItemMapper {
     SysDictItem toEntity(SysDictItemDto dto);
 

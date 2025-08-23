@@ -5,8 +5,9 @@ import org.hzai.system.sysrole.entity.dto.SysRoleDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "cdi")
+@Mapper(componentModel = "cdi" , unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface SysRoleMapper {
     SysRole toEntity(SysRoleDto dto);
 

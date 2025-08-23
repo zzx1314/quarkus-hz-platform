@@ -5,8 +5,9 @@ import org.hzai.ai.aimcptools.entity.dto.AiMcpToolsDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "cdi")
+@Mapper(componentModel = "cdi" , unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface AiMcpToolsMapper {
     AiMcpTools toEntity(AiMcpToolsDto dto);
 
