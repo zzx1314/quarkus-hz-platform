@@ -1,12 +1,18 @@
 package org.hzai.ai.aiapplication.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+import org.hzai.system.sysuser.entity.SysUser;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -56,8 +62,13 @@ public class AiApplication  extends PanacheEntityBase {
 
 	private Boolean isSetup;
 
-	private String roles;
+	@Column(columnDefinition = "bigint[]")
+    private List<Long> roles;
 
 	private Long createId;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "createId", insertable = false, updatable = false)
+    private SysUser sysUser;
 
 }

@@ -35,15 +35,13 @@ public class AiApplicationDto {
 
 	private Boolean isSetup;
 
-	private String roles;
-
 	private Long createId;
 
     private List<String> mcpIdList;
 
 	private List<String> knowledgeIdList;
 
-	private List<String> roleIdList;
+	private List<Long> roleIdList;
 
 	private Integer processId;
 

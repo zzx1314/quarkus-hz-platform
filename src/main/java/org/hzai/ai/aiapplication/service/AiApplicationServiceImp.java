@@ -116,7 +116,7 @@ public class AiApplicationServiceImp implements AiApplicationService {
         entity.setCreateTime(LocalDateTime.now());
 
 		entity.setCreateId(securityUtil.getUserId());
-		entity.setRoles(String.join(",", aiApplicationDto.getRoleIdList()));
+		entity.setRoles(aiApplicationDto.getRoleIdList());
 
 		if ("简单应用".equals(aiApplicationDto.getType())) {
 			entity.setKnowledgeIds(String.join(",", aiApplicationDto.getKnowledgeIdList()));

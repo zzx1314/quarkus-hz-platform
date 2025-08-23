@@ -9,7 +9,8 @@ public class QueryBuilder {
     private String orderByClause = "";
     private String alias = ""; // 新增实体别名
 
-    private QueryBuilder() {}
+    private QueryBuilder() {
+    }
 
     public static QueryBuilder create() {
         return new QueryBuilder();
@@ -42,7 +43,7 @@ public class QueryBuilder {
         return this;
     }
 
-     public QueryBuilder notEqual(String field, Object value) {
+    public QueryBuilder notEqual(String field, Object value) {
         if (value != null) {
             query.add(getFieldWithAlias(field) + " != :" + field);
             params.put(field, value);
@@ -81,6 +82,15 @@ public class QueryBuilder {
         if (value != null) {
             query.add(getFieldWithAlias(field) + " < :" + field + "_lt");
             params.put(field + "_lt", value);
+        }
+        return this;
+    }
+
+    public QueryBuilder arrayOverlap(String field, Collection<? extends Number> values) {
+        if (values != null && !values.isEmpty()) {
+            String paramName = field + "_arr";
+            query.add(getFieldWithAlias(field) + " && :" + paramName);
+            params.put(paramName, values.toArray(new Number[0]));
         }
         return this;
     }

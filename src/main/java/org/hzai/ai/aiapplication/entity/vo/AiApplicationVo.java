@@ -23,7 +23,7 @@ public class AiApplicationVo extends AiApplication {
 
 	private List<Integer> knowledgeIdList;
 
-	private List<String> roleIdList;
+	private List<Long> roleIdList;
 
 	private String createUsername;
 }

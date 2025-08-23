@@ -42,6 +42,7 @@ public class AiApplicationRepository implements PanacheRepository<AiApplication>
     public PageResult<AiApplicationVo> selectPage(AiApplicationQueryDto dto, PageRequest pageRequest) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0)
+                .arrayOverlap("roles", dto.getRoleIdList())
                 .equal("createId", dto.getCreateId())
                 .between("createTime", dto.getBeginTime(), dto.getEndTime())
                 .orderBy("createTime desc");
@@ -52,6 +53,7 @@ public class AiApplicationRepository implements PanacheRepository<AiApplication>
         List<AiApplicationVo> result = new ArrayList<>();
         for (AiApplication aiApplication : list) {
             AiApplicationVo aiApplicationVo = mapper.toVo(aiApplication);
+            aiApplicationVo.setCreateUsername(aiApplication.getSysUser().getUsername());
             if (StringUtil.isNullOrEmpty(aiApplication.getKnowledgeIds())) {
                 String[] kArray = aiApplication.getKnowledgeIds().split(",");
                 aiApplicationVo.setKnowledgeIdList(Arrays.stream(kArray).map(Integer::parseInt).toList());
@@ -66,8 +68,8 @@ public class AiApplicationRepository implements PanacheRepository<AiApplication>
             } else {
                 aiApplicationVo.setMcpCount(0);
             }
-            if (StringUtil.isNullOrEmpty(aiApplication.getRoles())) {
-                aiApplicationVo.setRoleIdList(Arrays.stream(aiApplicationVo.getRoles().split(",")).toList());
+            if (!aiApplication.getRoles().isEmpty()) {
+                aiApplicationVo.setRoleIdList(aiApplication.getRoles());
             }
             result.add(aiApplicationVo);
         }
