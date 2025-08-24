@@ -1,9 +1,11 @@
 package org.hzai.system.sysdictitem.entity.dto;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 import jakarta.ws.rs.QueryParam;
 
 @Data
+@Accessors(chain = true)
 public class SysDictItemQueryDto {
     @QueryParam("id")
     private Long id;

@@ -259,9 +259,7 @@ public class AiDocumentServiceImp implements AiDocumentService {
 	 */
 	private void checkDocName(List<AiDocumentStoreDto> storeDtos) {
 		for (AiDocumentStoreDto storeDto : storeDtos) {
-			AiDocumentQueryDto query = new AiDocumentQueryDto();
-			query.setFileName(storeDto.getFileName());
-			query.setKnowledgeId(storeDto.getKnowledgeBaseId());
+			AiDocumentQueryDto query = new AiDocumentQueryDto().setFileName(storeDto.getFileName()).setKnowledgeId(storeDto.getKnowledgeBaseId());
 			List<AiDocument> list = repository.selectList(query);
 			if (!list.isEmpty()) {
 				// delete repeated document

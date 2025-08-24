@@ -4,8 +4,10 @@ import java.util.List;
 
 import jakarta.ws.rs.QueryParam;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 @Data
+@Accessors(chain = true)
 public class SysUserQueryDto {
     @QueryParam("username")
 	private String username;

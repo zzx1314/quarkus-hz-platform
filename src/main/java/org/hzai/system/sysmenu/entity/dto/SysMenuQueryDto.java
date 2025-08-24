@@ -1,12 +1,14 @@
 package org.hzai.system.sysmenu.entity.dto;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 
 import jakarta.ws.rs.QueryParam;
 
 @Data
+@Accessors(chain = true)
 public class SysMenuQueryDto {
     @QueryParam("id")
     private Long id;

@@ -2,8 +2,10 @@ package org.hzai.system.sysorg.entity.dto;
 
 import jakarta.ws.rs.QueryParam;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 @Data
+@Accessors(chain = true)
 public class SysOrgQueryDto {
 
     @QueryParam("name")

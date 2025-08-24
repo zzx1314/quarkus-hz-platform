@@ -87,9 +87,7 @@ public class AiApplicationController {
     @GET
     @Path("/isEnable/{id}/{isEnable}")
 	public R<Object> findById(@PathParam("id") Long id, @PathParam("isEnable") Boolean isEnable) {
-		AiApplication aiApplication = new AiApplication();
-		aiApplication.setId(id);
-		aiApplication.setIsSetup(isEnable);
+		AiApplication aiApplication = new AiApplication().setId(id).setIsSetup(isEnable);
 		aiApplicationService.replaceById(aiApplication);
 		return R.ok();
 	}

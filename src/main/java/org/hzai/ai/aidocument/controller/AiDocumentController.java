@@ -152,8 +152,7 @@ public class AiDocumentController {
 	@Path("getDocByKbId/{kbId}")
 	public R<Object> getDocByKbId(@PathParam("kbId") Long kbId) {
 		List<SelectOption> selectOptions = new ArrayList<>();
-        AiDocumentQueryDto dto = new AiDocumentQueryDto();
-        dto.setKnowledgeId(kbId);
+        AiDocumentQueryDto dto = new AiDocumentQueryDto().setKnowledgeId(kbId);
 		List<AiDocument> list = aiDocumentService.listEntitysByDto(dto);
 		if (!list.isEmpty()) {
 			for (AiDocument aiDocument : list) {

@@ -2,8 +2,10 @@ package org.hzai.system.sysrole.entity.dto;
 
 import jakarta.ws.rs.QueryParam;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 @Data
+@Accessors(chain = true)
 public class SysRoleQueryDto {
 
     @QueryParam("id")

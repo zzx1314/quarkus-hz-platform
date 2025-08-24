@@ -1,12 +1,14 @@
 package org.hzai.ai.aiapplication.entity.dto;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 
 import jakarta.ws.rs.QueryParam;
 
 @Data
+@Accessors(chain = true)
 public class AiApplicationQueryDto {
     @QueryParam("id")
     private Long id;
