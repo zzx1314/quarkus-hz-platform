@@ -8,6 +8,7 @@ import org.hzai.ai.aiapplication.entity.dto.AiApplicationQueryDto;
 import org.hzai.ai.aiapplication.entity.vo.AiApplicationVo;
 import org.hzai.ai.aiapplication.service.AiApplicationService;
 import org.hzai.util.FileUtil;
+import org.hzai.util.IdUtil;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.R;
@@ -105,7 +106,8 @@ public class AiApplicationController {
 	@Path(value = "/chatFile")
 	public Multi<String> uploadFile(@RestForm("file") FileUpload file, @RestForm Long appId,
 			@RestForm(value = "message") String message) throws Exception {
-		String filepath = FileUtil.saveFile(file, "/temp/file").toString();
+        String fileTemp = IdUtil.simpleUUID();
+		String filepath = FileUtil.saveFile(file, "/temp/file/" + fileTemp).toString();
 		return aiApplicationService.chat(appId, message, filepath);
 	}
 
