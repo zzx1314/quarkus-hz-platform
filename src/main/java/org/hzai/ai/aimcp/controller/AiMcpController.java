@@ -78,9 +78,7 @@ public class AiMcpController {
     @PUT
     @Path("enableMcp/{id}/{status}")
 	public R<Object> enableMcp(@PathParam("id") Long id, @PathParam("status") String status) {
-		AiMcp aiMcp = new AiMcp();
-		aiMcp.setEnable(status);
-		aiMcp.setId(id);
+		AiMcp aiMcp = new AiMcp().setEnable(status).setId(id);
 		aiMcpService.register(aiMcp);
 		return R.ok();
 	}

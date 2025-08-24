@@ -176,8 +176,7 @@ public class AiMcpServiceImp implements AiMcpService {
             // update
 			repository.updateById(aiMcp);
             // 1. 查询数据库中已有的工具
-            AiMcpToolsQueryDto queryDto = new AiMcpToolsQueryDto();
-            queryDto.setMcpId(aiMcp.getId());
+            AiMcpToolsQueryDto queryDto = new AiMcpToolsQueryDto().setMcpId(aiMcp.getId());
             List<AiMcpTools> existingTools = aiMcpToolsRepository.selectList(queryDto);
             Map<String, AiMcpTools> existingToolMap = existingTools.stream()
 					.collect(Collectors.toMap(AiMcpTools::getName, Function.identity()));
@@ -364,8 +363,7 @@ public class AiMcpServiceImp implements AiMcpService {
 
     @Override
     public Object findAllBySelectOption() {
-        AiMcpQueryDto queryDto = new AiMcpQueryDto();
-        queryDto.setEnable("启用");
+        AiMcpQueryDto queryDto = new AiMcpQueryDto().setEnable("启用");
         List<AiMcp> list = repository.selectList(queryDto);
 		List<SelectOption> selectOption = new ArrayList<>();
 		for (AiMcp aiMcp : list) {

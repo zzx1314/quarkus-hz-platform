@@ -77,8 +77,7 @@ public class AiProcessServiceImp implements AiProcessService {
     @Override
     public AiProcessNet getAiProcessNet(Long appId) {
         AiProcessNet aiProcessNet = new AiProcessNet();
-        AiProcessQueryDto queryDto = new AiProcessQueryDto();
-        queryDto.setAppId(appId);
+        AiProcessQueryDto queryDto = new AiProcessQueryDto().setAppId(appId);
 		AiProcess aiProcess = repository.selectOne(queryDto);
 		String nodes = aiProcess.getNodes();
 		List<NodeEntity> nodeEntityList = JsonUtil.fromJsonToList(nodes, NodeEntity.class);

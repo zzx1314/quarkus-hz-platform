@@ -69,8 +69,7 @@ public class AiMcpToolsServiceImp implements AiMcpToolsService {
 
     @Override
     public Object findAllBySelectOption(Long id) {
-        AiMcpToolsQueryDto queryDto = new AiMcpToolsQueryDto();
-        queryDto.setMcpId(id);
+        AiMcpToolsQueryDto queryDto = new AiMcpToolsQueryDto().setMcpId(id);
         List<AiMcpTools> list = repository.selectList(queryDto);
 		List<SelectOption> selectOption = new ArrayList<>();
 		for (AiMcpTools aiMcp : list) {

@@ -268,8 +268,7 @@ public class AiDocumentServiceImp implements AiDocumentService {
 				// delete paragraphs
 				List<String> vertexIds = new ArrayList<>();
 				for (Long docId : docIds) {
-					AiParagraphQueryDto paragraphQueryDto = new AiParagraphQueryDto();
-					paragraphQueryDto.setDocId(docId);
+					AiParagraphQueryDto paragraphQueryDto = new AiParagraphQueryDto().setDocId(docId);
 					List<AiParagraph> paragraphs = aiParagraphRepository.selectList(paragraphQueryDto);
 					vertexIds.addAll(paragraphs.stream().map(AiParagraph::getVectorId).toList());
 					aiParagraphRepository.deleteByIds(paragraphs.stream().map(AiParagraph::getId).toList());;

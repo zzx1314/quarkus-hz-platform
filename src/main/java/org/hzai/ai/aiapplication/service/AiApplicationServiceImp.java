@@ -354,8 +354,7 @@ public class AiApplicationServiceImp implements AiApplicationService {
 		} else { 
 			// 复杂应用的修改
 		    repository.updateByDto(aiApplication);
-			AiProcessQueryDto dto = new AiProcessQueryDto();
-			dto.setAppId(aiApplication.getId());
+			AiProcessQueryDto dto = new AiProcessQueryDto().setAppId(aiApplication.getId());
 			AiProcess onepRrocess = aiProcessService.listOne(dto);
 			onepRrocess.setNodes(aiApplication.getNodes());
 			onepRrocess.setEdges(aiApplication.getEdges());

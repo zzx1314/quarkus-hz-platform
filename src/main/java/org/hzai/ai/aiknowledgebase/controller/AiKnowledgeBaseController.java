@@ -60,8 +60,7 @@ public class AiKnowledgeBaseController {
     @GET
     @Path("/getById/{id}")
 	public R<Object> getById(@PathParam("id") Long id) {
-        AiKnowledgeBaseQueryDto queryDto = new AiKnowledgeBaseQueryDto();
-        queryDto.setId(id);
+        AiKnowledgeBaseQueryDto queryDto = new AiKnowledgeBaseQueryDto().setId(id);
 		AiKnowledgeBase one = aiKnowledgeBaseService.listOne(queryDto);
 		return R.ok(one);
 	}

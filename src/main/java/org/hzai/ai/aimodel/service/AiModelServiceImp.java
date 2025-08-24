@@ -73,8 +73,7 @@ public class AiModelServiceImp implements AiModelService {
 
     @Override
     public Object findAllBySelectOption() {
-        AiModelQueryDto queryDto = new AiModelQueryDto();
-        queryDto.setEnable("true");
+        AiModelQueryDto queryDto = new AiModelQueryDto().setEnable("true");
         List<AiModel> list = repository.selectList(queryDto);
 		List<SelectOption> selectOption = new ArrayList<>();
 		for (AiModel aiMcp : list) {
@@ -88,8 +87,7 @@ public class AiModelServiceImp implements AiModelService {
 
     @Override
     public ChatModel getChatModel() {
-        AiModelQueryDto queryDto = new AiModelQueryDto();
-        queryDto.setEnable("true");
+        AiModelQueryDto queryDto = new AiModelQueryDto().setEnable("true");
         queryDto.setModelType("chat");
         AiModel mode = repository.selectOne(queryDto);
 		return OpenAiChatModel.builder()
@@ -104,9 +102,7 @@ public class AiModelServiceImp implements AiModelService {
 
     @Override
     public StreamingChatModel getStreamingChatModel() {
-        AiModelQueryDto queryDto = new AiModelQueryDto();
-        queryDto.setEnable("true");
-        queryDto.setModelType("chat");
+        AiModelQueryDto queryDto = new AiModelQueryDto().setEnable("true").setModelType("chat");
         AiModel mode = repository.selectOne(queryDto);
 		return OpenAiStreamingChatModel.builder()
 				.baseUrl(mode.getBaseUrl())

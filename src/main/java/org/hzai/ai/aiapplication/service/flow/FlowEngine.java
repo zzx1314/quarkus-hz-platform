@@ -284,8 +284,7 @@ public class FlowEngine {
 		Double minScore = config.getDouble("minScore");
 
 		if (docId != null) {
-			AiParagraphQueryDto queryDto = new AiParagraphQueryDto();
-			queryDto.setDocId(docId);
+			AiParagraphQueryDto queryDto = new AiParagraphQueryDto().setDocId(docId);
 			List<AiParagraph> allParagraph = aiParagraphService.selectList(queryDto);
 			String paragraph = allParagraph.stream().map(AiParagraph::getContent).collect(Collectors.joining("\n"));
 			return paragraph;
