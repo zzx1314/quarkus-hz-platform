@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 
 @ApplicationScoped
@@ -13,8 +14,13 @@ public class CommandEnvStrategyFactory {
 
 	private final Map<String, CommandEnvStrategy> strategies;
 
-	 
-	public CommandEnvStrategyFactory(List<CommandEnvStrategy> strategyList) {
+	@Inject
+	public CommandEnvStrategyFactory() {
+		List<CommandEnvStrategy> strategyList = List.of(
+				new JavaCommandEnvStrategy(),
+				new PythonCommandEnvStrategy(),
+				new NodeJsCommandEnvStrategy()
+		);
 		this.strategies = strategyList.stream()
 				.collect(Collectors.toMap(
 						strategy -> strategy.getClass().getSimpleName().replace("CommandEnvStrategy", "").toLowerCase(),

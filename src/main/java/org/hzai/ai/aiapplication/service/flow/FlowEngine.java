@@ -26,6 +26,7 @@ import org.hzai.ai.aiparagraph.entity.dto.AiParagraphQueryDto;
 import org.hzai.ai.aiparagraph.repository.AiParagraphRepository;
 import org.hzai.ai.aiprocess.entity.NodeEntity;
 import org.hzai.ai.assistant.Assistant;
+import jakarta.inject.Named;
 
 
 @Slf4j
@@ -47,6 +48,7 @@ public class FlowEngine {
 	private AiDocumentService aiDocumentService;
 
 	@Inject
+	@Named("flowExecutor")
 	private ExecutorService flowExecutor;
 
 	public Object startProcess(ChatModel chatModel,
