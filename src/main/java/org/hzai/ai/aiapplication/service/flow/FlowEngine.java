@@ -33,23 +33,23 @@ import jakarta.inject.Named;
 @ApplicationScoped
 public class FlowEngine {
 	@Inject
-	private AiMcpService aiMcpService;
+	AiMcpService aiMcpService;
 
 	@Inject
-	private AiModelRepository aiModelService;
+	AiModelRepository aiModelService;
 
 	@Inject
-	private ChatMemoryProvider chatMemoryProvider;
+	ChatMemoryProvider chatMemoryProvider;
 
 	@Inject
-	private AiParagraphRepository aiParagraphService;
+	AiParagraphRepository aiParagraphService;
 
 	@Inject
-	private AiDocumentService aiDocumentService;
+	AiDocumentService aiDocumentService;
 
 	@Inject
 	@Named("flowExecutor")
-	private ExecutorService flowExecutor;
+	ExecutorService flowExecutor;
 
 	public Object startProcess(ChatModel chatModel,
 							   Map<String, List<String>> edgeMap,

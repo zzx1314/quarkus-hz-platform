@@ -96,7 +96,7 @@ public class AiApplicationController {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Path(value = "/chatFile")
 	public Multi<String> uploadFile(@RestForm("file") FileUpload file, @RestForm Long appId,
-			@RestForm(value = "message") String message) throws Exception {
+			@RestForm(value = "message") String message) {
         String fileTemp = IdUtil.simpleUUID();
 		String filepath = FileUtil.saveFile(file, "/temp/file/" + fileTemp).toString();
 		return aiApplicationService.chat(appId, message, filepath);
