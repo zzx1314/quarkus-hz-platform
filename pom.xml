@@ -64,6 +64,15 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-websockets-next</artifactId>
         </dependency>
+        <!--服务调用-->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-rest-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-rest-client-jackson</artifactId>
+        </dependency>
         <!--数据库-->
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -107,10 +116,6 @@
         <dependency>
 			<groupId>dev.langchain4j</groupId>
 			<artifactId>langchain4j-pgvector</artifactId>
-		</dependency>
-        <dependency>
-			<groupId>dev.langchain4j</groupId>
-			<artifactId>langchain4j-onnx-scoring</artifactId>
 		</dependency>
         <dependency>
 			<groupId>dev.langchain4j</groupId>
