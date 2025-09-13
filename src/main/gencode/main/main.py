@@ -3,7 +3,7 @@ import os
 
 # -------------------- 配置 --------------------
 TEMPLATE_DIR = '../templates/'  # 模板根目录
-JAVA_ROOT_DIR = '/demo/CleverCopilot/src/main/java'  # Java 文件根目录
+JAVA_ROOT_DIR = '/demo/clever_copilot/src/main/java'  # Java 文件根目录
 
 # 定义模板和对应生成文件后缀
 TEMPLATES = {

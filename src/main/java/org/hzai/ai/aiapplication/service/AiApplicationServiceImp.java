@@ -205,9 +205,9 @@ public class AiApplicationServiceImp implements AiApplicationService {
 		if ("简单应用".equals(aiApplication.getType())) {
 			IntentRecognition intentRecognition = getIntentRecognition(question, chatModel);
 			if (intentRecognition == IntentRecognition.GREETING){
-				return Multi.createFrom().items("你好呀，我是CleverCopilot智能助手，有什么可以帮你的吗？");
+				return Multi.createFrom().items("你好呀，我是clever_copilot智能助手，有什么可以帮你的吗？");
 			} else if (intentRecognition == IntentRecognition.ASK_IDENTITY){
-				return Multi.createFrom().items("我是CleverCopilot智能助手，您可以问我任何问题，我会尽力帮助您。");
+				return Multi.createFrom().items("我是clever_copilot智能助手，您可以问我任何问题，我会尽力帮助您。");
 			}
 			assistant = this.simpleAssistant(aiApplication, chatModel, streamingChatModel);
 			return assistant.chatForEachUse(securityUtil.getUserId(), question);
@@ -240,9 +240,9 @@ public class AiApplicationServiceImp implements AiApplicationService {
 		// 语义分析
 		IntentRecognition intentRecognition = getIntentRecognition(question, chatModel);
 		if (intentRecognition == IntentRecognition.GREETING){
-			return Multi.createFrom().items("你好呀，我是CleverCopilot智能助手，有什么可以帮你的吗？");
+			return Multi.createFrom().items("你好呀，我是clever_copilot智能助手，有什么可以帮你的吗？");
 		} else if (intentRecognition == IntentRecognition.ASK_IDENTITY){
-			return Multi.createFrom().items("我是CleverCopilot智能助手，您可以问我任何问题，我会尽力帮助您。");
+			return Multi.createFrom().items("我是clever_copilot智能助手，您可以问我任何问题，我会尽力帮助您。");
 		}
 		// 执行流程
 		if ("启动".equals(question)) {
