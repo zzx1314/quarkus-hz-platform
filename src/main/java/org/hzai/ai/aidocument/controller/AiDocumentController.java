@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.ws.rs.*;
 import org.hzai.ai.aidocument.entity.AiDocument;
 import org.hzai.ai.aidocument.entity.dto.AiDocumentQueryDto;
 import org.hzai.ai.aidocument.entity.dto.AiDocumentStoreDto;
@@ -13,7 +14,6 @@ import org.hzai.ai.aiparagraph.entity.AiParagraph;
 import org.hzai.ai.aiparagraph.entity.dto.AiParagraphDto;
 import org.hzai.ai.aiparagraph.entity.dto.AiParagraphQueryDto;
 import org.hzai.ai.aiparagraph.service.AiParagraphService;
-import org.hzai.ai.assistant.StreamedAssistant;
 import org.hzai.ai.common.SelectOption;
 import org.hzai.util.JsonUtil;
 import org.hzai.util.PageRequest;
@@ -25,16 +25,6 @@ import io.smallrye.mutiny.Multi;
 import io.vertx.core.json.JsonObject;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.BeanParam;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.NotFoundException;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
 import org.jboss.resteasy.reactive.multipart.FileUpload;
@@ -49,9 +39,6 @@ public class AiDocumentController {
 
     @Inject
     AiParagraphService aiParagraphService;
-
-     @Inject 
-     StreamedAssistant assistant;
 
 
     @GET
@@ -180,7 +167,7 @@ public class AiDocumentController {
     @GET
 	@Path(value = "/hitTest")
     @Produces("text/stream;charset=UTF-8")
-	public Multi<String> hitTest(String message, Long knowledgeBaseId) {
+	public Multi<String> hitTest(@QueryParam("message") String message, @QueryParam("knowledgeBaseId")Long knowledgeBaseId) {
 		return aiDocumentService.hitTest(message, knowledgeBaseId);
 	}
     @PUT

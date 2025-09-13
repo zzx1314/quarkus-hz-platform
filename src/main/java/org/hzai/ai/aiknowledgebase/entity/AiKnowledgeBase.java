@@ -3,14 +3,12 @@ package org.hzai.ai.aiknowledgebase.entity;
 import java.time.LocalDateTime;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.Formula;
+import org.hzai.ai.aidocument.entity.AiDocument;
 
 /**
  * <p>
@@ -50,8 +48,16 @@ public class AiKnowledgeBase extends PanacheEntityBase {
 	private String hitHandle;
 
 
-	@Formula("(select count(d.id) from ai_document d where d.knowledge_id = id)")
+	@Transient
 	private Long documentCount;
+
+	public Long getDocumentCount() {
+		if (documentCount == null) {
+			documentCount = AiDocument.count("select count(d) from AiDocument d where d.knowledgeId = ?1", this.id);
+		}
+		return documentCount;
+	}
+
 
 
 }

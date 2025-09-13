@@ -2,6 +2,7 @@ package org.hzai.ai.aiapplication.controller;
 
 import java.util.List;
 
+import jakarta.ws.rs.*;
 import org.hzai.ai.aiapplication.entity.AiApplication;
 import org.hzai.ai.aiapplication.entity.dto.AiApplicationDto;
 import org.hzai.ai.aiapplication.entity.dto.AiApplicationQueryDto;
@@ -18,16 +19,6 @@ import org.jboss.resteasy.reactive.multipart.FileUpload;
 import io.smallrye.mutiny.Multi;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.BeanParam;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.NotFoundException;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -96,7 +87,7 @@ public class AiApplicationController {
     @GET
     @Produces("text/stream;charset=UTF-8")
     @Path(value = "/chat")
-	public Multi<String> chatStream(Long appId, String message) {
+	public Multi<String> chatStream(@QueryParam("appId") Long appId, @QueryParam("message")  String message) {
 		return aiApplicationService.chat(appId, message, null);
 	}
 
@@ -105,7 +96,7 @@ public class AiApplicationController {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Path(value = "/chatFile")
 	public Multi<String> uploadFile(@RestForm("file") FileUpload file, @RestForm Long appId,
-			@RestForm(value = "message") String message) throws Exception {
+			@RestForm(value = "message") String message) {
         String fileTemp = IdUtil.simpleUUID();
 		String filepath = FileUtil.saveFile(file, "/temp/file/" + fileTemp).toString();
 		return aiApplicationService.chat(appId, message, filepath);

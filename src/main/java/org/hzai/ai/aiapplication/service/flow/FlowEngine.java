@@ -26,28 +26,30 @@ import org.hzai.ai.aiparagraph.entity.dto.AiParagraphQueryDto;
 import org.hzai.ai.aiparagraph.repository.AiParagraphRepository;
 import org.hzai.ai.aiprocess.entity.NodeEntity;
 import org.hzai.ai.assistant.Assistant;
+import jakarta.inject.Named;
 
 
 @Slf4j
 @ApplicationScoped
 public class FlowEngine {
 	@Inject
-	private AiMcpService aiMcpService;
+	AiMcpService aiMcpService;
 
 	@Inject
-	private AiModelRepository aiModelService;
+	AiModelRepository aiModelService;
 
 	@Inject
-	private ChatMemoryProvider chatMemoryProvider;
+	ChatMemoryProvider chatMemoryProvider;
 
 	@Inject
-	private AiParagraphRepository aiParagraphService;
+	AiParagraphRepository aiParagraphService;
 
 	@Inject
-	private AiDocumentService aiDocumentService;
+	AiDocumentService aiDocumentService;
 
 	@Inject
-	private ExecutorService flowExecutor;
+	@Named("flowExecutor")
+	ExecutorService flowExecutor;
 
 	public Object startProcess(ChatModel chatModel,
 							   Map<String, List<String>> edgeMap,
