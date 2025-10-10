@@ -26,3 +26,8 @@ services:
     volumes:
       - /data/bge-reranker-base/onnx/model.onnx:/demo/bge-reranker-base/onnx/model.onnx
       - /data/bge-reranker-base/tokenizer.json:/demo/bge-reranker-base/tokenizer.json
+  clever-serve:
+    container_name: quarkus-clever-serve
+    image: quarkus/clever_copilot-jvm
+    ports:
+      - "8080:8080"
