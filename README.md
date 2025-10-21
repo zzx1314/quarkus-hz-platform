@@ -1,4 +1,4 @@
-# clever_copilot
+# hz_server
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
