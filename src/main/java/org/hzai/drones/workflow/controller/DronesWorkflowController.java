@@ -1,0 +1,80 @@
+package org.hzai.drones.workflow.controller;
+
+import java.util.List;
+
+import org.hzai.drones.workflow.entity.DronesWorkflow;
+import org.hzai.drones.workflow.entity.dto.DronesWorkflowDto;
+import org.hzai.drones.workflow.entity.dto.DronesWorkflowQueryDto;
+import org.hzai.drones.workflow.service.DronesWorkflowService;
+import org.hzai.util.PageRequest;
+import org.hzai.util.PageResult;
+import org.hzai.util.R;
+
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.BeanParam;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+
+@Path("/dronesWorkflow")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class DronesWorkflowController {
+    @Inject
+    DronesWorkflowService dronesWorkflowService;
+
+
+    @GET
+    @Path("/getPage")
+    public R<PageResult<DronesWorkflow>> getPage(@BeanParam DronesWorkflowQueryDto dto, @BeanParam PageRequest pageRequest) {
+        return R.ok(dronesWorkflowService.listPage(dto, pageRequest));
+    }
+
+    @GET
+    @Path("/getByDto")
+    public R<List<DronesWorkflow>> getByDto(@BeanParam DronesWorkflowQueryDto dto) {
+        return R.ok(dronesWorkflowService.listEntitysByDto(dto));
+    }
+
+    @GET
+    @Path("/getAll")
+    public R<List<DronesWorkflow>> getAll() {
+        return R.ok(dronesWorkflowService.listEntitys());
+    }
+
+    @POST
+    @Path("/create")
+    @Transactional
+    public R<Boolean> create(DronesWorkflow entity) {
+        return R.ok(dronesWorkflowService.register(entity));
+    }
+
+    @PUT
+    @Path("/update")
+    public R<DronesWorkflow> update(DronesWorkflowDto dto) {
+        dronesWorkflowService.replaceByDto(dto);
+        return R.ok();
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @Transactional
+    public R<Void> delete(@PathParam("id") Long id) {
+        DronesWorkflow entity = DronesWorkflow.findById(id);
+        if (entity == null) {
+            throw new NotFoundException();
+        }
+        entity.setIsDeleted(1);
+        entity.persist();
+        return R.ok();
+    }
+
+}

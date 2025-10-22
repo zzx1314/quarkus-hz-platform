@@ -3,7 +3,7 @@ import os
 
 # -------------------- 配置 --------------------
 TEMPLATE_DIR = '../templates/'  # 模板根目录
-JAVA_ROOT_DIR = '/home/zhangzexin/IdeaProjects/clever_copilot/src/main/java'  # Java 文件根目录
+JAVA_ROOT_DIR = '/home/zhangzexin/IdeaProjects/hz_server/src/main/java'  # Java 文件根目录
 
 # 定义模板和对应生成文件后缀
 TEMPLATES = {
@@ -18,8 +18,8 @@ TEMPLATES = {
 
 # 数据模型
 data = {
-    "base_package_name": "org.hzai.drones.routelibrary", #修改
-    "entity_name": "DronesRouteLibrary" #修改
+    "base_package_name": "org.hzai.drones.workflow", #修改
+    "entity_name": "DronesWorkflow" #修改
 }
 
 # -------------------- 初始化 Jinja2 --------------------

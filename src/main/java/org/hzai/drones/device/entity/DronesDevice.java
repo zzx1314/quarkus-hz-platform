@@ -3,6 +3,7 @@ package org.hzai.drones.device.entity;
 import java.time.LocalDateTime;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -96,5 +97,6 @@ public class DronesDevice extends PanacheEntityBase {
     /**
      * 是否删除
      */
+     @Column(columnDefinition = "INT DEFAULT 0")
      private Integer isDeleted;
 }
