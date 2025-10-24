@@ -23,6 +23,8 @@ public interface DronesDeviceService {
 
    void replaceByDto(DronesDeviceDto dto);
 
+   void replaceByQuery(DronesDeviceDto dto, DronesDeviceQueryDto queryDto);
+
    void removeById(Long id);
 
    void removeByIds(List<Long> ids);

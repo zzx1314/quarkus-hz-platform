@@ -29,6 +29,11 @@ public class DronesDevice extends PanacheEntityBase {
 	private Long id;
 
     /**
+     * 设备ID
+     */
+    private String deviceId;
+
+    /**
      * 设备名称
      */
     private String deviceName;
@@ -93,6 +98,11 @@ public class DronesDevice extends PanacheEntityBase {
      * 更新时间
      */
 	private LocalDateTime updateTime;
+
+    /**
+     * 最后通信时间
+     */
+    private LocalDateTime commTime;
 
     /**
      * 是否删除

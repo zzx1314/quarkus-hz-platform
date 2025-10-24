@@ -1,4 +1,4 @@
-package org.hzai.drones.device.entity.dto;
+package org.hzai.drones.command.entity.dto;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -6,7 +6,7 @@ import jakarta.ws.rs.QueryParam;
 
 @Data
 @Accessors(chain = true) 
-public class DronesDeviceQueryDto {
+public class DronesCommandQueryDto {
     @QueryParam("id")
     private Long id;
 
@@ -15,7 +15,4 @@ public class DronesDeviceQueryDto {
 
     @QueryParam("endTime")
     private String endTime;
-
-    @QueryParam("deviceId")
-    private String deviceId;
 }

@@ -1,12 +1,12 @@
-package org.hzai.drones.device.service;
+package org.hzai.drones.command.service;
 
 import java.util.List;
 import java.time.LocalDateTime;
 
-import org.hzai.drones.device.entity.DronesDevice;
-import org.hzai.drones.device.entity.dto.DronesDeviceQueryDto;
-import org.hzai.drones.device.entity.dto.DronesDeviceDto;
-import org.hzai.drones.device.repository.DronesDeviceRepository;
+import org.hzai.drones.command.entity.DronesCommand;
+import org.hzai.drones.command.entity.dto.DronesCommandQueryDto;
+import org.hzai.drones.command.entity.dto.DronesCommandDto;
+import org.hzai.drones.command.repository.DronesCommandRepository;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 
@@ -15,43 +15,43 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 @ApplicationScoped
-public class DronesDeviceServiceImp implements DronesDeviceService {
+public class DronesCommandServiceImp implements DronesCommandService {
     @Inject
-    DronesDeviceRepository repository;
+    DronesCommandRepository repository;
     @Override
-    public List<DronesDevice> listEntitys() {
+    public List<DronesCommand> listEntitys() {
         return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
     }
 
     @Override
-    public List<DronesDevice> listEntitysByDto(DronesDeviceQueryDto dto) {
+    public List<DronesCommand> listEntitysByDto(DronesCommandQueryDto dto) {
         return repository.selectList(dto);
     }
 
     @Override
-    public DronesDevice listOne(DronesDeviceQueryDto dto) {
+    public DronesCommand listOne(DronesCommandQueryDto dto) {
         return repository.selectOne(dto);
     }
 
     @Override
-    public PageResult<DronesDevice> listPage(DronesDeviceQueryDto dto, PageRequest pageRequest) {
+    public PageResult<DronesCommand> listPage(DronesCommandQueryDto dto, PageRequest pageRequest) {
         return repository.selectPage(dto, pageRequest);
     }
 
     @Override
-    public Boolean register(DronesDevice entity) {
+    public Boolean register(DronesCommand entity) {
         entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);
         return true;
     }
 
     @Override
-    public void replaceById(DronesDevice entity) {
+    public void replaceById(DronesCommand entity) {
         repository.updateById(entity);
     }
 
     @Override
-    public void replaceByDto(DronesDeviceDto dto) {
+    public void replaceByDto(DronesCommandDto dto) {
         repository.updateByDto(dto);
     }
 
@@ -63,11 +63,6 @@ public class DronesDeviceServiceImp implements DronesDeviceService {
     @Override
     public void removeByIds(List<Long> ids) {
         repository.deleteByIds(ids);
-    }
-
-    @Override
-    public void replaceByQuery(DronesDeviceDto dto, DronesDeviceQueryDto queryDto) {
-        repository.updateByQuery(dto, queryDto);
     }
 
 }

@@ -1,12 +1,12 @@
-package org.hzai.drones.device.repository;
+package org.hzai.drones.command.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.hzai.drones.device.entity.DronesDevice;
-import org.hzai.drones.device.entity.dto.DronesDeviceDto;
-import org.hzai.drones.device.entity.dto.DronesDeviceQueryDto;
-import org.hzai.drones.device.entity.mapper.DronesDeviceMapper;
+import org.hzai.drones.command.entity.DronesCommand;
+import org.hzai.drones.command.entity.dto.DronesCommandDto;
+import org.hzai.drones.command.entity.dto.DronesCommandQueryDto;
+import org.hzai.drones.command.entity.mapper.DronesCommandMapper;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.QueryBuilder;
@@ -19,31 +19,30 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 @ApplicationScoped
-public class DronesDeviceRepository implements PanacheRepository<DronesDevice> {
+public class DronesCommandRepository implements PanacheRepository<DronesCommand> {
     @Inject
-    DronesDeviceMapper mapper;
+    DronesCommandMapper mapper;
 
-     public List<DronesDevice> selectList(DronesDeviceQueryDto queryDto) {
+     public List<DronesCommand> selectList(DronesCommandQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
     }
 
-    public DronesDevice selectOne(DronesDeviceQueryDto queryDto) {
+    public DronesCommand selectOne(DronesCommandQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
-                .equal("deviceId", queryDto.getDeviceId())
                 .equal("id", queryDto.getId())
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).singleResult();
     }
 
-    public PageResult<DronesDevice> selectPage(DronesDeviceQueryDto dto, PageRequest pageRequest) {
+    public PageResult<DronesCommand> selectPage(DronesCommandQueryDto dto, PageRequest pageRequest) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0)
                 .between("createTime", dto.getBeginTime(), dto.getEndTime())
                 .orderBy("createTime desc");
 
-        PanacheQuery<DronesDevice> query = find(qb.getQuery(), qb.getParams())
+        PanacheQuery<DronesCommand> query = find(qb.getQuery(), qb.getParams())
                 .page(Page.of(pageRequest.getPageIndex(), pageRequest.getSize()));
 
         return new PageResult<>(
@@ -54,26 +53,17 @@ public class DronesDeviceRepository implements PanacheRepository<DronesDevice> {
     }
 
     @Transactional
-    public void updateById(DronesDevice dto) {
-        DronesDevice entity = this.findById(dto.getId());
+    public void updateById(DronesCommand dto) {
+        DronesCommand entity = this.findById(dto.getId());
         mapper.updateEntity(dto, entity);
         entity.setUpdateTime(LocalDateTime.now());
     }
 
     @Transactional
-    public void updateByDto(DronesDeviceDto dto) {
-        DronesDevice entity = this.findById(dto.getId());
+    public void updateByDto(DronesCommandDto dto) {
+        DronesCommand entity = this.findById(dto.getId());
         mapper.updateEntityFromDto(dto, entity);
         entity.setUpdateTime(LocalDateTime.now());
-    }
-
-    @Transactional
-    public void updateByQuery(DronesDeviceDto dto, DronesDeviceQueryDto queryDto) {
-        DronesDevice selectOne = this.selectOne(queryDto);
-        if (selectOne != null) {
-            mapper.updateEntityFromDto(dto, selectOne);
-            selectOne.setUpdateTime(LocalDateTime.now());
-        }
     }
 
     @Transactional

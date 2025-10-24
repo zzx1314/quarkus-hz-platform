@@ -18,8 +18,8 @@ TEMPLATES = {
 
 # 数据模型
 data = {
-    "base_package_name": "org.hzai.drones.workflow", #修改
-    "entity_name": "DronesWorkflow" #修改
+    "base_package_name": "org.hzai.drones.command", #修改
+    "entity_name": "DronesCommand" #修改
 }
 
 # -------------------- 初始化 Jinja2 --------------------
