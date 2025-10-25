@@ -28,4 +28,6 @@ public interface DronesDeviceService {
    void removeById(Long id);
 
    void removeByIds(List<Long> ids);
+
+   void registerByDto(DronesDeviceDto deviceDto);
 }

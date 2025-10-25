@@ -70,4 +70,9 @@ public class DronesDeviceServiceImp implements DronesDeviceService {
         repository.updateByQuery(dto, queryDto);
     }
 
+    @Override
+    public void registerByDto(DronesDeviceDto deviceDto) {
+        repository.insertByDto(deviceDto);
+    }
+
 }
