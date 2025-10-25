@@ -1,4 +1,4 @@
-package org.hzai.ai.aiprocess.entity;
+package org.hzai.drones.workflow.entity;
 
 import io.vertx.core.json.JsonObject;
 import lombok.Data;

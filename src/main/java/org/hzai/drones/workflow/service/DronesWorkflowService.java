@@ -5,6 +5,7 @@ import java.util.List;
 import org.hzai.drones.workflow.entity.DronesWorkflow;
 import org.hzai.drones.workflow.entity.dto.DronesWorkflowDto;
 import org.hzai.drones.workflow.entity.dto.DronesWorkflowQueryDto;
+import org.hzai.drones.workflow.vo.DronesWorkflowVo;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 
@@ -26,4 +27,6 @@ public interface DronesWorkflowService {
    void removeById(Long id);
 
    void removeByIds(List<Long> ids);
+
+   DronesWorkflowVo getWorkflowGraph(Long workflowId);
 }

@@ -1,17 +1,16 @@
-package org.hzai.ai.aiprocess.entity.vo;
-import lombok.Data;
+package org.hzai.drones.workflow.vo;
 
 import java.util.List;
 import java.util.Map;
 
-import org.hzai.ai.aiprocess.entity.NodeEntity;
+import org.hzai.drones.workflow.entity.NodeEntity;
 
-/**
- * AI流程网络实体
- */
+import lombok.Data;
+
 @Data
-public class AiProcessNet {
-	/**
+public class DronesWorkflowVo {
+
+    /**
 	 * 开始节点
 	 */
 	private NodeEntity startNode;

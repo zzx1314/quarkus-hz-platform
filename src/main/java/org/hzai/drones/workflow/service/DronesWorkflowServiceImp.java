@@ -1,12 +1,21 @@
 package org.hzai.drones.workflow.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.time.LocalDateTime;
 
 import org.hzai.drones.workflow.entity.DronesWorkflow;
+import org.hzai.drones.workflow.entity.EdgeEntity;
+import org.hzai.drones.workflow.entity.NodeEntity;
 import org.hzai.drones.workflow.entity.dto.DronesWorkflowQueryDto;
 import org.hzai.drones.workflow.entity.dto.DronesWorkflowDto;
 import org.hzai.drones.workflow.repository.DronesWorkflowRepository;
+import org.hzai.drones.workflow.vo.DronesWorkflowVo;
+import org.hzai.util.JsonUtil;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 
@@ -63,6 +72,38 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
     @Override
     public void removeByIds(List<Long> ids) {
         repository.deleteByIds(ids);
+    }
+
+    @Override
+    public DronesWorkflowVo getWorkflowGraph(Long workflowId) {
+        DronesWorkflowVo dronesWorkflowVo = new DronesWorkflowVo();
+        DronesWorkflowQueryDto queryDto = new DronesWorkflowQueryDto().setId(workflowId);
+		DronesWorkflow dronesWorkflow = repository.selectOne(queryDto);
+		String nodes = dronesWorkflow.getNodes();
+		List<NodeEntity> nodeEntityList = JsonUtil.fromJsonToList(nodes, NodeEntity.class);
+		String edges = dronesWorkflow.getEdges();
+		List<EdgeEntity> edgeEntityList = JsonUtil.fromJsonToList(edges, EdgeEntity.class);
+
+		NodeEntity startNode = nodeEntityList.stream()
+				.filter(n -> "start".equals(n.getType()))
+				.findFirst()
+				.orElseThrow(() -> new RuntimeException("未找到开始节点"));
+		dronesWorkflowVo.setStartNode(startNode);
+
+		// 建立从 sourceId -> List<targetId> 的映射
+		Map<String, List<String>> edgeMap = new HashMap<>();
+		for (EdgeEntity edge : edgeEntityList) {
+			edgeMap.computeIfAbsent(edge.getSource(), k -> new ArrayList<>())
+					.add(edge.getTarget());
+		}
+		dronesWorkflowVo.setEdgeMap(edgeMap);
+
+		// 构建 id -> NodeEntity 映射
+		Map<String, NodeEntity> nodeMap = nodeEntityList.stream()
+				.collect(Collectors.toMap(NodeEntity::getId, Function.identity()));
+		dronesWorkflowVo.setNodeMap(nodeMap);
+
+		return dronesWorkflowVo;
     }
 
 }
