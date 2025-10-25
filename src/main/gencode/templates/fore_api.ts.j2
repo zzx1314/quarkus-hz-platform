@@ -1,0 +1,40 @@
+import { http } from "@/utils/http";
+
+type Result = {
+  code: number;
+  msg: string;
+  data?: Array<any>;
+};
+
+type ResultPage = {
+  code: number;
+  msg: string;
+  data?: {
+    records: Array<any>;
+    total: number;
+  };
+};
+
+const {{ entity_name[0]|lower }}{{ entity_name[1:] }}Urls = {
+  page: `/api/{{ entity_name[0]|lower }}{{ entity_name[1:] }}/getPage`,
+  save: "/api/{{ entity_name[0]|lower }}{{ entity_name[1:] }}/create",
+  delete: `/api/{{ entity_name[0]|lower }}{{ entity_name[1:] }}/`,
+  update: "/api/{{ entity_name[0]|lower }}{{ entity_name[1:] }}/update"
+};
+
+// 分页
+export const {{ entity_name[0]|lower }}{{ entity_name[1:] }}Page = (query?: object) => {
+  return http.axiosGetRequest<ResultPage>({{ entity_name[0]|lower }}{{ entity_name[1:] }}Urls.page, query);
+};
+// 保存
+export const {{ entity_name[0]|lower }}{{ entity_name[1:] }}Save = (param?: object) => {
+  return http.axiosPostRequest<Result>({{ entity_name[0]|lower }}{{ entity_name[1:] }}Urls.save, param);
+};
+// 修改
+export const {{ entity_name[0]|lower }}{{ entity_name[1:] }}Update = (param?: object) => {
+  return http.axiosPut<Result>({{ entity_name[0]|lower }}{{ entity_name[1:] }}Urls.update, param);
+};
+// 删除
+export const {{ entity_name[0]|lower }}{{ entity_name[1:] }}Delete = (param?: object) => {
+  return http.axiosDelete<Result>({{ entity_name[0]|lower }}{{ entity_name[1:] }}Urls.delete + param);
+};

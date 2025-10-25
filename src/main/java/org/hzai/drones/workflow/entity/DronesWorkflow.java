@@ -16,20 +16,27 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper=false)
 public class DronesWorkflow extends PanacheEntityBase{
+	// id
     @Id
 	@GeneratedValue
 	private Long id;
 
+	// 节点
 	private String nodes;
 
+	// 边
 	private String edges;
 
-	private Long appId;
+	// 路线ID
+	private Long routeId;
 
+	// 创建时间
 	private LocalDateTime createTime;
 
+	// 修改时间
 	private LocalDateTime updateTime;
 
+	// 逻辑删除
 	@Column(columnDefinition = "INT DEFAULT 0")
 	private Integer isDeleted;
 }
