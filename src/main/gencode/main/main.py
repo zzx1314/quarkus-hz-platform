@@ -32,37 +32,58 @@ data = {
 env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
 
 # -------------------- 提取java实体类 --------------------
-def parse_private_fields_with_pre_comments(java_file_path):
+def parse_private_fields_with_javadoc(java_file_path):
     """
-    解析 Java 实体类文件，提取 private 字段及备注（备注来源于字段前的单行注释）
+    解析 Java 实体类文件，只提取 private 字段及前置多行注释（Javadoc）
     :param java_file_path: Java 文件路径
-    :return: 字段对象列表 [{'name': 'id', 'comment': 'id'}, {'name': 'nodes', 'comment': '节点'}, ...]
+    :return: 字段对象列表 [{'name': 'routeName', 'comment': '路线名称'}, ...]
     """
     with open(java_file_path, 'r', encoding='utf-8') as f:
         lines = f.readlines()
 
     fields = []
-    prev_comment = ""
+    prev_comment_lines = []
+    in_multiline_comment = False
+
     for line in lines:
         line = line.strip()
-        # 忽略空行
         if not line:
-            prev_comment = ""
             continue
-        # 匹配单行注释
-        comment_match = re.match(r'//\s*(.*)', line)
-        if comment_match:
-            prev_comment = comment_match.group(1).strip()
+        # 多行注释开始 /** 或 /*
+        if line.startswith("/**") or line.startswith("/*"):
+            in_multiline_comment = True
+            prev_comment_lines = []
+            # 如果注释在同一行结束 */
+            if line.endswith("*/") and len(line) > 4:
+                comment_text = line[3:-2].strip()
+                prev_comment_lines = [comment_text]
+                in_multiline_comment = False
             continue
+
+        # 多行注释内容
+        if in_multiline_comment:
+            if line.endswith("*/"):
+                comment_line = line[:-2].strip().lstrip('*').strip()
+                if comment_line:
+                    prev_comment_lines.append(comment_line)
+                in_multiline_comment = False
+            else:
+                comment_line = line.strip().lstrip('*').strip()
+                if comment_line:
+                    prev_comment_lines.append(comment_line)
+            continue
+
         # 匹配 private 字段（排除 static 或 final）
         field_match = re.match(r'private\s+(?!static|final)[\w<>?,\s\[\]]+\s+(\w+)\s*(=[^;]*)?;', line)
         if field_match:
             field_name = field_match.group(1)
+            comment = " ".join(prev_comment_lines).strip() if prev_comment_lines else ""
             fields.append({
                 "name": field_name,
-                "comment": prev_comment
+                "comment": comment
             })
-            prev_comment = ""  # 用完就清空
+            prev_comment_lines = []  # 用完清空
+
     return fields
 
 # -------------------- 渲染生成 --------------------
