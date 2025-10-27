@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { FormInstance } from "element-plus";
-import { use{{ entity }} } from "./hook";
+import { use{{ entity_name}} } from "./hook";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import EditPen from "@iconify-icons/ep/edit-pen";
-import Delete from "@iconify-icons/ep/delete";
+import EditPen from "~icons/ep/edit-pen";
+import Delete from "~icons/ep/delete";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { useCollectorBusDevForm } from "./form";
 import PureTable from "@pureadmin/table";
 import { PlusDialogForm, PlusSearch } from "plus-pro-components";
-import AddFill from "@iconify-icons/ri/add-circle-line";
+import AddFill from "~icons/ri/add-circle-line";
 
 defineOptions({
-  name: "{{ entity }}"
+  name: "{{ entity_name}}"
 });
 
 const addFormRef = ref<FormInstance>();
@@ -38,7 +38,7 @@ const {
   handleSubmit,
   cancel,
   openDia
-} = use{{ entity }}();
+} = use{{ entity_name}}();
 </script>
 <template>
   <div class="main">

@@ -87,7 +87,7 @@ def parse_private_fields_with_javadoc(java_file_path):
     return fields
 
 # -------------------- 渲染生成 --------------------
-def generate_file(template_name: str, file_suffix: str, data: dict, gen_path: str):
+def generate_file(template_name: str, file_suffix: str, data: dict, gen_path: str, type: str):
     """
     根据模板生成文件
     :param template_name: 模板 key
@@ -120,7 +120,12 @@ def generate_file(template_name: str, file_suffix: str, data: dict, gen_path: st
     os.makedirs(full_dir, exist_ok=True)
 
     # 文件路径
-    file_path = os.path.join(full_dir, f"{data['entity_name']}{file_suffix}")
+    if type == "2":
+        file_path = os.path.join(full_dir, f"{file_suffix}")
+    elif type == "1":
+        file_path = os.path.join(full_dir, f"{data['entity_name']}{file_suffix}")
+    else:
+        file_path = os.path.join(full_dir, f"{data['entity_name']}{file_suffix}")
 
     # 输出文件
     with open(file_path, 'w', encoding='utf-8') as f:
@@ -136,22 +141,22 @@ if __name__ == "__main__":
 
     # 生成后端
     if arg == "1" or arg is None:
-        generate_file('dto', 'Dto.java', data, "entity/dto")
-        generate_file('query_dto', 'QueryDto.java', data, "entity/dto")
-        generate_file('mapper', 'Mapper.java', data, "entity/mapper")
-        generate_file('repository', 'Repository.java', data, "repository")
-        generate_file('service', 'Service.java', data, "service")
-        generate_file('serviceImp', 'ServiceImp.java', data, "service")
-        generate_file('controller', 'Controller.java', data, "controller")
+        generate_file('dto', 'Dto.java', data, "entity/dto", "1")
+        generate_file('query_dto', 'QueryDto.java', data, "entity/dto", "1")
+        generate_file('mapper', 'Mapper.java', data, "entity/mapper", "1")
+        generate_file('repository', 'Repository.java', data, "repository", "1")
+        generate_file('service', 'Service.java', data, "service", "1")
+        generate_file('serviceImp', 'ServiceImp.java', data, "service", "1")
+        generate_file('controller', 'Controller.java', data, "controller", "1")
         if arg == "1":
             print("后端代码生成完成！")
 
     # 生成前端
     if arg == "2" or arg is None:
-        generate_file('foreApi', 'fore_api.tsx', data, "frontend")
-        generate_file('foreForm', 'fore_form.tsx', data, "frontend")
-        generate_file('foreHook', 'fore_hook.tsx', data, "frontend")
-        generate_file('foreIndex', 'fore_index.vue', data, "frontend")
+        generate_file('foreApi', f"{data['entity_name'][0].lower() + data['entity_name'][1:]}.ts", data, "frontend/api", "2")
+        generate_file('foreForm', 'form.tsx', data, "frontend", "2")
+        generate_file('foreHook', 'hook.tsx', data, "frontend", "2")
+        generate_file('foreIndex', 'index.vue', data, "frontend", "2")
         if arg == "2":
             print("前端代码生成完成！")
 
