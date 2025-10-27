@@ -42,7 +42,7 @@ public class AiApplicationRepository implements PanacheRepository<AiApplication>
     public PageResult<AiApplicationVo> selectPage(AiApplicationQueryDto dto, PageRequest pageRequest) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0)
-                .arrayOverlap("roles", dto.getRoleIdList())
+                .in("roles", dto.getRoleIdList())
                 .equal("createId", dto.getCreateId())
                 .between("createTime", dto.getBeginTime(), dto.getEndTime())
                 .orderBy("createTime desc");
