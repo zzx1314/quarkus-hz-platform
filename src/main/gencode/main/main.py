@@ -98,6 +98,12 @@ def generate_file(template_name: str, file_suffix: str, data: dict, gen_path: st
     # 加载模板
     template = env.get_template(TEMPLATES[template_name])
 
+    # 渲染内容
+    output = template.render(data)
+
+    # 包路径
+    package_path = data["base_package_name"].replace('.', os.sep)
+
     # 解析实体类字段
     entity_java_path = os.path.join(
         JAVA_ROOT_DIR,
@@ -105,14 +111,9 @@ def generate_file(template_name: str, file_suffix: str, data: dict, gen_path: st
         "entity",
         f"{data['entity_name']}.java"
     )
-    fields = parse_private_fields_with_pre_comments(entity_java_path)
+    fields = parse_private_fields_with_javadoc(entity_java_path)
     data['fields'] = fields
 
-    # 渲染内容
-    output = template.render(data)
-
-    # 包路径
-    package_path = data["base_package_name"].replace('.', os.sep)
 
     # 拼接最终生成目录：JAVA_ROOT_DIR/package_path/gen_path
     full_dir = os.path.join(JAVA_ROOT_DIR, package_path, gen_path)
@@ -147,7 +148,6 @@ if __name__ == "__main__":
 
     # 生成前端
     if arg == "2" or arg is None:
-        generate_file('frontend', 'index.html', data, "frontend")
         generate_file('foreApi', 'fore_api.tsx', data, "frontend")
         generate_file('foreForm', 'fore_form.tsx', data, "frontend")
         generate_file('foreHook', 'fore_hook.tsx', data, "frontend")
