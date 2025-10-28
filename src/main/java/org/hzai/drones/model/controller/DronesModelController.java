@@ -6,9 +6,12 @@ import org.hzai.drones.model.entity.DronesModel;
 import org.hzai.drones.model.entity.dto.DronesModelDto;
 import org.hzai.drones.model.entity.dto.DronesModelQueryDto;
 import org.hzai.drones.model.service.DronesModelService;
+import org.hzai.util.JsonUtil;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.R;
+import org.jboss.resteasy.reactive.RestForm;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
 
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -63,6 +66,14 @@ public class DronesModelController {
         dronesModelService.replaceByDto(dto);
         return R.ok();
     }
+
+    @POST
+    @Path(value = "/uploadFile")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+	public R<Object> uploadFile(@RestForm("file") FileUpload file, @RestForm String modelInfo) throws Exception {
+		DronesModelDto modelDto = JsonUtil.fromJson(modelInfo, DronesModelDto.class);
+		return dronesModelService.uploadFile(file, modelDto);
+	}
 
     @DELETE
     @Path("/{id}")

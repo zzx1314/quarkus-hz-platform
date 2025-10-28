@@ -3,21 +3,35 @@ package org.hzai.drones.model.service;
 import java.util.List;
 import java.time.LocalDateTime;
 
+import org.hzai.config.FileConfig;
 import org.hzai.drones.model.entity.DronesModel;
 import org.hzai.drones.model.entity.dto.DronesModelQueryDto;
 import org.hzai.drones.model.entity.dto.DronesModelDto;
 import org.hzai.drones.model.repository.DronesModelRepository;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
+import org.hzai.util.R;
+import org.hzai.util.SecurityUtil;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
 
+import org.hzai.util.FileUtil;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 
 @ApplicationScoped
+@Slf4j
 public class DronesModelServiceImp implements DronesModelService {
     @Inject
     DronesModelRepository repository;
+
+    @Inject
+    SecurityUtil securityUtil;
+
+    @Inject
+    FileConfig fileConfig;
+
     @Override
     public List<DronesModel> listEntitys() {
         return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
@@ -64,6 +78,27 @@ public class DronesModelServiceImp implements DronesModelService {
     @Override
     public void removeByIds(List<Long> ids) {
         repository.deleteByIds(ids);
+    }
+
+    @Override
+    public R<Object> uploadFile(FileUpload file, DronesModelDto modelDto) {
+        log.info("Uploading file: {}", file.fileName());
+        // Save the file to a designated path
+        String mcpFilePath = fileConfig.basePath() + "/model/" + securityUtil.getUserId();
+        FileUtil.saveFile(file, mcpFilePath);
+        if (modelDto.getId() != null) {
+            // Update existing record
+            this.replaceByDto(modelDto);
+        } else{
+            // Create new record
+            DronesModel dronesModel = new DronesModel();
+            dronesModel.setFileName(file.fileName());
+            dronesModel.setFilePath(mcpFilePath + "/" + file.fileName());
+            dronesModel.setFileFormat(modelDto.getFileFormat());
+            dronesModel.setFileSize(file.size());
+            this.register(dronesModel);
+        }
+        return R.ok();
     }
 
 }
