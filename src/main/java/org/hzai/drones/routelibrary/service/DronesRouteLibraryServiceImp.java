@@ -41,6 +41,7 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
     @Override
     public Boolean register(DronesRouteLibrary entity) {
         entity.setCreateTime(LocalDateTime.now());
+        entity.setIsDeleted(0);
         repository.persist(entity);
         return true;
     }

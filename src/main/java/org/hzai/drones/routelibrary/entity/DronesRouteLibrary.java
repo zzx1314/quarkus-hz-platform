@@ -2,7 +2,10 @@ package org.hzai.drones.routelibrary.entity;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -52,6 +55,7 @@ public class DronesRouteLibrary extends PanacheEntityBase {
      /**
      * 创建时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private LocalDateTime createTime;
 
     /**
@@ -62,5 +66,6 @@ public class DronesRouteLibrary extends PanacheEntityBase {
     /**
      * 是否删除
      */
+     @Column(columnDefinition = "INT DEFAULT 0")
      private Integer isDeleted;
 }

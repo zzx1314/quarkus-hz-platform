@@ -40,6 +40,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
 
     @Override
     public Boolean register(DronesTask entity) {
+        entity.setIsDeleted(0);
         entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);
         return true;

@@ -59,16 +59,6 @@ public class DronesDevice extends PanacheEntityBase {
     private String ipAddress;
 
     /**
-     * 设备位置
-     */
-    private String location;
-
-    /**
-     * 设备制造商
-     */
-    private String manufacturer;
-
-    /**
      * 设备型号
      */
     private String model;
@@ -77,17 +67,6 @@ public class DronesDevice extends PanacheEntityBase {
      * 固件版本
      */
     private String firmwareVersion;
-
-    /**
-     * 电池状态
-     */
-    private String batteryStatus;
-
-    /**
-     * 最后维护日期
-     */
-    private String lastMaintenanceDate;
-
 
     /**
      * 创建时间

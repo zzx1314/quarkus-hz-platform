@@ -40,6 +40,7 @@ public class DronesCommandServiceImp implements DronesCommandService {
 
     @Override
     public Boolean register(DronesCommand entity) {
+        entity.setIsDeleted(0);
         entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);
         return true;

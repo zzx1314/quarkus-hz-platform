@@ -40,6 +40,7 @@ public class DronesMediaServiceImp implements DronesMediaService {
 
     @Override
     public Boolean register(DronesMedia entity) {
+        entity.setIsDeleted(0);
         entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);
         return true;
