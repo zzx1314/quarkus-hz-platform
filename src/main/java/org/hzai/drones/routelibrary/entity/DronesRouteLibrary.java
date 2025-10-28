@@ -52,6 +52,11 @@ public class DronesRouteLibrary extends PanacheEntityBase {
      */
     private Integer estimatedFlightTimeMin;
 
+    /**
+     * 关联模型的id
+     */
+    private long modelId;
+
      /**
      * 创建时间
      */
