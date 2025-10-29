@@ -10,12 +10,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.hzai.system.sysuser.entity.dto.SysUserDto;
 import org.hzai.system.sysuser.service.SysUserService;
 import org.hzai.util.CommonConstants;
 import org.hzai.util.R;
 import org.hzai.util.RedisUtil;
 
+import io.smallrye.jwt.auth.principal.JWTParser;
+import io.smallrye.jwt.auth.principal.ParseException;
 import io.smallrye.jwt.build.Jwt;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -29,6 +32,9 @@ public class AuthService {
 
     @Inject
     RedisUtil redisUtil;
+
+    @Inject
+    JWTParser jwtParser;
 
     public Response authenticate(String grantType, String username, String password, String clientId, String clientSecret) {
          if ("password".equals(grantType)) {
@@ -126,6 +132,48 @@ public class AuthService {
         String key = "refresh_token:" + refreshToken;
         redisUtil.setObject(key, userDto, CommonConstants.REFRESH_EXPIRES_IN);
         return refreshToken;
+    }
+
+    public Response checkTokenInfo(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return Response.status(401)
+                    .entity(R.failed("UNAUTHORIZED", "Missing or invalid Authorization header"))
+                    .build();
+        }
+
+        String token = authHeader.substring(7);
+
+        String key = "access_token:" + token;
+        // 检查 token 是否存在于 Redis
+        if (!redisUtil.exists(key)) {
+            return Response.status(401)
+                        .entity(R.failed("UNAUTHORIZED", "Invalid access token"))
+                        .build();
+        }
+        try {
+            JsonWebToken jwt = jwtParser.parse(token);
+            // 额外检查 claims（可选）
+            String issuer = jwt.getIssuer();
+            if (!"https://quarkus-oauth2-server".equals(issuer)) {
+                return Response.status(401)
+                        .entity(R.failed("UNAUTHORIZED", "Invalid issuer"))
+                        .build();
+            }
+            // 验证成功：返回 Token 信息或业务响应
+            return Response.ok()
+                    .entity(R.ok(Map.of("userId", jwt.getSubject(), "exp", jwt.getExpirationTime()),"Token valid"))
+                    .build();
+        } catch (ParseException e) {
+            // 捕获验证失败（e.g., 过期、签名无效）
+            String message = switch (e.getCause().getMessage()) {
+                case "Token is expired" -> "Token expired";
+                case "Signature could not be verified" -> "Invalid signature";
+                default -> "Invalid token: " + e.getMessage();
+            };
+            return Response.status(401)
+                    .entity(R.failed("UNAUTHORIZED", message))
+                    .build();
+        }
     }
 
   
