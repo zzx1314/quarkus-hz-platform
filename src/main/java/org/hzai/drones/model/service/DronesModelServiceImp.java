@@ -18,6 +18,7 @@ import org.hzai.util.FileUtil;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 @ApplicationScoped
@@ -53,6 +54,7 @@ public class DronesModelServiceImp implements DronesModelService {
     }
 
     @Override
+    @Transactional
     public Boolean register(DronesModel entity) {
         entity.setIsDeleted(0);
         entity.setCreateTime(LocalDateTime.now());
