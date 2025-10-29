@@ -25,4 +25,9 @@ public class DronesModelDto {
      * 文件大小（字节）
      */
     private Long fileSize;
+
+    /**
+     * 备注
+     */
+    private String remarks;
 }

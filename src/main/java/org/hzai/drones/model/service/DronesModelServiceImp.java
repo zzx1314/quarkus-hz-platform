@@ -100,6 +100,7 @@ public class DronesModelServiceImp implements DronesModelService {
             dronesModel.setFilePath(mcpFilePath + "/" + file.fileName());
             dronesModel.setFileFormat(modelDto.getFileFormat());
             dronesModel.setFileSize(file.size());
+            dronesModel.setRemarks(modelDto.getRemarks());
             this.register(dronesModel);
         }
         return R.ok();

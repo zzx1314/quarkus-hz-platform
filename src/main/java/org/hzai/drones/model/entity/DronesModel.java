@@ -44,6 +44,12 @@ public class DronesModel extends PanacheEntityBase{
 
 
     /**
+     * 备注
+     */
+    private String remarks;
+
+
+    /**
      * 创建时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
