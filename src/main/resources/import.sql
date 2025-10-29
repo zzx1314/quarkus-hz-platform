@@ -67,7 +67,7 @@ INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, c
 INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1134, '媒体资源管理', null, null, '/mediaParent', 'ri/clapperboard-ai-line', -1, '', 6, 0, 1, '2025-06-19 10:35:53', null, 0, null, false, '110', null, null);
 INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1135, '媒体资源', null, null, '/drones/media/index', 'ri/clapperboard-ai-line', 1134, 'mediaIndex', 1, 0, 3, '2025-06-19 11:41:33', null, 0, null, false, '110', null, 1136);
 INSERT INTO p_sys_menu (id, name, code, permission, path_url, icon, parent_id, component, sort, keep_alive, type, create_time, update_time, is_deleted, remarks, leaf, role_code, disabled, find_auth_id) VALUES (1136, '查询媒体资源', null, 'media_find', null, null, 1135, '', 1, 0, 2, '2025-06-19 11:45:03', null, 0, null, false, '110', null, null);
-ALTER SEQUENCE p_sys_menu_seq RESTART WITH 1136;
+ALTER SEQUENCE p_sys_menu_seq RESTART WITH 1137;
 
 -- 角色菜单初始化
 INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1024);
@@ -116,6 +116,9 @@ INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1012);
 INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1021);
 INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1022);
 INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1023);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1034);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1035);
+INSERT INTO p_sys_role_menu (role_id, menu_id) VALUES (1, 1036);
 
 -- 字典初始化
 INSERT INTO p_sys_dict (id, type, dict_type, description, remarks, create_time, update_time, is_deleted, allow_deletion, is_show) VALUES (28, 'sys_security_policy', '系统类', '安全策略配置', '安全策略配置', '2020-09-01 16:17:18', null, 0, true, true);
