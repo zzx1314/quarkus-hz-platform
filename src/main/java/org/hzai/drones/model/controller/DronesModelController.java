@@ -2,6 +2,7 @@ package org.hzai.drones.model.controller;
 
 import java.util.List;
 
+import org.hzai.ai.common.SelectOption;
 import org.hzai.drones.model.entity.DronesModel;
 import org.hzai.drones.model.entity.dto.DronesModelDto;
 import org.hzai.drones.model.entity.dto.DronesModelQueryDto;
@@ -51,6 +52,12 @@ public class DronesModelController {
     @Path("/getAll")
     public R<List<DronesModel>> getAll() {
         return R.ok(dronesModelService.listEntitys());
+    }
+
+    @GET
+    @Path("/getSelectOption")
+    public R<List<SelectOption>> getSelectOption() {
+        return R.ok(dronesModelService.getSelectOption());
     }
 
     @POST

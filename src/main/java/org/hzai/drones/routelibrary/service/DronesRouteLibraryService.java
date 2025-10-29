@@ -26,4 +26,6 @@ public interface DronesRouteLibraryService {
    void removeById(Long id);
 
    void removeByIds(List<Long> ids);
+
+   Object getRoute(Long modelId);
 }

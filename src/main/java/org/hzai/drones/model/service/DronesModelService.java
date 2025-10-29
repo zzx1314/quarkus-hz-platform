@@ -2,6 +2,7 @@ package org.hzai.drones.model.service;
 
 import java.util.List;
 
+import org.hzai.ai.common.SelectOption;
 import org.hzai.drones.model.entity.DronesModel;
 import org.hzai.drones.model.entity.dto.DronesModelDto;
 import org.hzai.drones.model.entity.dto.DronesModelQueryDto;
@@ -30,4 +31,6 @@ public interface DronesModelService {
    void removeByIds(List<Long> ids);
 
    R<Object> uploadFile(FileUpload file, DronesModelDto modelDto);
+
+   List<SelectOption> getSelectOption();
 }

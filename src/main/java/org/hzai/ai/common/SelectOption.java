@@ -9,4 +9,14 @@ public class SelectOption {
 
 	private Object value;
 
+	public SelectOption(String label, Object value) {
+		this.label = label;
+		this.value = value;
+	}
+
+	public SelectOption() {
+	}
+
+	
+
 }

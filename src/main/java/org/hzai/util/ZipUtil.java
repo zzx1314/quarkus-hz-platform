@@ -6,9 +6,13 @@ import java.util.zip.*;
 
 public class ZipUtil {
 
-    public static void unzip(Path zipFilePath, Path destDir) throws IOException {
+    public static void unzip(Path zipFilePath, Path destDir) {
         if (!Files.exists(destDir)) {
-            Files.createDirectories(destDir);
+            try {
+                Files.createDirectories(destDir);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to create directories: " + destDir, e);
+            }
         }
         try (ZipInputStream zis = new ZipInputStream(Files.newInputStream(zipFilePath))) {
             ZipEntry entry;
@@ -32,6 +36,8 @@ public class ZipUtil {
                     }
                 }
             }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to unzip file: " + zipFilePath, e);
         }
     }
 }

@@ -1,8 +1,10 @@
 package org.hzai.drones.model.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.time.LocalDateTime;
 
+import org.hzai.ai.common.SelectOption;
 import org.hzai.config.FileConfig;
 import org.hzai.drones.model.entity.DronesModel;
 import org.hzai.drones.model.entity.dto.DronesModelQueryDto;
@@ -101,6 +103,15 @@ public class DronesModelServiceImp implements DronesModelService {
             this.register(dronesModel);
         }
         return R.ok();
+    }
+
+    @Override
+    public List<SelectOption> getSelectOption() {
+        // Query model becomes drop-down option
+        List<DronesModel> models = this.listEntitys();
+        return models.stream()
+                .map(model -> new SelectOption(model.getFileName(), model.getId()))
+                .collect(Collectors.toList());
     }
 
 }
