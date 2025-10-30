@@ -8,6 +8,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.time.LocalDateTime;
 
+import org.hzai.drones.task.entity.DronesTask;
+import org.hzai.drones.task.entity.dto.DronesTaskQueryDto;
+import org.hzai.drones.task.service.DronesTaskService;
 import org.hzai.drones.workflow.entity.DronesWorkflow;
 import org.hzai.drones.workflow.entity.EdgeEntity;
 import org.hzai.drones.workflow.entity.NodeEntity;
@@ -27,6 +30,11 @@ import jakarta.inject.Inject;
 public class DronesWorkflowServiceImp implements DronesWorkflowService {
     @Inject
     DronesWorkflowRepository repository;
+
+    @Inject
+    DronesTaskService taskService;
+
+
     @Override
     public List<DronesWorkflow> listEntitys() {
         return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
@@ -75,7 +83,9 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
     }
 
     @Override
-    public DronesWorkflowVo getWorkflowGraph(Long workflowId) {
+    public DronesWorkflowVo getWorkflowGraph(Long taskId) {
+        DronesTask task = taskService.listOne(new DronesTaskQueryDto().setId(taskId));
+        Long workflowId = task.getWorkflowId();
         DronesWorkflowVo dronesWorkflowVo = new DronesWorkflowVo();
         DronesWorkflowQueryDto queryDto = new DronesWorkflowQueryDto().setId(workflowId);
 		DronesWorkflow dronesWorkflow = repository.selectOne(queryDto);

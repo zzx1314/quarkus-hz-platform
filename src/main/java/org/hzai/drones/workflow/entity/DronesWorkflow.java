@@ -34,9 +34,9 @@ public class DronesWorkflow extends PanacheEntityBase{
 	private String edges;
 
 	/**
-	 * 路线ID
+	 * 任务ID
 	 */
-	private Long routeId;
+	private Long taskId;
 
 	/**
 	 * 创建时间

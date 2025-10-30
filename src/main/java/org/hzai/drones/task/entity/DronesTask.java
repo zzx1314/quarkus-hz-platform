@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper=false)
 public class DronesTask extends PanacheEntityBase{
-     @Id
+    @Id
 	@GeneratedValue
 	private Long id;
 
@@ -36,6 +36,11 @@ public class DronesTask extends PanacheEntityBase{
      * 任务状态
      */
     private String taskStatus;
+
+    /**
+     * 工作流ID
+     */
+    private Long workflowId;
 
     /**
      * 创建时间

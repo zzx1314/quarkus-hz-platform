@@ -6,6 +6,7 @@ import org.hzai.drones.workflow.entity.DronesWorkflow;
 import org.hzai.drones.workflow.entity.dto.DronesWorkflowDto;
 import org.hzai.drones.workflow.entity.dto.DronesWorkflowQueryDto;
 import org.hzai.drones.workflow.service.DronesWorkflowService;
+import org.hzai.drones.workflow.vo.DronesWorkflowVo;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.R;
@@ -42,6 +43,12 @@ public class DronesWorkflowController {
     @Path("/getByDto")
     public R<List<DronesWorkflow>> getByDto(@BeanParam DronesWorkflowQueryDto dto) {
         return R.ok(dronesWorkflowService.listEntitysByDto(dto));
+    }
+
+    @GET
+    @Path("/getWorkflowByTaskId/{taskId}")
+    public R<DronesWorkflowVo> getWorkflowByTaskId(@PathParam("taskId") Long taskId) {
+        return R.ok(dronesWorkflowService.getWorkflowGraph(taskId));
     }
 
     @GET
