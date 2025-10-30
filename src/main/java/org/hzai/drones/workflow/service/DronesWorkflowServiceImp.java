@@ -34,10 +34,9 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
     @Inject
     DronesTaskService taskService;
 
-
     @Override
     public List<DronesWorkflow> listEntitys() {
-        return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
+        return repository.list("isDeleted = ?1", Sort.by("createTime"), 0);
     }
 
     @Override
@@ -87,33 +86,34 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
         DronesTask task = taskService.listOne(new DronesTaskQueryDto().setId(taskId));
         Long workflowId = task.getWorkflowId();
         DronesWorkflowVo dronesWorkflowVo = new DronesWorkflowVo();
-        DronesWorkflowQueryDto queryDto = new DronesWorkflowQueryDto().setId(workflowId);
-		DronesWorkflow dronesWorkflow = repository.selectOne(queryDto);
-		String nodes = dronesWorkflow.getNodes();
-		List<NodeEntity> nodeEntityList = JsonUtil.fromJsonToList(nodes, NodeEntity.class);
-		String edges = dronesWorkflow.getEdges();
-		List<EdgeEntity> edgeEntityList = JsonUtil.fromJsonToList(edges, EdgeEntity.class);
+        if (null != workflowId) {
+            DronesWorkflowQueryDto queryDto = new DronesWorkflowQueryDto().setId(workflowId);
+            DronesWorkflow dronesWorkflow = repository.selectOne(queryDto);
+            String nodes = dronesWorkflow.getNodes();
+            List<NodeEntity> nodeEntityList = JsonUtil.fromJsonToList(nodes, NodeEntity.class);
+            String edges = dronesWorkflow.getEdges();
+            List<EdgeEntity> edgeEntityList = JsonUtil.fromJsonToList(edges, EdgeEntity.class);
 
-		NodeEntity startNode = nodeEntityList.stream()
-				.filter(n -> "start".equals(n.getType()))
-				.findFirst()
-				.orElseThrow(() -> new RuntimeException("未找到开始节点"));
-		dronesWorkflowVo.setStartNode(startNode);
+            NodeEntity startNode = nodeEntityList.stream()
+                    .filter(n -> "start".equals(n.getType()))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("未找到开始节点"));
+            dronesWorkflowVo.setStartNode(startNode);
 
-		// 建立从 sourceId -> List<targetId> 的映射
-		Map<String, List<String>> edgeMap = new HashMap<>();
-		for (EdgeEntity edge : edgeEntityList) {
-			edgeMap.computeIfAbsent(edge.getSource(), k -> new ArrayList<>())
-					.add(edge.getTarget());
-		}
-		dronesWorkflowVo.setEdgeMap(edgeMap);
+            // 建立从 sourceId -> List<targetId> 的映射
+            Map<String, List<String>> edgeMap = new HashMap<>();
+            for (EdgeEntity edge : edgeEntityList) {
+                edgeMap.computeIfAbsent(edge.getSource(), k -> new ArrayList<>())
+                        .add(edge.getTarget());
+            }
+            dronesWorkflowVo.setEdgeMap(edgeMap);
 
-		// 构建 id -> NodeEntity 映射
-		Map<String, NodeEntity> nodeMap = nodeEntityList.stream()
-				.collect(Collectors.toMap(NodeEntity::getId, Function.identity()));
-		dronesWorkflowVo.setNodeMap(nodeMap);
-
-		return dronesWorkflowVo;
+            // 构建 id -> NodeEntity 映射
+            Map<String, NodeEntity> nodeMap = nodeEntityList.stream()
+                    .collect(Collectors.toMap(NodeEntity::getId, Function.identity()));
+            dronesWorkflowVo.setNodeMap(nodeMap);
+        }
+        return dronesWorkflowVo;
     }
 
 }
