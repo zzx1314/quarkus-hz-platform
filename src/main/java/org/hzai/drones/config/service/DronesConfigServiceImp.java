@@ -1,8 +1,10 @@
 package org.hzai.drones.config.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.time.LocalDateTime;
 
+import org.hzai.ai.common.SelectOption;
 import org.hzai.drones.config.entity.DronesConfig;
 import org.hzai.drones.config.entity.dto.DronesConfigQueryDto;
 import org.hzai.drones.config.entity.dto.DronesConfigDto;
@@ -64,6 +66,14 @@ public class DronesConfigServiceImp implements DronesConfigService {
     @Override
     public void removeByIds(List<Long> ids) {
         repository.deleteByIds(ids);
+    }
+
+    @Override
+    public List<SelectOption> getSelectOptions() {
+        List<DronesConfig> listAll = repository.listAll();
+        return listAll.stream()
+                .map(item -> new SelectOption(item.getConfigName(), item.getId()))
+                .collect(Collectors.toList());
     }
 
 }

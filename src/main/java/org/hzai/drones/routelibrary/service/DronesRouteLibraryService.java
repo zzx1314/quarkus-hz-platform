@@ -2,6 +2,7 @@ package org.hzai.drones.routelibrary.service;
 
 import java.util.List;
 
+import org.hzai.ai.common.SelectOption;
 import org.hzai.drones.routelibrary.entity.DronesRouteLibrary;
 import org.hzai.drones.routelibrary.entity.dto.DronesRouteLibraryDto;
 import org.hzai.drones.routelibrary.entity.dto.DronesRouteLibraryQueryDto;
@@ -28,4 +29,6 @@ public interface DronesRouteLibraryService {
    void removeByIds(List<Long> ids);
 
    Object getRoute(Long modelId);
+
+   List<SelectOption> getSelectOptions();
 }

@@ -1,8 +1,10 @@
 package org.hzai.drones.device.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.time.LocalDateTime;
 
+import org.hzai.ai.common.SelectOption;
 import org.hzai.drones.device.entity.DronesDevice;
 import org.hzai.drones.device.entity.dto.DronesDeviceQueryDto;
 import org.hzai.drones.device.entity.dto.DronesDeviceDto;
@@ -73,6 +75,14 @@ public class DronesDeviceServiceImp implements DronesDeviceService {
     @Override
     public void registerByDto(DronesDeviceDto deviceDto) {
         repository.insertByDto(deviceDto);
+    }
+
+    @Override
+    public List<SelectOption> getSelectOptions() {
+        List<DronesDevice> listAll = repository.listAll();
+        return listAll.stream()
+                .map(item -> new SelectOption(item.getDeviceName(), item.getId()))
+                .collect(Collectors.toList());
     }
 
 }

@@ -2,6 +2,7 @@ package org.hzai.drones.device.controller;
 
 import java.util.List;
 
+import org.hzai.ai.common.SelectOption;
 import org.hzai.drones.device.entity.DronesDevice;
 import org.hzai.drones.device.entity.dto.DronesDeviceDto;
 import org.hzai.drones.device.entity.dto.DronesDeviceQueryDto;
@@ -48,6 +49,13 @@ public class DronesDeviceController {
     @Path("/getAll")
     public R<List<DronesDevice>> getAll() {
         return R.ok(dronesDeviceService.listEntitys());
+    }
+
+    
+    @GET
+    @Path("/getSelectOption")
+    public R<List<SelectOption>> getSelectOption() {
+        return R.ok(dronesDeviceService.getSelectOptions());
     }
 
     @POST

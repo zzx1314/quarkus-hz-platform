@@ -1,9 +1,11 @@
 package org.hzai.drones.routelibrary.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
+import org.hzai.ai.common.SelectOption;
 import org.hzai.drones.model.entity.DronesModel;
 import org.hzai.drones.model.entity.dto.DronesModelQueryDto;
 import org.hzai.drones.model.service.DronesModelService;
@@ -90,6 +92,14 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
             return base64Str;
         }
         return "";
+    }
+
+    @Override
+    public List<SelectOption> getSelectOptions() {
+        List<DronesRouteLibrary> listAll = repository.listAll();
+        return listAll.stream()
+                .map(item -> new SelectOption(item.getRouteName(), item.getId()))
+                .collect(Collectors.toList());
     }
 
 }

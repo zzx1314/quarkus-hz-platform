@@ -2,6 +2,7 @@ package org.hzai.drones.config.controller;
 
 import java.util.List;
 
+import org.hzai.ai.common.SelectOption;
 import org.hzai.drones.config.entity.DronesConfig;
 import org.hzai.drones.config.entity.dto.DronesConfigDto;
 import org.hzai.drones.config.entity.dto.DronesConfigQueryDto;
@@ -62,6 +63,12 @@ public class DronesConfigController {
     public R<DronesConfig> update(DronesConfigDto dto) {
         dronesConfigService.replaceByDto(dto);
         return R.ok();
+    }
+
+    @GET
+    @Path("/getSelectOption")
+    public R<List<SelectOption>> getSelectOption() {
+        return R.ok(dronesConfigService.getSelectOptions());
     }
 
     @DELETE

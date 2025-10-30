@@ -2,6 +2,7 @@ package org.hzai.drones.routelibrary.controller;
 
 import java.util.List;
 
+import org.hzai.ai.common.SelectOption;
 import org.hzai.drones.routelibrary.entity.DronesRouteLibrary;
 import org.hzai.drones.routelibrary.entity.dto.DronesRouteLibraryDto;
 import org.hzai.drones.routelibrary.entity.dto.DronesRouteLibraryQueryDto;
@@ -48,6 +49,12 @@ public class DronesRouteLibraryController {
     @Path("/getAll")
     public R<List<DronesRouteLibrary>> getAll() {
         return R.ok(dronesRouteLibraryService.listEntitys());
+    }
+
+    @GET
+    @Path("/getSelectOption")
+    public R<List<SelectOption>> getSelectOption() {
+        return R.ok(dronesRouteLibraryService.getSelectOptions());
     }
 
     @POST

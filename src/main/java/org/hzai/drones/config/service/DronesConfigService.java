@@ -2,6 +2,7 @@ package org.hzai.drones.config.service;
 
 import java.util.List;
 
+import org.hzai.ai.common.SelectOption;
 import org.hzai.drones.config.entity.DronesConfig;
 import org.hzai.drones.config.entity.dto.DronesConfigDto;
 import org.hzai.drones.config.entity.dto.DronesConfigQueryDto;
@@ -26,4 +27,6 @@ public interface DronesConfigService {
    void removeById(Long id);
 
    void removeByIds(List<Long> ids);
+
+   List<SelectOption> getSelectOptions();
 }
