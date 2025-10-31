@@ -18,6 +18,7 @@ import org.jboss.resteasy.reactive.multipart.FileUpload;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -52,6 +53,7 @@ public class DronesMediaServiceImp implements DronesMediaService {
     }
 
     @Override
+    @Transactional
     public Boolean register(DronesMedia entity) {
         entity.setIsDeleted(0);
         entity.setCreateTime(LocalDateTime.now());

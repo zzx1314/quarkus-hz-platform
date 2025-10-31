@@ -15,6 +15,7 @@ import org.hzai.util.PageResult;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class DronesDeviceServiceImp implements DronesDeviceService {
@@ -41,6 +42,7 @@ public class DronesDeviceServiceImp implements DronesDeviceService {
     }
 
     @Override
+    @Transactional
     public Boolean register(DronesDevice entity) {
         entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);

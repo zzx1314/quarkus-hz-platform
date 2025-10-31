@@ -13,6 +13,7 @@ import org.hzai.util.PageResult;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class DronesCommandServiceImp implements DronesCommandService {
@@ -39,6 +40,7 @@ public class DronesCommandServiceImp implements DronesCommandService {
     }
 
     @Override
+    @Transactional
     public Boolean register(DronesCommand entity) {
         entity.setIsDeleted(0);
         entity.setCreateTime(LocalDateTime.now());

@@ -13,6 +13,8 @@ import org.hzai.util.PageResult;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+
 
 @ApplicationScoped
 public class {{ entity_name }}ServiceImp implements {{ entity_name }}Service {
@@ -38,6 +40,7 @@ public class {{ entity_name }}ServiceImp implements {{ entity_name }}Service {
         return repository.selectPage(dto, pageRequest);
     }
 
+    @Transactional
     @Override
     public Boolean register({{ entity_name }} entity) {
         entity.setCreateTime(LocalDateTime.now());
