@@ -12,9 +12,12 @@ import org.hzai.drones.media.entity.DronesMedia;
 import org.hzai.drones.media.entity.dto.DronesMediaDto;
 import org.hzai.drones.media.entity.dto.DronesMediaQueryDto;
 import org.hzai.drones.media.service.DronesMediaService;
+import org.hzai.util.JsonUtil;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
 import org.hzai.util.R;
+import org.jboss.resteasy.reactive.RestForm;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
 
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -86,6 +89,14 @@ public class DronesMediaController {
         entity.persist();
         return R.ok();
     }
+
+    @POST
+    @Path(value = "/uploadFile")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+	public R<Object> uploadFile(@RestForm("file") FileUpload file, @RestForm String mediaInfo) throws Exception {
+		DronesMediaDto mediaDto = JsonUtil.fromJson(mediaInfo, DronesMediaDto.class);
+		return dronesMediaService.uploadFile(file, mediaDto);
+	}
 
     @GET
     @Path("/stream/{filename}")

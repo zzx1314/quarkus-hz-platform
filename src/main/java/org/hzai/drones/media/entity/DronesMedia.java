@@ -43,6 +43,11 @@ public class DronesMedia extends PanacheEntityBase {
     private Long mediaSize;
 
     /**
+     * 媒体文件描述
+     */
+    private String remarks;
+
+    /**
      * 创建时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")

@@ -3,21 +3,34 @@ package org.hzai.drones.media.service;
 import java.util.List;
 import java.time.LocalDateTime;
 
+import org.hzai.config.FileConfig;
 import org.hzai.drones.media.entity.DronesMedia;
 import org.hzai.drones.media.entity.dto.DronesMediaQueryDto;
 import org.hzai.drones.media.entity.dto.DronesMediaDto;
 import org.hzai.drones.media.repository.DronesMediaRepository;
+import org.hzai.util.FileUtil;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
+import org.hzai.util.R;
+import org.hzai.util.SecurityUtil;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
 
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @ApplicationScoped
 public class DronesMediaServiceImp implements DronesMediaService {
     @Inject
     DronesMediaRepository repository;
+
+    @Inject
+    FileConfig fileConfig;
+
+    @Inject
+    SecurityUtil securityUtil;
     @Override
     public List<DronesMedia> listEntitys() {
         return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
@@ -64,6 +77,28 @@ public class DronesMediaServiceImp implements DronesMediaService {
     @Override
     public void removeByIds(List<Long> ids) {
         repository.deleteByIds(ids);
+    }
+
+    @Override
+    public R<Object> uploadFile(FileUpload file, DronesMediaDto mediaDto) {
+         log.info("Uploading file: {}", file.fileName());
+        // Save the file to a designated path
+        String mcpFilePath = fileConfig.basePath() + "/media/" + securityUtil.getUserId();
+        FileUtil.saveFile(file, mcpFilePath);
+        if (mediaDto.getId() != null) {
+            // Update existing record
+            this.replaceByDto(mediaDto);
+        } else{
+            // Create new record
+            DronesMedia dronesMedia = new DronesMedia();
+            dronesMedia.setMediaName(file.fileName());
+            dronesMedia.setMediaPath(mcpFilePath + "/" + file.fileName());
+            dronesMedia.setMediaType(mediaDto.getMediaType());
+            dronesMedia.setMediaSize(file.size());
+            dronesMedia.setRemarks(mediaDto.getRemarks());
+            this.register(dronesMedia);
+        }
+        return R.ok();
     }
 
 }

@@ -7,6 +7,8 @@ import org.hzai.drones.media.entity.dto.DronesMediaDto;
 import org.hzai.drones.media.entity.dto.DronesMediaQueryDto;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
+import org.hzai.util.R;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
 
 public interface DronesMediaService {
    List<DronesMedia> listEntitys();
@@ -26,4 +28,6 @@ public interface DronesMediaService {
    void removeById(Long id);
 
    void removeByIds(List<Long> ids);
+
+   R<Object> uploadFile(FileUpload file, DronesMediaDto modelDto);
 }
