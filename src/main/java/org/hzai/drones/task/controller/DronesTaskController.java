@@ -77,4 +77,10 @@ public class DronesTaskController {
         return R.ok();
     }
 
+    @GET
+    @Path("/startTask")
+    public R<Object> startTask(@PathParam("id") Long id) {
+        return R.ok();
+    }
+
 }

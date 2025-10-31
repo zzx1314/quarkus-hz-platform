@@ -85,8 +85,9 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
     public DronesWorkflowVo getWorkflowGraph(Long taskId) {
         DronesTask task = taskService.listOne(new DronesTaskQueryDto().setId(taskId));
         Long workflowId = task.getWorkflowId();
-        DronesWorkflowVo dronesWorkflowVo = new DronesWorkflowVo();
+        DronesWorkflowVo dronesWorkflowVo = null;
         if (null != workflowId) {
+            dronesWorkflowVo = new DronesWorkflowVo();
             DronesWorkflowQueryDto queryDto = new DronesWorkflowQueryDto().setId(workflowId);
             DronesWorkflow dronesWorkflow = repository.selectOne(queryDto);
             String nodes = dronesWorkflow.getNodes();
