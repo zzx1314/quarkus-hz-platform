@@ -12,6 +12,7 @@ import org.hzai.drones.media.entity.DronesMedia;
 import org.hzai.drones.media.entity.dto.DronesMediaDto;
 import org.hzai.drones.media.entity.dto.DronesMediaQueryDto;
 import org.hzai.drones.media.service.DronesMediaService;
+import org.hzai.util.FileUtil;
 import org.hzai.util.JsonUtil;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
@@ -32,6 +33,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -142,5 +144,11 @@ public class DronesMediaController {
 
         return response.build();
     }
+
+    @GET
+    @Path("/downFile")
+	public Response downloadByPath(@QueryParam("filePath") String filePath) {
+		 return FileUtil.downloadFile(filePath);
+	 }
 
 }

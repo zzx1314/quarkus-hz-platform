@@ -103,8 +103,8 @@ public class AiApplicationController {
 	}
 
     @GET
-    @Path("/downFile")
-	public Response downloadByPath(String filePath) {
+    @Path("/downFile/{filePath}")
+	public Response downloadByPath(@PathParam("filePath") String filePath) {
 		 return FileUtil.downloadFile(filePath);
 	 }
 
