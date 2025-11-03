@@ -71,7 +71,8 @@ public class DronesDeviceRepository implements PanacheRepository<DronesDevice> {
     public void updateByQuery(DronesDeviceDto dto, DronesDeviceQueryDto queryDto) {
         DronesDevice selectOne = this.selectOne(queryDto);
         if (selectOne != null) {
-            mapper.updateEntityFromDto(dto, selectOne);
+            selectOne.setCommTime(LocalDateTime.now());
+            selectOne.setStatus(dto.getStatus());
             selectOne.setUpdateTime(LocalDateTime.now());
         }
     }

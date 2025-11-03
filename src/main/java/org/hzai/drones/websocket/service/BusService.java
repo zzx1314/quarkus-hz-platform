@@ -16,6 +16,7 @@ import org.jose4j.json.internal.json_simple.JSONObject;
 import io.quarkus.runtime.util.StringUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class BusService {
@@ -31,6 +32,7 @@ public class BusService {
     /**
      * 检查客户端id
      */
+    @Transactional
     public boolean checkClientId(String clientId) {
         DronesDeviceQueryDto queryDto = new DronesDeviceQueryDto();
         queryDto.setDeviceId(clientId);
