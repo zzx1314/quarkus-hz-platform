@@ -84,6 +84,7 @@ public class DronesDevice extends PanacheEntityBase {
     /**
      * 最后通信时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private LocalDateTime commTime;
 
     /**
