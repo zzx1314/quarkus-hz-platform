@@ -89,6 +89,8 @@ public class DronesDeviceRepository implements PanacheRepository<DronesDevice> {
     public void insertByDto(DronesDeviceDto deviceDto) {
         DronesDevice entity = new DronesDevice();
         mapper.updateEntityFromDto(deviceDto, entity);
+        entity.setCreateTime(LocalDateTime.now());
+        entity.setIsDeleted(0);
         this.persist(entity);
     }
 
