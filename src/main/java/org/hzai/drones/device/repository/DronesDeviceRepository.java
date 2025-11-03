@@ -34,7 +34,7 @@ public class DronesDeviceRepository implements PanacheRepository<DronesDevice> {
                 .equal("deviceId", queryDto.getDeviceId())
                 .equal("id", queryDto.getId())
                 .equal("isDeleted", 0);
-        return find(qb.getQuery(), qb.getParams()).singleResult();
+        return find(qb.getQuery(), qb.getParams()).firstResult();
     }
 
     public PageResult<DronesDevice> selectPage(DronesDeviceQueryDto dto, PageRequest pageRequest) {
@@ -85,6 +85,7 @@ public class DronesDeviceRepository implements PanacheRepository<DronesDevice> {
         }
     }
 
+    @Transactional
     public void insertByDto(DronesDeviceDto deviceDto) {
         DronesDevice entity = new DronesDevice();
         mapper.updateEntityFromDto(deviceDto, entity);

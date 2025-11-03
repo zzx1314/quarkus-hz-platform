@@ -3,12 +3,12 @@ package org.hzai.drones.util;
 import org.hzai.util.RedisUtil;
 
 import io.quarkus.runtime.util.StringUtil;
-import jakarta.annotation.Resource;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class CheckClientTokenUtil {
-    @Resource
+    @Inject
     public RedisUtil redisUtil;
 
 
