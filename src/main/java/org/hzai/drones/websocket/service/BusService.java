@@ -68,7 +68,9 @@ public class BusService {
         } else if ("error".equals(dto.getStatus())) {
             dto.setStatus("异常");
         }
-        dronesDeviceService.replaceByDto(dto);
+        DronesDeviceQueryDto queryDto = new DronesDeviceQueryDto();
+        queryDto.setDeviceId(dto.getDeviceId());
+        dronesDeviceService.replaceByQuery(dto, queryDto);
         return new MessageInfo("report", "success");
     }
 
