@@ -1,7 +1,10 @@
 package org.hzai.drones.device.repository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hzai.drones.device.entity.DronesDevice;
 import org.hzai.drones.device.entity.dto.DronesDeviceDto;
@@ -93,6 +96,53 @@ public class DronesDeviceRepository implements PanacheRepository<DronesDevice> {
         entity.setCreateTime(LocalDateTime.now());
         entity.setIsDeleted(0);
         this.persist(entity);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> getDeviceCountByDay() {
+        String sql = """
+            SELECT
+                TO_CHAR(date_trunc('day', create_time), 'YYYY-MM-DD') AS date,
+                COUNT(*) AS count
+            FROM drones_device
+            WHERE create_time >= NOW() - INTERVAL '14 days'
+            GROUP BY date_trunc('day', create_time)
+            ORDER BY date ASC
+        """;
+
+        List<Object[]> rows = getEntityManager().createNativeQuery(sql).getResultList();
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Object[] row : rows) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("date", row[0]);
+            map.put("count", ((Number) row[1]).longValue());
+            result.add(map);
+        }
+        return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> countDeviceByType() {
+        String sql = """
+            SELECT
+                drones_device.device_type AS name,
+                COUNT(drones_device.id) AS count
+            FROM drones_device
+            WHERE drones_device.is_deleted = 0
+            GROUP BY drones_device.device_type
+            ORDER BY count DESC
+        """;
+        List<Object[]> rows = getEntityManager().createNativeQuery(sql).getResultList();
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Object[] row : rows) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("name", row[0]);
+            map.put("count", ((Number) row[1]).longValue());
+            result.add(map);
+        }
+
+        return result;
     }
 
 }

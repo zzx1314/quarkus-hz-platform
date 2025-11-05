@@ -33,4 +33,10 @@ public interface DronesModelService {
    R<Object> uploadFile(FileUpload file, DronesModelDto modelDto);
 
    List<SelectOption> getSelectOption();
+
+   List<Long> getModelCount();
+
+   List<Long> getModelCountBefore();
+
+   long count();
 }

@@ -26,4 +26,10 @@ public interface DronesTaskService {
    void removeById(Long id);
 
    void removeByIds(List<Long> ids);
+
+   List<Long> getTaskCount();
+
+   List<Long> getTaskCountBefore();
+
+   long count();
 }

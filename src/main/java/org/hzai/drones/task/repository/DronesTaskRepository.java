@@ -1,7 +1,10 @@
 package org.hzai.drones.task.repository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hzai.drones.task.entity.DronesTask;
 import org.hzai.drones.task.entity.dto.DronesTaskDto;
@@ -73,6 +76,29 @@ public class DronesTaskRepository implements PanacheRepository<DronesTask> {
                 this.deleteById(id);
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> getDronesTaskCountByDay() {
+        String sql = """
+            SELECT
+                TO_CHAR(date_trunc('day', create_time), 'YYYY-MM-DD') AS date,
+                COUNT(*) AS count
+            FROM drones_task
+            WHERE create_time >= NOW() - INTERVAL '14 days'
+            GROUP BY date_trunc('day', create_time)
+            ORDER BY date ASC
+        """;
+
+        List<Object[]> rows = getEntityManager().createNativeQuery(sql).getResultList();
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Object[] row : rows) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("date", row[0]);
+            map.put("count", ((Number) row[1]).longValue());
+            result.add(map);
+        }
+        return result;
     }
 
 }

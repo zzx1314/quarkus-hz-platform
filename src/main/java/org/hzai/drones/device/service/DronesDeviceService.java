@@ -1,6 +1,7 @@
 package org.hzai.drones.device.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.hzai.ai.common.SelectOption;
 import org.hzai.drones.device.entity.DronesDevice;
@@ -33,4 +34,13 @@ public interface DronesDeviceService {
    void registerByDto(DronesDeviceDto deviceDto);
 
    List<SelectOption> getSelectOptions();
+
+   List<Long> getDeviceCount();
+
+   List<Long> getDeviceCountBefore();
+
+   long count();
+
+   List<Map<String, Object>> statisticsDeviceTypeNumber();
+
 }

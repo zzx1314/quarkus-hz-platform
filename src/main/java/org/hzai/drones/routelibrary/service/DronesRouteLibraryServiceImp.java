@@ -1,10 +1,14 @@
 package org.hzai.drones.routelibrary.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
+import org.hzai.ai.aistatistics.util.DateUtil;
 import org.hzai.ai.common.SelectOption;
 import org.hzai.drones.model.entity.DronesModel;
 import org.hzai.drones.model.entity.dto.DronesModelQueryDto;
@@ -100,6 +104,64 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
         return listAll.stream()
                 .map(item -> new SelectOption(item.getRouteName(), item.getId()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Long> getRouteCount() {
+        List<Long> data = new ArrayList<>();
+        List<Map<String, Object>> modelCountByDay = repository.getDronesRouteLibraryCountByDay();
+
+        List<String> lastSevenDays = DateUtil.getLastSevenDays();
+
+        if (!modelCountByDay.isEmpty()) {
+            // 将数据库统计结果转为 Map<date, count>
+            Map<String, Object> countMap = new HashMap<>();
+            for (Map<String, Object> map : modelCountByDay) {
+                countMap.put(map.get("date").toString(), map.get("count"));
+            }
+            // 按照最近7天顺序填充数据，缺失的日期设为0
+            for (String date : lastSevenDays) {
+                data.add(Long.valueOf(countMap.getOrDefault(date, 0L).toString()));
+            }
+        } else {
+            // 如果没有数据，则全部填充0
+            for (int i = 0; i < 7; i++) {
+                data.add(0L);
+            }
+        }
+        return data;
+    }
+
+    @Override
+    public List<Long> getRouteCountBefore() {
+        List<Long> data = new ArrayList<>();
+        List<Map<String, Object>> modelCountByDay = repository.getDronesRouteLibraryCountByDay();
+
+        List<String> lastSevenDays = DateUtil.getLast14DaysToLast7Days();
+
+        if (!modelCountByDay.isEmpty()) {
+            // 将数据库统计结果转为 Map<date, count>
+            Map<String, Object> countMap = new HashMap<>();
+            for (Map<String, Object> map : modelCountByDay) {
+                countMap.put(map.get("date").toString(), map.get("count"));
+            }
+            // 按照最近7天顺序填充数据，缺失的日期设为0
+            for (String date : lastSevenDays) {
+                data.add(Long.valueOf(countMap.getOrDefault(date, 0L).toString()));
+            }
+        } else {
+            // 如果没有数据，则全部填充0
+            for (int i = 0; i < 7; i++) {
+                data.add(0L);
+            }
+        }
+
+        return data;
+    }
+
+    @Override
+    public long count() {
+        return repository.count();
     }
 
 }

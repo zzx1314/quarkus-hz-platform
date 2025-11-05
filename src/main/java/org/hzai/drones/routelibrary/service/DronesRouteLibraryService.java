@@ -31,4 +31,10 @@ public interface DronesRouteLibraryService {
    Object getRoute(Long modelId);
 
    List<SelectOption> getSelectOptions();
+
+   List<Long> getRouteCount();
+
+   List<Long> getRouteCountBefore();
+
+   long count();
 }

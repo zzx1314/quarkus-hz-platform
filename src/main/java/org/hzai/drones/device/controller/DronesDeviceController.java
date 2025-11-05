@@ -72,6 +72,18 @@ public class DronesDeviceController {
         return R.ok();
     }
 
+    @GET
+    @Path("/getStatus/{deviceId}")
+    public R<DronesDevice> getStatus(@PathParam("deviceId") String deviceId) {
+        DronesDeviceQueryDto queryDto = new DronesDeviceQueryDto();
+        queryDto.setDeviceId(deviceId);
+        DronesDevice entity = dronesDeviceService.listOne(queryDto);
+        if (entity == null) {
+            return R.failed("设备不存在");
+        }
+        return R.ok(entity);
+    }
+
     @DELETE
     @Path("/{id}")
     @Transactional
