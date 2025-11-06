@@ -23,6 +23,10 @@ import org.hzai.util.PageResult;
 import org.hzai.util.R;
 import org.hzai.util.ZipUtil;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -168,7 +172,20 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
 
     @Override
     public void saveRouteData(DronesRouteLibraryDto data) {
-        repository.updateByDto(data);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            List<List<Double>> result = mapper.readValue(data.getRouteData(), mapper.getTypeFactory()
+                .constructCollectionType(List.class, mapper.getTypeFactory()
+                .constructCollectionType(List.class, Double.class)));
+                data.setStartCoordinates(mapper.writeValueAsString(result.get(0)));
+                data.setEndCoordinates(mapper.writeValueAsString(result.get(result.size() - 1)));
+                repository.updateByDto(data);
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        
     }
 
     @Override

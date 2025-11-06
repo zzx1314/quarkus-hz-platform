@@ -52,10 +52,6 @@ public class DronesRouteLibrary extends PanacheEntityBase {
      */
     private String endCoordinates;
 
-    /**
-     * 路线距离（公里）
-     */
-    private Double distanceKm;
 
     /**
      * 关联模型的id
