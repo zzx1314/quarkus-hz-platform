@@ -8,6 +8,7 @@ import org.hzai.drones.routelibrary.entity.dto.DronesRouteLibraryDto;
 import org.hzai.drones.routelibrary.entity.dto.DronesRouteLibraryQueryDto;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
+import org.hzai.util.R;
 
 public interface DronesRouteLibraryService {
    List<DronesRouteLibrary> listEntitys();
@@ -39,4 +40,6 @@ public interface DronesRouteLibraryService {
    long count();
 
    void saveRouteData(DronesRouteLibraryDto data);
+
+   R<Object> startOrRoute(Long id, String status);
 }

@@ -20,6 +20,7 @@ import org.hzai.drones.routelibrary.repository.DronesRouteLibraryRepository;
 import org.hzai.util.ImageUtil;
 import org.hzai.util.PageRequest;
 import org.hzai.util.PageResult;
+import org.hzai.util.R;
 import org.hzai.util.ZipUtil;
 
 import io.quarkus.panache.common.Sort;
@@ -55,6 +56,7 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
 
     @Override
     public Boolean register(DronesRouteLibrary entity) {
+        entity.setRouteStatus("停用");
         entity.setCreateTime(LocalDateTime.now());
         entity.setIsDeleted(0);
         repository.persist(entity);
@@ -167,6 +169,22 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
     @Override
     public void saveRouteData(DronesRouteLibraryDto data) {
         repository.updateByDto(data);
+    }
+
+    @Override
+    public R<Object> startOrRoute(Long id, String status) {
+        if ("start".equals(status)) {
+            // 启动,检查是否有航线数据
+            DronesRouteLibrary route = repository.findById(id);
+            if (route.getRouteData() == null || route.getRouteData().isEmpty()) {
+                return R.failed("请对航线进行设计并保存");
+            }
+        }
+        DronesRouteLibraryDto dto = new DronesRouteLibraryDto();
+        dto.setId(id);
+        dto.setRouteStatus(status.equals("start") ? "启用" : "停用");
+        repository.updateByDto(dto);
+        return R.ok();
     }
 
 }

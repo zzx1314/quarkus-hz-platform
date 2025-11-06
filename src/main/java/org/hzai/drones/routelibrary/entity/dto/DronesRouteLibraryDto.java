@@ -7,4 +7,6 @@ public class DronesRouteLibraryDto {
     private Long id;
 
     private String routeData;
+
+    private String routeStatus;
 }

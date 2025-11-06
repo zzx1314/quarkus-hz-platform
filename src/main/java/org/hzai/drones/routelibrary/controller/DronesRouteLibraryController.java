@@ -93,10 +93,15 @@ public class DronesRouteLibraryController {
 
     @POST
     @Path("/saveRouteData")
-    @Transactional
     public R<Boolean> saveRouteData(DronesRouteLibraryDto data) {
         dronesRouteLibraryService.saveRouteData(data);
         return R.ok();
+    }
+
+    @GET
+    @Path("/startOrStopRoute/{id}/{status}")
+    public R<Object> startOrRoute(@PathParam("id") Long id, @PathParam("status") String status) {
+        return dronesRouteLibraryService.startOrRoute(id, status);
     }
 
 }

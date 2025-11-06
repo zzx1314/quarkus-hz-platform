@@ -33,6 +33,11 @@ public class DronesRouteLibrary extends PanacheEntityBase {
     private String routeType;
 
     /**
+     * 路线状态
+     */
+    private String routeStatus;
+
+    /**
      * 路线描述
      */
     private String routeDescription;
@@ -51,11 +56,6 @@ public class DronesRouteLibrary extends PanacheEntityBase {
      * 路线距离（公里）
      */
     private Double distanceKm;
-
-    /**
-     * 预计飞行时间（分钟）
-     */
-    private Integer estimatedFlightTimeMin;
 
     /**
      * 关联模型的id
