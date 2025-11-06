@@ -2,9 +2,11 @@ package {{ base_package_name }}.entity.mapper;
 
 import {{ base_package_name }}.entity.{{ entity_name }};
 import {{ base_package_name }}.entity.dto.{{ entity_name }}Dto;
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "cdi" , unmappedTargetPolicy = ReportingPolicy.IGNORE)
@@ -12,8 +14,10 @@ public interface {{ entity_name }}Mapper {
     {{ entity_name }} toEntity({{ entity_name }}Dto dto);
 
     @Mapping(target = "id", ignore = true)
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDto({{ entity_name }}Dto dto, @MappingTarget {{ entity_name }} entity);
 
     @Mapping(target = "id", ignore = true)
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntity({{ entity_name }} dto, @MappingTarget {{ entity_name }} entity);
 }

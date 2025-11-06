@@ -37,4 +37,6 @@ public interface DronesRouteLibraryService {
    List<Long> getRouteCountBefore();
 
    long count();
+
+   void saveRouteData(DronesRouteLibraryDto data);
 }

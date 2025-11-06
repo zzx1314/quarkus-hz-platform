@@ -164,4 +164,9 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
         return repository.count();
     }
 
+    @Override
+    public void saveRouteData(DronesRouteLibraryDto data) {
+        repository.updateByDto(data);
+    }
+
 }

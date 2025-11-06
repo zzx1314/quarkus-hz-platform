@@ -28,6 +28,11 @@ public class DronesRouteLibrary extends PanacheEntityBase {
     private String routeName;
 
     /**
+     * 路线类型
+     */
+    private String routeType;
+
+    /**
      * 路线描述
      */
     private String routeDescription;
@@ -73,4 +78,9 @@ public class DronesRouteLibrary extends PanacheEntityBase {
      */
      @Column(columnDefinition = "INT DEFAULT 0")
      private Integer isDeleted;
+
+     /**
+     * 路线数据
+     */
+     private String routeData;
 }

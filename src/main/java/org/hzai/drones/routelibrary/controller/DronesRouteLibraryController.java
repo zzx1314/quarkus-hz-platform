@@ -90,4 +90,13 @@ public class DronesRouteLibraryController {
         return R.ok(dronesRouteLibraryService.getRoute(modelId));
     }
 
+
+    @POST
+    @Path("/saveRouteData")
+    @Transactional
+    public R<Boolean> saveRouteData(DronesRouteLibraryDto data) {
+        dronesRouteLibraryService.saveRouteData(data);
+        return R.ok();
+    }
+
 }
