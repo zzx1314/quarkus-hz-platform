@@ -44,12 +44,6 @@ public class DronesDevice extends PanacheEntityBase {
      * 设备类型
      */
     private String deviceType;
-
-    /**
-     * 设备序列号
-     */
-    private String serialNumber;
-
     /**
      * 设备状态
      */
@@ -66,9 +60,29 @@ public class DronesDevice extends PanacheEntityBase {
     private String model;
 
     /**
-     * 固件版本
+     * 速度
      */
-    private String firmwareVersion;
+    private String speed;
+
+    /**
+     * 高度
+     */
+    private String height;
+
+    /**
+     * 剩余电量
+     */
+    private String battery;
+
+    /**
+     * 航向
+     */
+    private String course;
+
+    /**
+     * 位置
+     */
+    private String location;
 
     /**
      * 创建时间
