@@ -16,6 +16,21 @@ import io.quarkus.websockets.next.WebSocketConnection;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * websocket服务
+ * ws://192.168.41.227:8080/api/notice/9527/a2ed64b9095b4def83afcab1d4ca5a72
+ * 心跳响应：
+    {
+    "deviceId": "9527",
+    "type": "heartbeat",
+    "status": "success",
+    "speed": 4km/h,
+    "height": 1000m,
+    "battery": 100%,
+    "course": 0°,
+    "location": "116.397428,39.90923"
+    }
+ */
 @Slf4j
 @WebSocket(path = "/notice/{deviceId}/{accessToken}")
 public class WebSocketService {
@@ -62,7 +77,7 @@ public class WebSocketService {
         } else if (messageJson.get("type").equals("report")) {
             // 处理指令结果
             MessageInfo messageInfo = JsonUtil.fromJson(message, MessageInfo.class);
-            busService.updateCommandReport(messageInfo.getId(), message, deviceId);
+            busService.updateCommandReport(messageInfo.getId(), messageInfo.getStatus(), messageInfo.getReturnValue());
         }
     }
 }
