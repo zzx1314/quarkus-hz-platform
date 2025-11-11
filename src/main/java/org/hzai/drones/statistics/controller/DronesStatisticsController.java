@@ -198,7 +198,7 @@ public class DronesStatisticsController {
 
 		double ratio = ((double) today / total) * 100;
 
-		chartData.setName("文档");
+		chartData.setName("模型");
 		chartData.setIcon("FileTextLine"); // 图标名称可自定义
 		chartData.setBgColor("#fffaf0");
 		chartData.setColor("#ff9900");
