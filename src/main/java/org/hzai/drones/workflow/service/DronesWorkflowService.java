@@ -29,4 +29,5 @@ public interface DronesWorkflowService {
    void removeByIds(List<Long> ids);
 
    DronesWorkflowVo getWorkflowGraph(Long taskId);
+   DronesWorkflow getWorkflow(Long taskId);
 }

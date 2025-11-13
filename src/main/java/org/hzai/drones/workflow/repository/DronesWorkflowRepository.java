@@ -32,6 +32,7 @@ public class DronesWorkflowRepository implements PanacheRepository<DronesWorkflo
     public DronesWorkflow selectOne(DronesWorkflowQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("id", queryDto.getId())
+                .equal("taskId", queryDto.getTaskId())
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).singleResult();
     }

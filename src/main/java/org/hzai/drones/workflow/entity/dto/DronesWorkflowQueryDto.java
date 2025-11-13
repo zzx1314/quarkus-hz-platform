@@ -15,4 +15,6 @@ public class DronesWorkflowQueryDto {
 
     @QueryParam("endTime")
     private String endTime;
+
+    private Long taskId;
 }

@@ -8,8 +8,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.time.LocalDateTime;
 
-import org.hzai.drones.task.entity.DronesTask;
-import org.hzai.drones.task.entity.dto.DronesTaskQueryDto;
 import org.hzai.drones.task.service.DronesTaskService;
 import org.hzai.drones.workflow.entity.DronesWorkflow;
 import org.hzai.drones.workflow.entity.EdgeEntity;
@@ -57,6 +55,7 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
     @Override
     public Boolean register(DronesWorkflow entity) {
         entity.setCreateTime(LocalDateTime.now());
+        entity.setIsDeleted(0);
         repository.persist(entity);
         return true;
     }
@@ -83,13 +82,10 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
 
     @Override
     public DronesWorkflowVo getWorkflowGraph(Long taskId) {
-        DronesTask task = taskService.listOne(new DronesTaskQueryDto().setId(taskId));
-        Long workflowId = task.getWorkflowId();
-        DronesWorkflowVo dronesWorkflowVo = null;
-        if (null != workflowId) {
-            dronesWorkflowVo = new DronesWorkflowVo();
-            DronesWorkflowQueryDto queryDto = new DronesWorkflowQueryDto().setId(workflowId);
-            DronesWorkflow dronesWorkflow = repository.selectOne(queryDto);
+        DronesWorkflowQueryDto queryDto = new DronesWorkflowQueryDto().setTaskId(taskId);
+        DronesWorkflow dronesWorkflow = repository.selectOne(queryDto);
+        DronesWorkflowVo dronesWorkflowVo = new DronesWorkflowVo();
+        if (null != dronesWorkflow) {
             String nodes = dronesWorkflow.getNodes();
             List<NodeEntity> nodeEntityList = JsonUtil.fromJsonToList(nodes, NodeEntity.class);
             String edges = dronesWorkflow.getEdges();
@@ -115,6 +111,12 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
             dronesWorkflowVo.setNodeMap(nodeMap);
         }
         return dronesWorkflowVo;
+    }
+
+    @Override
+    public DronesWorkflow getWorkflow(Long taskId) {
+        DronesWorkflowQueryDto queryDto = new DronesWorkflowQueryDto().setTaskId(taskId);
+        return repository.selectOne(queryDto);
     }
 
 }

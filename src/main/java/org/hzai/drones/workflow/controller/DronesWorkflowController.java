@@ -46,10 +46,17 @@ public class DronesWorkflowController {
     }
 
     @GET
-    @Path("/getWorkflowByTaskId/{taskId}")
-    public R<DronesWorkflowVo> getWorkflowByTaskId(@PathParam("taskId") Long taskId) {
+    @Path("/getWorkflowVoByTaskId/{taskId}")
+    public R<DronesWorkflowVo> getWorkflowVoByTaskId(@PathParam("taskId") Long taskId) {
         return R.ok(dronesWorkflowService.getWorkflowGraph(taskId));
     }
+
+    @GET
+    @Path("/getWorkflowByTaskId/{taskId}")
+    public R<DronesWorkflow> getWorkflowByTaskId(@PathParam("taskId") Long taskId) {
+        return R.ok(dronesWorkflowService.getWorkflow(taskId));
+    }
+
 
     @GET
     @Path("/getAll")

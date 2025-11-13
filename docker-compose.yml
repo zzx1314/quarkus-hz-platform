@@ -18,15 +18,7 @@ services:
       - "6378:6379"
     volumes:
       - /home/root/dockerdata/redis:/data
-  scoring-serve:
-    container_name: quarkus-scoring-serve
-    image: quarkus/langchain4j-scoring-serve-jvm
-    ports:
-      - "8081:8081"
-    volumes:
-      - /data/bge-reranker-base/onnx/model.onnx:/demo/bge-reranker-base/onnx/model.onnx
-      - /data/bge-reranker-base/tokenizer.json:/demo/bge-reranker-base/tokenizer.json
-  clever-serve:
+  hz-serve:
     container_name: quarkus-clever-serve
     image: quarkus/clever_copilot-jvm
     ports:

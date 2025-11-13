@@ -26,11 +26,13 @@ public class DronesWorkflow extends PanacheEntityBase{
 	/**
 	 * 节点
 	 */
+	@Column(columnDefinition = "TEXT")
 	private String nodes;
 
 	/**
 	 * 边
 	 */
+	@Column(columnDefinition = "TEXT")
 	private String edges;
 
 	/**

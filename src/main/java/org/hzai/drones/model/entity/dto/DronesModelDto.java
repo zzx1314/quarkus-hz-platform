@@ -6,6 +6,10 @@ import lombok.Data;
 public class DronesModelDto {
     private Long id;
 
+    private String modelName;
+
+    private String modelType;
+
      /**
      * 文件名称
      */
