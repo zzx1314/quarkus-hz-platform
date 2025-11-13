@@ -100,6 +100,8 @@ public class DronesModelServiceImp implements DronesModelService {
         } else{
             // Create new record
             DronesModel dronesModel = new DronesModel();
+            dronesModel.setModelName(modelDto.getModelName());
+            dronesModel.setModelType(modelDto.getModelType());
             dronesModel.setFileName(file.fileName());
             dronesModel.setFilePath(mcpFilePath + "/" + file.fileName());
             dronesModel.setFileFormat(modelDto.getFileFormat());

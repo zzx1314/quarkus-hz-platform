@@ -83,7 +83,7 @@ public class DronesTaskController {
      * @return
      */
     @GET
-    @Path("/startTask")
+    @Path("/startTask/{id}")
     public R<Object> startTask(@PathParam("id") Long id) {
         dronesTaskService.startTask(id);
         return R.ok();

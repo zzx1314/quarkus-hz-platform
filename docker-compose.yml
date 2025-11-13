@@ -18,6 +18,17 @@ services:
       - "6378:6379"
     volumes:
       - /home/root/dockerdata/redis:/data
+  nginx:
+    image: nginx:latest
+    container_name: my-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - /home/root/dockerdata/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /home/root/dockerdata/nginx/conf.d:/etc/nginx/conf.d:ro
+      - /home/root/dockerdata/nginx/html:/usr/share/nginx/html:ro
+      - /home/root/dockerdata/nginx/ssl:/etc/nginx/ssl:ro
+    restart: always
   hz-serve:
     container_name: quarkus-clever-serve
     image: quarkus/clever_copilot-jvm
