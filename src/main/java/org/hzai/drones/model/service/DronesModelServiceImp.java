@@ -115,7 +115,7 @@ public class DronesModelServiceImp implements DronesModelService {
         // Query model becomes drop-down option
         List<DronesModel> models = this.listEntitys();
         return models.stream()
-                .map(model -> new SelectOption(model.getFileName(), model.getId()))
+                .map(model -> new SelectOption(model.getModelName(), model.getId()))
                 .collect(Collectors.toList());
     }
 
