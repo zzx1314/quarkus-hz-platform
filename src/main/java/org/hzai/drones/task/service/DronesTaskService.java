@@ -32,4 +32,6 @@ public interface DronesTaskService {
    List<Long> getTaskCountBefore();
 
    long count();
+
+   void startTask(Long id);
 }

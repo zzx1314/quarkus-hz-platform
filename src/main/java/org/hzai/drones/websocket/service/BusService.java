@@ -4,14 +4,15 @@ import java.time.LocalDateTime;
 
 import org.hzai.drones.command.entity.DronesCommand;
 import org.hzai.drones.command.entity.dto.DronesCommandDto;
+import org.hzai.drones.command.entity.dto.DronesCommandWebsocket;
 import org.hzai.drones.command.service.DronesCommandService;
 import org.hzai.drones.device.entity.DronesDevice;
 import org.hzai.drones.device.entity.dto.DronesDeviceDto;
 import org.hzai.drones.device.entity.dto.DronesDeviceQueryDto;
 import org.hzai.drones.device.service.DronesDeviceService;
 import org.hzai.drones.websocket.entity.MessageInfo;
+import org.hzai.util.JsonUtil;
 import org.hzai.util.RedisUtil;
-import org.jose4j.json.internal.json_simple.JSONObject;
 
 import io.quarkus.runtime.util.StringUtil;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -88,9 +89,9 @@ public class BusService {
     /**
      * 保存指令消息
      */
-    public Long saveCommand(MessageInfo messageInfo){
+    public Long saveCommand(DronesCommandWebsocket messageInfo){
         DronesCommand command = new DronesCommand();
-        command.setCommandParams(JSONObject.toJSONString(messageInfo.getData()));
+        command.setCommandParams(JsonUtil.toJson(messageInfo));
         command.setStatus("已下发");
         command.setCreateTime(LocalDateTime.now());
         command.setUpdateTime(LocalDateTime.now());

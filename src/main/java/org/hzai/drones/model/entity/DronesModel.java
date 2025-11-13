@@ -23,6 +23,16 @@ public class DronesModel extends PanacheEntityBase{
 	private Long id;
 
     /**
+     * 模型名称
+     */
+    private String modelName;
+
+    /**
+     * 模型类型
+     */
+    private String modelType;
+
+    /**
      * 文件名称
      */
     private String fileName;

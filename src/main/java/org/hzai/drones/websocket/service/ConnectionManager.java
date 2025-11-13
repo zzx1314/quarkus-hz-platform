@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.hzai.drones.command.entity.dto.DronesCommandWebsocket;
 import org.hzai.drones.websocket.entity.MessageInfo;
 import org.hzai.util.JsonUtil;
 
@@ -61,7 +62,7 @@ public class ConnectionManager {
     /**
      * 通过deviceId发送消息
      */
-    public void sendMessageByDeviceId(String deviceId, MessageInfo message) {
+    public void sendMessageByDeviceId(String deviceId, DronesCommandWebsocket message) {
         WebSocketConnection conn = connections.get(deviceId);
         if (conn != null && conn.isOpen()) {
             message.setDeviceId(deviceId);

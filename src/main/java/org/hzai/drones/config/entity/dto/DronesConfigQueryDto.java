@@ -2,6 +2,9 @@ package org.hzai.drones.config.entity.dto;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+
+import java.util.List;
+
 import jakarta.ws.rs.QueryParam;
 
 @Data
@@ -15,4 +18,7 @@ public class DronesConfigQueryDto {
 
     @QueryParam("endTime")
     private String endTime;
+
+    @QueryParam("ids")
+    private List<Long> ids;
 }

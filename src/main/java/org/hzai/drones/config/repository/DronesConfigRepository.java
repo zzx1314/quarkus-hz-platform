@@ -25,6 +25,7 @@ public class DronesConfigRepository implements PanacheRepository<DronesConfig> {
 
      public List<DronesConfig> selectList(DronesConfigQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
+        .in("id", queryDto.getIds())
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
     }
