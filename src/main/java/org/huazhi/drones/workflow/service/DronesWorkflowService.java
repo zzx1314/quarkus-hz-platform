@@ -22,7 +22,7 @@ public interface DronesWorkflowService {
 
    void replaceById(DronesWorkflow entity);
 
-   void replaceByDto(DronesWorkflowDto dto);
+   void replaceByDto(DronesWorkflowQueryDto queryDto,DronesWorkflowDto dto);
 
    void removeById(Long id);
 

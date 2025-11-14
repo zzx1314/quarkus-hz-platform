@@ -67,8 +67,8 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
     }
 
     @Override
-    public void replaceByDto(DronesWorkflowDto dto) {
-        repository.updateByDto(dto);
+    public void replaceByDto(DronesWorkflowQueryDto queryDto,DronesWorkflowDto dto) {
+        repository.updateByQeryDto(queryDto ,dto);
     }
 
     @Override

@@ -74,7 +74,9 @@ public class DronesWorkflowController {
     @PUT
     @Path("/update")
     public R<DronesWorkflow> update(DronesWorkflowDto dto) {
-        dronesWorkflowService.replaceByDto(dto);
+        DronesWorkflowQueryDto queryDto = new DronesWorkflowQueryDto();
+        queryDto.setTaskId(dto.getTaskId());
+        dronesWorkflowService.replaceByDto(queryDto, dto);
         return R.ok();
     }
 

@@ -68,6 +68,13 @@ public class DronesWorkflowRepository implements PanacheRepository<DronesWorkflo
     }
 
     @Transactional
+    public void updateByQeryDto(DronesWorkflowQueryDto queryDto, DronesWorkflowDto dto) {
+        DronesWorkflow dronesWorkflow = this.selectOne(queryDto);
+        mapper.updateEntityFromDto(dto, dronesWorkflow);
+        dronesWorkflow.setUpdateTime(LocalDateTime.now());
+    }
+
+    @Transactional
     public void deleteByIds(List<Long> ids) {
         if (ids != null && !ids.isEmpty()) {
             for (Long id : ids) {
