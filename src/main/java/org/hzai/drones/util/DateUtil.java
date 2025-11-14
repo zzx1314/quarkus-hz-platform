@@ -1,4 +1,4 @@
-package org.hzai.ai.aistatistics.util;
+package org.hzai.drones.util;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

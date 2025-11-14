@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.time.LocalDateTime;
 
-import org.hzai.ai.common.SelectOption;
+import org.hzai.drones.common.SelectOption;
 import org.hzai.drones.config.entity.DronesConfig;
 import org.hzai.drones.config.entity.dto.DronesConfigQueryDto;
 import org.hzai.drones.config.entity.dto.DronesConfigDto;

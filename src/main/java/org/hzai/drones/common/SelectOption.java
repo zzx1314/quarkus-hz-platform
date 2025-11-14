@@ -1,4 +1,4 @@
-package org.hzai.ai.common;
+package org.hzai.drones.common;
 
 import lombok.Data;
 

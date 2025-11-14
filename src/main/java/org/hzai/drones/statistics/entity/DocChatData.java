@@ -1,5 +1,4 @@
-package org.hzai.ai.aistatistics.entity;
-
+package org.hzai.drones.statistics.entity;
 import lombok.Data;
 
 import java.util.List;

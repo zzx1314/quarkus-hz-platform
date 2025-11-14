@@ -3,7 +3,7 @@ package org.hzai.drones.device.service;
 import java.util.List;
 import java.util.Map;
 
-import org.hzai.ai.common.SelectOption;
+import org.hzai.drones.common.SelectOption;
 import org.hzai.drones.device.entity.DronesDevice;
 import org.hzai.drones.device.entity.dto.DronesDeviceDto;
 import org.hzai.drones.device.entity.dto.DronesDeviceQueryDto;

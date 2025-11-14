@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.hzai.ai.aistatistics.entity.ChartData;
-import org.hzai.ai.aistatistics.entity.DocChatData;
 import org.hzai.drones.device.service.DronesDeviceService;
 import org.hzai.drones.model.service.DronesModelService;
 import org.hzai.drones.routelibrary.service.DronesRouteLibraryService;
 import org.hzai.drones.statistics.entity.BarChartData;
+import org.hzai.drones.statistics.entity.ChartData;
+import org.hzai.drones.statistics.entity.DocChatData;
 import org.hzai.drones.task.service.DronesTaskService;
 import org.hzai.util.R;
 

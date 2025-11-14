@@ -2,7 +2,7 @@ package org.hzai.drones.device.controller;
 
 import java.util.List;
 
-import org.hzai.ai.common.SelectOption;
+import org.hzai.drones.common.SelectOption;
 import org.hzai.drones.device.entity.DronesDevice;
 import org.hzai.drones.device.entity.dto.DronesDeviceDto;
 import org.hzai.drones.device.entity.dto.DronesDeviceQueryDto;
