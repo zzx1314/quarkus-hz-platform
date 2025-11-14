@@ -169,7 +169,7 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
 
     @Override
     public long count() {
-        return repository.count();
+        return repository.count("isDeleted = ?1", 0);
     }
 
     @Override

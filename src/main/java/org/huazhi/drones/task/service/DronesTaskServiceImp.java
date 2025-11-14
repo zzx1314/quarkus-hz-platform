@@ -172,7 +172,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
 
     @Override
     public long count() {
-        return repository.count();
+        return repository.count("isDeleted = ?1", 0);
     }
 
     /**

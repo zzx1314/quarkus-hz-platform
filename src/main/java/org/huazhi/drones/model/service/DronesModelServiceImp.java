@@ -176,7 +176,7 @@ public class DronesModelServiceImp implements DronesModelService {
 
     @Override
     public long count() {
-        return repository.count();
+        return repository.count("isDeleted = ?1", 0);
     }
 
 }
