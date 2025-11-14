@@ -33,6 +33,8 @@ public interface DronesRouteLibraryService {
 
    List<SelectOption> getSelectOptions();
 
+   List<SelectOption> getRouteOption(Long id);
+
    List<Long> getRouteCount();
 
    List<Long> getRouteCountBefore();

@@ -38,9 +38,10 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
 
     @Inject
     DronesModelService modelService;
+
     @Override
     public List<DronesRouteLibrary> listEntitys() {
-        return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
+        return repository.list("isDeleted = ?1", Sort.by("createTime"), 0);
     }
 
     @Override
@@ -175,17 +176,17 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
         ObjectMapper mapper = new ObjectMapper();
         try {
             List<List<Double>> result = mapper.readValue(data.getRouteData(), mapper.getTypeFactory()
-                .constructCollectionType(List.class, mapper.getTypeFactory()
-                .constructCollectionType(List.class, Double.class)));
-                data.setStartCoordinates(mapper.writeValueAsString(result.get(0)));
-                data.setEndCoordinates(mapper.writeValueAsString(result.get(result.size() - 1)));
-                repository.updateByDto(data);
+                    .constructCollectionType(List.class, mapper.getTypeFactory()
+                            .constructCollectionType(List.class, Double.class)));
+            data.setStartCoordinates(mapper.writeValueAsString(result.get(0)));
+            data.setEndCoordinates(mapper.writeValueAsString(result.get(result.size() - 1)));
+            repository.updateByDto(data);
         } catch (JsonMappingException e) {
             e.printStackTrace();
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        
+
     }
 
     @Override
@@ -202,6 +203,28 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
         dto.setRouteStatus(status.equals("start") ? "启用" : "停用");
         repository.updateByDto(dto);
         return R.ok();
+    }
+
+    @Override
+    public List<SelectOption> getRouteOption(Long id) {
+        // 获取所有航点
+        List<SelectOption> routePoints = new ArrayList<>();
+        ObjectMapper mapper = new ObjectMapper();
+        DronesRouteLibrary route = repository.findById(id);
+        try {
+            List<List<Double>> result = mapper.readValue(route.getRouteData(), mapper.getTypeFactory()
+                    .constructCollectionType(List.class, mapper.getTypeFactory()
+                            .constructCollectionType(List.class, Double.class)));
+            for (int i = 0; i < result.size(); i++) {
+                List<Double> point = result.get(i);
+                routePoints.add(new SelectOption("航点" + (i + 1), point.get(0) + "," + point.get(1)));
+            }
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return routePoints;
     }
 
 }

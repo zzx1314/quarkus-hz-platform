@@ -24,7 +24,7 @@ public class ImageUtil {
         return sb.toString().trim();
     }
 
-    public static void pgmToPng(String pgmFilePath, String pngFilePath) throws IOException {
+    public static void pgmToPng(String pgmFilePath, String pngFilePath) {
         try (InputStream fis = new FileInputStream(pgmFilePath)) {
             // 1. 读取 magic
             String magic;
@@ -86,6 +86,8 @@ public class ImageUtil {
 
             ImageIO.write(image, "png", new File(pngFilePath));
             System.out.println("转换完成！输出文件: " + pngFilePath);
+        } catch (IOException e) {
+            log.error("转换 PGM 文件失败: {}", e.getMessage());
         }
     }
 
