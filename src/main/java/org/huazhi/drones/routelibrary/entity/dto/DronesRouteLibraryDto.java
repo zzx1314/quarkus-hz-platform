@@ -10,6 +10,8 @@ public class DronesRouteLibraryDto {
 
     private String routeStatus;
 
+    private Long modelId;
+
     /**
      * 起点坐标
      */

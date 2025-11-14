@@ -57,6 +57,12 @@ public class DronesRouteLibraryController {
         return R.ok(dronesRouteLibraryService.getSelectOptions());
     }
 
+    @GET
+    @Path("/getSelectOptionPoint/{id}")
+    public R<List<SelectOption>> getSelectOptionPoint(@PathParam("id") Long id) {
+        return R.ok(dronesRouteLibraryService.getRouteOption(id));
+    }
+
     @POST
     @Path("/create")
     @Transactional
