@@ -10,7 +10,7 @@ int main(void) {
     curl = curl_easy_init();
     if(curl) {
         // 设置URL
-        curl_easy_setopt(curl, CURLOPT_URL, "https://huazhi:4433/api/device/client/register");
+        curl_easy_setopt(curl, CURLOPT_URL, "https://agent:4433/api/client/register");
 
         // 设置POST数据（JSON格式）
         const char *postFields = "{"
@@ -24,13 +24,13 @@ int main(void) {
         // 设置HTTP头信息
         struct curl_slist *headers = NULL;
         headers = curl_slist_append(headers, "Content-Type: application/json");
-        headers = curl_slist_append(headers, "Authorization: 2edc7586dc2a4dc98851de755d9a6c72");
+        headers = curl_slist_append(headers, "Authorization: 24956ccd61134f93b07dea3856a1a061");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
         // 设置POST数据
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postFields);
 
-        curl_easy_setopt(curl, CURLOPT_CAINFO, "/opt/hz/middleware/certs/client/rootca.crt");
+        curl_easy_setopt(curl, CURLOPT_CAINFO, "/home/zhangzexin/IdeaProjects/hz_server/src/main/client/cer/rootca.crt");
         // 执行请求
         res = curl_easy_perform(curl);
 
