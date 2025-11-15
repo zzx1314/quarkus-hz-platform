@@ -97,7 +97,7 @@ Status Report(char* token, char* deviceId) {
     ctx_info.gid = -1;
     ctx_info.uid = -1;   
     ctx_info.options = LWS_SERVER_OPTION_DO_SSL_GLOBAL_INIT;
-    ctx_info.client_ssl_ca_filepath = "/opt/hz/middleware/certs/client/rootca.crt";
+    ctx_info.client_ssl_ca_filepath = "/home/zhangzexin/IdeaProjects/hz_server/src/main/client/cer/rootca.crt";
 
     struct lws_context *context = lws_create_context(&ctx_info);  
     struct lws_client_connect_info conn_info = { 0 };  
