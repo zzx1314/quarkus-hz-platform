@@ -1,6 +1,5 @@
 package org.huazhi.drones.workflow.entity;
 
-import io.vertx.core.json.JsonObject;
 import lombok.Data;
 
 /**
@@ -14,5 +13,5 @@ public class NodeEntity {
 
 	private String type;
 
-	private JsonObject data;
+	private DeviceNodeEntity data;
 }

@@ -25,6 +25,7 @@ import org.huazhi.drones.task.entity.dto.DronesTaskQueryDto;
 import org.huazhi.drones.task.repository.DronesTaskRepository;
 import org.huazhi.drones.util.DateUtil;
 import org.huazhi.drones.websocket.service.ConnectionManager;
+import org.huazhi.drones.workflow.entity.DeviceNodeEntity;
 import org.huazhi.drones.workflow.entity.NodeEntity;
 import org.huazhi.drones.workflow.service.DronesWorkflowService;
 import org.huazhi.drones.workflow.vo.DronesWorkflowVo;
@@ -37,11 +38,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.netty.util.internal.StringUtil;
 import io.quarkus.panache.common.Sort;
 import io.quarkus.vertx.runtime.jackson.JsonUtil;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -198,8 +196,8 @@ public class DronesTaskServiceImp implements DronesTaskService {
         for (int i = 0; i < taskNodes.size(); i++) { 
             // 循环每一个步骤
             NodeEntity taskNode = taskNodes.get(i);
-            JsonObject data = taskNode.getData();
-            Long deviceId =  data.getLong("deviceId");
+            DeviceNodeEntity data = taskNode.getData();
+            long deviceId =  data.getDeviceId();
             DronesDevice deviceInfo = deviceService.listOne(new DronesDeviceQueryDto().setId(deviceId));
             commandWebsocket.setDeviceId(deviceInfo.getDeviceId());
             commandWebsocket.setType("command");
@@ -207,26 +205,25 @@ public class DronesTaskServiceImp implements DronesTaskService {
             DronesStep step = new DronesStep();
             step.setTaskNumber(i + 1 + "");
             // 构建目标功能
-            JsonArray configIds = data.getJsonArray("configIds");
+            List<Long> configIds = data.getConfigIds();
             if (configIds != null && !configIds.isEmpty()) {
                 Map<String, String> configMap = new HashMap<>();
                 for(int j = 0; j < configIds.size(); j++) {
-                    Long configId = configIds.getLong(j);
+                    Long configId = configIds.get(j);
                     DronesConfig config = configService.listOne(new DronesConfigQueryDto().setId(configId));
                     configMap.put(config.getConfigName(), config.getConfigValue());
                 }
                 step.setTaskTarget(configMap);
             }
             // 构建路径
-            Long routeId =  data.getLong("routeId");
-            String path = data.getString("path");
-            if (StringUtil.isNullOrEmpty(path)) {
+            Long routeId =  data.getRouteId();
+            List<String> pathArray = data.getPath();
+            if (pathArray != null && !pathArray.isEmpty()) {
                 // 有航点
                 List<List<Double>> pathList = new ArrayList<>();
-                JsonArray pathArray = data.getJsonArray("path");
                 for (int j = 0; j < pathArray.size(); j++){
                     List<Double> point = new ArrayList<>();
-                    String pointString = pathArray.getString(j);
+                    String pointString = pathArray.get(j);
                     point = Arrays.asList(pointString.split(",")).stream().map(Double::parseDouble).collect(Collectors.toList());
                     point.add(0.0);
                     pathList.add(point);
@@ -240,6 +237,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
             stepArray.add(step);
         }
         commandWebsocket.setStepArray(stepArray);
+        log.info("发送指令信息:"+ JsonUtil.wrapJsonValue(commandWebsocket));
         connectionManager.sendMessageByDeviceId(commandWebsocket.getDeviceId(), commandWebsocket);
     }
 
@@ -268,7 +266,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
                 throw new RuntimeException("nodeMap 缺少节点：" + nextId);
             }
             // 添加设备节点
-            if ("设备".equals(nextNode.getType())) {
+            if ("device".equals(nextNode.getType())) {
                 taskNodes.add(nextNode);
             }
             current = nextNode;
