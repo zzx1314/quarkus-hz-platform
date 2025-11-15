@@ -1,9 +1,11 @@
 package org.huazhi.drones.task.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.huazhi.drones.command.entity.dto.DronesCommandWebsocket;
 import org.huazhi.drones.command.entity.dto.DronesStep;
@@ -35,8 +37,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.netty.util.internal.StringUtil;
 import io.quarkus.panache.common.Sort;
 import io.quarkus.vertx.runtime.jackson.JsonUtil;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -203,18 +207,36 @@ public class DronesTaskServiceImp implements DronesTaskService {
             DronesStep step = new DronesStep();
             step.setTaskNumber(i + 1 + "");
             // 构建目标功能
-            Long configId =  data.getLong("configIds");
-            List<DronesConfig> configs = configService.listEntitysByDto(new DronesConfigQueryDto().setId(configId));
-            Map<String, String> configMap = new HashMap<>();
-            for (DronesConfig config : configs) {
-                configMap.put(config.getConfigName(), config.getConfigValue());
+            JsonArray configIds = data.getJsonArray("configIds");
+            if (configIds != null && !configIds.isEmpty()) {
+                Map<String, String> configMap = new HashMap<>();
+                for(int j = 0; j < configIds.size(); j++) {
+                    Long configId = configIds.getLong(j);
+                    DronesConfig config = configService.listOne(new DronesConfigQueryDto().setId(configId));
+                    configMap.put(config.getConfigName(), config.getConfigValue());
+                }
+                step.setTaskTarget(configMap);
             }
-            step.setTaskTarget(configMap);
             // 构建路径
             Long routeId =  data.getLong("routeId");
-            DronesRouteLibrary route = routeLibraryService.listOne(new DronesRouteLibraryQueryDto().setId(routeId));
-            List<List<Double>> pathList = getPathList(route.getRouteData());
-            step.setRoutePath(pathList);
+            String path = data.getString("path");
+            if (StringUtil.isNullOrEmpty(path)) {
+                // 有航点
+                List<List<Double>> pathList = new ArrayList<>();
+                JsonArray pathArray = data.getJsonArray("path");
+                for (int j = 0; j < pathArray.size(); j++){
+                    List<Double> point = new ArrayList<>();
+                    String pointString = pathArray.getString(j);
+                    point = Arrays.asList(pointString.split(",")).stream().map(Double::parseDouble).collect(Collectors.toList());
+                    point.add(0.0);
+                    pathList.add(point);
+                }
+                step.setRoutePath(pathList);
+            } else{
+                DronesRouteLibrary route = routeLibraryService.listOne(new DronesRouteLibraryQueryDto().setId(routeId));
+                List<List<Double>> pathList = getPathList(route.getRouteData());
+                step.setRoutePath(pathList);
+            }
             stepArray.add(step);
         }
         commandWebsocket.setStepArray(stepArray);
