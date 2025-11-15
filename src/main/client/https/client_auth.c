@@ -41,13 +41,13 @@ int clientAuth(char** token) {
     curl_global_init(CURL_GLOBAL_DEFAULT);
     curl = curl_easy_init();
     if(curl) {
-        curl_easy_setopt(curl, CURLOPT_URL, "https://huazhi:443/api/device/client/clientAuth/9527");
+        curl_easy_setopt(curl, CURLOPT_URL, "https://agent:443/api/client/clientAuth/9527");
         // 设置客户端证书路径
-        curl_easy_setopt(curl, CURLOPT_SSLCERT, "/opt/hz/middleware/certs/client/client.crt");
+        curl_easy_setopt(curl, CURLOPT_SSLCERT, "/home/zhangzexin/IdeaProjects/hz_server/src/main/client/cer/client.crt");
         // 设置客户端私钥路径
-        curl_easy_setopt(curl, CURLOPT_SSLKEY, "/opt/hz/middleware/certs/client/client.key");
+        curl_easy_setopt(curl, CURLOPT_SSLKEY, "/home/zhangzexin/IdeaProjects/hz_server/src/main/client/cer/client.key");
         // 设置 CA 证书路径
-        curl_easy_setopt(curl, CURLOPT_CAINFO, "/opt/hz/middleware/certs/client/rootca.crt");
+        curl_easy_setopt(curl, CURLOPT_CAINFO, "/home/zhangzexin/IdeaProjects/hz_server/src/main/client/cer/rootca.crt");
         // 可选：设置证书验证
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L);
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2L);

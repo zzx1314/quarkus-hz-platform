@@ -23,6 +23,7 @@ services:
     container_name: quarkus-nginx
     ports:
       - "4433:4433"
+      - "443:443"
     volumes:
       - /home/root/dockerdata/nginx/conf.d:/etc/nginx/conf.d:ro
       - /home/root/dockerdata/nginx/html:/usr/share/nginx/html:ro

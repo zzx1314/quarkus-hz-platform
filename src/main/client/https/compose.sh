@@ -1,0 +1,1 @@
+sudo gcc client_auth.c -o client_auth -lcurl -lcjson -lssl -lcrypto
