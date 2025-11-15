@@ -1,8 +1,6 @@
 package org.huazhi.drones.command.entity.dto;
 
 import java.util.List;
-import java.util.Map;
-
 
 import lombok.Data;
 
@@ -10,21 +8,18 @@ import lombok.Data;
 public class DronesCommandWebsocket {
     Long id;
     
+    /**
+     * 设备id
+     */
     String deviceId;
 
+    /**
+     * 命令类型
+     */
     String type;
-    /**
-     * 配置信息
-     */
-    Map<String, String> config;
 
     /**
-     * 模型信息
+     * 步骤
      */
-    Map<String, String> model;
-
-    /**
-     * 路线信息
-     */
-    List<LocationInfo> route;
+    List<DronesStep> stepArray;
  }

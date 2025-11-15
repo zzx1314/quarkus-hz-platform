@@ -10,6 +10,7 @@ import org.huazhi.drones.device.entity.DronesDevice;
 import org.huazhi.drones.device.entity.dto.DronesDeviceDto;
 import org.huazhi.drones.device.entity.dto.DronesDeviceQueryDto;
 import org.huazhi.drones.device.service.DronesDeviceService;
+import org.huazhi.drones.websocket.entity.MessageHeartbeat;
 import org.huazhi.drones.websocket.entity.MessageInfo;
 import org.huazhi.util.JsonUtil;
 import org.huazhi.util.RedisUtil;
@@ -62,8 +63,16 @@ public class BusService {
      * @param dto
      * @return
      */
-    public MessageInfo reportStatus(DronesDeviceDto dto) {
+    public MessageInfo reportStatus(MessageHeartbeat messageHeartbeat) {
+        DronesDeviceDto dto = new DronesDeviceDto();
         dto.setCommTime(LocalDateTime.now());
+        dto.setDeviceId(messageHeartbeat.getDeviceId());
+        dto.setStatus(messageHeartbeat.getStatus());
+        dto.setSpeed(messageHeartbeat.getDrones().getSpeed());
+        dto.setHeight(messageHeartbeat.getDrones().getHeight());
+        dto.setBattery(messageHeartbeat.getDrones().getBattery());
+        dto.setCourse(messageHeartbeat.getDrones().getCourse());
+        dto.setLocation(messageHeartbeat.getDrones().getLocation());
         if ("success".equals(dto.getStatus())) {
             dto.setStatus("在线");
         } else if ("error".equals(dto.getStatus())) {

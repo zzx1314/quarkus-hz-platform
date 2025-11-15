@@ -2,7 +2,7 @@ package org.huazhi.drones.websocket.service;
 
 import java.util.Map;
 
-import org.huazhi.drones.device.entity.dto.DronesDeviceDto;
+import org.huazhi.drones.websocket.entity.MessageHeartbeat;
 import org.huazhi.drones.websocket.entity.MessageInfo;
 import org.huazhi.exception.BusinessException;
 import org.huazhi.util.JsonUtil;
@@ -70,10 +70,10 @@ public class WebSocketService {
         Map<String, Object> messageJson = JsonUtil.fromJsonToMap(message);
         if (messageJson.get("type").equals("heartbeat")) {
             // 心跳消息
-            DronesDeviceDto device = JsonUtil.fromJson(message, DronesDeviceDto.class);
-            MessageInfo messageInfo = busService.reportStatus(device);
+            MessageHeartbeat heartbeat = JsonUtil.fromJson(message, MessageHeartbeat.class);
+            MessageInfo messageInfo = busService.reportStatus(heartbeat);
             // 发送心跳响应
-            connectionManager.sendHeartBeatReturn(device.getDeviceId(), messageInfo);
+            connectionManager.sendHeartBeatReturn(heartbeat.getDeviceId(), messageInfo);
         } else if (messageJson.get("type").equals("report")) {
             // 处理指令结果
             MessageInfo messageInfo = JsonUtil.fromJson(message, MessageInfo.class);

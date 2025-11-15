@@ -6,15 +6,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.huazhi.drones.command.entity.dto.DronesCommandWebsocket;
-import org.huazhi.drones.command.entity.dto.LocationInfo;
+import org.huazhi.drones.command.entity.dto.DronesStep;
 import org.huazhi.drones.config.entity.DronesConfig;
 import org.huazhi.drones.config.entity.dto.DronesConfigQueryDto;
 import org.huazhi.drones.config.service.DronesConfigService;
 import org.huazhi.drones.device.entity.DronesDevice;
 import org.huazhi.drones.device.entity.dto.DronesDeviceQueryDto;
 import org.huazhi.drones.device.service.DronesDeviceService;
-import org.huazhi.drones.model.entity.DronesModel;
-import org.huazhi.drones.model.entity.dto.DronesModelQueryDto;
 import org.huazhi.drones.model.service.DronesModelService;
 import org.huazhi.drones.routelibrary.entity.DronesRouteLibrary;
 import org.huazhi.drones.routelibrary.entity.dto.DronesRouteLibraryQueryDto;
@@ -70,7 +68,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
 
     @Override
     public List<DronesTask> listEntitys() {
-        return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
+        return repository.list("isDeleted = ?1", Sort.by("createTime"), 0);
     }
 
     @Override
@@ -177,6 +175,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
 
     /**
      * 启动任务
+     * 
      * @param id
      */
     @Override
@@ -187,66 +186,81 @@ public class DronesTaskServiceImp implements DronesTaskService {
         // 获取任务流程图
         DronesWorkflowVo workflowGraph = workflowService.getWorkflowGraph(id);
         log.info("任务流程图：{}", JsonUtil.wrapJsonValue(workflowGraph));
-        /*
-         * 流程的节点类型
-         * 1. 设备
-         * 2. 配置
-         * 3. 模型
-         * 4. 航线
-         * 
-         * 找到设备为每个设备（配置，模型，航线）
-         */
-        // 1、获取设备节点
-         List<NodeEntity> deviceList = workflowGraph.getNodeMap().values().stream()
-                .filter(node -> "设备".equals(node.getType()))
-                .toList();
-        if (deviceList != null && deviceList.size() >0) {
-            for (NodeEntity devicEntity : deviceList) { 
-                // 2、组建向设备发送的信息
-                DronesCommandWebsocket commandWebsocket = new DronesCommandWebsocket();
-                JsonObject data = devicEntity.getData();
-                Long deviceId =  data.getLong("deviceId");
-                DronesDevice deviceInfo = deviceService.listOne(new DronesDeviceQueryDto().setId(deviceId));
-                commandWebsocket.setDeviceId(deviceInfo.getDeviceId());
-                commandWebsocket.setType("command");
-                // 获取配置
-                Long configId =  data.getLong("configIds");
-                List<DronesConfig> configs = configService.listEntitysByDto(new DronesConfigQueryDto().setId(configId));
-                Map<String, String> configMap = new HashMap<>();
-                for (DronesConfig config : configs) {
-                    configMap.put(config.getConfigName(), config.getConfigValue());
-                }
-                commandWebsocket.setConfig(configMap);
-                // 获取模型
-                Long modelId =  data.getLong("modelId");
-                DronesModel model = modelService.listOne(new DronesModelQueryDto().setId(modelId));
-                Map<String, String> modelMap = new HashMap<>();
-                modelMap.put("name", model.getModelName());
-                commandWebsocket.setModel(modelMap);
-                // 获取航线
-                Long routeId =  data.getLong("routeId");
-                DronesRouteLibrary route = routeLibraryService.listOne(new DronesRouteLibraryQueryDto().setId(routeId));
-                List<LocationInfo> rouInfos = new ArrayList<>();
-                for (List<Double> path : getPathList(route.getRouteData())) {
-                    LocationInfo locationInfo = new LocationInfo();
-                    locationInfo.setLongitude(path.get(0).toString());
-                    locationInfo.setLatitude(path.get(1).toString());
-                    rouInfos.add(locationInfo);
-                }
-                commandWebsocket.setRoute(rouInfos);
+        // 获取任务节点
+        List<NodeEntity> taskNodes = findTasknodes(workflowGraph);
+        DronesCommandWebsocket commandWebsocket = new DronesCommandWebsocket();
 
-                connectionManager.sendMessageByDeviceId(deviceInfo.getDeviceId(), commandWebsocket);
+        List<DronesStep> stepArray = new ArrayList<>();
+        for (int i = 0; i < taskNodes.size(); i++) { 
+            // 循环每一个步骤
+            NodeEntity taskNode = taskNodes.get(i);
+            JsonObject data = taskNode.getData();
+            Long deviceId =  data.getLong("deviceId");
+            DronesDevice deviceInfo = deviceService.listOne(new DronesDeviceQueryDto().setId(deviceId));
+            commandWebsocket.setDeviceId(deviceInfo.getDeviceId());
+            commandWebsocket.setType("command");
+            // 构建步骤
+            DronesStep step = new DronesStep();
+            step.setTaskNumber(i + 1 + "");
+            // 构建目标功能
+            Long configId =  data.getLong("configIds");
+            List<DronesConfig> configs = configService.listEntitysByDto(new DronesConfigQueryDto().setId(configId));
+            Map<String, String> configMap = new HashMap<>();
+            for (DronesConfig config : configs) {
+                configMap.put(config.getConfigName(), config.getConfigValue());
             }
+            step.setTaskTarget(configMap);
+            // 构建路径
+            Long routeId =  data.getLong("routeId");
+            DronesRouteLibrary route = routeLibraryService.listOne(new DronesRouteLibraryQueryDto().setId(routeId));
+            List<List<Double>> pathList = getPathList(route.getRouteData());
+            step.setRoutePath(pathList);
+            stepArray.add(step);
         }
+        commandWebsocket.setStepArray(stepArray);
+        connectionManager.sendMessageByDeviceId(commandWebsocket.getDeviceId(), commandWebsocket);
     }
 
-    private  List<List<Double>> getPathList(String routeData) {
+    /**
+     * 根据工作流定义查找任务中的设备节点
+     * 
+     * @param workflowVo 工作流定义对象，包含开始节点、边映射和节点映射
+     * @return 设备类型的任务节点列表
+     */
+    private List<NodeEntity> findTasknodes(DronesWorkflowVo workflowVo) {
+        List<NodeEntity> taskNodes = new ArrayList<>();
+
+        NodeEntity current = workflowVo.getStartNode();
+        while (true) {
+            String currentId = current.getId();
+            // 找下一节点
+            List<String> nextIds = workflowVo.getEdgeMap().get(currentId);
+            if (nextIds == null || nextIds.isEmpty()) {
+                break;
+            }
+            // 默认只走第一条线（如有分支可扩展）
+            String nextId = nextIds.get(0);
+
+            NodeEntity nextNode = workflowVo.getNodeMap().get(nextId);
+            if (nextNode == null) {
+                throw new RuntimeException("nodeMap 缺少节点：" + nextId);
+            }
+            // 添加设备节点
+            if ("设备".equals(nextNode.getType())) {
+                taskNodes.add(nextNode);
+            }
+            current = nextNode;
+        }
+        return taskNodes;
+    }
+
+    private List<List<Double>> getPathList(String routeData) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             List<List<Double>> result = mapper.readValue(routeData, mapper.getTypeFactory()
-                .constructCollectionType(List.class, mapper.getTypeFactory()
-                .constructCollectionType(List.class, Double.class)));
-                 return result;
+                    .constructCollectionType(List.class, mapper.getTypeFactory()
+                            .constructCollectionType(List.class, Double.class)));
+            return result;
         } catch (JsonMappingException e) {
             e.printStackTrace();
         } catch (JsonProcessingException e) {
