@@ -36,11 +36,6 @@ public class DronesDevice extends PanacheEntityBase {
     private String deviceId;
 
     /**
-     * 设备名称
-     */
-    private String deviceName;
-
-    /**
      * 设备类型
      */
     private String deviceType;
@@ -52,7 +47,7 @@ public class DronesDevice extends PanacheEntityBase {
     /**
      * IP地址
      */
-    private String ipAddress;
+    private String deviceIp;
 
     /**
      * 设备型号
