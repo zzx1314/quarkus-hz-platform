@@ -67,12 +67,16 @@ public class BusService {
         DronesDeviceDto dto = new DronesDeviceDto();
         dto.setCommTime(LocalDateTime.now());
         dto.setDeviceId(messageHeartbeat.getDeviceId());
-        dto.setStatus(messageHeartbeat.getStatus());
-        dto.setSpeed(messageHeartbeat.getDrones().getSpeed());
-        dto.setHeight(messageHeartbeat.getDrones().getHeight());
-        dto.setBattery(messageHeartbeat.getDrones().getBattery());
-        dto.setCourse(messageHeartbeat.getDrones().getCourse());
-        dto.setLocation(messageHeartbeat.getDrones().getLocation());
+        if (StringUtil.isNullOrEmpty(messageHeartbeat.getStatus())) {
+            dto.setStatus("success");
+        }
+        if (messageHeartbeat.getDrones() != null) {
+            dto.setSpeed(messageHeartbeat.getDrones().getSpeed());
+            dto.setHeight(messageHeartbeat.getDrones().getHeight());
+            dto.setBattery(messageHeartbeat.getDrones().getBattery());
+            dto.setCourse(messageHeartbeat.getDrones().getCourse());
+            dto.setLocation(messageHeartbeat.getDrones().getLocation());
+        }
         if ("success".equals(dto.getStatus())) {
             dto.setStatus("在线");
         } else if ("error".equals(dto.getStatus())) {
