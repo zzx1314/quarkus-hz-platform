@@ -32,6 +32,7 @@ char *websocket_send_data() {
 
     cJSON_AddItemToObject(root, "type", cJSON_CreateString("heartbeat"));
     cJSON_AddItemToObject(root, "deviceId", cJSON_CreateString(deviceIdParam));
+    cJSON_AddItemToObject(root, "status", cJSON_CreateString("success"));
     str = cJSON_Print(root);
     printf("sendMessage = %s\n", str);
     cJSON_Delete(root);
@@ -88,7 +89,7 @@ Status Report(char* token, char* deviceId) {
     char addr_port[256] = { 0 };
     sprintf(addr_port, "%s:%u", "agent", port & 65535 );
 
-    sprintf(websocket_url, "/notice/%s/%s", deviceId, token);
+    sprintf(websocket_url, "/api/notice/%s/%s", deviceId, token);
  
     struct lws_context_creation_info ctx_info = { 0 };  
     ctx_info.port = CONTEXT_PORT_NO_LISTEN;
