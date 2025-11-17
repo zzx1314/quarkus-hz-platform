@@ -7,7 +7,9 @@ import jakarta.ws.rs.core.Response;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
+import java.util.List;
 
 public class FileUtil {
 
@@ -94,5 +96,105 @@ public class FileUtil {
             return Response.serverError().entity("下载失败: " + e.getMessage()).build();
         }
     }
+
+    /**
+     * 删除单个文件
+     */
+    public static boolean deleteFile(String path) {
+        Path p = Paths.get(path);
+        try {
+            return Files.deleteIfExists(p);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+     /**
+     * 删除文件夹及其所有子内容（递归）
+     */
+    public static boolean deleteDirectory(String directoryPath) {
+        Path dir = Paths.get(directoryPath);
+        if (!Files.exists(dir)) {
+            return true; // 认为已删除
+        }
+
+        try {
+            Files.walk(dir)
+                    .sorted((a, b) -> b.compareTo(a)) // 先删子目录/文件，再删目录本身
+                    .forEach(path -> {
+                        try {
+                            Files.deleteIfExists(path);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * 清空目录，但保留目录本身
+     */
+    public static boolean cleanDirectory(String directoryPath) {
+        Path dir = Paths.get(directoryPath);
+        if (!Files.exists(dir)) {
+            return true;
+        }
+
+        try {
+            Files.list(dir).forEach(path -> {
+                try {
+                    if (Files.isDirectory(path)) {
+                        deleteDirectory(path.toString());
+                    } else {
+                        Files.deleteIfExists(path);
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * 读取文件全部内容为字符串
+     * @param filePath 文件路径
+     * @return 文件内容，读取失败返回 null
+     */
+    public static String readFileToString(String filePath) {
+        Path path = Paths.get(filePath);
+        try {
+            return Files.readString(path, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * 按行读取文件内容
+     * @param filePath 文件路径
+     * @return 每行内容列表，读取失败返回 null
+     */
+    public static List<String> readFileToLines(String filePath) {
+        Path path = Paths.get(filePath);
+        try {
+            return Files.readAllLines(path, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }
+
+
 

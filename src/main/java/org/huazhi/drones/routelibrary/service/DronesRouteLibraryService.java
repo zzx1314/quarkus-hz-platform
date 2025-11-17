@@ -29,7 +29,7 @@ public interface DronesRouteLibraryService {
 
    void removeByIds(List<Long> ids);
 
-   Object getRoute(Long modelId);
+   R<Object> getRoute(Long modelId);
 
    List<SelectOption> getSelectOptions();
 

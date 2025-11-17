@@ -93,7 +93,7 @@ public class DronesRouteLibraryController {
     @GET
     @Path("/getRoute/{modelId}")
     public R<Object> getRoute(@PathParam("modelId") Long modelId) {
-        return R.ok(dronesRouteLibraryService.getRoute(modelId));
+        return dronesRouteLibraryService.getRoute(modelId);
     }
 
 

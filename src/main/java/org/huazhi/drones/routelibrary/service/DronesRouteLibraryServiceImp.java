@@ -15,6 +15,7 @@ import org.huazhi.drones.routelibrary.entity.dto.DronesRouteLibraryDto;
 import org.huazhi.drones.routelibrary.entity.dto.DronesRouteLibraryQueryDto;
 import org.huazhi.drones.routelibrary.repository.DronesRouteLibraryRepository;
 import org.huazhi.drones.util.DateUtil;
+import org.huazhi.util.FileUtil;
 import org.huazhi.util.ImageUtil;
 import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
@@ -29,6 +30,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.quarkus.panache.common.Sort;
+import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -90,7 +92,7 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
     }
 
     @Override
-    public Object getRoute(Long modelId) {
+    public R<Object> getRoute(Long modelId) {
         // Get route from modelId
         DronesModel model = modelService.listOne(new DronesModelQueryDto().setId(modelId));
         // Unzip the model file, convert the format, and return a base64-encoded string.
@@ -100,10 +102,48 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
         // Find the pgm file and convert it to png format
         ImageUtil.pgmToPng(unZipPath + "/model.pgm", unZipPath + "/model.png");
         String base64Str = ImageUtil.getPngBase64String(unZipPath + "/model.png");
+        // 获取yaml文件
+        String yamlFilePath = unZipPath + "/model.yaml";
+        List<String> yamlData = FileUtil.readFileToLines(yamlFilePath);
         if (base64Str != null) {
-            return base64Str;
+            JsonObject result = new JsonObject();
+            result.put("route", base64Str);
+            result.put("resolution", getResolution(yamlData));
+            result.put("origin", getOrigin(yamlData));
+            FileUtil.cleanDirectory(unZipPath);
+            return R.ok(result);
         }
-        return "";
+       
+        return R.ok();
+    }
+
+    public double getResolution(List<String> lines) {
+        for (String line : lines) {
+            line = line.trim();
+            if (line.startsWith("resolution:")) {
+                String value = line.split(":")[1].trim();
+                return Double.parseDouble(value);
+            }
+        }
+        return -1;
+    }
+
+    public  double[] getOrigin(List<String> lines) {
+        for (String line : lines) {
+            line = line.trim();
+            if (line.startsWith("origin:")) {
+                String value = line.split(":")[1].trim();
+                // 去掉 [ ] 符号
+                value = value.replace("[", "").replace("]", "");
+                String[] parts = value.split(",");
+                double[] origin = new double[parts.length];
+                for (int i = 0; i < parts.length; i++) {
+                    origin[i] = Double.parseDouble(parts[i].trim());
+                }
+                return origin;
+            }
+        }
+        return null;
     }
 
     @Override
