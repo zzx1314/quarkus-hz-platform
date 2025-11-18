@@ -88,7 +88,7 @@ public class DronesDeviceServiceImp implements DronesDeviceService {
     public List<SelectOption> getSelectOptions() {
         List<DronesDevice> listAll = repository.listAll();
         return listAll.stream()
-                .map(item -> new SelectOption(item.getDeviceIp(), item.getId()))
+                .map(item -> new SelectOption(item.getDeviceId(), item.getId()))
                 .collect(Collectors.toList());
     }
 
