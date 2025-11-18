@@ -2,7 +2,7 @@ package org.huazhi.drones.workflow.controller;
 
 import java.util.List;
 
-import org.huazhi.drones.routelibrary.entity.DronesRouteLibrary;
+import org.huazhi.drones.routelibrary.entity.vo.DronesRouteLibraryVo;
 import org.huazhi.drones.workflow.entity.DronesWorkflow;
 import org.huazhi.drones.workflow.entity.dto.DronesWorkflowDto;
 import org.huazhi.drones.workflow.entity.dto.DronesWorkflowQueryDto;
@@ -60,7 +60,7 @@ public class DronesWorkflowController {
 
     @GET
     @Path("/getRouteByTaskId/{taskId}")
-    public R<List<DronesRouteLibrary>> getRouteByTaskId(@PathParam("taskId") Long taskId) {
+    public R<List<DronesRouteLibraryVo>> getRouteByTaskId(@PathParam("taskId") Long taskId) {
         return R.ok(dronesWorkflowService.getRouteByTaskId(taskId));
     }
 

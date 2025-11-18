@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 
 import org.huazhi.drones.routelibrary.entity.DronesRouteLibrary;
 import org.huazhi.drones.routelibrary.entity.dto.DronesRouteLibraryQueryDto;
+import org.huazhi.drones.routelibrary.entity.mapper.DronesRouteLibraryMapper;
+import org.huazhi.drones.routelibrary.entity.vo.DronesRouteLibraryVo;
 import org.huazhi.drones.routelibrary.service.DronesRouteLibraryService;
 import org.huazhi.drones.task.service.DronesTaskService;
 import org.huazhi.drones.workflow.entity.DronesWorkflow;
@@ -38,6 +40,10 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
 
     @Inject
     DronesRouteLibraryService routeLibraryService;
+
+
+    @Inject
+    DronesRouteLibraryMapper mapper;
 
     @Override
     public List<DronesWorkflow> listEntitys() {
@@ -132,8 +138,8 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
      * @return
      */
     @Override
-    public List<DronesRouteLibrary> getRouteByTaskId(Long taskId) {
-        List<DronesRouteLibrary> result = new ArrayList<>();
+    public List<DronesRouteLibraryVo> getRouteByTaskId(Long taskId) {
+        List<DronesRouteLibraryVo> result = new ArrayList<>();
         DronesWorkflow dronesWorkflow = getWorkflow(taskId);
         // 从地图中找到设备节点，然后从设备节点找到具体的航线数据
         if (null != dronesWorkflow) { 
@@ -142,9 +148,13 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
             for (NodeEntity nodeEntity : nodeEntityList) {
                 if ("device".equals(nodeEntity.getType())) {
                     Long routeId = nodeEntity.getData().getRouteId();
+                    Long deviceId = nodeEntity.getData().getDeviceId();
                     DronesRouteLibrary route = routeLibraryService.listOne(new DronesRouteLibraryQueryDto().setId(routeId));
                     if (null != route) {
-                        result.add(route);
+                        DronesRouteLibraryVo routeVo = new DronesRouteLibraryVo();
+                        mapper.toVo(route, routeVo);
+                        routeVo.setDeviceId(deviceId);
+                        result.add(routeVo);
                     }
                 }
             }

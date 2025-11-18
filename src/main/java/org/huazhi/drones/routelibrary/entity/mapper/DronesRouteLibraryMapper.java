@@ -2,6 +2,7 @@ package org.huazhi.drones.routelibrary.entity.mapper;
 
 import org.huazhi.drones.routelibrary.entity.DronesRouteLibrary;
 import org.huazhi.drones.routelibrary.entity.dto.DronesRouteLibraryDto;
+import org.huazhi.drones.routelibrary.entity.vo.DronesRouteLibraryVo;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -20,4 +21,7 @@ public interface DronesRouteLibraryMapper {
     @Mapping(target = "id", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntity(DronesRouteLibrary dto, @MappingTarget DronesRouteLibrary entity);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void toVo(DronesRouteLibrary entity, @MappingTarget DronesRouteLibraryVo vo);
 }
