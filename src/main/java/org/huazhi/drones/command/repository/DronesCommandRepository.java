@@ -39,6 +39,8 @@ public class DronesCommandRepository implements PanacheRepository<DronesCommand>
     public PageResult<DronesCommand> selectPage(DronesCommandQueryDto dto, PageRequest pageRequest) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0)
+                .like("commandName", dto.getCommandName())
+                .like("deviceId", dto.getDeviceId())
                 .between("createTime", dto.getBeginTime(), dto.getEndTime())
                 .orderBy("createTime desc");
 

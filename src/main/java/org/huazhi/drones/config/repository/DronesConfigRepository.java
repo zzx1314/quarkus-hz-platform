@@ -40,6 +40,8 @@ public class DronesConfigRepository implements PanacheRepository<DronesConfig> {
     public PageResult<DronesConfig> selectPage(DronesConfigQueryDto dto, PageRequest pageRequest) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0)
+                .like("configName", dto.getConfigName())
+                .like("configValue", dto.getConfigValue())
                 .between("createTime", dto.getBeginTime(), dto.getEndTime())
                 .orderBy("createTime desc");
 

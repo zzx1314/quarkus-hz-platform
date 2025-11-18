@@ -39,6 +39,8 @@ public class DronesMediaRepository implements PanacheRepository<DronesMedia> {
     public PageResult<DronesMedia> selectPage(DronesMediaQueryDto dto, PageRequest pageRequest) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0)
+                .like("mediaName", dto.getMediaName())
+                .like("mediaType", dto.getMediaType())
                 .between("createTime", dto.getBeginTime(), dto.getEndTime())
                 .orderBy("createTime desc");
 

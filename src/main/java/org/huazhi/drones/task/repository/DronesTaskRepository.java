@@ -42,6 +42,9 @@ public class DronesTaskRepository implements PanacheRepository<DronesTask> {
     public PageResult<DronesTask> selectPage(DronesTaskQueryDto dto, PageRequest pageRequest) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0)
+                .like("taskName", dto.getTaskName())
+                .like("taskDescription", dto.getTaskDescription())
+                .like("taskStatus", dto.getTaskStatus())
                 .between("createTime", dto.getBeginTime(), dto.getEndTime())
                 .orderBy("createTime desc");
 

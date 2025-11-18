@@ -43,6 +43,9 @@ public class DronesDeviceRepository implements PanacheRepository<DronesDevice> {
     public PageResult<DronesDevice> selectPage(DronesDeviceQueryDto dto, PageRequest pageRequest) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0)
+                .like("deviceId", dto.getDeviceId())
+                .like("deviceType", dto.getDeviceType())
+                .like("status", dto.getStatus())
                 .between("createTime", dto.getBeginTime(), dto.getEndTime())
                 .orderBy("createTime desc");
 

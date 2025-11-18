@@ -15,4 +15,16 @@ public class DronesModelQueryDto {
 
     @QueryParam("endTime")
     private String endTime;
+
+    /**
+     * 模型名称
+     */
+    @QueryParam("modelName")
+    private String modelName;
+
+    /**
+     * 模型类型
+     */
+    @QueryParam("modelType")
+    private String modelType;
 }

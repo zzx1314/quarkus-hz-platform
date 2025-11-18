@@ -18,4 +18,15 @@ public class DronesDeviceQueryDto {
 
     @QueryParam("deviceId")
     private String deviceId;
+
+    /**
+     * 设备类型
+     */
+    @QueryParam("deviceType")
+    private String deviceType;
+    /**
+     * 设备状态
+     */
+    @QueryParam("status")
+    private String status;
 }

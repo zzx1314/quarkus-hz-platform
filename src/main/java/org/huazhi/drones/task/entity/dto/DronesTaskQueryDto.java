@@ -15,4 +15,23 @@ public class DronesTaskQueryDto {
 
     @QueryParam("endTime")
     private String endTime;
+
+     /**
+     * 任务名称
+     */
+    @QueryParam("taskName")
+    private String taskName;
+
+    /**
+     * 任务描述
+     */
+    @QueryParam("taskDescription")
+    private String taskDescription;
+
+    /**
+     * 任务状态
+     */
+    @QueryParam("taskStatus")
+    private String taskStatus;
+
 }

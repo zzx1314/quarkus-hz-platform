@@ -42,6 +42,9 @@ public class DronesRouteLibraryRepository implements PanacheRepository<DronesRou
     public PageResult<DronesRouteLibrary> selectPage(DronesRouteLibraryQueryDto dto, PageRequest pageRequest) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0)
+                .like("routeName", dto.getRouteName())
+                .like("routeType", dto.getRouteType())
+                .like("routeStatus", dto.getRouteStatus())
                 .between("createTime", dto.getBeginTime(), dto.getEndTime())
                 .orderBy("createTime desc");
 

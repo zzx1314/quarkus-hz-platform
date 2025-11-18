@@ -15,4 +15,22 @@ public class DronesRouteLibraryQueryDto {
 
     @QueryParam("endTime")
     private String endTime;
+
+     /**
+     * 路线名称
+     */
+    @QueryParam("routeName")
+    private String routeName;
+
+    /**
+     * 路线类型
+     */
+    @QueryParam("routeType")
+    private String routeType;
+
+    /**
+     * 路线状态
+     */
+    @QueryParam("routeStatus")
+    private String routeStatus;
 }

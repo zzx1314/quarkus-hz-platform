@@ -15,4 +15,11 @@ public class DronesCommandQueryDto {
 
     @QueryParam("endTime")
     private String endTime;
+
+    @QueryParam("commandName")
+    private String commandName;
+
+    @QueryParam("deviceId")
+    private String deviceId;
+
 }

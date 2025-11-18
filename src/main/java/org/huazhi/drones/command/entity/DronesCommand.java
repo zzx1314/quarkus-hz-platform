@@ -43,7 +43,7 @@ public class DronesCommand extends PanacheEntityBase {
     /**
      * 目标设备ID
      */
-    private Long deviceId;
+    private String deviceId;
 
     /**
      * 指令状态

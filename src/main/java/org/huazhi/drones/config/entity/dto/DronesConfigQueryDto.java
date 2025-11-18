@@ -21,4 +21,16 @@ public class DronesConfigQueryDto {
 
     @QueryParam("ids")
     private List<Long> ids;
+
+    /**
+     * 配置名称
+     */
+    @QueryParam("configName")
+    private String configName;
+
+    /**
+     * 配置值
+     */
+    @QueryParam("configValue")
+    private String configValue;
 }
