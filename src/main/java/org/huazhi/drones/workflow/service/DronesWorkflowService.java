@@ -2,6 +2,7 @@ package org.huazhi.drones.workflow.service;
 
 import java.util.List;
 
+import org.huazhi.drones.routelibrary.entity.DronesRouteLibrary;
 import org.huazhi.drones.workflow.entity.DronesWorkflow;
 import org.huazhi.drones.workflow.entity.dto.DronesWorkflowDto;
 import org.huazhi.drones.workflow.entity.dto.DronesWorkflowQueryDto;
@@ -30,4 +31,6 @@ public interface DronesWorkflowService {
 
    DronesWorkflowVo getWorkflowGraph(Long taskId);
    DronesWorkflow getWorkflow(Long taskId);
+
+   List<DronesRouteLibrary> getRouteByTaskId(Long taskId);
 }

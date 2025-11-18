@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.huazhi.drones.routelibrary.entity.DronesRouteLibrary;
+import org.huazhi.drones.routelibrary.entity.dto.DronesRouteLibraryQueryDto;
+import org.huazhi.drones.routelibrary.service.DronesRouteLibraryService;
 import org.huazhi.drones.task.service.DronesTaskService;
 import org.huazhi.drones.workflow.entity.DronesWorkflow;
 import org.huazhi.drones.workflow.entity.EdgeEntity;
@@ -32,6 +35,9 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
 
     @Inject
     DronesTaskService taskService;
+
+    @Inject
+    DronesRouteLibraryService routeLibraryService;
 
     @Override
     public List<DronesWorkflow> listEntitys() {
@@ -118,6 +124,32 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
     public DronesWorkflow getWorkflow(Long taskId) {
         DronesWorkflowQueryDto queryDto = new DronesWorkflowQueryDto().setTaskId(taskId);
         return repository.selectOne(queryDto);
+    }
+
+    /**
+     * 获取任务下的所有航线
+     * @param taskId
+     * @return
+     */
+    @Override
+    public List<DronesRouteLibrary> getRouteByTaskId(Long taskId) {
+        List<DronesRouteLibrary> result = new ArrayList<>();
+        DronesWorkflow dronesWorkflow = getWorkflow(taskId);
+        // 从地图中找到设备节点，然后从设备节点找到具体的航线数据
+        if (null != dronesWorkflow) { 
+            String nodes = dronesWorkflow.getNodes();
+            List<NodeEntity> nodeEntityList = JsonUtil.fromJsonToList(nodes, NodeEntity.class);
+            for (NodeEntity nodeEntity : nodeEntityList) {
+                if ("device".equals(nodeEntity.getType())) {
+                    Long routeId = nodeEntity.getData().getRouteId();
+                    DronesRouteLibrary route = routeLibraryService.listOne(new DronesRouteLibraryQueryDto().setId(routeId));
+                    if (null != route) {
+                        result.add(route);
+                    }
+                }
+            }
+        }
+        return result;
     }
 
 }
