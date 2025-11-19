@@ -34,7 +34,8 @@ public class DronesWorkflowRepository implements PanacheRepository<DronesWorkflo
                 .equal("id", queryDto.getId())
                 .equal("taskId", queryDto.getTaskId())
                 .equal("isDeleted", 0);
-        return find(qb.getQuery(), qb.getParams()).singleResult();
+        return find(qb.getQuery(), qb.getParams()).singleResultOptional()
+        .orElse(null);
     }
 
     public PageResult<DronesWorkflow> selectPage(DronesWorkflowQueryDto dto, PageRequest pageRequest) {

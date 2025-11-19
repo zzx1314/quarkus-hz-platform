@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.huazhi.config.FileConfig;
 import org.huazhi.drones.common.SelectOption;
 import org.huazhi.drones.model.entity.DronesModel;
 import org.huazhi.drones.model.entity.dto.DronesModelQueryDto;
@@ -41,6 +42,9 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
 
     @Inject
     DronesModelService modelService;
+
+    @Inject
+    FileConfig fileConfig;
 
     @Override
     public List<DronesRouteLibrary> listEntitys() {
@@ -97,7 +101,7 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
         DronesModel model = modelService.listOne(new DronesModelQueryDto().setId(modelId));
         // Unzip the model file, convert the format, and return a base64-encoded string.
         String modelFilePath = model.getFilePath();
-        String unZipPath = "/temp/unzipped_model_" + modelId;
+        String unZipPath = fileConfig.basePath() + "/temp/unzipped_model_" + modelId;
         ZipUtil.unzip(Paths.get(modelFilePath), Paths.get(unZipPath));
         // Find the pgm file and convert it to png format
         ImageUtil.pgmToPng(unZipPath + "/model.pgm", unZipPath + "/model.png");
