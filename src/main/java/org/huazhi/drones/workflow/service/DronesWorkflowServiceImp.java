@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.huazhi.drones.device.entity.DronesDevice;
+import org.huazhi.drones.device.entity.dto.DronesDeviceQueryDto;
+import org.huazhi.drones.device.service.DronesDeviceService;
 import org.huazhi.drones.routelibrary.entity.DronesRouteLibrary;
 import org.huazhi.drones.routelibrary.entity.dto.DronesRouteLibraryQueryDto;
 import org.huazhi.drones.routelibrary.entity.mapper.DronesRouteLibraryMapper;
@@ -40,6 +43,9 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
 
     @Inject
     DronesRouteLibraryService routeLibraryService;
+
+    @Inject
+    DronesDeviceService deviceService;
 
 
     @Inject
@@ -146,14 +152,15 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
             String nodes = dronesWorkflow.getNodes();
             List<NodeEntity> nodeEntityList = JsonUtil.fromJsonToList(nodes, NodeEntity.class);
             for (NodeEntity nodeEntity : nodeEntityList) {
-                if ("device".equals(nodeEntity.getType())) {
-                    Long routeId = nodeEntity.getData().getRouteId();
-                    Long deviceId = nodeEntity.getData().getDeviceId();
+                if ("task".equals(nodeEntity.getType())) {
+                    Long routeId = nodeEntity.getRouteId();
+                    String deviceIdString = nodeEntity.getDeviceId();
+                    DronesDevice deviceInfo = deviceService.listOne(new DronesDeviceQueryDto().setDeviceId(deviceIdString));
                     DronesRouteLibrary route = routeLibraryService.listOne(new DronesRouteLibraryQueryDto().setId(routeId));
                     if (null != route) {
                         DronesRouteLibraryVo routeVo = new DronesRouteLibraryVo();
                         mapper.toVo(route, routeVo);
-                        routeVo.setDeviceId(deviceId);
+                        routeVo.setDeviceId(deviceInfo.getId());
                         result.add(routeVo);
                     }
                 }

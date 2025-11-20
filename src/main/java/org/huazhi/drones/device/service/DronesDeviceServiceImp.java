@@ -155,5 +155,10 @@ public class DronesDeviceServiceImp implements DronesDeviceService {
         return repository.countDeviceByType();
     }
 
+    @Override
+    public DronesDevice listById(Long id) {
+        return repository.findById(id);
+    }
+
 
 }

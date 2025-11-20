@@ -17,6 +17,8 @@ public interface DronesDeviceService {
 
    DronesDevice listOne(DronesDeviceQueryDto dto);
 
+   DronesDevice listById(Long id);
+
    PageResult<DronesDevice> listPage(DronesDeviceQueryDto dto, PageRequest pageRequest);
 
    Boolean register(DronesDevice entity);

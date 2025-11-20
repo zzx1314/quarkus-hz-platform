@@ -56,7 +56,7 @@ public class SysUserRepository implements PanacheRepository<SysUser> {
                 .equal("isDeleted", 0)
                 .like("username", queryDto.getUsername())
                 .like("phone", queryDto.getPhone());
-        return this.find(qb.getQuery(), qb.getParams()).firstResult();
+        return this.find(qb.getQuery(), qb.getParams()).singleResultOptional().orElse(null);
     }
 
 }

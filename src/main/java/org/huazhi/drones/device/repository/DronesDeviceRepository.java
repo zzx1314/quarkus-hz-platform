@@ -37,7 +37,7 @@ public class DronesDeviceRepository implements PanacheRepository<DronesDevice> {
                 .equal("deviceId", queryDto.getDeviceId())
                 .equal("id", queryDto.getId())
                 .equal("isDeleted", 0);
-        return find(qb.getQuery(), qb.getParams()).firstResult();
+        return find(qb.getQuery(), qb.getParams()).singleResultOptional().orElse(null);
     }
 
     public PageResult<DronesDevice> selectPage(DronesDeviceQueryDto dto, PageRequest pageRequest) {

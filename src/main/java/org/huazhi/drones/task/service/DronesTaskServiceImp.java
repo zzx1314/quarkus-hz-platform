@@ -1,23 +1,17 @@
 package org.huazhi.drones.task.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
+import org.huazhi.drones.command.entity.dto.DroneTaskPlan;
+import org.huazhi.drones.command.entity.dto.DronesAction;
+import org.huazhi.drones.command.entity.dto.DronesActionData;
 import org.huazhi.drones.command.entity.dto.DronesCommandWebsocket;
-import org.huazhi.drones.command.entity.dto.DronesStep;
-import org.huazhi.drones.config.entity.DronesConfig;
-import org.huazhi.drones.config.entity.dto.DronesConfigQueryDto;
 import org.huazhi.drones.config.service.DronesConfigService;
-import org.huazhi.drones.device.entity.DronesDevice;
-import org.huazhi.drones.device.entity.dto.DronesDeviceQueryDto;
 import org.huazhi.drones.device.service.DronesDeviceService;
 import org.huazhi.drones.model.service.DronesModelService;
-import org.huazhi.drones.routelibrary.entity.DronesRouteLibrary;
-import org.huazhi.drones.routelibrary.entity.dto.DronesRouteLibraryQueryDto;
 import org.huazhi.drones.routelibrary.service.DronesRouteLibraryService;
 import org.huazhi.drones.task.entity.DronesTask;
 import org.huazhi.drones.task.entity.dto.DronesTaskDto;
@@ -25,7 +19,9 @@ import org.huazhi.drones.task.entity.dto.DronesTaskQueryDto;
 import org.huazhi.drones.task.repository.DronesTaskRepository;
 import org.huazhi.drones.util.DateUtil;
 import org.huazhi.drones.websocket.service.ConnectionManager;
-import org.huazhi.drones.workflow.entity.DeviceNodeEntity;
+import org.huazhi.drones.workflow.entity.DeviceNodeAction;
+import org.huazhi.drones.workflow.entity.DeviceNodeLand;
+import org.huazhi.drones.workflow.entity.DeviceNodeTakeoff;
 import org.huazhi.drones.workflow.entity.NodeEntity;
 import org.huazhi.drones.workflow.service.DronesWorkflowService;
 import org.huazhi.drones.workflow.vo.DronesWorkflowVo;
@@ -192,51 +188,104 @@ public class DronesTaskServiceImp implements DronesTaskService {
         List<NodeEntity> taskNodes = findTasknodes(workflowGraph);
         DronesCommandWebsocket commandWebsocket = new DronesCommandWebsocket();
 
-        List<DronesStep> stepArray = new ArrayList<>();
+        List<DroneTaskPlan> planArray = new ArrayList<>();
         for (int i = 0; i < taskNodes.size(); i++) { 
             // 循环每一个步骤
             NodeEntity taskNode = taskNodes.get(i);
-            DeviceNodeEntity data = taskNode.getData();
-            long deviceId =  data.getDeviceId();
-            DronesDevice deviceInfo = deviceService.listOne(new DronesDeviceQueryDto().setId(deviceId));
-            commandWebsocket.setDeviceId(deviceInfo.getDeviceId());
+            commandWebsocket.setDeviceId(taskNode.getDeviceId());
             commandWebsocket.setType("command");
-            // 构建步骤
-            DronesStep step = new DronesStep();
-            step.setTaskNumber(i + 1 + "");
-            // 构建目标功能
-            List<Long> configIds = data.getConfigIds();
-            if (configIds != null && !configIds.isEmpty()) {
-                Map<String, String> configMap = new HashMap<>();
-                for(int j = 0; j < configIds.size(); j++) {
-                    Long configId = configIds.get(j);
-                    DronesConfig config = configService.listOne(new DronesConfigQueryDto().setId(configId));
-                    configMap.put(config.getConfigName(), config.getConfigValue());
+            // 构建任务步骤
+            DroneTaskPlan taskPlan = new DroneTaskPlan();
+            taskPlan.setTaskId(i + 1 + "");
+            // 判断节点类型
+            if ("takeoff".equals(taskNode.getType())) {
+                // 起飞节点
+                DeviceNodeTakeoff takeoffInfo = taskNode.getTakeoff();
+                // 动作数组
+                List<DronesAction> actionArray = new ArrayList<>();
+                // 动作
+                DronesAction actionTakeoff = new DronesAction();
+                actionTakeoff.setActionId(i + 1 + "-1");
+                actionTakeoff.setActionType("hzRos");
+                DronesActionData actionData = new DronesActionData();
+                actionData.setAction("takeoff");
+                actionData.setHeight(takeoffInfo.getHeight());
+                actionData.setSpeed(takeoffInfo.getSpeed());
+                actionTakeoff.setActionData(actionData);
+                actionTakeoff.setTimeout(takeoffInfo.getTimeout());
+                actionArray.add(actionTakeoff);
+                // 添加动作
+                taskPlan.setActionArray(actionArray);
+            } else if ("land".equals(taskNode.getType())) {
+                // 降落节点
+                DeviceNodeLand landInfo = taskNode.getLand();
+                // 动作数组
+                List<DronesAction> actionArray = new ArrayList<>();
+                // 动作
+                DronesAction actionTakeoLand = new DronesAction();
+                actionTakeoLand.setActionId(i + 1 + "-1");
+                actionTakeoLand.setActionType("hzRos");
+                DronesActionData actionData = new DronesActionData();
+                actionData.setAction("land");
+                actionTakeoLand.setActionData(actionData);
+                actionTakeoLand.setTimeout(landInfo.getTimeout());
+                actionArray.add(actionTakeoLand);
+                // 添加动作
+                taskPlan.setActionArray(actionArray);
+            } else if ("task".equals(taskNode.getType())) {
+                // 设备节点--执行任务
+                DeviceNodeAction taskInfo = taskNode.getAction();
+                // 顺序执行的动作
+                List<String> sequenceList = taskInfo.getSequence();
+                // 动作数组
+                List<DronesAction> actionArray = new ArrayList<>();
+                // 动作
+                for (int j = 0; j < sequenceList.size(); j++) { 
+                    String sequence = sequenceList.get(j);
+                    if ("moveBase".equals(sequence)) {
+                        // 移动航线
+                        DronesAction action = taskInfo.getMoveBase();
+                        action.setActionId(i + 1 + "-" + (j + 1));
+                        action.setActionType("hzRos");
+                        DronesActionData actionData = new DronesActionData();
+                        actionData.setAction("moveBase");
+                        actionData.setPath(getPathList(action.getActionData().getPathString()));
+                        action.setActionData(actionData);
+                        actionArray.add(action);
+                    } else if ("videoCapture".equals(sequence)) {
+                        // 视频抓拍
+                        DronesAction action = taskInfo.getVideoCapture();
+                        action.setActionId(i + 1 + "-" + (j + 1));
+                        action.setActionType("videoCapture");
+                        DronesActionData actionData = new DronesActionData();
+                        actionData.setAction("videoCapture");
+                        action.setActionData(actionData);
+                        actionArray.add(action);
+                    } else if ("takePhoto".equals(sequence)) {
+                        // 拍照
+                        DronesAction action = taskInfo.getTakePhoto();
+                        action.setActionId(i + 1 + "-" + (j + 1));
+                        action.setActionType("takePhoto");
+                        DronesActionData actionData = new DronesActionData();
+                        actionData.setAction("takePhoto");
+                        action.setActionData(actionData);
+                        actionArray.add(action);
+                    } else if ("targetRecognition".equals(sequence)) {
+                        // 目标识别
+                        DronesAction action = taskInfo.getTargetRecognition();
+                        action.setActionId(i + 1 + "-" + (j + 1));
+                        action.setActionType("targetRecognition");
+                        DronesActionData actionData = new DronesActionData();
+                        actionData.setAction("targetRecognition");
+                        action.setActionData(actionData);
+                        actionArray.add(action);
+                    }
                 }
-                step.setTaskTarget(configMap);
+                taskPlan.setActionArray(actionArray);
             }
-            // 构建路径
-            Long routeId =  data.getRouteId();
-            List<String> pathArray = data.getPath();
-            if (pathArray != null && !pathArray.isEmpty()) {
-                // 有航点
-                List<List<Double>> pathList = new ArrayList<>();
-                for (int j = 0; j < pathArray.size(); j++){
-                    List<Double> point = new ArrayList<>();
-                    String pointString = pathArray.get(j);
-                    point = Arrays.asList(pointString.split(",")).stream().map(Double::parseDouble).collect(Collectors.toList());
-                    point.add(0.0);
-                    pathList.add(point);
-                }
-                step.setRoutePath(pathList);
-            } else{
-                DronesRouteLibrary route = routeLibraryService.listOne(new DronesRouteLibraryQueryDto().setId(routeId));
-                List<List<Double>> pathList = getPathList(route.getRouteData());
-                step.setRoutePath(pathList);
-            }
-            stepArray.add(step);
+            planArray.add(taskPlan);
         }
-        commandWebsocket.setStepArray(stepArray);
+        commandWebsocket.setTaskplanArray(planArray);
         log.info("发送指令信息:"+ JsonUtil.wrapJsonValue(commandWebsocket));
         connectionManager.sendMessageByDeviceId(commandWebsocket.getDeviceId(), commandWebsocket);
     }
@@ -265,8 +314,8 @@ public class DronesTaskServiceImp implements DronesTaskService {
             if (nextNode == null) {
                 throw new RuntimeException("nodeMap 缺少节点：" + nextId);
             }
-            // 添加设备节点
-            if ("device".equals(nextNode.getType())) {
+            // 添加起飞节点，任务节点，降落节点
+            if ("task".equals(nextNode.getType()) || "takeoff".equals(nextNode.getType()) || "land".equals(nextNode.getType())) {
                 taskNodes.add(nextNode);
             }
             current = nextNode;

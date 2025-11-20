@@ -6,7 +6,10 @@ import lombok.Data;
 
 @Data
 public class DronesCommandWebsocket {
-    Long id;
+    /**
+     * 命令id
+     */
+    Long commandId;
     
     /**
      * 设备id
@@ -19,7 +22,12 @@ public class DronesCommandWebsocket {
     String type;
 
     /**
-     * 步骤
+     * 动作触发器
      */
-    List<DronesStep> stepArray;
+    List<DronesActionTrigger> actionTriggerArray;
+
+    /**
+     * 任务计划
+     */
+    List<DroneTaskPlan> taskplanArray;
  }
