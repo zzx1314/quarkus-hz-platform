@@ -15,6 +15,7 @@ import org.huazhi.drones.routelibrary.entity.dto.DronesRouteLibraryQueryDto;
 import org.huazhi.drones.routelibrary.entity.mapper.DronesRouteLibraryMapper;
 import org.huazhi.drones.routelibrary.entity.vo.DronesRouteLibraryVo;
 import org.huazhi.drones.routelibrary.service.DronesRouteLibraryService;
+import org.huazhi.drones.task.entity.DronesTask;
 import org.huazhi.drones.task.service.DronesTaskService;
 import org.huazhi.drones.workflow.entity.DronesWorkflow;
 import org.huazhi.drones.workflow.entity.EdgeEntity;
@@ -76,6 +77,11 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
         entity.setCreateTime(LocalDateTime.now());
         entity.setIsDeleted(0);
         repository.persist(entity);
+        // 修改任务的id
+        DronesTask task = new DronesTask();
+        task.setId(entity.getTaskId());
+        task.setWorkflowId(entity.getId());
+        taskService.replaceById(task);
         return true;
     }
 
