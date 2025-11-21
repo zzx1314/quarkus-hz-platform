@@ -52,7 +52,7 @@ public class SysOrgServiceImp implements SysOrgService {
 			Map<Integer, List<SysOrg>> groupByParentId = selectOrgList.stream()
 				.collect(Collectors.groupingBy(SysOrg::getParentId));
 
-            if (StringUtil.isNullOrEmpty(dto.getName()) || StringUtil.isNullOrEmpty(dto.getType())) {
+            if (!StringUtil.isNullOrEmpty(dto.getName()) || !StringUtil.isNullOrEmpty(dto.getType())) {
                 // 查询到的组织节点
 				selectOrgList = sysOrgRepository.selectOrgList(dto);
                 if (selectOrgList != null && !selectOrgList.isEmpty()) {
@@ -182,10 +182,10 @@ public class SysOrgServiceImp implements SysOrgService {
 			// 通过parentid进行分组
 			Map<Integer, List<SysOrg>> groupByParentId = listOrg.stream()
 				.collect(Collectors.groupingBy(SysOrg::getParentId));
-			if (StringUtil.isNullOrEmpty(queryDto.getName()) || StringUtil.isNullOrEmpty(queryDto.getType())) {
+			if (!StringUtil.isNullOrEmpty(queryDto.getName()) || !StringUtil.isNullOrEmpty(queryDto.getType())) {
 				listOrg =  sysOrgRepository.selectOrgList(queryDto);
 				// 寻找父级节点
-				if ((StringUtil.isNullOrEmpty(queryDto.getName()) || StringUtil.isNullOrEmpty(queryDto.getType()))
+				if ((!StringUtil.isNullOrEmpty(queryDto.getName()) || !StringUtil.isNullOrEmpty(queryDto.getType()))
 						&& !listOrg.isEmpty()) {
 					listOrg.forEach(one -> {
 						// 组成父节点的
