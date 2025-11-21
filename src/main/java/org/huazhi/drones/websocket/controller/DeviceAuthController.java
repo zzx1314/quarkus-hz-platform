@@ -95,7 +95,7 @@ public class DeviceAuthController {
      * @param device
      */
     private void handleDeviceMode(DronesDeviceDto device) {
-        if (StringUtil.isNullOrEmpty(device.getDeviceId()) && device.getDeviceId().length() >= 5) {
+        if (!StringUtil.isNullOrEmpty(device.getDeviceId()) && device.getDeviceId().length() >= 5) {
             // 获取第4到5位字符
             String deviceMode = device.getDeviceId().substring(3, 5);
             if (deviceMode.equals("00")) {

@@ -31,7 +31,7 @@ public class DronesDeviceDto {
     /**
      * IP地址
      */
-    private String ipAddress;
+    private String deviceIp;
 
     /**
      * 速度
