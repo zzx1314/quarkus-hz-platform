@@ -36,6 +36,11 @@ public class DeviceNodeAction {
      */
     private List<String> sequence;
 
+    /**
+     * 并行的动作
+     */
+    private DeviceNodeActionParallelGroup parallelGroup;
+
 
     /**
      * 超时

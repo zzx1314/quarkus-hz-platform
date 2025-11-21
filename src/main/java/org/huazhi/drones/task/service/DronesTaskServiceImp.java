@@ -20,6 +20,7 @@ import org.huazhi.drones.task.repository.DronesTaskRepository;
 import org.huazhi.drones.util.DateUtil;
 import org.huazhi.drones.websocket.service.ConnectionManager;
 import org.huazhi.drones.workflow.entity.DeviceNodeAction;
+import org.huazhi.drones.workflow.entity.DeviceNodeActionParallelGroup;
 import org.huazhi.drones.workflow.entity.DeviceNodeLand;
 import org.huazhi.drones.workflow.entity.DeviceNodeTakeoff;
 import org.huazhi.drones.workflow.entity.NodeEntity;
@@ -237,48 +238,45 @@ public class DronesTaskServiceImp implements DronesTaskService {
                 DeviceNodeAction taskInfo = taskNode.getAction();
                 // 顺序执行的动作
                 List<String> sequenceList = taskInfo.getSequence();
+                // 并行动作
+                DeviceNodeActionParallelGroup parallelGroup = taskInfo.getParallelGroup();
                 // 动作数组
                 List<DronesAction> actionArray = new ArrayList<>();
                 // 动作
                 for (int j = 0; j < sequenceList.size(); j++) { 
                     String sequence = sequenceList.get(j);
+                    if ("parallel".equals(sequence)) {
+                        // 并行动作
+                        List<String> parallelAction = parallelGroup.getList();
+                        for (int k = 0; k < parallelAction.size(); k++) { 
+                            String parallel = parallelAction.get(k);
+                            if ("moveBase".equals(parallel)) {
+                                // 移动航线
+                                getActionDataMoveBase(i, taskInfo, actionArray, j, k);
+                            } else if ("videoCapture".equals(parallel)) {
+                                // 视频抓拍
+                                 getActionDataVideoCapture(i, taskInfo, actionArray, j, k);
+                            } else if ("takePhoto".equals(sequence)) {
+                                // 拍照
+                                getActionDataTakePhoto(i, taskInfo, actionArray, j, k);
+                            } else if ("targetRecognition".equals(sequence)) {
+                                // 目标识别
+                                getActionDataTarge(i, taskInfo, actionArray, j, k);
+                            }
+                        }
+                    }
                     if ("moveBase".equals(sequence)) {
                         // 移动航线
-                        DronesAction action = taskInfo.getMoveBase();
-                        action.setActionId(i + 1 + "-" + (j + 1));
-                        action.setActionType("hzRos");
-                        DronesActionData actionData = new DronesActionData();
-                        actionData.setAction("moveBase");
-                        actionData.setPath(getPathList(action.getActionData().getPathString()));
-                        action.setActionData(actionData);
-                        actionArray.add(action);
+                        getActionDataMoveBase(i, taskInfo, actionArray, j, 0);
                     } else if ("videoCapture".equals(sequence)) {
                         // 视频抓拍
-                        DronesAction action = taskInfo.getVideoCapture();
-                        action.setActionId(i + 1 + "-" + (j + 1));
-                        action.setActionType("videoCapture");
-                        DronesActionData actionData = new DronesActionData();
-                        actionData.setAction("videoCapture");
-                        action.setActionData(actionData);
-                        actionArray.add(action);
+                        getActionDataVideoCapture(i, taskInfo, actionArray, j, 0);
                     } else if ("takePhoto".equals(sequence)) {
                         // 拍照
-                        DronesAction action = taskInfo.getTakePhoto();
-                        action.setActionId(i + 1 + "-" + (j + 1));
-                        action.setActionType("takePhoto");
-                        DronesActionData actionData = new DronesActionData();
-                        actionData.setAction("takePhoto");
-                        action.setActionData(actionData);
-                        actionArray.add(action);
+                        getActionDataTakePhoto(i, taskInfo, actionArray, j, 0);
                     } else if ("targetRecognition".equals(sequence)) {
                         // 目标识别
-                        DronesAction action = taskInfo.getTargetRecognition();
-                        action.setActionId(i + 1 + "-" + (j + 1));
-                        action.setActionType("targetRecognition");
-                        DronesActionData actionData = new DronesActionData();
-                        actionData.setAction("targetRecognition");
-                        action.setActionData(actionData);
-                        actionArray.add(action);
+                        getActionDataTarge(i, taskInfo, actionArray, j, 0);
                     }
                 }
                 taskPlan.setActionArray(actionArray);
@@ -288,6 +286,63 @@ public class DronesTaskServiceImp implements DronesTaskService {
         commandWebsocket.setTaskplanArray(planArray);
         log.info("发送指令信息:"+ JsonUtil.wrapJsonValue(commandWebsocket));
         connectionManager.sendMessageByDeviceId(commandWebsocket.getDeviceId(), commandWebsocket);
+    }
+
+    private void getActionDataTarge(int i, DeviceNodeAction taskInfo, List<DronesAction> actionArray, int j, int k) {
+        DronesAction action = taskInfo.getTargetRecognition();
+        if (k == 0) {
+            action.setActionId(i + 1 + "-" + (j + 1));
+        } else {
+            action.setActionId(i + 1 + "-" + (j + 1) + "-" + (k + 1));
+        }
+        action.setActionType("targetRecognition");
+        DronesActionData actionData = new DronesActionData();
+        actionData.setAction("targetRecognition");
+        action.setActionData(actionData);
+        actionArray.add(action);
+    }
+
+    private void getActionDataTakePhoto(int i, DeviceNodeAction taskInfo, List<DronesAction> actionArray, int j, int k) {
+        DronesAction action = taskInfo.getTakePhoto();
+        if (k == 0) {
+            action.setActionId(i + 1 + "-" + (j + 1));
+        } else {
+            action.setActionId(i + 1 + "-" + (j + 1) + "-" + (k + 1));
+        }
+        action.setActionType("takePhoto");
+        DronesActionData actionData = new DronesActionData();
+        actionData.setAction("takePhoto");
+        action.setActionData(actionData);
+        actionArray.add(action);
+    }
+
+    private void getActionDataVideoCapture(int i, DeviceNodeAction taskInfo, List<DronesAction> actionArray, int j, int k) {
+        DronesAction action = taskInfo.getVideoCapture();
+        if (k == 0) {
+            action.setActionId(i + 1 + "-" + (j + 1));
+        } else {
+            action.setActionId(i + 1 + "-" + (j + 1) + "-" + (k + 1));
+        }
+        action.setActionType("videoCapture");
+        DronesActionData actionData = new DronesActionData();
+        actionData.setAction("videoCapture");
+        action.setActionData(actionData);
+        actionArray.add(action);
+    }
+
+    private void getActionDataMoveBase(int i, DeviceNodeAction taskInfo, List<DronesAction> actionArray, int j, int k) {
+        DronesAction action = taskInfo.getMoveBase();
+        if (k == 0) {
+            action.setActionId(i + 1 + "-" + (j + 1));
+        } else {
+            action.setActionId(i + 1 + "-" + (j + 1) + "-" + (k + 1));
+        }
+        action.setActionType("hzRos");
+        DronesActionData actionData = new DronesActionData();
+        actionData.setAction("moveBase");
+        actionData.setPath(getPathList(action.getActionData().getPathString()));
+        action.setActionData(actionData);
+        actionArray.add(action);
     }
 
     /**
