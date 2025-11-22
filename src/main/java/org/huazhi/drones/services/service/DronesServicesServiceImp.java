@@ -1,12 +1,12 @@
-package {{ base_package_name }}.service;
+package org.huazhi.drones.services.service;
 
 import java.util.List;
 import java.time.LocalDateTime;
 
-import {{ base_package_name }}.entity.{{ entity_name }};
-import {{ base_package_name }}.entity.dto.{{ entity_name }}QueryDto;
-import {{ base_package_name }}.entity.dto.{{ entity_name }}Dto;
-import {{ base_package_name }}.repository.{{ entity_name }}Repository;
+import org.huazhi.drones.services.entity.DronesServices;
+import org.huazhi.drones.services.entity.dto.DronesServicesQueryDto;
+import org.huazhi.drones.services.entity.dto.DronesServicesDto;
+import org.huazhi.drones.services.repository.DronesServicesRepository;
 import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
 
@@ -17,44 +17,44 @@ import jakarta.transaction.Transactional;
 
 
 @ApplicationScoped
-public class {{ entity_name }}ServiceImp implements {{ entity_name }}Service {
+public class DronesServicesServiceImp implements DronesServicesService {
     @Inject
-    {{ entity_name }}Repository repository;
+    DronesServicesRepository repository;
     @Override
-    public List<{{ entity_name }}> listEntitys() {
+    public List<DronesServices> listEntitys() {
         return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
     }
 
     @Override
-    public List<{{ entity_name }}> listEntitysByDto({{ entity_name }}QueryDto dto) {
+    public List<DronesServices> listEntitysByDto(DronesServicesQueryDto dto) {
         return repository.selectList(dto);
     }
 
     @Override
-    public {{ entity_name }} listOne({{ entity_name }}QueryDto dto) {
+    public DronesServices listOne(DronesServicesQueryDto dto) {
         return repository.selectOne(dto);
     }
 
     @Override
-    public PageResult<{{ entity_name }}> listPage({{ entity_name }}QueryDto dto, PageRequest pageRequest) {
+    public PageResult<DronesServices> listPage(DronesServicesQueryDto dto, PageRequest pageRequest) {
         return repository.selectPage(dto, pageRequest);
     }
 
     @Transactional
     @Override
-    public Boolean register({{ entity_name }} entity) {
+    public Boolean register(DronesServices entity) {
         entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);
         return true;
     }
 
     @Override
-    public void replaceById({{ entity_name }} entity) {
+    public void replaceById(DronesServices entity) {
         repository.updateById(entity);
     }
 
     @Override
-    public void replaceByDto({{ entity_name }}Dto dto) {
+    public void replaceByDto(DronesServicesDto dto) {
         repository.updateByDto(dto);
     }
 

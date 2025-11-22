@@ -1,12 +1,12 @@
-package {{ base_package_name }}.repository;
+package org.huazhi.drones.services.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import {{ base_package_name }}.entity.{{ entity_name }};
-import {{ base_package_name }}.entity.dto.{{ entity_name }}Dto;
-import {{ base_package_name }}.entity.dto.{{ entity_name }}QueryDto;
-import {{ base_package_name }}.entity.mapper.{{ entity_name }}Mapper;
+import org.huazhi.drones.services.entity.DronesServices;
+import org.huazhi.drones.services.entity.dto.DronesServicesDto;
+import org.huazhi.drones.services.entity.dto.DronesServicesQueryDto;
+import org.huazhi.drones.services.entity.mapper.DronesServicesMapper;
 import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
 import org.huazhi.util.QueryBuilder;
@@ -19,30 +19,30 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 @ApplicationScoped
-public class {{ entity_name }}Repository implements PanacheRepository<{{ entity_name }}> {
+public class DronesServicesRepository implements PanacheRepository<DronesServices> {
     @Inject
-    {{ entity_name }}Mapper mapper;
+    DronesServicesMapper mapper;
 
-     public List<{{ entity_name }}> selectList({{ entity_name }}QueryDto queryDto) {
+     public List<DronesServices> selectList(DronesServicesQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
     }
 
-    public {{ entity_name }} selectOne({{ entity_name }}QueryDto queryDto) {
+    public DronesServices selectOne(DronesServicesQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("id", queryDto.getId())
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).singleResult();
     }
 
-    public PageResult<{{ entity_name }}> selectPage({{ entity_name }}QueryDto dto, PageRequest pageRequest) {
+    public PageResult<DronesServices> selectPage(DronesServicesQueryDto dto, PageRequest pageRequest) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0)
                 .between("createTime", dto.getBeginTime(), dto.getEndTime())
                 .orderBy("createTime desc");
 
-        PanacheQuery<{{ entity_name }}> query = find(qb.getQuery(), qb.getParams())
+        PanacheQuery<DronesServices> query = find(qb.getQuery(), qb.getParams())
                 .page(Page.of(pageRequest.getPageIndex(), pageRequest.getSize()));
 
         return new PageResult<>(
@@ -53,15 +53,15 @@ public class {{ entity_name }}Repository implements PanacheRepository<{{ entity_
     }
 
     @Transactional
-    public void updateById({{ entity_name }} dto) {
-        {{ entity_name }} entity = this.findById(dto.getId());
+    public void updateById(DronesServices dto) {
+        DronesServices entity = this.findById(dto.getId());
         mapper.updateEntity(dto, entity);
         entity.setUpdateTime(LocalDateTime.now());
     }
 
     @Transactional
-    public void updateByDto({{ entity_name }}Dto dto) {
-        {{ entity_name }} entity = this.findById(dto.getId());
+    public void updateByDto(DronesServicesDto dto) {
+        DronesServices entity = this.findById(dto.getId());
         mapper.updateEntityFromDto(dto, entity);
         entity.setUpdateTime(LocalDateTime.now());
     }
