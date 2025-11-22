@@ -8,7 +8,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.huazhi.drones.device.entity.DronesDevice;
-import org.huazhi.drones.device.entity.dto.DronesDeviceQueryDto;
 import org.huazhi.drones.device.service.DronesDeviceService;
 import org.huazhi.drones.routelibrary.entity.DronesRouteLibrary;
 import org.huazhi.drones.routelibrary.entity.dto.DronesRouteLibraryQueryDto;
@@ -159,9 +158,8 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
             List<NodeEntity> nodeEntityList = JsonUtil.fromJsonToList(nodes, NodeEntity.class);
             for (NodeEntity nodeEntity : nodeEntityList) {
                 if ("task".equals(nodeEntity.getType())) {
-                    Long routeId = nodeEntity.getRouteId();
-                    String deviceIdString = nodeEntity.getDeviceId();
-                    DronesDevice deviceInfo = deviceService.listOne(new DronesDeviceQueryDto().setDeviceId(deviceIdString));
+                    Long routeId = nodeEntity.getData().getRouteId();
+                    DronesDevice deviceInfo = deviceService.listById(nodeEntity.getData().getDeviceId());
                     DronesRouteLibrary route = routeLibraryService.listOne(new DronesRouteLibraryQueryDto().setId(routeId));
                     if (null != route) {
                         DronesRouteLibraryVo routeVo = new DronesRouteLibraryVo();

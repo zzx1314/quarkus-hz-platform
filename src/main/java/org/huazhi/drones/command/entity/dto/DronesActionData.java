@@ -16,7 +16,7 @@ public class DronesActionData {
 
     private List<List<Double>> path;
 
-    private String pathString;
+    private List<String> pathString;
 
     private Object data;
 

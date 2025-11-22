@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.huazhi.drones.command.entity.dto.DronesCommandWebsocket;
+import org.huazhi.drones.command.entity.webscoketdto.DronesCommandWebsocketV1;
 import org.huazhi.drones.websocket.entity.MessageInfo;
 import org.huazhi.util.JsonUtil;
 
@@ -62,13 +62,12 @@ public class ConnectionManager {
     /**
      * 通过deviceId发送消息
      */
-    public void sendMessageByDeviceId(String deviceId, DronesCommandWebsocket message) {
+    public void sendMessageByDeviceId(String deviceId, DronesCommandWebsocketV1 message) {
         WebSocketConnection conn = connections.get(deviceId);
         if (conn != null && conn.isOpen()) {
-            message.setDeviceId(deviceId);
             // 保存指令并获取指令ID
             Long id = busService.saveCommand(message);
-            message.setCommandId(id);
+            message.setMissionId(id);
             String jsonString = JsonUtil.toJson(message);
             log.info("Sending message to deviceId {}: {}", deviceId, jsonString);
             conn.sendTextAndAwait(jsonString);

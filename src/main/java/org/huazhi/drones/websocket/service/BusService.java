@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import org.huazhi.drones.command.entity.DronesCommand;
 import org.huazhi.drones.command.entity.dto.DronesCommandDto;
-import org.huazhi.drones.command.entity.dto.DronesCommandWebsocket;
+import org.huazhi.drones.command.entity.webscoketdto.DronesCommandWebsocketV1;
 import org.huazhi.drones.command.service.DronesCommandService;
 import org.huazhi.drones.device.entity.DronesDevice;
 import org.huazhi.drones.device.entity.dto.DronesDeviceDto;
@@ -102,7 +102,7 @@ public class BusService {
     /**
      * 保存指令消息
      */
-    public Long saveCommand(DronesCommandWebsocket messageInfo){
+    public Long saveCommand(DronesCommandWebsocketV1 messageInfo){
         DronesCommand command = new DronesCommand();
         command.setCommandParams(JsonUtil.toJson(messageInfo));
         command.setStatus("已下发");
