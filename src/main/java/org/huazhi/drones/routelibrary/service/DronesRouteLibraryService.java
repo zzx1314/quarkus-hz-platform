@@ -44,4 +44,6 @@ public interface DronesRouteLibraryService {
    void saveRouteData(DronesRouteLibraryDto data);
 
    R<Object> startOrRoute(Long id, String status);
+
+   DronesRouteLibrary listEntitysById(long routeId);
 }

@@ -8,12 +8,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.huazhi.drones.command.entity.webscoketdto.DronesCommandWebsocketV1;
+import org.huazhi.drones.command.entity.webscoketdto.DronesRoute;
 import org.huazhi.drones.command.entity.webscoketdto.action.DronesAction;
 import org.huazhi.drones.command.entity.webscoketdto.task.DronesTaskWebScoket;
 import org.huazhi.drones.config.service.DronesConfigService;
 import org.huazhi.drones.device.entity.DronesDevice;
 import org.huazhi.drones.device.service.DronesDeviceService;
 import org.huazhi.drones.model.service.DronesModelService;
+import org.huazhi.drones.routelibrary.entity.DronesRouteLibrary;
 import org.huazhi.drones.routelibrary.service.DronesRouteLibraryService;
 import org.huazhi.drones.task.entity.DronesTask;
 import org.huazhi.drones.task.entity.dto.DronesTaskDto;
@@ -28,6 +30,7 @@ import org.huazhi.drones.workflow.vo.DronesWorkflowVo;
 import org.huazhi.util.JsonUtil;
 import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
+import org.huazhi.util.R;
 
 import java.time.LocalDateTime;
 
@@ -185,10 +188,13 @@ public class DronesTaskServiceImp implements DronesTaskService {
         // 寻找错误节点
         List<DronesAction> errorNodes = new ArrayList<>();
         DronesCommandWebsocketV1 commandWebsocket = new DronesCommandWebsocketV1();
-        commandWebsocket.setOnErrorActions(errorNodes);
 
         List<DronesTaskWebScoket> tasks = new ArrayList<>();
         Long deviceId = taskNodes.get(0).getData().getDeviceId();
+        long routeId = taskNodes.get(0).getData().getRouteId();
+        // 补充航线路径
+        commandWebsocket.setRoute(getRoutesById(routeId));
+        // 补充服务列表
         DronesDevice device = deviceService.listById(deviceId);
         for (int i = 0; i < taskNodes.size(); i++) {
             // 循环每一个步骤
@@ -208,6 +214,22 @@ public class DronesTaskServiceImp implements DronesTaskService {
         commandWebsocket.setTasks(tasks);
         log.info("发送指令信息:" + JsonUtil.toJson(commandWebsocket));
         // connectionManager.sendMessageByDeviceId(device.getDeviceId(), commandWebsocket);
+    }
+
+    private List<DronesRoute> getRoutesById(long routeId) {
+        DronesRouteLibrary route =  routeLibraryService.listEntitysById(routeId);
+        String routeData = route.getRouteData();
+        List<DronesRoute> routes = new ArrayList<>();
+        String[] split = routeData.split(",");
+        for (int i = 0; i < split.length; i++) { 
+            DronesRoute routeDataOne = new DronesRoute();
+            routeDataOne.setWpId(i + "");
+            routeDataOne.setLat(Double.parseDouble(split[i].split(" ")[0]));
+            routeDataOne.setLon(Double.parseDouble(split[i].split(" ")[1]));
+            routeDataOne.setAlt(0.0);
+            routes.add(routeDataOne);
+        }
+        return routes;
     }
 
     /**

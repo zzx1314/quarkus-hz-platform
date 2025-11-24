@@ -272,4 +272,9 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
         return routePoints;
     }
 
+    @Override
+    public DronesRouteLibrary listEntitysById(long routeId) {
+        return repository.findById(routeId);
+    }
+
 }
