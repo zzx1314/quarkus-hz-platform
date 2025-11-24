@@ -3,6 +3,7 @@ package org.huazhi.drones.command.entity.webscoketdto;
 import java.util.List;
 
 import org.huazhi.drones.command.entity.webscoketdto.action.DronesAction;
+import org.huazhi.drones.command.entity.webscoketdto.task.DronesTaskWebScoket;
 
 import lombok.Data;
 

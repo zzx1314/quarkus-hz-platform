@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.huazhi.drones.command.entity.webscoketdto.DronesCommandWebsocketV1;
-import org.huazhi.drones.command.entity.webscoketdto.DronesTaskWebScoket;
 import org.huazhi.drones.command.entity.webscoketdto.action.DronesAction;
+import org.huazhi.drones.command.entity.webscoketdto.task.DronesTaskWebScoket;
 import org.huazhi.drones.config.service.DronesConfigService;
 import org.huazhi.drones.device.entity.DronesDevice;
 import org.huazhi.drones.device.service.DronesDeviceService;
@@ -210,6 +210,10 @@ public class DronesTaskServiceImp implements DronesTaskService {
         // connectionManager.sendMessageByDeviceId(device.getDeviceId(), commandWebsocket);
     }
 
+    /**
+     * 获取任务节点
+     * 
+     */
     private List<DronesAction> findAction(DronesWorkflowVo workflowGraph, NodeEntity taskNode, List<DronesAction> errorNodes) {
         // key位任务id，vaule是所有的action
         List<DronesAction> actions = new ArrayList<>();

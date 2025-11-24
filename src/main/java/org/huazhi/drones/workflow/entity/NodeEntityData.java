@@ -1,7 +1,7 @@
 package org.huazhi.drones.workflow.entity;
 
-import org.huazhi.drones.command.entity.webscoketdto.DronesTaskWebScoket;
 import org.huazhi.drones.command.entity.webscoketdto.action.DronesAction;
+import org.huazhi.drones.command.entity.webscoketdto.task.DronesTaskWebScoket;
 
 import lombok.Data;
 
@@ -17,7 +17,7 @@ public class NodeEntityData {
     private Long deviceId;
 
 
-    private String actionType;
+    private String nodeType;
 
     // 任务数据
     private DronesTaskWebScoket taskInfo ;

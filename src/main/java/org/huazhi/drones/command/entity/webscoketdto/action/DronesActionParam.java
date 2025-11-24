@@ -15,8 +15,6 @@ public class DronesActionParam {
 
     private DronesActionParamEvent event;
 
-    private Integer timeout;
-
     /**
      * 目标航点
      */

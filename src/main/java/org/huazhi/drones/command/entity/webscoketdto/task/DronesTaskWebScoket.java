@@ -1,7 +1,8 @@
-package org.huazhi.drones.command.entity.webscoketdto;
+package org.huazhi.drones.command.entity.webscoketdto.task;
 
 import java.util.List;
 
+import org.huazhi.drones.command.entity.webscoketdto.DronesRoute;
 import org.huazhi.drones.command.entity.webscoketdto.action.DronesAction;
 
 import lombok.Data;
