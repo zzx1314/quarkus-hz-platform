@@ -133,6 +133,17 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
             Map<String, NodeEntity> nodeMap = nodeEntityList.stream()
                     .collect(Collectors.toMap(NodeEntity::getId, Function.identity()));
             dronesWorkflowVo.setNodeMap(nodeMap);
+
+            // 建立 targetId -> List<sourceId> 的映射
+            Map<String, List<String>> reverseEdgeMap = new HashMap<>();
+
+            for (EdgeEntity edge : edgeEntityList) {
+                reverseEdgeMap
+                    .computeIfAbsent(edge.getTarget(), k -> new ArrayList<>())
+                    .add(edge.getSource());
+            }
+            dronesWorkflowVo.setReverseEdgeMap(reverseEdgeMap);
+
         }
         return dronesWorkflowVo;
     }

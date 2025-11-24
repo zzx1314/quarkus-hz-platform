@@ -2,6 +2,7 @@ package org.huazhi.drones.command.entity.webscoketdto;
 
 import java.util.List;
 
+import org.huazhi.drones.command.entity.webscoketdto.action.DronesAction;
 
 import lombok.Data;
 
@@ -15,5 +16,5 @@ public class DronesTaskWebScoket {
 
     private String event;
 
-    private List<Object> actions;
+    private List<DronesAction> actions;
 }

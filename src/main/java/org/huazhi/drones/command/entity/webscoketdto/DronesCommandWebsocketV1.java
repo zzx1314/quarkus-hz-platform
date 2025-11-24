@@ -2,7 +2,7 @@ package org.huazhi.drones.command.entity.webscoketdto;
 
 import java.util.List;
 
-import org.huazhi.drones.erroraction.entity.DronesOnErrorAction;
+import org.huazhi.drones.command.entity.webscoketdto.action.DronesAction;
 
 import lombok.Data;
 
@@ -31,7 +31,7 @@ public class DronesCommandWebsocketV1 {
     /**
      * 错误动作列表
      */
-    private List<DronesOnErrorAction> onErrorActions;
+    private List<DronesAction> onErrorActions;
 
     /**
      * 任务列表

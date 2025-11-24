@@ -24,4 +24,11 @@ public class DronesWorkflowVo {
 	 * 构建 id -> NodeEntity 映射
 	 */
 	Map<String, NodeEntity> nodeMap;
+
+
+	// 建立 targetId -> List<sourceId> 的映射
+	Map<String, List<String>> reverseEdgeMap;
+
+
+	
 }
