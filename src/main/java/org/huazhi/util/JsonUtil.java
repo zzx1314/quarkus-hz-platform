@@ -1,5 +1,6 @@
 package org.huazhi.util;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -16,6 +17,7 @@ public class JsonUtil {
     static {
         // 配置：忽略未知字段，避免反序列化报错
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_EMPTY);
     }
 
     /**
