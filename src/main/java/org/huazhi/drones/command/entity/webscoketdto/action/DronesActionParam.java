@@ -1,6 +1,5 @@
 package org.huazhi.drones.command.entity.webscoketdto.action;
 
-import java.util.List;
 
 import org.huazhi.drones.command.entity.webscoketdto.DronesRoute;
 
@@ -8,6 +7,10 @@ import lombok.Data;
 
 @Data
 public class DronesActionParam {
+    /**
+     * 悬停时间
+     */
+    private Integer timeSec;
     /**
      * 目标高度
      */

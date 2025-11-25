@@ -17,7 +17,11 @@ public class NodeEntityData {
     private Long deviceId;
 
 
+    // 节点类型
     private String nodeType;
+
+    // 具体动作类型
+    private String type;
 
     // 任务数据
     private DronesTaskWebScoket taskInfo ;

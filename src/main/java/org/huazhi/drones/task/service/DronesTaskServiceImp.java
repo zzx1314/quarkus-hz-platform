@@ -36,7 +36,11 @@ import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
 import org.huazhi.util.R;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
 
@@ -245,24 +249,30 @@ public class DronesTaskServiceImp implements DronesTaskService {
         DronesRouteLibrary route =  routeLibraryService.listEntitysById(routeId);
         String routeData = route.getRouteData();
         List<DronesRoute> routes = new ArrayList<>();
-        String[] split = routeData.split(",");
-        for (int i = 0; i < split.length; i++) { 
-            DronesRoute routeDataOne = new DronesRoute();
-            routeDataOne.setWpId(i + "");
-            routeDataOne.setLat(Double.parseDouble(split[i].split(" ")[0]));
-            routeDataOne.setLon(Double.parseDouble(split[i].split(" ")[1]));
-            routeDataOne.setAlt(0.0);
-            routes.add(routeDataOne);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            List<List<Double>> result = mapper.readValue(routeData, new TypeReference<List<List<Double>>>() {});
+            for (List<Double> point : result) {
+                DronesRoute routeDataOne = new DronesRoute();
+                routeDataOne.setLat(point.get(0));
+                routeDataOne.setLon(point.get(1));
+                routeDataOne.setAlt(0.0);
+                routes.add(routeDataOne);
+            }
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         }
         return routes;
     }
 
     /**
-     * 获取任务节点
+     * 获取动作节点
      * 
      */
     private List<DronesAction> findAction(DronesWorkflowVo workflowGraph, NodeEntity taskNode,
-         List<DronesAction> errorNodes, List<String> serviceName) {
+            List<DronesAction> errorNodes, List<String> serviceName) {
         // key位任务id，vaule是所有的action
         List<DronesAction> actions = new ArrayList<>();
         Map<String, List<String>> edgeMap = workflowGraph.getEdgeMap();
@@ -377,13 +387,14 @@ public class DronesTaskServiceImp implements DronesTaskService {
                 if (nextNode == null) {
                     throw new RuntimeException("nodeMap 缺少节点：" + nextId);
                 }
-                // 添加起飞节点，任务节点，降落节点
                 if ("task".equals(nextNode.getType())) {
                     taskNodes.add(nextNode);
-                } else {
-                    continue;
-                }
-                current = nextNode;
+                    current = nextNode;
+                    break;
+                } else if ("end".equals(nextNode.getType())) {
+                    current = nextNode;
+                    break;
+                } 
             }
         }
         return taskNodes;
