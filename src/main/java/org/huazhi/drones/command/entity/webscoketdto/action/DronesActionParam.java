@@ -34,7 +34,7 @@ public class DronesActionParam {
     /**
      * service -type
      */
-    private List<String> type;
+    private String type;
 
     /**
      * 失败原因

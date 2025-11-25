@@ -32,6 +32,7 @@ public class DronesServicesRepository implements PanacheRepository<DronesService
     public DronesServices selectOne(DronesServicesQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("id", queryDto.getId())
+                .equal("type", queryDto.getType())
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).singleResult();
     }

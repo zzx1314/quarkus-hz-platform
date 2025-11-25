@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.huazhi.drones.command.entity.webscoketdto.action.DronesAction;
 import org.huazhi.drones.command.entity.webscoketdto.task.DronesTaskWebScoket;
+import org.huazhi.drones.services.entity.vo.DronesServicesVo;
 
 import lombok.Data;
 
@@ -26,7 +27,7 @@ public class DronesCommandWebsocketV1 {
     /**
      * 服务列表
      */
-    private List<Object> services; 
+    private List<DronesServicesVo> services; 
 
 
     /**

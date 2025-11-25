@@ -15,4 +15,7 @@ public class DronesServicesQueryDto {
 
     @QueryParam("endTime")
     private String endTime;
+
+    @QueryParam("type")
+    private String type;
 }

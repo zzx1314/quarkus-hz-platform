@@ -17,6 +17,10 @@ import org.huazhi.drones.device.service.DronesDeviceService;
 import org.huazhi.drones.model.service.DronesModelService;
 import org.huazhi.drones.routelibrary.entity.DronesRouteLibrary;
 import org.huazhi.drones.routelibrary.service.DronesRouteLibraryService;
+import org.huazhi.drones.services.entity.DronesServices;
+import org.huazhi.drones.services.entity.dto.DronesServicesQueryDto;
+import org.huazhi.drones.services.entity.vo.DronesServicesVo;
+import org.huazhi.drones.services.service.DronesServicesService;
 import org.huazhi.drones.task.entity.DronesTask;
 import org.huazhi.drones.task.entity.dto.DronesTaskDto;
 import org.huazhi.drones.task.entity.dto.DronesTaskQueryDto;
@@ -31,6 +35,8 @@ import org.huazhi.util.JsonUtil;
 import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
 import org.huazhi.util.R;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.time.LocalDateTime;
 
@@ -62,6 +68,9 @@ public class DronesTaskServiceImp implements DronesTaskService {
 
     @Inject
     DronesRouteLibraryService routeLibraryService;
+
+    @Inject
+    DronesServicesService servicesService;
 
     @Override
     public List<DronesTask> listEntitys() {
@@ -196,6 +205,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
         commandWebsocket.setRoute(getRoutesById(routeId));
         // 补充服务列表
         DronesDevice device = deviceService.listById(deviceId);
+        List<String> serviceName = new ArrayList<>();
         for (int i = 0; i < taskNodes.size(); i++) {
             // 循环每一个步骤
             NodeEntity taskNode = taskNodes.get(i);
@@ -207,13 +217,28 @@ public class DronesTaskServiceImp implements DronesTaskService {
             taskInfo.setToWp(taskNode.getData().getTaskInfo().getToWp());
             taskInfo.setEvent(taskNode.getData().getTaskInfo().getEvent());
             // 寻找action
-            List<DronesAction> actions = findAction(workflowGraph, taskNode, errorNodes);
+            List<DronesAction> actions = findAction(workflowGraph, taskNode, errorNodes, serviceName);
             taskInfo.setActions(actions);
             tasks.add(taskInfo);
         }
+        List<DronesServicesVo> services = getServicesByNames(serviceName);
+        commandWebsocket.setServices(services);
         commandWebsocket.setTasks(tasks);
         log.info("发送指令信息:" + JsonUtil.toJson(commandWebsocket));
         // connectionManager.sendMessageByDeviceId(device.getDeviceId(), commandWebsocket);
+    }
+
+    private List<DronesServicesVo> getServicesByNames(List<String> serviceNames) {
+        List<DronesServicesVo> services = new ArrayList<>();
+        for (String serviceName : serviceNames) {
+            DronesServices listEntitysByDto = servicesService.listOne(new DronesServicesQueryDto().setType(serviceName));
+            DronesServicesVo one = new DronesServicesVo();
+            one.setType(listEntitysByDto.getType());
+            JsonNode parma = JsonUtil.toJsonObject(listEntitysByDto.getParams());
+            one.setParams(parma);
+            services.add(one);
+        }
+        return services;
     }
 
     private List<DronesRoute> getRoutesById(long routeId) {
@@ -236,7 +261,8 @@ public class DronesTaskServiceImp implements DronesTaskService {
      * 获取任务节点
      * 
      */
-    private List<DronesAction> findAction(DronesWorkflowVo workflowGraph, NodeEntity taskNode, List<DronesAction> errorNodes) {
+    private List<DronesAction> findAction(DronesWorkflowVo workflowGraph, NodeEntity taskNode,
+         List<DronesAction> errorNodes, List<String> serviceName) {
         // key位任务id，vaule是所有的action
         List<DronesAction> actions = new ArrayList<>();
         Map<String, List<String>> edgeMap = workflowGraph.getEdgeMap();
@@ -270,20 +296,20 @@ public class DronesTaskServiceImp implements DronesTaskService {
         if (nextActionNodeList.size() > 0) {
             // 寻找后面串联的action
             for (NodeEntity nextActionNode : nextActionNodeList) {
-                addNextAction(workflowGraph, nextActionNode, actions, errorNodes);
+                addNextAction(workflowGraph, nextActionNode, actions, errorNodes, serviceName);
             }
         }
         return actions;
     }
 
-    private void addNextAction(DronesWorkflowVo workflowVo, NodeEntity currentNode, List<DronesAction> actions, List<DronesAction> errorNodes) {
+    private void addNextAction(DronesWorkflowVo workflowVo, NodeEntity currentNode, List<DronesAction> actions, List<DronesAction> errorNodes, List<String> serviceName) {
         // 防止循环
         Set<String> visited = new HashSet<>();
-        dfsActions(workflowVo, currentNode, actions, visited, errorNodes);
+        dfsActions(workflowVo, currentNode, actions, visited, errorNodes, serviceName);
     }
 
     private void dfsActions(DronesWorkflowVo workflowVo, NodeEntity currentNode, List<DronesAction> actions,
-            Set<String> visited, List<DronesAction> errorActions) {
+            Set<String> visited, List<DronesAction> errorActions, List<String> serviceName) {
         // 如果已经遍历过该节点，避免循环引用导致死循环
         if (!visited.add(currentNode.getId())) {
             return;
@@ -298,8 +324,12 @@ public class DronesTaskServiceImp implements DronesTaskService {
             NodeEntity nextNode = workflowVo.getNodeMap().get(nextId);
             if (nextNode != null && "action".equals(nextNode.getType())) {
                 DronesAction action = getActionInfo(nextNode, getAfter(currentNode));
+                String type = action.getType();
+                if (type.contains("SERVICE")) {
+                    serviceName.add(action.getParams().getType());
+                }
                 actions.add(action);
-                dfsActions(workflowVo, nextNode, actions, visited, errorActions);
+                dfsActions(workflowVo, nextNode, actions, visited, errorActions, serviceName);
             } else if (nextNode != null && "errorAction".equals(nextNode.getType())) {
                 DronesAction errorAction = nextNode.getData().getAction();
                 DronesAction dronesAction = actions.get(actions.size()-1);
