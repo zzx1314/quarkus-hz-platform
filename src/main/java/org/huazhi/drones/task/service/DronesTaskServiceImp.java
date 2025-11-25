@@ -209,7 +209,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
         commandWebsocket.setRoute(getRoutesById(routeId));
         // 补充服务列表
         DronesDevice device = deviceService.listById(deviceId);
-        List<String> serviceName = new ArrayList<>();
+        Set<String> serviceName = new HashSet<>();
         for (int i = 0; i < taskNodes.size(); i++) {
             // 循环每一个步骤
             NodeEntity taskNode = taskNodes.get(i);
@@ -228,11 +228,12 @@ public class DronesTaskServiceImp implements DronesTaskService {
         List<DronesServicesVo> services = getServicesByNames(serviceName);
         commandWebsocket.setServices(services);
         commandWebsocket.setTasks(tasks);
+        commandWebsocket.setOnErrorActions(errorNodes);
         log.info("发送指令信息:" + JsonUtil.toJson(commandWebsocket));
         // connectionManager.sendMessageByDeviceId(device.getDeviceId(), commandWebsocket);
     }
 
-    private List<DronesServicesVo> getServicesByNames(List<String> serviceNames) {
+    private List<DronesServicesVo> getServicesByNames(Set<String> serviceNames) {
         List<DronesServicesVo> services = new ArrayList<>();
         for (String serviceName : serviceNames) {
             DronesServices listEntitysByDto = servicesService.listOne(new DronesServicesQueryDto().setType(serviceName));
@@ -272,7 +273,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
      * 
      */
     private List<DronesAction> findAction(DronesWorkflowVo workflowGraph, NodeEntity taskNode,
-            List<DronesAction> errorNodes, List<String> serviceName) {
+            List<DronesAction> errorNodes, Set<String> serviceName) {
         // key位任务id，vaule是所有的action
         List<DronesAction> actions = new ArrayList<>();
         Map<String, List<String>> edgeMap = workflowGraph.getEdgeMap();
@@ -316,14 +317,14 @@ public class DronesTaskServiceImp implements DronesTaskService {
         return actions;
     }
 
-    private void addNextAction(DronesWorkflowVo workflowVo, NodeEntity currentNode, List<DronesAction> actions, List<DronesAction> errorNodes, List<String> serviceName) {
+    private void addNextAction(DronesWorkflowVo workflowVo, NodeEntity currentNode, List<DronesAction> actions, List<DronesAction> errorNodes, Set<String> serviceName) {
         // 防止循环
         Set<String> visited = new HashSet<>();
         dfsActions(workflowVo, currentNode, actions, visited, errorNodes, serviceName);
     }
 
     private void dfsActions(DronesWorkflowVo workflowVo, NodeEntity currentNode, List<DronesAction> actions,
-            Set<String> visited, List<DronesAction> errorActions, List<String> serviceName) {
+            Set<String> visited, List<DronesAction> errorActions, Set<String> serviceName) {
         // 如果已经遍历过该节点，避免循环引用导致死循环
         if (!visited.add(currentNode.getId())) {
             return;
@@ -344,10 +345,9 @@ public class DronesTaskServiceImp implements DronesTaskService {
                 }
                 actions.add(action);
                 dfsActions(workflowVo, nextNode, actions, visited, errorActions, serviceName);
-            } else if (nextNode != null && "errorAction".equals(nextNode.getType())) {
+            } else if (nextNode != null && "error".equals(nextNode.getType())) {
                 DronesAction errorAction = nextNode.getData().getAction();
-                DronesAction dronesAction = actions.get(actions.size()-1);
-                dronesAction.getParams().getEvent().setOnFail(errorAction.getParams().getReason());
+                errorAction.setAfter(getErrorAfter(currentNode));
                 errorActions.add(errorAction);
             }
         }
@@ -359,6 +359,12 @@ public class DronesTaskServiceImp implements DronesTaskService {
     private String getAfter(NodeEntity currentNode) {
         NodeEntityData data = currentNode.getData();
         return data.getAction().getParams().getEvent().getOnComplete();
+    }
+
+
+    private String getErrorAfter(NodeEntity currentNode) {
+        NodeEntityData data = currentNode.getData();
+        return data.getAction().getParams().getEvent().getOnFail();
     }
 
     /**
