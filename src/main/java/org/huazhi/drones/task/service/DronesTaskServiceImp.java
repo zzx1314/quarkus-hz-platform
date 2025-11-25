@@ -301,6 +301,10 @@ public class DronesTaskServiceImp implements DronesTaskService {
                 action.setAfter(initEvent);
                 actions.add(action);
                 nextActionNodeList.add(actionNode);
+
+                if (action.getType().contains("SERVICE")) {
+                    serviceName.add(action.getParams().getType());
+                }
             }
         }
         if (nextActionNodeList.size() > 0) {
