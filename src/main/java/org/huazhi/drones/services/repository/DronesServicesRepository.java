@@ -1,7 +1,9 @@
 package org.huazhi.drones.services.repository;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.huazhi.drones.services.entity.DronesServices;
 import org.huazhi.drones.services.entity.dto.DronesServicesDto;
@@ -35,6 +37,18 @@ public class DronesServicesRepository implements PanacheRepository<DronesService
                 .equal("type", queryDto.getType())
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).singleResult();
+    }
+
+    /**
+     * 根据类型列表批量查询服务
+     * @param types 服务类型集合
+     * @return 服务列表
+     */
+    public List<DronesServices> selectByTypes(Set<String> types) {
+        if (types == null || types.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return list("type in ?1 and isDeleted = ?2", types, 0);
     }
 
     public PageResult<DronesServices> selectPage(DronesServicesQueryDto dto, PageRequest pageRequest) {

@@ -18,7 +18,6 @@ import org.huazhi.drones.model.service.DronesModelService;
 import org.huazhi.drones.routelibrary.entity.DronesRouteLibrary;
 import org.huazhi.drones.routelibrary.service.DronesRouteLibraryService;
 import org.huazhi.drones.services.entity.DronesServices;
-import org.huazhi.drones.services.entity.dto.DronesServicesQueryDto;
 import org.huazhi.drones.services.entity.vo.DronesServicesVo;
 import org.huazhi.drones.services.service.DronesServicesService;
 import org.huazhi.drones.task.entity.DronesTask;
@@ -34,12 +33,10 @@ import org.huazhi.drones.workflow.vo.DronesWorkflowVo;
 import org.huazhi.util.JsonUtil;
 import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
-import org.huazhi.util.R;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
@@ -186,62 +183,98 @@ public class DronesTaskServiceImp implements DronesTaskService {
     /**
      * 启动任务
      * 
-     * @param id
+     * @param id 任务ID
      */
     @Override
     public void startTask(Long id) {
+        // 更新任务状态
         DronesTask task = repository.findById(id);
+        if (task == null) {
+            throw new RuntimeException("任务不存在：" + id);
+        }
         task.setTaskStatus("进行中");
         repository.updateById(task);
+        
         // 获取任务流程图
         DronesWorkflowVo workflowGraph = workflowService.getWorkflowGraph(id);
         log.info("任务流程图：{}", JsonUtil.toJson(workflowGraph));
+        
         // 获取任务节点
         List<NodeEntity> taskNodes = findTasknodes(workflowGraph);
-        // 寻找错误节点
-        List<DronesAction> errorNodes = new ArrayList<>();
+        if (taskNodes.isEmpty()) {
+            throw new RuntimeException("任务节点为空，无法启动任务");
+        }
+        
+        // 初始化命令对象
         DronesCommandWebsocketV1 commandWebsocket = new DronesCommandWebsocketV1();
-
-        List<DronesTaskWebScoket> tasks = new ArrayList<>();
-        Long deviceId = taskNodes.get(0).getData().getDeviceId();
-        long routeId = taskNodes.get(0).getData().getRouteId();
+        commandWebsocket.setType("command");
+        
+        // 获取首个任务节点的设备和航线信息
+        NodeEntity firstTaskNode = taskNodes.get(0);
+        Long deviceId = firstTaskNode.getData().getDeviceId();
+        long routeId = firstTaskNode.getData().getRouteId();
+        
         // 补充航线路径
         commandWebsocket.setRoute(getRoutesById(routeId));
-        // 补充服务列表
+        
+        // 获取设备信息（用于后续发送消息）
         DronesDevice device = deviceService.listById(deviceId);
-        Set<String> serviceName = new HashSet<>();
+        
+        // 构建任务步骤列表
+        List<DronesTaskWebScoket> tasks = new ArrayList<>();
+        List<DronesAction> errorNodes = new ArrayList<>();
+        Set<String> serviceNames = new HashSet<>();
+        
         for (int i = 0; i < taskNodes.size(); i++) {
-            // 循环每一个步骤
             NodeEntity taskNode = taskNodes.get(i);
-            commandWebsocket.setType("command");
+            
             // 构建任务步骤
             DronesTaskWebScoket taskInfo = new DronesTaskWebScoket();
-            taskInfo.setTaskId(i + 1 + "");
+            taskInfo.setTaskId(String.valueOf(i + 1));
             taskInfo.setFromWp(taskNode.getData().getTaskInfo().getFromWp());
             taskInfo.setToWp(taskNode.getData().getTaskInfo().getToWp());
             taskInfo.setEvent(taskNode.getData().getTaskInfo().getEvent());
+            
             // 寻找action
-            List<DronesAction> actions = findAction(workflowGraph, taskNode, errorNodes, serviceName);
+            List<DronesAction> actions = findAction(workflowGraph, taskNode, errorNodes, serviceNames);
             taskInfo.setActions(actions);
             tasks.add(taskInfo);
         }
-        List<DronesServicesVo> services = getServicesByNames(serviceName);
+        
+        // 批量获取服务列表（优化N+1查询）
+        List<DronesServicesVo> services = getServicesByNames(serviceNames);
+        
+        // 组装命令对象
         commandWebsocket.setServices(services);
         commandWebsocket.setTasks(tasks);
         commandWebsocket.setOnErrorActions(errorNodes);
-        log.info("发送指令信息:" + JsonUtil.toJson(commandWebsocket));
+        
+        log.info("发送指令信息：{}", JsonUtil.toJson(commandWebsocket));
         // connectionManager.sendMessageByDeviceId(device.getDeviceId(), commandWebsocket);
     }
 
+    /**
+     * 根据服务名称集合批量获取服务信息
+     * 优化：使用单次批量查询替代循环中的N次查询
+     * 
+     * @param serviceNames 服务名称集合
+     * @return 服务VO列表
+     */
     private List<DronesServicesVo> getServicesByNames(Set<String> serviceNames) {
+        if (serviceNames == null || serviceNames.isEmpty()) {
+            return new ArrayList<>();
+        }
+        
+        // 批量查询所有服务
+        List<DronesServices> servicesList = servicesService.listByTypes(serviceNames);
+        
+        // 转换为VO对象
         List<DronesServicesVo> services = new ArrayList<>();
-        for (String serviceName : serviceNames) {
-            DronesServices listEntitysByDto = servicesService.listOne(new DronesServicesQueryDto().setType(serviceName));
-            DronesServicesVo one = new DronesServicesVo();
-            one.setType(listEntitysByDto.getType());
-            JsonNode parma = JsonUtil.toJsonObject(listEntitysByDto.getParams());
-            one.setParams(parma);
-            services.add(one);
+        for (DronesServices service : servicesList) {
+            DronesServicesVo vo = new DronesServicesVo();
+            vo.setType(service.getType());
+            vo.setParams(JsonUtil.toJsonObject(service.getParams()));
+            services.add(vo);
         }
         return services;
     }

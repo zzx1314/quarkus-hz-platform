@@ -1,6 +1,7 @@
 package org.huazhi.drones.services.service;
 
 import java.util.List;
+import java.util.Set;
 import java.time.LocalDateTime;
 
 import org.huazhi.drones.services.entity.DronesServices;
@@ -67,6 +68,11 @@ public class DronesServicesServiceImp implements DronesServicesService {
     @Override
     public void removeByIds(List<Long> ids) {
         repository.deleteByIds(ids);
+    }
+
+    @Override
+    public List<DronesServices> listByTypes(Set<String> types) {
+        return repository.selectByTypes(types);
     }
 
 }

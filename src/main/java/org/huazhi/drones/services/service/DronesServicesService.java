@@ -1,6 +1,7 @@
 package org.huazhi.drones.services.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.huazhi.drones.services.entity.DronesServices;
 import org.huazhi.drones.services.entity.dto.DronesServicesDto;
@@ -26,4 +27,11 @@ public interface DronesServicesService {
    void removeById(Long id);
 
    void removeByIds(List<Long> ids);
+
+   /**
+    * 根据类型列表批量查询服务
+    * @param types 服务类型集合
+    * @return 服务列表
+    */
+   List<DronesServices> listByTypes(Set<String> types);
 }
