@@ -277,6 +277,12 @@ public class DronesTaskServiceImp implements DronesTaskService {
         return services;
     }
 
+    /**
+     * 根据航线ID获取航线路径点
+     * 
+     * @param routeId 航线ID
+     * @return 航线路径点列表
+     */
     private List<DronesRoute> getRoutesById(long routeId) {
         DronesRouteLibrary route =  routeLibraryService.listEntitysById(routeId);
         String routeData = route.getRouteData();
@@ -354,6 +360,9 @@ public class DronesTaskServiceImp implements DronesTaskService {
         dfsActions(workflowVo, currentNode, actions, visited, errorNodes, serviceName);
     }
 
+    /**
+     * 深度优先遍历获取后续action节点
+     */
     private void dfsActions(DronesWorkflowVo workflowVo, NodeEntity currentNode, List<DronesAction> actions,
             Set<String> visited, List<DronesAction> errorActions, Set<String> serviceName) {
         // 如果已经遍历过该节点，避免循环引用导致死循环
