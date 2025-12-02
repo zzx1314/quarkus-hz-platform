@@ -42,6 +42,11 @@ public class DronesTask extends PanacheEntityBase{
      */
     private Long workflowId;
 
+    /*
+     * 工作流UUID 
+     */
+    private String workflowUuid;
+
     /**
      * 创建时间
      */

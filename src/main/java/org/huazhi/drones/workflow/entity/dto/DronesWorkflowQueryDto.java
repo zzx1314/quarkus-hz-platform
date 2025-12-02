@@ -17,4 +17,7 @@ public class DronesWorkflowQueryDto {
     private String endTime;
 
     private Long taskId;
+
+    @QueryParam("uuid")
+    private String uuid;
 }

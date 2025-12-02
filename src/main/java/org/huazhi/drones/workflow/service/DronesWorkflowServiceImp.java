@@ -32,7 +32,9 @@ import java.time.LocalDateTime;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @ApplicationScoped
 public class DronesWorkflowServiceImp implements DronesWorkflowService {
     @Inject
@@ -73,13 +75,25 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
 
     @Override
     public Boolean register(DronesWorkflow entity) {
+        log.info(JsonUtil.toJson(entity));
+        // 1、查询uuid是否存在，如果不存在进行注册，如果存在进行更新
+        DronesWorkflowQueryDto queryDto = new DronesWorkflowQueryDto().setUuid(entity.getUuid());
+        DronesWorkflow existingWorkflow = repository.selectOne(queryDto);
+        if (null != existingWorkflow) {
+            entity.setId(existingWorkflow.getId());
+            entity.setUpdateTime(LocalDateTime.now());
+            repository.updateById(entity);
+            return true;
+        }  
         entity.setCreateTime(LocalDateTime.now());
         entity.setIsDeleted(0);
         repository.persist(entity);
-        // 修改任务的id
+        
+        // 修改任务的workflowId
         DronesTask task = new DronesTask();
         task.setId(entity.getTaskId());
         task.setWorkflowId(entity.getId());
+        task.setWorkflowUuid(entity.getUuid());
         taskService.replaceById(task);
         return true;
     }

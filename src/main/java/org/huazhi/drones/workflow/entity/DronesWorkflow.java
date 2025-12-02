@@ -24,6 +24,11 @@ public class DronesWorkflow extends PanacheEntityBase{
 	private Long id;
 
 	/**
+	 * 工作流id
+	 */
+	private String uuid;
+
+	/**
 	 * 节点
 	 */
 	@Column(columnDefinition = "TEXT")
