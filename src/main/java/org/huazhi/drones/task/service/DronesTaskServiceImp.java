@@ -250,13 +250,11 @@ public class DronesTaskServiceImp implements DronesTaskService {
         commandWebsocket.setOnErrorActions(errorNodes);
         
         log.info("发送指令信息：{}", JsonUtil.toJson(commandWebsocket));
-        // connectionManager.sendMessageByDeviceId(device.getDeviceId(), commandWebsocket);
+        connectionManager.sendMessageByDeviceId(device.getDeviceId(), commandWebsocket);
     }
 
     /**
      * 根据服务名称集合批量获取服务信息
-     * 优化：使用单次批量查询替代循环中的N次查询
-     * 
      * @param serviceNames 服务名称集合
      * @return 服务VO列表
      */
@@ -395,6 +393,9 @@ public class DronesTaskServiceImp implements DronesTaskService {
     }
 
 
+    /**
+     * 获取error的after
+     */
     private String getErrorAfter(NodeEntity currentNode) {
         NodeEntityData data = currentNode.getData();
         return data.getAction().getParams().getEvent().getOnFail();
