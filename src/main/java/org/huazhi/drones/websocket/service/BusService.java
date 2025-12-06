@@ -66,6 +66,7 @@ public class BusService {
      */
     public MessageInfo reportStatus(MessageHeartbeat messageHeartbeat) {
         DronesDeviceDto dto = new DronesDeviceDto();
+        dto.setDeviceId(messageHeartbeat.getDeviceId());
         dto.setCommTime(LocalDateTime.now());
         dto.setDeviceId(messageHeartbeat.getDeviceId());
         if (StringUtil.isNullOrEmpty(messageHeartbeat.getStatus())) {
