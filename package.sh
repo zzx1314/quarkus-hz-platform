@@ -18,6 +18,7 @@ fi
 BUILD_IMAGE=true
 RESTART_SERVICES=true
 BUILD_NATIVE=false
+BUILD_FRONTEND=true
 
 # 解析命令行参数
 while [[ $# -gt 0 ]]; do
@@ -30,6 +31,10 @@ while [[ $# -gt 0 ]]; do
             RESTART_SERVICES=false
             shift
             ;;
+        --no-frontend)
+            BUILD_FRONTEND=false
+            shift
+            ;;
         --native)
             BUILD_NATIVE=true
             shift
@@ -37,10 +42,11 @@ while [[ $# -gt 0 ]]; do
         -h|--help)
             echo "用法: $0 [选项]"
             echo "选项:"
-            echo "  --no-image    跳过构建Docker镜像"
-            echo "  --no-restart  跳过重启服务"
-            echo "  --native      构建原生镜像"
-            echo "  -h, --help    显示帮助信息"
+            echo "  --no-image     跳过构建Docker镜像"
+            echo "  --no-restart   跳过重启服务"
+            echo "  --no-frontend  跳过前端构建"
+            echo "  --native       构建原生镜像"
+            echo "  -h, --help     显示帮助信息"
             exit 0
             ;;
         *)
@@ -102,4 +108,27 @@ else
     echo "3. 跳过服务重启"
 fi
 
-echo "打包流程已完成!"
+# 构建前端项目
+if [ "$BUILD_FRONTEND" = true ]; then
+    echo "4. 构建前端项目..."
+    FRONTEND_PROJECT="../vue-pure-admin-max"
+    
+    if [ -d "$FRONTEND_PROJECT" ] && [ -f "$FRONTEND_PROJECT/build.sh" ]; then
+        echo "进入前端项目目录并执行构建..."
+        cd "$FRONTEND_PROJECT"
+        if ./build.sh; then
+            echo "前端项目构建成功"
+            cd -
+        else
+            echo "前端项目构建失败"
+            cd -
+            exit 1
+        fi
+    else
+        echo "警告: 前端项目或构建脚本不存在: $FRONTEND_PROJECT"
+    fi
+else
+    echo "4. 跳过前端项目构建"
+fi
+
+echo "完整的打包流程已完成!"
