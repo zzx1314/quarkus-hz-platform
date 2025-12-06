@@ -78,7 +78,7 @@ public class DronesDeviceController {
         queryDto.setId(deviceId);
         DronesDevice entity = dronesDeviceService.listOne(queryDto);
         if (entity == null) {
-            return R.failed("设备不存在");
+            return R.failed(null,"设备不存在");
         }
         return R.ok(entity);
     }

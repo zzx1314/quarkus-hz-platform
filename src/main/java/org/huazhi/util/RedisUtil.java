@@ -7,6 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import java.time.Duration;
+import java.util.Optional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -52,12 +53,12 @@ public class RedisUtil {
     /**
      * 从 Redis 获取对象
      */
-    public <T> T getObject(String key, Class<T> clazz) {
+    public <T> Optional<T> getObject(String key, Class<T> clazz) {
         String json = valueCommands.get(key);
         if (json == null)
-            return null;
+            return Optional.empty();
         try {
-            return objectMapper.readValue(json, clazz);
+            return Optional.of(objectMapper.readValue(json, clazz));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

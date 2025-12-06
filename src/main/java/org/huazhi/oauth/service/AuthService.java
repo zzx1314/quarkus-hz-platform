@@ -23,7 +23,7 @@ import io.smallrye.jwt.build.Jwt;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
-
+import java.util.Optional;
 @ApplicationScoped
 public class AuthService {
 
@@ -72,11 +72,12 @@ public class AuthService {
             throw new RuntimeException("Refresh token is invalid or expired");
         }
 
-        SysUserDto userDto = redisUtil.getObject(key, SysUserDto.class);
-        // 生成新的 Access Token
-        String jwt = generateToken(userDto.getUsername(), userDto);
+        Optional<SysUserDto> userDtoOpt = redisUtil.getObject(key, SysUserDto.class);
 
-        return createTokenResponse(jwt, refreshToken, userDto);
+        String jwt = userDtoOpt
+        .map(userDto -> generateToken(userDto.getUsername(), userDto))
+        .orElseThrow(() -> new RuntimeException("User not found"));
+        return createTokenResponse(jwt, refreshToken, userDtoOpt.get());
     }
 
     public R<Object> logout(String accessToken) {
@@ -120,7 +121,7 @@ public class AuthService {
                 .subject(subject)
                 .groups(new HashSet<>(Arrays.asList("User", "Admin")))
                 .claim("role", userDto != null ? userDto.getRoleIdList() : null)
-                .claim("userId", userDto.getId())
+                .claim("userId", userDto != null ? userDto.getId() : null)
                 .expiresAt(Instant.now().plusSeconds(CommonConstants.EXPIRES_IN))
                 .sign();
 
