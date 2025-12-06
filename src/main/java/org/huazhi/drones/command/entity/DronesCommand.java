@@ -38,6 +38,7 @@ public class DronesCommand extends PanacheEntityBase {
     /**
      * 指令参数
      */
+    @Column(columnDefinition = "TEXT")
     private String commandParams;
 
     /**
@@ -53,6 +54,7 @@ public class DronesCommand extends PanacheEntityBase {
     /**
      * 返回值
      */
+    @Column(columnDefinition = "TEXT")
     private String returnValue;
 
     /**

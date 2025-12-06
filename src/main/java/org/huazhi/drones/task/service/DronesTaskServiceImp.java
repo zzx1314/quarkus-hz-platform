@@ -207,7 +207,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
 
         // 初始化命令对象
         DronesCommandWebsocketV1 commandWebsocket = new DronesCommandWebsocketV1();
-        commandWebsocket.setType("command");
+        commandWebsocket.setType("toros");
 
         // 获取首个任务节点的设备和航线信息
         NodeEntity firstTaskNode = taskNodes.get(0);
