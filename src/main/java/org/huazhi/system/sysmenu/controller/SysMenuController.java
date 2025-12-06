@@ -68,7 +68,7 @@ public class SysMenuController {
             ArrayNode arrayNode = mapper.convertValue(menuTreeList, ArrayNode.class);
             return R.ok(TreeUtil.listToTree(arrayNode));
         } else {
-            return R.failed();
+            return R.failed(null,"当前用户没有分配菜单权限，请联系管理员！");
         }
     }
 

@@ -60,7 +60,7 @@ public class DronesConfigController {
 
     @PUT
     @Path("/update")
-    public R<DronesConfig> update(DronesConfigDto dto) {
+    public R<Void> update(DronesConfigDto dto) {
         dronesConfigService.replaceByDto(dto);
         return R.ok();
     }

@@ -44,7 +44,7 @@ public class AuthController {
             String token = authHeader.substring(7);
             return authService.logout(token);
         }
-        return R.failed("Unauthorized");
+        return R.failed(null,"Unauthorized");
     }
 
     @POST

@@ -101,7 +101,7 @@ public class DronesMediaServiceImp implements DronesMediaService {
             dronesMedia.setRemarks(mediaDto.getRemarks());
             this.register(dronesMedia);
         }
-        return R.ok();
+        return R.ok("File uploaded successfully");
     }
 
 }

@@ -66,7 +66,7 @@ public class DeviceAuthController {
         // 设备是否通过认证，如果认证通过可以进行
         boolean checkRes = checkClientTokenUtil.checkToken(deviceDto.getDeviceId(), authToken);
         if (!checkRes) {
-            return R.failed("无效的token信息");
+            return R.failed(null,"无效的token信息");
         }
         registerDevice(deviceDto);
         return R.ok("设备注册成功");

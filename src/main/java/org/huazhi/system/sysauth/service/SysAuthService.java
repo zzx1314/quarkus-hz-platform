@@ -68,7 +68,7 @@ public class SysAuthService {
 					sysMenuVoList.add(sysAuthMenuVo);
 				});
 			} catch (Exception e) {
-				return R.failed("当前角色的权限路径不完整，请再菜单管理检查角色权限范围路径！");
+				return R.failed(null,"当前角色的权限路径不完整，请再菜单管理检查角色权限范围路径！");
 			}
 			for (int i = 0; i < sysMenuVoList.size(); i++) {
 				SysAuthMenuVo sysAuthMenuVo = sysMenuVoList.get(i);

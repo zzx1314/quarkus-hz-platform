@@ -119,7 +119,7 @@ public class SysOrgServiceImp implements SysOrgService {
 	}
 
 	@Override
-	public R<Object> registerOrg(SysOrgTreeDto sysOrg) {
+	public R<Void> registerOrg(SysOrgTreeDto sysOrg) {
 		// 顶部门判断只能有一个
 		if ("top".equals(sysOrg.getType())) {
 			SysOrgQueryDto queryDto = new SysOrgQueryDto();
@@ -227,7 +227,7 @@ public class SysOrgServiceImp implements SysOrgService {
 			queryDto.setNotId(sysOrg.getId());
 			List<SysOrg> list = sysOrgRepository.selectOrgList(queryDto);
 			if (list.size() > 0) {
-				return R.failed("顶部门只能添加一个!");
+				return R.failed(null,"顶部门只能添加一个!");
 			}
 		}
 		/**
@@ -239,13 +239,13 @@ public class SysOrgServiceImp implements SysOrgService {
 				// 上级是单位
 				if ("company".equals(sysOrg.getType()) || "common".equals(sysOrg.getType())) {
 				} else {
-					return R.failed("上级是单位只能添加单位或者是部门！");
+					return R.failed(null,"上级是单位只能添加单位或者是部门！");
 				}
 			} else if ("common".equals(parentOrg.getType())) {
 				// 上级是部门
 				if ("common".equals(sysOrg.getType())) {
 				} else {
-					return R.failed("上级是部门只能添加部门！");
+					return R.failed(null,"上级是部门只能添加部门！");
 				}
 			}
 		}
@@ -257,15 +257,15 @@ public class SysOrgServiceImp implements SysOrgService {
 	public R<Object> updateOrgAndTypeById(SysOrgTreeDto orgDTO) {
 		R<Object> r = this.checkOrgBeforeUpdate(orgDTO);
 		if (-1 == r.getCode()) {
-			return R.failed(r.getMsg());
+			return R.failed(null,r.getMsg());
 		}
 		Optional<SysOrg> byIdOptional = sysOrgRepository.findByIdOptional(orgDTO.getId());
 		if (byIdOptional.isPresent()) {
 			SysOrg org = byIdOptional.get();
 			sysOrgMapper.updateEntityFromDto(orgDTO, org);
-			return R.ok();
+			return R.ok("更新成功");
 		} else {
-			return R.failed();
+			return R.failed(null,"更新失败");
 		}
 	}
 

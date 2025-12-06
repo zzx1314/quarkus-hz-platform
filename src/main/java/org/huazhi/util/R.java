@@ -2,8 +2,6 @@ package org.huazhi.util;
 
 import lombok.*;
 import lombok.experimental.Accessors;
-import lombok.experimental.FieldNameConstants;
-
 import java.io.Serializable;
 
 /**
@@ -16,7 +14,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-@FieldNameConstants
 public class R<T> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -37,7 +34,7 @@ public class R<T> implements Serializable {
 		return new R<>();
 	}
 
-	public static <T> R<T> ok() {
+	public static <T> R<Void> ok() {
 		return restResult(null, CommonConstants.SUCCESS, null);
 	}
 
@@ -49,11 +46,11 @@ public class R<T> implements Serializable {
 		return restResult(data, CommonConstants.SUCCESS, msg);
 	}
 
-	public static <T> R<T> failed() {
+	public static <T> R<Void> failed() {
 		return restResult(null, CommonConstants.FAIL, null);
 	}
 
-	public static <T> R<T> failed(String msg) {
+	public static <T> R<Void> failed(String msg) {
 		return restResult(null, CommonConstants.FAIL, msg);
 	}
 

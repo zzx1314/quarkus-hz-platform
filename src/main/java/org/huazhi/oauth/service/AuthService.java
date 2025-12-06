@@ -82,13 +82,13 @@ public class AuthService {
     public R<Object> logout(String accessToken) {
         String key = "access_token:" + accessToken;
         if (!redisUtil.exists(key)) {
-            return R.failed("Access token is invalid or expired");
+            return R.failed(null,"Access token is invalid or expired");
         }
         redisUtil.del(key);
         return R.ok("Logout successful");
     }
 
-    public R<Object> checkToken(String accessToken) {
+    public R<Void> checkToken(String accessToken) {
         String key = "access_token:" + accessToken;
         if (!redisUtil.exists(key)) {
             return R.failed("Access token is invalid or expired");

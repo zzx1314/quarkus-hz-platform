@@ -48,7 +48,7 @@ public class SysAuthController {
 	@POST
 	@Path("/setMenuAuth")
 	@Transactional
-	public R<Object> setMenuAuth(SysAuthDto sysAuthDto) {
+	public R<Void> setMenuAuth(SysAuthDto sysAuthDto) {
 		SysRoleQueryDto sysRoleDto = new SysRoleQueryDto();
 		sysRoleDto.setCode(sysAuthDto.getRoleCode());
 		SysRole sysRole = sysRoleService.listRoleByDto(sysRoleDto);

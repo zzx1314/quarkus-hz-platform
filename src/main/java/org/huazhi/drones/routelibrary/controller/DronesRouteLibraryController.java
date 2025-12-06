@@ -72,7 +72,7 @@ public class DronesRouteLibraryController {
 
     @PUT
     @Path("/update")
-    public R<DronesRouteLibrary> update(DronesRouteLibraryDto dto) {
+    public R<Void> update(DronesRouteLibraryDto dto) {
         dronesRouteLibraryService.replaceByDto(dto);
         return R.ok();
     }
@@ -98,7 +98,7 @@ public class DronesRouteLibraryController {
 
     @POST
     @Path("/saveRouteData")
-    public R<Boolean> saveRouteData(DronesRouteLibraryDto data) {
+    public R<Void> saveRouteData(DronesRouteLibraryDto data) {
         dronesRouteLibraryService.saveRouteData(data);
         return R.ok();
     }

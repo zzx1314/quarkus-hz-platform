@@ -58,7 +58,7 @@ public class DronesTaskController {
 
     @PUT
     @Path("/update")
-    public R<DronesTask> update(DronesTaskDto dto) {
+    public R<Void> update(DronesTaskDto dto) {
         dronesTaskService.replaceByDto(dto);
         return R.ok();
     }
@@ -84,7 +84,7 @@ public class DronesTaskController {
      */
     @GET
     @Path("/startTask/{id}")
-    public R<Object> startTask(@PathParam("id") Long id) {
+    public R<Void> startTask(@PathParam("id") Long id) {
         dronesTaskService.startTask(id);
         return R.ok();
     }

@@ -79,7 +79,7 @@ public class DronesWorkflowController {
 
     @PUT
     @Path("/update")
-    public R<DronesWorkflow> update(DronesWorkflowDto dto) {
+    public R<Void> update(DronesWorkflowDto dto) {
         DronesWorkflowQueryDto queryDto = new DronesWorkflowQueryDto();
         queryDto.setTaskId(dto.getTaskId());
         dronesWorkflowService.replaceByDto(queryDto, dto);

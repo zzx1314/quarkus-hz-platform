@@ -74,7 +74,7 @@ public class DronesMediaController {
 
     @PUT
     @Path("/update")
-    public R<DronesMedia> update(DronesMediaDto dto) {
+    public R<Void> update(DronesMediaDto dto) {
         dronesMediaService.replaceByDto(dto);
         return R.ok();
     }

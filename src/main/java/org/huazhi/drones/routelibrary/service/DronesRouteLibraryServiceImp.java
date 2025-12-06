@@ -118,7 +118,7 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
             return R.ok(result);
         }
 
-        return R.ok();
+        return R.ok("No route data found");
     }
 
     public double getResolution(List<String> lines) {
@@ -240,14 +240,14 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
             // 启动,检查是否有航线数据
             DronesRouteLibrary route = repository.findById(id);
             if (route.getRouteData() == null || route.getRouteData().isEmpty()) {
-                return R.failed("请对航线进行设计并保存");
+                return R.failed(null,"请对航线进行设计并保存");
             }
         }
         DronesRouteLibraryDto dto = new DronesRouteLibraryDto();
         dto.setId(id);
         dto.setRouteStatus(status.equals("start") ? "启用" : "停用");
         repository.updateByDto(dto);
-        return R.ok();
+        return R.ok("操作成功");
     }
 
     @Override

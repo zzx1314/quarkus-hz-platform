@@ -109,7 +109,7 @@ public class DronesModelServiceImp implements DronesModelService {
             dronesModel.setRemarks(modelDto.getRemarks());
             this.register(dronesModel);
         }
-        return R.ok();
+        return R.ok("File uploaded successfully");
     }
 
     @Override
