@@ -71,6 +71,7 @@ public class WebSocketService {
         if (messageJson.get("type").equals("heartbeat")) {
             // 心跳消息
             MessageHeartbeat heartbeat = JsonUtil.fromJson(message, MessageHeartbeat.class);
+            heartbeat.setDeviceId(deviceId);
             MessageInfo messageInfo = busService.reportStatus(heartbeat);
             // 发送心跳响应
             connectionManager.sendHeartBeatReturn(heartbeat.getDeviceId(), messageInfo);
