@@ -101,7 +101,7 @@ public class EntityUtils {
 			final Function<? super Source, ? extends Result> action) {
 
 		Objects.requireNonNull(action);
-		return Optional.ofNullable(source).map(action).orElse(null);
+		return Optional.ofNullable(source).map(action).orElseGet(() -> null);
 	}
 
 	/**

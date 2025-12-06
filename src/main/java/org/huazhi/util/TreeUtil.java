@@ -29,10 +29,12 @@ public class TreeUtil {
 	public <T extends TreeNode> List<T> buildByLoop(List<T> treeNodes, Object root) {
 		List<T> trees = new ArrayList<>();
 		for (T treeNode : treeNodes) {
+			if (treeNode == null) continue;
 			if (root.equals(treeNode.getParentId())) {
 				trees.add(treeNode);
 			}
 			for (T it : treeNodes) {
+				if (it == null) continue;
 				if (it.getParentId() == treeNode.getId()) {
 					if (treeNode.getChildren() == null) {
 						treeNode.setChildren(new ArrayList<>());
@@ -100,6 +102,7 @@ public class TreeUtil {
 	public <T extends TreeNode> List<T> buildByRecursive(List<T> treeNodes, Object root) {
 		List<T> trees = new ArrayList<T>();
 		for (T treeNode : treeNodes) {
+			if (treeNode == null) continue;
 			if (root.equals(treeNode.getParentId())) {
 				trees.add(findChildren(treeNode, treeNodes));
 			}
@@ -117,6 +120,7 @@ public class TreeUtil {
 	 **/
 	public <T extends TreeNode> T findChildren(T treeNode, List<T> treeNodes) {
 		for (T it : treeNodes) {
+			if (it == null || treeNode == null) continue;
 			if (treeNode.getId() == it.getParentId()) {
 				if (treeNode.getChildren() == null) {
 					treeNode.setChildren(new ArrayList<>());

@@ -2,6 +2,7 @@ package org.huazhi.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
@@ -18,6 +19,7 @@ public class SecurityUtil {
         Object roleObj = jwt.getClaim("role");
         if (roleObj instanceof List<?> list) {
             return list.stream()
+                    .filter(Objects::nonNull)
                     .map(o -> {
                         if (o instanceof Number n)
                             return n.longValue();
