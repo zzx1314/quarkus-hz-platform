@@ -36,7 +36,6 @@ public class SysDictItemController {
     @Inject
     SysDictItemService sysDictItemService;
 
-
     @GET
     @Path("/getPage")
     public R<PageResult<SysDictItem>> getPage(@BeanParam SysDictItemQueryDto dto, @BeanParam PageRequest pageRequest) {
@@ -67,7 +66,7 @@ public class SysDictItemController {
     @Transactional
     public R<SysDictItem> update(SysDictItemDto dto) {
         SysDictItem entity = SysDictItem.findById(dto.getId());
-        if(entity == null) {
+        if (entity == null) {
             throw new NotFoundException();
         }
         entity.setUpdateTime(LocalDateTime.now());

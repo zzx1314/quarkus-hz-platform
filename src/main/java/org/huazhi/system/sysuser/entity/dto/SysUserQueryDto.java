@@ -9,12 +9,11 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class SysUserQueryDto {
-    @QueryParam("username")
+	@QueryParam("username")
 	private String username;
 
 	@QueryParam("orgId")
 	private Integer orgId;
-
 
 	@QueryParam("orgIds")
 	private List<Integer> orgIds;
@@ -37,9 +36,9 @@ public class SysUserQueryDto {
 	@QueryParam("realName")
 	private String realName;
 
-    @QueryParam("beginTime")
-    private String beginTime;
+	@QueryParam("beginTime")
+	private String beginTime;
 
-    @QueryParam("endTime")
-    private String endTime;
+	@QueryParam("endTime")
+	private String endTime;
 }

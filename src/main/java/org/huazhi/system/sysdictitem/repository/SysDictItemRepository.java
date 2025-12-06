@@ -16,26 +16,26 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class SysDictItemRepository implements PanacheRepository<SysDictItem> {
 
-     public List<SysDictItem> selectList(SysDictItemQueryDto queryDto) {
-        QueryBuilder qb = QueryBuilder.create()
-                .equal("isDeleted", 0);
-        return find(qb.getQuery(), qb.getParams()).list();
-    }
+        public List<SysDictItem> selectList(SysDictItemQueryDto queryDto) {
+                QueryBuilder qb = QueryBuilder.create()
+                                .equal("isDeleted", 0);
+                return find(qb.getQuery(), qb.getParams()).list();
+        }
 
-    public PageResult<SysDictItem> selectPage(SysDictItemQueryDto dto, PageRequest pageRequest) {
-        QueryBuilder qb = QueryBuilder.create()
-                .equal("isDeleted", 0)
-                .between("createTime", dto.getBeginTime(), dto.getEndTime())
-                .orderBy("createTime desc");
+        public PageResult<SysDictItem> selectPage(SysDictItemQueryDto dto, PageRequest pageRequest) {
+                QueryBuilder qb = QueryBuilder.create()
+                                .equal("isDeleted", 0)
+                                .between("createTime", dto.getBeginTime(), dto.getEndTime())
+                                .orderBy("createTime desc");
 
-        PanacheQuery<SysDictItem> query = find(qb.getQuery(), qb.getParams())
-                .page(Page.of(pageRequest.getPageIndex(), pageRequest.getSize()));
+                PanacheQuery<SysDictItem> query = find(qb.getQuery(), qb.getParams())
+                                .page(Page.of(pageRequest.getPageIndex(), pageRequest.getSize()));
 
-        return new PageResult<>(
-                query.list(),
-                query.count(),
-                pageRequest.getPage(),
-                pageRequest.getSize());
-    }
+                return new PageResult<>(
+                                query.list(),
+                                query.count(),
+                                pageRequest.getPage(),
+                                pageRequest.getSize());
+        }
 
 }

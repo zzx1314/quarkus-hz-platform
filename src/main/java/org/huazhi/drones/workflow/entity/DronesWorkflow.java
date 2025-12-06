@@ -14,12 +14,12 @@ import lombok.experimental.Accessors;
 @Data
 @Entity
 @Accessors(chain = true)
-@EqualsAndHashCode(callSuper=false)
-public class DronesWorkflow extends PanacheEntityBase{
+@EqualsAndHashCode(callSuper = false)
+public class DronesWorkflow extends PanacheEntityBase {
 	/**
 	 * 主键ID
 	 */
-    @Id
+	@Id
 	@GeneratedValue
 	private Long id;
 

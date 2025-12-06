@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class SysRoleDto {
-    private Long id;
+	private Long id;
 
 	/**
 	 * 角色名

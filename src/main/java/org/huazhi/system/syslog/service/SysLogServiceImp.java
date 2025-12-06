@@ -17,9 +17,10 @@ import jakarta.inject.Inject;
 public class SysLogServiceImp implements SysLogService {
     @Inject
     SysLogRepository repository;
+
     @Override
     public List<SysLog> listEntitys() {
-        return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
+        return repository.list("isDeleted = ?1", Sort.by("createTime"), 0);
     }
 
     @Override

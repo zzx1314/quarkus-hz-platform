@@ -29,7 +29,7 @@ public class RedisUtil {
     }
 
     /**
-     * 将对象存储到 Redis   
+     * 将对象存储到 Redis
      */
     public <T> void setObject(String key, T obj) {
         try {
@@ -54,7 +54,8 @@ public class RedisUtil {
      */
     public <T> T getObject(String key, Class<T> clazz) {
         String json = valueCommands.get(key);
-        if (json == null) return null;
+        if (json == null)
+            return null;
         try {
             return objectMapper.readValue(json, clazz);
         } catch (JsonProcessingException e) {

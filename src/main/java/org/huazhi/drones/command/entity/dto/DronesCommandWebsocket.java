@@ -10,7 +10,7 @@ public class DronesCommandWebsocket {
      * 命令id
      */
     Long commandId;
-    
+
     /**
      * 设备id
      */
@@ -30,4 +30,4 @@ public class DronesCommandWebsocket {
      * 任务计划
      */
     List<DroneTaskPlan> taskplanArray;
- }
+}

@@ -32,7 +32,7 @@ public class DronesRouteLibraryVo {
      */
     private String endCoordinates;
 
-     /**
+    /**
      * 关联模型的id
      */
     private long modelId;
@@ -40,10 +40,10 @@ public class DronesRouteLibraryVo {
     /**
      * 路线数据
      */
-     private String routeData;
+    private String routeData;
 
-     /**
+    /**
      * 设备id
      */
-     private Long deviceId;
+    private Long deviceId;
 }

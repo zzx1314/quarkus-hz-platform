@@ -31,7 +31,6 @@ public class DronesTaskController {
     @Inject
     DronesTaskService dronesTaskService;
 
-
     @GET
     @Path("/getPage")
     public R<PageResult<DronesTask>> getPage(@BeanParam DronesTaskQueryDto dto, @BeanParam PageRequest pageRequest) {
@@ -79,6 +78,7 @@ public class DronesTaskController {
 
     /**
      * 启动任务
+     * 
      * @param id
      * @return
      */

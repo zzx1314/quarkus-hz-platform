@@ -25,12 +25,13 @@ public class EntityUtils {
 
 	/**
 	 * 将对象集合按照一定规则映射后收集为另一种形式的集合
-	 * @param <R> 最终结果的泛型
-	 * @param <S> 原始集合元素的类泛型
-	 * @param <T> 转换后元素的中间状态泛型
-	 * @param <A> 最终结果收集器泛型
-	 * @param source 最原始的集合实例
-	 * @param action 转换规则
+	 * 
+	 * @param <R>       最终结果的泛型
+	 * @param <S>       原始集合元素的类泛型
+	 * @param <T>       转换后元素的中间状态泛型
+	 * @param <A>       最终结果收集器泛型
+	 * @param source    最原始的集合实例
+	 * @param action    转换规则
 	 * @param collector 收集器的类型
 	 * @return 变换后存储新元素的集合实例
 	 */
@@ -44,11 +45,11 @@ public class EntityUtils {
 		return source.stream().map(action).collect(collector);
 	}
 
-
 	/**
 	 * 将对象集合按照一定规则映射后收集为另一种形式的集合
-	 * @param <S> 原始集合元素的类泛型
-	 * @param <T> 转换后元素的中间状态泛型
+	 * 
+	 * @param <S>    原始集合元素的类泛型
+	 * @param <T>    转换后元素的中间状态泛型
 	 * @param source 最原始的集合实例
 	 * @param action 转换规则
 	 * @return 变换后存储新元素的集合实例
@@ -61,8 +62,9 @@ public class EntityUtils {
 
 	/**
 	 * 将对象集合按照一定规则映射后收集为另一种形式的集合
-	 * @param <S> 原始集合元素的类泛型
-	 * @param <T> 转换后元素的中间状态泛型
+	 * 
+	 * @param <S>    原始集合元素的类泛型
+	 * @param <T>    转换后元素的中间状态泛型
 	 * @param source 最原始的集合实例
 	 * @param action 转换规则
 	 * @return 变换后存储新元素的集合实例
@@ -74,7 +76,8 @@ public class EntityUtils {
 
 	/**
 	 * 将对象集合按照一定规则映射后收集为List集合
-	 * @param <S> 原始集合元素的类泛型
+	 * 
+	 * @param <S>    原始集合元素的类泛型
 	 * @param source 最原始的集合实例
 	 * @param action 转换规则
 	 * @return 变换后存储新元素的集合实例
@@ -86,8 +89,9 @@ public class EntityUtils {
 
 	/**
 	 * 将对象以一种类型转换成另一种类型
-	 * @param <T> 源数据类型
-	 * @param <R> 变换后数据类型
+	 * 
+	 * @param <T>    源数据类型
+	 * @param <R>    变换后数据类型
 	 * @param source 源List集合
 	 * @param action 映射Lmabda表达式
 	 * @return 变换后的类型，如果source为null,则返回null
@@ -104,43 +108,53 @@ public class EntityUtils {
 	 * <p>
 	 * 将{@code List}集合换成另一种类型
 	 * </p>
+	 * 
 	 * <pre>
-	 *     public class User {
-	 *         private Long userId;
-	 *         private String userName;
-	 *         private String sex;
-	 *     }
+	 * public class User {
+	 * 	private Long userId;
+	 * 	private String userName;
+	 * 	private String sex;
+	 * }
 	 * </pre>
 	 * <p>
 	 * 通过方法引用获得任意列组成的新{@code List}集合
 	 * </p>
+	 * 
 	 * <pre>
 	 *     List&lt;Long&gt; userIds = EntityUtils.toList(list,User::getUserId)
 	 * </pre>
 	 * <p>
 	 * 在{@code User}类中添加有如下构造器
 	 * </p>
+	 * 
 	 * <pre>
-	 *     public User(User user) {
-	 *         if(user != null) {
-	 *             this.userId = user.userId;
-	 *             this.userName = user.userName;
-	 *             this.sex = user.sex;
-	 *         }
-	 *     }
-	 * </pre> <pre>
-	 *     public class UserVo extends User {
-	 *         private String deptName;
+	 * public User(User user) {
+	 * 	if (user != null) {
+	 * 		this.userId = user.userId;
+	 * 		this.userName = user.userName;
+	 * 		this.sex = user.sex;
+	 * 	}
+	 * }
+	 * </pre>
+	 * 
+	 * <pre>
+	 * public class UserVo extends User {
+	 * 	private String deptName;
 	 *
-	 *         public UserVo (User user) {
-	 *             super(user);
-	 *         }
-	 *     }
-	 * </pre> 通过如下代码可实现DO 转 VO <pre>
+	 * 	public UserVo(User user) {
+	 * 		super(user);
+	 * 	}
+	 * }
+	 * </pre>
+	 * 
+	 * 通过如下代码可实现DO 转 VO
+	 * 
+	 * <pre>
 	 *     List&lt;Long&gt; userVos = EntityUtils.toList(list,UserVo::new)
 	 * </pre>
-	 * @param <T> 源数据类型
-	 * @param <R> 变换后数据类型
+	 * 
+	 * @param <T>    源数据类型
+	 * @param <R>    变换后数据类型
 	 * @param source 源List集合
 	 * @param action 映射Lmabda表达式
 	 * @return 变换后的类型集合，如果source为null,则返回空集合
@@ -158,11 +172,11 @@ public class EntityUtils {
 		return new ArrayList<>();
 	}
 
-
 	/**
 	 * 将Array数组以一种类型转换成另一种类型
-	 * @param <T> 源数据类型
-	 * @param <R> 变换后数据类型
+	 * 
+	 * @param <T>    源数据类型
+	 * @param <R>    变换后数据类型
 	 * @param source 源Array数组
 	 * @param action 映射Lmabda表达式
 	 * @return 变换后的类型集合，如果source为null,则返回空集合
@@ -177,21 +191,21 @@ public class EntityUtils {
 		if (Objects.nonNull(source)) {
 			// 使用 toArray(IntFunction) 创建泛型数组
 			return Arrays.stream(source)
-						.map(action)
-						.toArray(size -> (Result[]) new Object[size]);
+					.map(action)
+					.toArray(size -> (Result[]) new Object[size]);
 		}
 		return (Result[]) new Object[0];
 	}
 
-
 	/**
 	 * 将集合转化成Map
-	 * @param lists 集合实例
-	 * @param keyAction key转换规则
+	 * 
+	 * @param lists       集合实例
+	 * @param keyAction   key转换规则
 	 * @param valueAction value转换规则
-	 * @param <T> 集合实体类泛型
-	 * @param <K> Key实体类泛型
-	 * @param <V> Value实体类泛型
+	 * @param <T>         集合实体类泛型
+	 * @param <K>         Key实体类泛型
+	 * @param <V>         Value实体类泛型
 	 * @return Map实例
 	 */
 	public static <T, K, V> Map<K, V> toMap(final Collection<T> lists, Function<? super T, ? extends K> keyAction,
@@ -204,8 +218,9 @@ public class EntityUtils {
 
 	/**
 	 * 将List集合以一种类型转换成Set集合
-	 * @param <T> 源数据类型
-	 * @param <R> 变换后数据类型
+	 * 
+	 * @param <T>    源数据类型
+	 * @param <R>    变换后数据类型
 	 * @param source 源List集合
 	 * @param action 映射Lmabda表达式
 	 * @return 变换后的类型集合，如果source为null,则返回空集合

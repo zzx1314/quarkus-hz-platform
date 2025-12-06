@@ -16,30 +16,30 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class SysMenuRepository implements PanacheRepository<SysMenu> {
 
-     public List<SysMenu> selectList(SysMenuQueryDto queryDto) {
-        QueryBuilder qb = QueryBuilder.create()
-        .in("id", queryDto.getIds())
-        .equal("type", queryDto.getType())
-        .equal("roleCode", queryDto.getRoleCode())
-        .equal("parentId", queryDto.getParentId())
-        .equal("isDeleted", 0);
-        return find(qb.getQuery(), qb.getParams()).list();
-    }
+        public List<SysMenu> selectList(SysMenuQueryDto queryDto) {
+                QueryBuilder qb = QueryBuilder.create()
+                                .in("id", queryDto.getIds())
+                                .equal("type", queryDto.getType())
+                                .equal("roleCode", queryDto.getRoleCode())
+                                .equal("parentId", queryDto.getParentId())
+                                .equal("isDeleted", 0);
+                return find(qb.getQuery(), qb.getParams()).list();
+        }
 
-    public PageResult<SysMenu> selectPage(SysMenuQueryDto dto, PageRequest pageRequest) {
-        QueryBuilder qb = QueryBuilder.create()
-                .equal("isDeleted", 0)
-                .between("createTime", dto.getBeginTime(), dto.getEndTime())
-                .orderBy("createTime desc");
+        public PageResult<SysMenu> selectPage(SysMenuQueryDto dto, PageRequest pageRequest) {
+                QueryBuilder qb = QueryBuilder.create()
+                                .equal("isDeleted", 0)
+                                .between("createTime", dto.getBeginTime(), dto.getEndTime())
+                                .orderBy("createTime desc");
 
-        PanacheQuery<SysMenu> query = find(qb.getQuery(), qb.getParams())
-                .page(Page.of(pageRequest.getPageIndex(), pageRequest.getSize()));
+                PanacheQuery<SysMenu> query = find(qb.getQuery(), qb.getParams())
+                                .page(Page.of(pageRequest.getPageIndex(), pageRequest.getSize()));
 
-        return new PageResult<>(
-                query.list(),
-                query.count(),
-                pageRequest.getPage(),
-                pageRequest.getSize());
-    }
+                return new PageResult<>(
+                                query.list(),
+                                query.count(),
+                                pageRequest.getPage(),
+                                pageRequest.getSize());
+        }
 
 }

@@ -15,9 +15,10 @@ public class FileUtil {
 
     /**
      * 保存上传文件
+     * 
      * @param file      上传的文件对象
      * @param targetDir 保存目录
-     * @return          保存后的路径
+     * @return 保存后的路径
      */
     public static Path saveFile(FileUpload file, String targetDir) {
         if (file == null || file.uploadedFile() == null) {
@@ -44,9 +45,9 @@ public class FileUtil {
     /**
      * 保存文件到指定目录
      *
-     * @param dirPath   保存的目录，例如 "knowledge/123"
-     * @param fileName  文件名，例如 "test.txt"
-     * @param input     输入流
+     * @param dirPath  保存的目录，例如 "knowledge/123"
+     * @param fileName 文件名，例如 "test.txt"
+     * @param input    输入流
      * @return 文件保存后的路径
      * @throws IOException IO异常
      */
@@ -76,6 +77,7 @@ public class FileUtil {
 
     /**
      * 下载文件
+     * 
      * @param filePath 文件路径
      * @return Response (带文件流)
      */
@@ -110,7 +112,7 @@ public class FileUtil {
         }
     }
 
-     /**
+    /**
      * 删除文件夹及其所有子内容（递归）
      */
     public static boolean deleteDirectory(String directoryPath) {
@@ -166,6 +168,7 @@ public class FileUtil {
 
     /**
      * 读取文件全部内容为字符串
+     * 
      * @param filePath 文件路径
      * @return 文件内容，读取失败返回 null
      */
@@ -181,6 +184,7 @@ public class FileUtil {
 
     /**
      * 按行读取文件内容
+     * 
      * @param filePath 文件路径
      * @return 每行内容列表，读取失败返回 null
      */
@@ -195,6 +199,3 @@ public class FileUtil {
     }
 
 }
-
-
-

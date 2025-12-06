@@ -7,7 +7,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 public class AESUtils {
-	 private static final String DEFAULT_KEY = "Welcome Superred";
+    private static final String DEFAULT_KEY = "Welcome Superred";
+
     /**
      * AES CBC ZeroPadding 加密
      */

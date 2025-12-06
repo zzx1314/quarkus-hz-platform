@@ -20,9 +20,10 @@ import jakarta.transaction.Transactional;
 public class DronesCommandServiceImp implements DronesCommandService {
     @Inject
     DronesCommandRepository repository;
+
     @Override
     public List<DronesCommand> listEntitys() {
-        return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
+        return repository.list("isDeleted = ?1", Sort.by("createTime"), 0);
     }
 
     @Override

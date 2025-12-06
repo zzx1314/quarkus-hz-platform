@@ -32,10 +32,10 @@ public class DronesRouteLibraryController {
     @Inject
     DronesRouteLibraryService dronesRouteLibraryService;
 
-
     @GET
     @Path("/getPage")
-    public R<PageResult<DronesRouteLibrary>> getPage(@BeanParam DronesRouteLibraryQueryDto dto, @BeanParam PageRequest pageRequest) {
+    public R<PageResult<DronesRouteLibrary>> getPage(@BeanParam DronesRouteLibraryQueryDto dto,
+            @BeanParam PageRequest pageRequest) {
         return R.ok(dronesRouteLibraryService.listPage(dto, pageRequest));
     }
 
@@ -95,7 +95,6 @@ public class DronesRouteLibraryController {
     public R<Object> getRoute(@PathParam("modelId") Long modelId) {
         return dronesRouteLibraryService.getRoute(modelId);
     }
-
 
     @POST
     @Path("/saveRouteData")

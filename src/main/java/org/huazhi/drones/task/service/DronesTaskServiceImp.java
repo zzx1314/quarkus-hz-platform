@@ -194,67 +194,68 @@ public class DronesTaskServiceImp implements DronesTaskService {
         }
         task.setTaskStatus("进行中");
         repository.updateById(task);
-        
+
         // 获取任务流程图
         DronesWorkflowVo workflowGraph = workflowService.getWorkflowGraph(id);
         log.info("任务流程图：{}", JsonUtil.toJson(workflowGraph));
-        
+
         // 获取任务节点
         List<NodeEntity> taskNodes = findTasknodes(workflowGraph);
         if (taskNodes.isEmpty()) {
             throw new RuntimeException("任务节点为空，无法启动任务");
         }
-        
+
         // 初始化命令对象
         DronesCommandWebsocketV1 commandWebsocket = new DronesCommandWebsocketV1();
         commandWebsocket.setType("command");
-        
+
         // 获取首个任务节点的设备和航线信息
         NodeEntity firstTaskNode = taskNodes.get(0);
         Long deviceId = firstTaskNode.getData().getDeviceId();
         long routeId = firstTaskNode.getData().getRouteId();
-        
+
         // 补充航线路径
         commandWebsocket.setRoute(getRoutesById(routeId));
-        
+
         // 获取设备信息（用于后续发送消息）
         DronesDevice device = deviceService.listById(deviceId);
-        
+
         // 构建任务步骤列表
         List<DronesTaskWebScoket> tasks = new ArrayList<>();
         List<DronesAction> errorNodes = new ArrayList<>();
         Set<String> serviceNames = new HashSet<>();
-        
+
         for (int i = 0; i < taskNodes.size(); i++) {
             NodeEntity taskNode = taskNodes.get(i);
-            
+
             // 构建任务步骤
             DronesTaskWebScoket taskInfo = new DronesTaskWebScoket();
             taskInfo.setTaskId(String.valueOf(i + 1));
             taskInfo.setFromWp(taskNode.getData().getTaskInfo().getFromWp());
             taskInfo.setToWp(taskNode.getData().getTaskInfo().getToWp());
             taskInfo.setEvent(taskNode.getData().getTaskInfo().getEvent());
-            
+
             // 寻找action
             List<DronesAction> actions = findAction(workflowGraph, taskNode, errorNodes, serviceNames);
             taskInfo.setActions(actions);
             tasks.add(taskInfo);
         }
-        
+
         // 批量获取服务列表（优化N+1查询）
         List<DronesServicesVo> services = getServicesByNames(serviceNames);
-        
+
         // 组装命令对象
         commandWebsocket.setServices(services);
         commandWebsocket.setTasks(tasks);
         commandWebsocket.setOnErrorActions(errorNodes);
-        
+
         log.info("发送指令信息：{}", JsonUtil.toJson(commandWebsocket));
         connectionManager.sendMessageByDeviceId(device.getDeviceId(), commandWebsocket);
     }
 
     /**
      * 根据服务名称集合批量获取服务信息
+     * 
      * @param serviceNames 服务名称集合
      * @return 服务VO列表
      */
@@ -262,10 +263,10 @@ public class DronesTaskServiceImp implements DronesTaskService {
         if (serviceNames == null || serviceNames.isEmpty()) {
             return new ArrayList<>();
         }
-        
+
         // 批量查询所有服务
         List<DronesServices> servicesList = servicesService.listByTypes(serviceNames);
-        
+
         // 转换为VO对象
         List<DronesServicesVo> services = new ArrayList<>();
         for (DronesServices service : servicesList) {
@@ -284,12 +285,13 @@ public class DronesTaskServiceImp implements DronesTaskService {
      * @return 航线路径点列表
      */
     private List<DronesRoute> getRoutesById(long routeId) {
-        DronesRouteLibrary route =  routeLibraryService.listEntitysById(routeId);
+        DronesRouteLibrary route = routeLibraryService.listEntitysById(routeId);
         String routeData = route.getRouteData();
         List<DronesRoute> routes = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
         try {
-            List<List<Double>> result = mapper.readValue(routeData, new TypeReference<List<List<Double>>>() {});
+            List<List<Double>> result = mapper.readValue(routeData, new TypeReference<List<List<Double>>>() {
+            });
             for (List<Double> point : result) {
                 DronesRoute routeDataOne = new DronesRoute();
                 routeDataOne.setLat(point.get(0));
@@ -354,7 +356,8 @@ public class DronesTaskServiceImp implements DronesTaskService {
         return actions;
     }
 
-    private void addNextAction(DronesWorkflowVo workflowVo, NodeEntity currentNode, List<DronesAction> actions, List<DronesAction> errorNodes, Set<String> serviceName) {
+    private void addNextAction(DronesWorkflowVo workflowVo, NodeEntity currentNode, List<DronesAction> actions,
+            List<DronesAction> errorNodes, Set<String> serviceName) {
         // 防止循环
         Set<String> visited = new HashSet<>();
         dfsActions(workflowVo, currentNode, actions, visited, errorNodes, serviceName);
@@ -401,7 +404,6 @@ public class DronesTaskServiceImp implements DronesTaskService {
         return data.getAction().getParams().getEvent().getOnComplete();
     }
 
-
     /**
      * 获取error的after
      */
@@ -447,7 +449,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
                 } else if ("end".equals(nextNode.getType())) {
                     current = nextNode;
                     break;
-                } 
+                }
             }
         }
         return taskNodes;

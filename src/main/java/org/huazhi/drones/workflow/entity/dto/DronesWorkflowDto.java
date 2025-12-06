@@ -4,9 +4,8 @@ import lombok.Data;
 
 @Data
 public class DronesWorkflowDto {
-    private Long id;
+	private Long id;
 
-    
 	/**
 	 * 节点
 	 */

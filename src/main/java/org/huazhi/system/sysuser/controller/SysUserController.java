@@ -76,7 +76,6 @@ public class SysUserController {
         return R.ok(userInfo);
     }
 
-
     @GET
     @Path("/getAll")
     public R<List<SysUser>> getAll() {
@@ -95,7 +94,7 @@ public class SysUserController {
     @Transactional
     public R<SysUser> update(SysUserDto sysUserDto) {
         SysUser entity = SysUser.findById(sysUserDto.getId());
-        if(entity == null) {
+        if (entity == null) {
             throw new NotFoundException();
         }
         entity.setUpdateTime(LocalDateTime.now());
@@ -115,5 +114,5 @@ public class SysUserController {
         entity.persist();
         return R.ok();
     }
-    
+
 }

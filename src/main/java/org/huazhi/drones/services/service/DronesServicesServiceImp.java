@@ -16,14 +16,14 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
-
 @ApplicationScoped
 public class DronesServicesServiceImp implements DronesServicesService {
     @Inject
     DronesServicesRepository repository;
+
     @Override
     public List<DronesServices> listEntitys() {
-        return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
+        return repository.list("isDeleted = ?1", Sort.by("createTime"), 0);
     }
 
     @Override

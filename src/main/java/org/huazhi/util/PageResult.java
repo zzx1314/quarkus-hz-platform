@@ -18,4 +18,3 @@ public class PageResult<T> {
         this.size = size;
     }
 }
-

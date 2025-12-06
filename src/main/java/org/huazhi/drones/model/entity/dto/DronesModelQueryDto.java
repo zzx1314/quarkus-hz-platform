@@ -5,7 +5,7 @@ import lombok.experimental.Accessors;
 import jakarta.ws.rs.QueryParam;
 
 @Data
-@Accessors(chain = true) 
+@Accessors(chain = true)
 public class DronesModelQueryDto {
     @QueryParam("id")
     private Long id;

@@ -31,10 +31,10 @@ public class DronesServicesController {
     @Inject
     DronesServicesService dronesServicesService;
 
-
     @GET
     @Path("/getPage")
-    public R<PageResult<DronesServices>> getPage(@BeanParam DronesServicesQueryDto dto, @BeanParam PageRequest pageRequest) {
+    public R<PageResult<DronesServices>> getPage(@BeanParam DronesServicesQueryDto dto,
+            @BeanParam PageRequest pageRequest) {
         return R.ok(dronesServicesService.listPage(dto, pageRequest));
     }
 

@@ -37,8 +37,7 @@ public class SysRoleController {
     @Inject
     SysRoleService sysRoleService;
 
-
-     @GET
+    @GET
     @Path("/getPage")
     public R<PageResult<SysRole>> getPage(@BeanParam SysRoleQueryDto sysRoleDto, @BeanParam PageRequest pageRequest) {
         return R.ok(sysRoleService.listRolePage(sysRoleDto, pageRequest));
@@ -68,7 +67,7 @@ public class SysRoleController {
     @Transactional
     public R<SysRole> update(SysRoleDto sysRoleDto) {
         SysRole entity = SysRole.findById(sysRoleDto.getId());
-        if(entity == null) {
+        if (entity == null) {
             throw new NotFoundException();
         }
         entity.setUpdateTime(LocalDateTime.now());

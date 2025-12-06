@@ -95,10 +95,10 @@ public class DronesMediaController {
     @POST
     @Path(value = "/uploadFile")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-	public R<Object> uploadFile(@RestForm("file") FileUpload file, @RestForm String mediaInfo) throws Exception {
-		DronesMediaDto mediaDto = JsonUtil.fromJson(mediaInfo, DronesMediaDto.class);
-		return dronesMediaService.uploadFile(file, mediaDto);
-	}
+    public R<Object> uploadFile(@RestForm("file") FileUpload file, @RestForm String mediaInfo) throws Exception {
+        DronesMediaDto mediaDto = JsonUtil.fromJson(mediaInfo, DronesMediaDto.class);
+        return dronesMediaService.uploadFile(file, mediaDto);
+    }
 
     @GET
     @Path("/stream/{filename}")
@@ -147,8 +147,8 @@ public class DronesMediaController {
 
     @GET
     @Path("/downFile")
-	public Response downloadByPath(@QueryParam("filePath") String filePath) {
-		 return FileUtil.downloadFile(filePath);
-	 }
+    public Response downloadByPath(@QueryParam("filePath") String filePath) {
+        return FileUtil.downloadFile(filePath);
+    }
 
 }

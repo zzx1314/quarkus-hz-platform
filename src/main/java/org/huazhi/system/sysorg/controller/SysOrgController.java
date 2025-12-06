@@ -29,7 +29,6 @@ public class SysOrgController {
     @Inject
     SysOrgService sysOrgService;
 
-
     @GET
     @Path("/tree")
     public R<Object> tree(@BeanParam SysOrgQueryDto sysOrgDto) {
@@ -48,12 +47,11 @@ public class SysOrgController {
         return R.ok(sysOrgService.listOrgs());
     }
 
-
     @GET
     @Path("/allList")
-	public R<Object> allList(@BeanParam SysOrgQueryDto queryDto) {
-		return R.ok(sysOrgService.listAllOrgVo(queryDto));
-	}
+    public R<Object> allList(@BeanParam SysOrgQueryDto queryDto) {
+        return R.ok(sysOrgService.listAllOrgVo(queryDto));
+    }
 
     @POST
     @Path("/create")
@@ -66,7 +64,7 @@ public class SysOrgController {
     @Path("/update")
     @Transactional
     public R<Object> update(SysOrgTreeDto sysOrg) {
-         return sysOrgService.updateOrg(sysOrg);
+        return sysOrgService.updateOrg(sysOrg);
     }
 
     @DELETE

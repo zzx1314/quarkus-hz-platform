@@ -32,10 +32,10 @@ public class DronesDeviceController {
     @Inject
     DronesDeviceService dronesDeviceService;
 
-
     @GET
     @Path("/getPage")
-    public R<PageResult<DronesDevice>> getPage(@BeanParam DronesDeviceQueryDto dto, @BeanParam PageRequest pageRequest) {
+    public R<PageResult<DronesDevice>> getPage(@BeanParam DronesDeviceQueryDto dto,
+            @BeanParam PageRequest pageRequest) {
         return R.ok(dronesDeviceService.listPage(dto, pageRequest));
     }
 
@@ -51,7 +51,6 @@ public class DronesDeviceController {
         return R.ok(dronesDeviceService.listEntitys());
     }
 
-    
     @GET
     @Path("/getSelectOption")
     public R<List<SelectOption>> getSelectOption() {

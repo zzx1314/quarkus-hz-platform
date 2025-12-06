@@ -41,11 +41,9 @@ public class DeviceNodeAction {
      */
     private DeviceNodeActionParallelGroup parallelGroup;
 
-
     /**
      * 超时
      */
     private String timeout;
 
-    
 }

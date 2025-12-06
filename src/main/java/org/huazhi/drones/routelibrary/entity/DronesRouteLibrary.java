@@ -16,11 +16,11 @@ import lombok.experimental.Accessors;
 @Data
 @Entity
 @Accessors(chain = true)
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 public class DronesRouteLibrary extends PanacheEntityBase {
     @Id
-	@GeneratedValue
-	private Long id;
+    @GeneratedValue
+    private Long id;
 
     /**
      * 路线名称
@@ -52,13 +52,12 @@ public class DronesRouteLibrary extends PanacheEntityBase {
      */
     private String endCoordinates;
 
-
     /**
      * 关联模型的id
      */
     private long modelId;
 
-     /**
+    /**
      * 创建时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
@@ -67,16 +66,16 @@ public class DronesRouteLibrary extends PanacheEntityBase {
     /**
      * 更新时间
      */
-	private LocalDateTime updateTime;
+    private LocalDateTime updateTime;
 
     /**
      * 是否删除
      */
-     @Column(columnDefinition = "INT DEFAULT 0")
-     private Integer isDeleted;
+    @Column(columnDefinition = "INT DEFAULT 0")
+    private Integer isDeleted;
 
-     /**
+    /**
      * 路线数据
      */
-     private String routeData;
+    private String routeData;
 }

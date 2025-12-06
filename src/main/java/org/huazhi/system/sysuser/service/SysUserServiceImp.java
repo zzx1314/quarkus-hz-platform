@@ -30,30 +30,30 @@ public class SysUserServiceImp implements SysUserService {
     @Inject
     SysUserMapper sysUserMapper;
 
-
     @Override
     public List<SysUser> listUsers() {
-        return sysUserRepository.list("isDeleted = ?1", Sort.by("createTime"),  0);
+        return sysUserRepository.list("isDeleted = ?1", Sort.by("createTime"), 0);
     }
+
     @Override
     public R<SysUserDto> authenticate(String username, String password) {
         // 先解密
         password = AESUtils.decrypt(password, null);
-        Optional<SysUser> firstResultOptional = sysUserRepository.find("username = ?1", username).firstResultOptional();    
+        Optional<SysUser> firstResultOptional = sysUserRepository.find("username = ?1", username).firstResultOptional();
         if (firstResultOptional.isEmpty()) {
             return R.failed(null, "用户名不存在");
         }
         SysUser sysUser = firstResultOptional.get();
         SysUserDto sysUserDto = sysUserMapper.toDto(sysUser);
-    
+
         List<SysRole> sysRoleList = sysUser.getRoles();
         if (sysRoleList != null && !sysRoleList.isEmpty()) {
-           // 补充角色
-           List<Long> roleIdList = sysRoleList.stream().map(SysRole::getId).collect(Collectors.toList());
-           sysUserDto.setRoleIdList(roleIdList);
+            // 补充角色
+            List<Long> roleIdList = sysRoleList.stream().map(SysRole::getId).collect(Collectors.toList());
+            sysUserDto.setRoleIdList(roleIdList);
 
-           // 补充权限
-           List<String> permissionList = sysRoleList.stream()
+            // 补充权限
+            List<String> permissionList = sysRoleList.stream()
                     .flatMap(role -> role.getMenus().stream())
                     .filter(menu -> menu.getPermission() != null && menu.getPermission().length() > 0)
                     .map(SysMenu::getPermission)
@@ -64,22 +64,26 @@ public class SysUserServiceImp implements SysUserService {
         if (!verifyResult) {
             return R.failed(null, "密码错误");
         }
-        return R.ok(sysUserDto,"登录成功");
+        return R.ok(sysUserDto, "登录成功");
     }
+
     @Override
     public List<SysUser> listUsersByDto(SysUserQueryDto sysUserDto) {
         return sysUserRepository.selectUserList(sysUserDto);
     }
+
     @Override
     public PageResult<SysUser> listUserPage(SysUserQueryDto dto, PageRequest pageRequest) {
         return sysUserRepository.selectUserPage(dto, pageRequest);
     }
+
     @Override
     public Boolean registerUser(SysUser sysUser) {
         sysUser.setCreateTime(LocalDateTime.now());
         sysUserRepository.persist(sysUser);
         return true;
     }
+
     @Override
     public SysUser listOne(SysUserQueryDto queryDto) {
         return sysUserRepository.selectOne(queryDto);

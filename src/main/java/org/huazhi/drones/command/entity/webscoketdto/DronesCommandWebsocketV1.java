@@ -27,8 +27,7 @@ public class DronesCommandWebsocketV1 {
     /**
      * 服务列表
      */
-    private List<DronesServicesVo> services; 
-
+    private List<DronesServicesVo> services;
 
     /**
      * 错误动作列表

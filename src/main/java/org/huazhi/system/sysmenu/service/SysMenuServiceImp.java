@@ -33,10 +33,9 @@ public class SysMenuServiceImp implements SysMenuService {
     @Inject
     SysMenuMapper sysMenuMapper;
 
-
     @Override
     public List<SysMenu> listEntitys() {
-        return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
+        return repository.list("isDeleted = ?1", Sort.by("createTime"), 0);
     }
 
     @Override
@@ -67,8 +66,8 @@ public class SysMenuServiceImp implements SysMenuService {
 
             // 权限组合
             Map<Integer, List<SysMenu>> greoupByPIdMap = menus.stream()
-			.filter(sysMenu -> sysMenu.getType() == 2)
-			.collect(Collectors.groupingBy(SysMenu::getParentId));
+                    .filter(sysMenu -> sysMenu.getType() == 2)
+                    .collect(Collectors.groupingBy(SysMenu::getParentId));
 
             return menus.stream().map(one -> {
                 MenuVo menuVo = sysMenuMapper.toMenuVo(one);
@@ -86,7 +85,7 @@ public class SysMenuServiceImp implements SysMenuService {
     @Override
     public SysMenu updateMenu(SysMenuDto dto) {
         SysMenu entity = SysMenu.findById(dto.getId());
-        if(entity == null) {
+        if (entity == null) {
             throw new NotFoundException();
         }
         entity.setUpdateTime(LocalDateTime.now());

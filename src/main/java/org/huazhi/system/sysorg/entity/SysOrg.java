@@ -15,14 +15,14 @@ import jakarta.persistence.Table;
 @Data
 @Entity
 @Table(name = "p_sys_org")
-@EqualsAndHashCode(callSuper=false)
-public class SysOrg extends PanacheEntityBase{
+@EqualsAndHashCode(callSuper = false)
+public class SysOrg extends PanacheEntityBase {
 
 	/**
 	 * 主键
 	 */
 	@Id
-    @GeneratedValue
+	@GeneratedValue
 	private Integer id;
 
 	/**

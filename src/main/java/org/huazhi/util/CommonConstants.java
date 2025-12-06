@@ -4,7 +4,7 @@ public interface CommonConstants {
 
 	String VALID_CLIENT_ID = "myclient";
 
-    String VALID_CLIENT_SECRET = "mysecret";
+	String VALID_CLIENT_SECRET = "mysecret";
 
 	/**
 	 * 菜单
@@ -19,7 +19,7 @@ public interface CommonConstants {
 	/**
 	 * 生效时间
 	 */
-    long EXPIRES_IN = 3600L;
+	long EXPIRES_IN = 3600L;
 
 	/**
 	 * 刷新 token 生效时间

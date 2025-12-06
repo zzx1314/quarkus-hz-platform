@@ -8,7 +8,7 @@ import java.util.List;
 import jakarta.ws.rs.QueryParam;
 
 @Data
-@Accessors(chain = true) 
+@Accessors(chain = true)
 public class DronesConfigQueryDto {
     @QueryParam("id")
     private Long id;

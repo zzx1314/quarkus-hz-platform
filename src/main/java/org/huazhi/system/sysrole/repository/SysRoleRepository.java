@@ -14,45 +14,45 @@ import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class SysRoleRepository implements PanacheRepository<SysRole>{
+public class SysRoleRepository implements PanacheRepository<SysRole> {
 
-    public List<SysRole> selectRoleList(SysRoleQueryDto sysRoleQueryDto) {
-        QueryBuilder qb = QueryBuilder.create()
-                .alias("r")
-                .equal("id", sysRoleQueryDto.getId())
-                .equal("isDeleted", 0)
-                .like("name", sysRoleQueryDto.getName());
+        public List<SysRole> selectRoleList(SysRoleQueryDto sysRoleQueryDto) {
+                QueryBuilder qb = QueryBuilder.create()
+                                .alias("r")
+                                .equal("id", sysRoleQueryDto.getId())
+                                .equal("isDeleted", 0)
+                                .like("name", sysRoleQueryDto.getName());
 
-        String baseQuery = "FROM SysRole r LEFT JOIN FETCH r.menus WHERE " + qb.getQuery();
-        return find(baseQuery, qb.getParams()).list();
-    }
+                String baseQuery = "FROM SysRole r LEFT JOIN FETCH r.menus WHERE " + qb.getQuery();
+                return find(baseQuery, qb.getParams()).list();
+        }
 
-    public PageResult<SysRole> selectRolePage(SysRoleQueryDto dto, PageRequest pageRequest) {
-        QueryBuilder qb = QueryBuilder.create()
-                .equal("isDeleted", 0)
-                .like("name", dto.getName())
-                .between("createTime", dto.getBeginTime(), dto.getEndTime())
-                .orderBy("createTime desc");
+        public PageResult<SysRole> selectRolePage(SysRoleQueryDto dto, PageRequest pageRequest) {
+                QueryBuilder qb = QueryBuilder.create()
+                                .equal("isDeleted", 0)
+                                .like("name", dto.getName())
+                                .between("createTime", dto.getBeginTime(), dto.getEndTime())
+                                .orderBy("createTime desc");
 
-        PanacheQuery<SysRole> query = find(qb.getQuery(), qb.getParams())
-                .page(Page.of(pageRequest.getPageIndex(), pageRequest.getSize()));
+                PanacheQuery<SysRole> query = find(qb.getQuery(), qb.getParams())
+                                .page(Page.of(pageRequest.getPageIndex(), pageRequest.getSize()));
 
-        return new PageResult<>(
-                query.list(),
-                query.count(),
-                pageRequest.getPage(),
-                pageRequest.getSize());
-    }
+                return new PageResult<>(
+                                query.list(),
+                                query.count(),
+                                pageRequest.getPage(),
+                                pageRequest.getSize());
+        }
 
-    public SysRole selectOne(SysRoleQueryDto sysRoleQueryDto) {
-        QueryBuilder qb = QueryBuilder.create()
-                .alias("r")
-                .equal("code", sysRoleQueryDto.getCode())
-                .equal("id", sysRoleQueryDto.getId())
-                .equal("isDeleted", 0)
-                .like("name", sysRoleQueryDto.getName());
+        public SysRole selectOne(SysRoleQueryDto sysRoleQueryDto) {
+                QueryBuilder qb = QueryBuilder.create()
+                                .alias("r")
+                                .equal("code", sysRoleQueryDto.getCode())
+                                .equal("id", sysRoleQueryDto.getId())
+                                .equal("isDeleted", 0)
+                                .like("name", sysRoleQueryDto.getName());
 
-        String baseQuery = "FROM SysRole r LEFT JOIN FETCH r.menus WHERE " + qb.getQuery();
-        return find(baseQuery, qb.getParams()).singleResult();
-    }
+                String baseQuery = "FROM SysRole r LEFT JOIN FETCH r.menus WHERE " + qb.getQuery();
+                return find(baseQuery, qb.getParams()).singleResult();
+        }
 }

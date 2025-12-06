@@ -24,13 +24,13 @@ import jakarta.persistence.Table;
 @Data
 @Entity
 @Table(name = "p_sys_user")
-@EqualsAndHashCode(callSuper=false)
-public class SysUser extends PanacheEntityBase{
+@EqualsAndHashCode(callSuper = false)
+public class SysUser extends PanacheEntityBase {
 	/**
 	 * 主键
 	 */
 	@Id
-    @GeneratedValue
+	@GeneratedValue
 	private Long id;
 
 	/**
@@ -135,12 +135,8 @@ public class SysUser extends PanacheEntityBase{
 	private String sex;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "p_sys_user_role",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
+	@JoinTable(name = "p_sys_user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	@JsonIgnore
-    public List<SysRole> roles = new ArrayList<>();
+	public List<SysRole> roles = new ArrayList<>();
 
 }

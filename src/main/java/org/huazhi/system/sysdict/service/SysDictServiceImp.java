@@ -18,9 +18,10 @@ import jakarta.inject.Inject;
 public class SysDictServiceImp implements SysDictService {
     @Inject
     SysDictRepository repository;
+
     @Override
     public List<SysDict> listEntitys() {
-        return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
+        return repository.list("isDeleted = ?1", Sort.by("createTime"), 0);
     }
 
     @Override
@@ -42,8 +43,8 @@ public class SysDictServiceImp implements SysDictService {
 
     @Override
     public List<SysDictItem> getItemByType(String type) {
-         SysDict oneDict = repository.find("type = ?1", type).singleResult();
-         return oneDict.getSysDictItems();
+        SysDict oneDict = repository.find("type = ?1", type).singleResult();
+        return oneDict.getSysDictItems();
     }
 
 }

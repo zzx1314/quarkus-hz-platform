@@ -31,10 +31,10 @@ public class DronesCommandController {
     @Inject
     DronesCommandService dronesCommandService;
 
-
     @GET
     @Path("/getPage")
-    public R<PageResult<DronesCommand>> getPage(@BeanParam DronesCommandQueryDto dto, @BeanParam PageRequest pageRequest) {
+    public R<PageResult<DronesCommand>> getPage(@BeanParam DronesCommandQueryDto dto,
+            @BeanParam PageRequest pageRequest) {
         return R.ok(dronesCommandService.listPage(dto, pageRequest));
     }
 

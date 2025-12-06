@@ -13,16 +13,15 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
-
 @Data
 @Entity
 @Accessors(chain = true)
-@EqualsAndHashCode(callSuper=false)
-public class DronesConfig  extends PanacheEntityBase{
+@EqualsAndHashCode(callSuper = false)
+public class DronesConfig extends PanacheEntityBase {
     @Id
-	@GeneratedValue
-	private Long id;
-    
+    @GeneratedValue
+    private Long id;
+
     /**
      * 配置名称
      */
@@ -38,7 +37,7 @@ public class DronesConfig  extends PanacheEntityBase{
      */
     private String description;
 
-     /**
+    /**
      * 创建时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
@@ -48,11 +47,11 @@ public class DronesConfig  extends PanacheEntityBase{
      * 更新时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
-	private LocalDateTime updateTime;
+    private LocalDateTime updateTime;
 
     /**
      * 是否删除
      */
-     @Column(columnDefinition = "INT DEFAULT 0")
-     private Integer isDeleted;
+    @Column(columnDefinition = "INT DEFAULT 0")
+    private Integer isDeleted;
 }

@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class SysOrgDto {
-    private Long id;
-    /**
+	private Long id;
+	/**
 	 * 组织名称
 	 */
 	private String name;

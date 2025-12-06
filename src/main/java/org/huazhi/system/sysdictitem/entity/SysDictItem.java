@@ -20,14 +20,14 @@ import jakarta.persistence.Table;
 @Data
 @Entity
 @Table(name = "p_sys_dict_item")
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 public class SysDictItem extends PanacheEntityBase {
 
 	/**
 	 * 主键
 	 */
 	@Id
-    @GeneratedValue
+	@GeneratedValue
 	private Integer id;
 
 	/**
@@ -83,12 +83,11 @@ public class SysDictItem extends PanacheEntityBase {
 
 	private Boolean allowDeletion;
 
-
 	/**
 	 * 所属字典ID
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "dict_id")
+	@JoinColumn(name = "dict_id")
 	private SysDict sysDict;
 
 }

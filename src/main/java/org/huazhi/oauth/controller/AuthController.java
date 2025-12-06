@@ -1,6 +1,5 @@
 package org.huazhi.oauth.controller;
 
-
 import org.huazhi.oauth.service.AuthService;
 import org.huazhi.util.R;
 
@@ -27,7 +26,6 @@ public class AuthController {
 
     @Context
     HttpHeaders headers;
-
 
     @POST
     public Response token(@FormParam("grant_type") String grantType,

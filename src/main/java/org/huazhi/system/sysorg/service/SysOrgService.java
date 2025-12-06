@@ -9,7 +9,7 @@ import org.huazhi.system.sysorg.entity.vo.SysOrgVo;
 import org.huazhi.util.R;
 
 public interface SysOrgService {
-    
+
    List<SysOrg> listOrgs();
 
    List<SysOrg> listOrgsByDto(SysOrgQueryDto sysOrgDto);

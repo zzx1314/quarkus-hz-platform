@@ -11,7 +11,6 @@ public class DroneTaskPlan {
      */
     private String taskId;
 
-
     /**
      * 任务动作
      */

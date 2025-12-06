@@ -117,7 +117,7 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
             FileUtil.cleanDirectory(unZipPath);
             return R.ok(result);
         }
-       
+
         return R.ok();
     }
 
@@ -132,7 +132,7 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
         return -1;
     }
 
-    public  double[] getOrigin(List<String> lines) {
+    public double[] getOrigin(List<String> lines) {
         for (String line : lines) {
             line = line.trim();
             if (line.startsWith("origin:")) {

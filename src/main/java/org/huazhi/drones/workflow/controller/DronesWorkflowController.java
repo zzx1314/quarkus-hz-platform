@@ -33,10 +33,10 @@ public class DronesWorkflowController {
     @Inject
     DronesWorkflowService dronesWorkflowService;
 
-
     @GET
     @Path("/getPage")
-    public R<PageResult<DronesWorkflow>> getPage(@BeanParam DronesWorkflowQueryDto dto, @BeanParam PageRequest pageRequest) {
+    public R<PageResult<DronesWorkflow>> getPage(@BeanParam DronesWorkflowQueryDto dto,
+            @BeanParam PageRequest pageRequest) {
         return R.ok(dronesWorkflowService.listPage(dto, pageRequest));
     }
 
@@ -63,7 +63,6 @@ public class DronesWorkflowController {
     public R<List<DronesRouteLibraryVo>> getRouteByTaskId(@PathParam("taskId") Long taskId) {
         return R.ok(dronesWorkflowService.getRouteByTaskId(taskId));
     }
-
 
     @GET
     @Path("/getAll")

@@ -26,7 +26,7 @@ public class DronesDeviceRepository implements PanacheRepository<DronesDevice> {
     @Inject
     DronesDeviceMapper mapper;
 
-     public List<DronesDevice> selectList(DronesDeviceQueryDto queryDto) {
+    public List<DronesDevice> selectList(DronesDeviceQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
@@ -104,14 +104,14 @@ public class DronesDeviceRepository implements PanacheRepository<DronesDevice> {
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> getDeviceCountByDay() {
         String sql = """
-            SELECT
-                TO_CHAR(date_trunc('day', create_time), 'YYYY-MM-DD') AS date,
-                COUNT(*) AS count
-            FROM drones_device
-            WHERE create_time >= NOW() - INTERVAL '14 days'
-            GROUP BY date_trunc('day', create_time)
-            ORDER BY date ASC
-        """;
+                    SELECT
+                        TO_CHAR(date_trunc('day', create_time), 'YYYY-MM-DD') AS date,
+                        COUNT(*) AS count
+                    FROM drones_device
+                    WHERE create_time >= NOW() - INTERVAL '14 days'
+                    GROUP BY date_trunc('day', create_time)
+                    ORDER BY date ASC
+                """;
 
         List<Object[]> rows = getEntityManager().createNativeQuery(sql).getResultList();
         List<Map<String, Object>> result = new ArrayList<>();
@@ -127,14 +127,14 @@ public class DronesDeviceRepository implements PanacheRepository<DronesDevice> {
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> countDeviceByType() {
         String sql = """
-            SELECT
-                drones_device.device_type AS name,
-                COUNT(drones_device.id) AS count
-            FROM drones_device
-            WHERE drones_device.is_deleted = 0
-            GROUP BY drones_device.device_type
-            ORDER BY count DESC
-        """;
+                    SELECT
+                        drones_device.device_type AS name,
+                        COUNT(drones_device.id) AS count
+                    FROM drones_device
+                    WHERE drones_device.is_deleted = 0
+                    GROUP BY drones_device.device_type
+                    ORDER BY count DESC
+                """;
         List<Object[]> rows = getEntityManager().createNativeQuery(sql).getResultList();
 
         List<Map<String, Object>> result = new ArrayList<>();

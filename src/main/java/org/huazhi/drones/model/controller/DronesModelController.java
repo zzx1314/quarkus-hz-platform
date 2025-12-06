@@ -35,7 +35,6 @@ public class DronesModelController {
     @Inject
     DronesModelService dronesModelService;
 
-
     @GET
     @Path("/getPage")
     public R<PageResult<DronesModel>> getPage(@BeanParam DronesModelQueryDto dto, @BeanParam PageRequest pageRequest) {
@@ -77,10 +76,10 @@ public class DronesModelController {
     @POST
     @Path(value = "/uploadFile")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-	public R<Object> uploadFile(@RestForm("file") FileUpload file, @RestForm String modelInfo) throws Exception {
-		DronesModelDto modelDto = JsonUtil.fromJson(modelInfo, DronesModelDto.class);
-		return dronesModelService.uploadFile(file, modelDto);
-	}
+    public R<Object> uploadFile(@RestForm("file") FileUpload file, @RestForm String modelInfo) throws Exception {
+        DronesModelDto modelDto = JsonUtil.fromJson(modelInfo, DronesModelDto.class);
+        return dronesModelService.uploadFile(file, modelDto);
+    }
 
     @DELETE
     @Path("/{id}")

@@ -21,9 +21,10 @@ import jakarta.inject.Inject;
 public class DronesConfigServiceImp implements DronesConfigService {
     @Inject
     DronesConfigRepository repository;
+
     @Override
     public List<DronesConfig> listEntitys() {
-        return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
+        return repository.list("isDeleted = ?1", Sort.by("createTime"), 0);
     }
 
     @Override

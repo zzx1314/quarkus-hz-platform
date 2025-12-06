@@ -23,7 +23,7 @@ public class DronesMediaRepository implements PanacheRepository<DronesMedia> {
     @Inject
     DronesMediaMapper mapper;
 
-     public List<DronesMedia> selectList(DronesMediaQueryDto queryDto) {
+    public List<DronesMedia> selectList(DronesMediaQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();

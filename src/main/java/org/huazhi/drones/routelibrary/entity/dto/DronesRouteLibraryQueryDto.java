@@ -5,7 +5,7 @@ import lombok.experimental.Accessors;
 import jakarta.ws.rs.QueryParam;
 
 @Data
-@Accessors(chain = true) 
+@Accessors(chain = true)
 public class DronesRouteLibraryQueryDto {
     @QueryParam("id")
     private Long id;
@@ -16,7 +16,7 @@ public class DronesRouteLibraryQueryDto {
     @QueryParam("endTime")
     private String endTime;
 
-     /**
+    /**
      * 路线名称
      */
     @QueryParam("routeName")

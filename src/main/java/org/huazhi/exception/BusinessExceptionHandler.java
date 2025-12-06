@@ -17,4 +17,3 @@ public class BusinessExceptionHandler implements ExceptionMapper<BusinessExcepti
                 .build();
     }
 }
-

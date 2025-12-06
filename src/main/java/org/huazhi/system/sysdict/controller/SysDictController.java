@@ -38,7 +38,6 @@ public class SysDictController {
     @Inject
     SysDictService sysDictService;
 
-
     @GET
     @Path("/getPage")
     public R<PageResult<SysDict>> getPage(@BeanParam SysDictQueryDto dto, @BeanParam PageRequest pageRequest) {
@@ -59,20 +58,19 @@ public class SysDictController {
 
     @GET
     @Path("/getSafePolicy")
-	public R<Object> getSafePolicy() {
-		// 安全策略
-		List<SysDictItem> safePolity = sysDictService.getItemByType("sys_security_policy");
-		JsonObject result = new JsonObject();
-		for (SysDictItem sysDictItem : safePolity) {
-			if ("sysOvertime".equals(sysDictItem.getType())) {
-				result.put(sysDictItem.getType(), Integer.parseInt(sysDictItem.getValue()) + "");
-			}
-			else {
-				result.put(sysDictItem.getType(), sysDictItem.getValue());
-			}
-		}
-		return R.ok(result);
-	}
+    public R<Object> getSafePolicy() {
+        // 安全策略
+        List<SysDictItem> safePolity = sysDictService.getItemByType("sys_security_policy");
+        JsonObject result = new JsonObject();
+        for (SysDictItem sysDictItem : safePolity) {
+            if ("sysOvertime".equals(sysDictItem.getType())) {
+                result.put(sysDictItem.getType(), Integer.parseInt(sysDictItem.getValue()) + "");
+            } else {
+                result.put(sysDictItem.getType(), sysDictItem.getValue());
+            }
+        }
+        return R.ok(result);
+    }
 
     @POST
     @Path("/create")
@@ -86,7 +84,7 @@ public class SysDictController {
     @Transactional
     public R<SysDict> update(SysDictDto dto) {
         SysDict entity = SysDict.findById(dto.getId());
-        if(entity == null) {
+        if (entity == null) {
             throw new NotFoundException();
         }
         entity.setUpdateTime(LocalDateTime.now());

@@ -25,7 +25,7 @@ public class DronesServicesRepository implements PanacheRepository<DronesService
     @Inject
     DronesServicesMapper mapper;
 
-     public List<DronesServices> selectList(DronesServicesQueryDto queryDto) {
+    public List<DronesServices> selectList(DronesServicesQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
@@ -41,6 +41,7 @@ public class DronesServicesRepository implements PanacheRepository<DronesService
 
     /**
      * 根据类型列表批量查询服务
+     * 
      * @param types 服务类型集合
      * @return 服务列表
      */

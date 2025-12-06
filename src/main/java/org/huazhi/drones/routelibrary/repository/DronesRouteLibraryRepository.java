@@ -26,7 +26,7 @@ public class DronesRouteLibraryRepository implements PanacheRepository<DronesRou
     @Inject
     DronesRouteLibraryMapper mapper;
 
-     public List<DronesRouteLibrary> selectList(DronesRouteLibraryQueryDto queryDto) {
+    public List<DronesRouteLibrary> selectList(DronesRouteLibraryQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
@@ -84,14 +84,14 @@ public class DronesRouteLibraryRepository implements PanacheRepository<DronesRou
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> getDronesRouteLibraryCountByDay() {
         String sql = """
-            SELECT
-                TO_CHAR(date_trunc('day', create_time), 'YYYY-MM-DD') AS date,
-                COUNT(*) AS count
-            FROM drones_route_library
-            WHERE create_time >= NOW() - INTERVAL '14 days'
-            GROUP BY date_trunc('day', create_time)
-            ORDER BY date ASC
-        """;
+                    SELECT
+                        TO_CHAR(date_trunc('day', create_time), 'YYYY-MM-DD') AS date,
+                        COUNT(*) AS count
+                    FROM drones_route_library
+                    WHERE create_time >= NOW() - INTERVAL '14 days'
+                    GROUP BY date_trunc('day', create_time)
+                    ORDER BY date ASC
+                """;
 
         List<Object[]> rows = getEntityManager().createNativeQuery(sql).getResultList();
         List<Map<String, Object>> result = new ArrayList<>();

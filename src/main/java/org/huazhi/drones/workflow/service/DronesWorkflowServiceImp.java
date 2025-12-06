@@ -49,7 +49,6 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
     @Inject
     DronesDeviceService deviceService;
 
-
     @Inject
     DronesRouteLibraryMapper mapper;
 
@@ -84,11 +83,11 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
             entity.setUpdateTime(LocalDateTime.now());
             repository.updateById(entity);
             return true;
-        }  
+        }
         entity.setCreateTime(LocalDateTime.now());
         entity.setIsDeleted(0);
         repository.persist(entity);
-        
+
         // 修改任务的workflowId
         DronesTask task = new DronesTask();
         task.setId(entity.getTaskId());
@@ -104,8 +103,8 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
     }
 
     @Override
-    public void replaceByDto(DronesWorkflowQueryDto queryDto,DronesWorkflowDto dto) {
-        repository.updateByQeryDto(queryDto ,dto);
+    public void replaceByDto(DronesWorkflowQueryDto queryDto, DronesWorkflowDto dto) {
+        repository.updateByQeryDto(queryDto, dto);
     }
 
     @Override
@@ -153,8 +152,8 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
 
             for (EdgeEntity edge : edgeEntityList) {
                 reverseEdgeMap
-                    .computeIfAbsent(edge.getTarget(), k -> new ArrayList<>())
-                    .add(edge.getSource());
+                        .computeIfAbsent(edge.getTarget(), k -> new ArrayList<>())
+                        .add(edge.getSource());
             }
             dronesWorkflowVo.setReverseEdgeMap(reverseEdgeMap);
 
@@ -170,6 +169,7 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
 
     /**
      * 获取任务下的所有航线
+     * 
      * @param taskId
      * @return
      */
@@ -178,14 +178,15 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
         List<DronesRouteLibraryVo> result = new ArrayList<>();
         DronesWorkflow dronesWorkflow = getWorkflow(taskId);
         // 从地图中找到设备节点，然后从设备节点找到具体的航线数据
-        if (null != dronesWorkflow) { 
+        if (null != dronesWorkflow) {
             String nodes = dronesWorkflow.getNodes();
             List<NodeEntity> nodeEntityList = JsonUtil.fromJsonToList(nodes, NodeEntity.class);
             for (NodeEntity nodeEntity : nodeEntityList) {
                 if ("task".equals(nodeEntity.getType())) {
                     Long routeId = nodeEntity.getData().getRouteId();
                     DronesDevice deviceInfo = deviceService.listById(nodeEntity.getData().getDeviceId());
-                    DronesRouteLibrary route = routeLibraryService.listOne(new DronesRouteLibraryQueryDto().setId(routeId));
+                    DronesRouteLibrary route = routeLibraryService
+                            .listOne(new DronesRouteLibraryQueryDto().setId(routeId));
                     if (null != route) {
                         DronesRouteLibraryVo routeVo = new DronesRouteLibraryVo();
                         mapper.toVo(route, routeVo);

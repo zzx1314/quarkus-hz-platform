@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class DronesWorkflowVo {
 
-    /**
+	/**
 	 * 开始节点
 	 */
 	private NodeEntity startNode;
@@ -25,10 +25,7 @@ public class DronesWorkflowVo {
 	 */
 	Map<String, NodeEntity> nodeMap;
 
-
 	// 建立 targetId -> List<sourceId> 的映射
 	Map<String, List<String>> reverseEdgeMap;
 
-
-	
 }

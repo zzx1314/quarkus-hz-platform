@@ -26,9 +26,10 @@ import jakarta.transaction.Transactional;
 public class DronesDeviceServiceImp implements DronesDeviceService {
     @Inject
     DronesDeviceRepository repository;
+
     @Override
     public List<DronesDevice> listEntitys() {
-        return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
+        return repository.list("isDeleted = ?1", Sort.by("createTime"), 0);
     }
 
     @Override
@@ -147,7 +148,7 @@ public class DronesDeviceServiceImp implements DronesDeviceService {
 
     @Override
     public long count() {
-       return repository.count("isDeleted = ?1", 0);
+        return repository.count("isDeleted = ?1", 0);
     }
 
     @Override
@@ -159,6 +160,5 @@ public class DronesDeviceServiceImp implements DronesDeviceService {
     public DronesDevice listById(Long id) {
         return repository.findById(id);
     }
-
 
 }

@@ -13,7 +13,7 @@ public class MessageInfo {
      */
     private String deviceId;
 
-     /**
+    /**
      * 速度
      */
     private String speed;

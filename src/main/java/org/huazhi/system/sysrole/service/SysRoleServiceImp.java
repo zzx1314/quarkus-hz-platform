@@ -20,7 +20,7 @@ public class SysRoleServiceImp implements SysRoleService {
 
     @Override
     public List<SysRole> listRoles() {
-        return sysRoleRepository.list("isDeleted = ?1", Sort.by("createTime"),  0);
+        return sysRoleRepository.list("isDeleted = ?1", Sort.by("createTime"), 0);
     }
 
     @Override

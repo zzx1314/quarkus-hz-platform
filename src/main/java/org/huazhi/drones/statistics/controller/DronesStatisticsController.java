@@ -24,22 +24,22 @@ import jakarta.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class DronesStatisticsController {
-    @Inject
-    DronesDeviceService dronesDeviceService;
+	@Inject
+	DronesDeviceService dronesDeviceService;
 
-    @Inject
-    DronesTaskService dronesTaskService;
+	@Inject
+	DronesTaskService dronesTaskService;
 
-    @Inject
-    DronesRouteLibraryService dronesRouteLibraryService;
+	@Inject
+	DronesRouteLibraryService dronesRouteLibraryService;
 
-    @Inject
-    DronesModelService dronesModelService;
+	@Inject
+	DronesModelService dronesModelService;
 
-    @GET
-    @Path("/statisticsAll")
+	@GET
+	@Path("/statisticsAll")
 	public R<Object> statistics() {
-        List<ChartData> chartDataList = new ArrayList<>();
+		List<ChartData> chartDataList = new ArrayList<>();
 		// 设备统计
 		ChartData deviceData = getDeviceCount();
 		chartDataList.add(deviceData);
@@ -53,15 +53,15 @@ public class DronesStatisticsController {
 		ChartData modelCount = getModelCount();
 		chartDataList.add(modelCount);
 		return R.ok(chartDataList);
-    }
+	}
 
-    /**
+	/**
 	 * 统计一周内创建的数量
 	 */
-    @GET
+	@GET
 	@Path("statisticsAllType")
 	public R<Object> statisticsAllNum() {
-        List<BarChartData> barChartDataList = new ArrayList<>();
+		List<BarChartData> barChartDataList = new ArrayList<>();
 		// 上周的数据
 		BarChartData barChartDataBefore = new BarChartData();
 		List<Long> deviceCountBefore = dronesDeviceService.getDeviceCountBefore();
@@ -85,15 +85,15 @@ public class DronesStatisticsController {
 		barChartData.setModelCount(modelCount);
 		barChartDataList.add(barChartData);
 		return R.ok(barChartDataList);
-    }
+	}
 
-    /**
+	/**
 	 * 统计设备类型数量
 	 */
-    @GET
+	@GET
 	@Path("statisticsDeviceTypeNumber")
 	public R<Object> statisticsDeviceNumber() {
-        List<Map<String, Object>> result = dronesDeviceService.statisticsDeviceTypeNumber();
+		List<Map<String, Object>> result = dronesDeviceService.statisticsDeviceTypeNumber();
 
 		List<String> names = new ArrayList<>();
 		List<Integer> counts = new ArrayList<>();
@@ -107,10 +107,9 @@ public class DronesStatisticsController {
 		docChatData.setXData(names);
 		docChatData.setYData(counts);
 		return R.ok(docChatData);
-    }
+	}
 
-
-     /**
+	/**
 	 * 获取 设备 统计数据
 	 */
 	private ChartData getDeviceCount() {
@@ -135,7 +134,7 @@ public class DronesStatisticsController {
 		return chartData;
 	}
 
-    /**
+	/**
 	 * 获取任务统计
 	 */
 	private ChartData getTaskCount() {
@@ -162,8 +161,7 @@ public class DronesStatisticsController {
 		return chartData;
 	}
 
-
-    /**
+	/**
 	 * 获取航线统计
 	 */
 	private ChartData getRouteCount() {
@@ -183,7 +181,7 @@ public class DronesStatisticsController {
 		return chartData;
 	}
 
-    /**
+	/**
 	 * 获取模型统计
 	 */
 	private ChartData getModelCount() {

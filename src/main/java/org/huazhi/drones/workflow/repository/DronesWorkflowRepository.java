@@ -23,7 +23,7 @@ public class DronesWorkflowRepository implements PanacheRepository<DronesWorkflo
     @Inject
     DronesWorkflowMapper mapper;
 
-     public List<DronesWorkflow> selectList(DronesWorkflowQueryDto queryDto) {
+    public List<DronesWorkflow> selectList(DronesWorkflowQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
@@ -36,7 +36,7 @@ public class DronesWorkflowRepository implements PanacheRepository<DronesWorkflo
                 .equal("uuid", queryDto.getUuid())
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).singleResultOptional()
-        .orElse(null);
+                .orElse(null);
     }
 
     public PageResult<DronesWorkflow> selectPage(DronesWorkflowQueryDto dto, PageRequest pageRequest) {

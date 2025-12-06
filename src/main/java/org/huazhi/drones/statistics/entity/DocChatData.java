@@ -1,4 +1,5 @@
 package org.huazhi.drones.statistics.entity;
+
 import lombok.Data;
 
 import java.util.List;

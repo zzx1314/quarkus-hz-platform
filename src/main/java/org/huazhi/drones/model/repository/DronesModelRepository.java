@@ -26,7 +26,7 @@ public class DronesModelRepository implements PanacheRepository<DronesModel> {
     @Inject
     DronesModelMapper mapper;
 
-     public List<DronesModel> selectList(DronesModelQueryDto queryDto) {
+    public List<DronesModel> selectList(DronesModelQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
@@ -83,14 +83,14 @@ public class DronesModelRepository implements PanacheRepository<DronesModel> {
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> getModelCountByDay() {
         String sql = """
-            SELECT
-                TO_CHAR(date_trunc('day', create_time), 'YYYY-MM-DD') AS date,
-                COUNT(*) AS count
-            FROM drones_model
-            WHERE create_time >= NOW() - INTERVAL '14 days'
-            GROUP BY date_trunc('day', create_time)
-            ORDER BY date ASC
-        """;
+                    SELECT
+                        TO_CHAR(date_trunc('day', create_time), 'YYYY-MM-DD') AS date,
+                        COUNT(*) AS count
+                    FROM drones_model
+                    WHERE create_time >= NOW() - INTERVAL '14 days'
+                    GROUP BY date_trunc('day', create_time)
+                    ORDER BY date ASC
+                """;
 
         List<Object[]> rows = getEntityManager().createNativeQuery(sql).getResultList();
         List<Map<String, Object>> result = new ArrayList<>();

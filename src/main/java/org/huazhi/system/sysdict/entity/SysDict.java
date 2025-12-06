@@ -18,18 +18,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
-
 @Data
 @Entity
 @Table(name = "p_sys_dict")
-@EqualsAndHashCode(callSuper=false)
-public class SysDict extends PanacheEntityBase{
+@EqualsAndHashCode(callSuper = false)
+public class SysDict extends PanacheEntityBase {
 
 	/**
 	 * 主键
 	 */
 	@Id
-    @GeneratedValue
+	@GeneratedValue
 	private Integer id;
 
 	/**
@@ -69,8 +68,7 @@ public class SysDict extends PanacheEntityBase{
 	@Column(columnDefinition = "INT DEFAULT 0")
 	private Integer isDeleted;
 
-	
 	@OneToMany(mappedBy = "sysDict", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<SysDictItem> sysDictItems;
+	private List<SysDictItem> sysDictItems;
 
 }

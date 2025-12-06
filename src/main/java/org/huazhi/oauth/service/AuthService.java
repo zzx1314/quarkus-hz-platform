@@ -36,8 +36,9 @@ public class AuthService {
     @Inject
     JWTParser jwtParser;
 
-    public Response authenticate(String grantType, String username, String password, String clientId, String clientSecret) {
-         if ("password".equals(grantType)) {
+    public Response authenticate(String grantType, String username, String password, String clientId,
+            String clientSecret) {
+        if ("password".equals(grantType)) {
             R<SysUserDto> checkResut = userService.authenticate(username, password);
             if (checkResut.getCode() != CommonConstants.SUCCESS) {
                 return Response.status(401)
@@ -49,7 +50,8 @@ public class AuthService {
             return createTokenResponse(accessToken, refreshToken, checkResut.getData());
 
         } else if ("client_credentials".equals(grantType)) {
-            if (!CommonConstants.VALID_CLIENT_ID.equals(clientId) || !CommonConstants.VALID_CLIENT_SECRET.equals(clientSecret)) {
+            if (!CommonConstants.VALID_CLIENT_ID.equals(clientId)
+                    || !CommonConstants.VALID_CLIENT_SECRET.equals(clientSecret)) {
                 return Response.status(401)
                         .entity(Map.of("error", "invalid_client", "error_description", "Invalid client credentials"))
                         .build();
@@ -72,7 +74,7 @@ public class AuthService {
 
         SysUserDto userDto = redisUtil.getObject(key, SysUserDto.class);
         // 生成新的 Access Token
-        String jwt =  generateToken(userDto.getUsername(), userDto);
+        String jwt = generateToken(userDto.getUsername(), userDto);
 
         return createTokenResponse(jwt, refreshToken, userDto);
     }
@@ -111,10 +113,9 @@ public class AuthService {
                 Map.entry("roles", Objects.requireNonNullElse(userDto.getRoleIdList(), List.of())));
         return Response.ok(tokenResponse).build();
     }
-    
 
     private String generateToken(String subject, SysUserDto userDto) {
-        String jwt =  Jwt.claims()
+        String jwt = Jwt.claims()
                 .issuer("https://quarkus-oauth2-server")
                 .subject(subject)
                 .groups(new HashSet<>(Arrays.asList("User", "Admin")))
@@ -147,8 +148,8 @@ public class AuthService {
         // 检查 token 是否存在于 Redis
         if (!redisUtil.exists(key)) {
             return Response.status(401)
-                        .entity(R.failed("UNAUTHORIZED", "Invalid access token"))
-                        .build();
+                    .entity(R.failed("UNAUTHORIZED", "Invalid access token"))
+                    .build();
         }
         try {
             JsonWebToken jwt = jwtParser.parse(token);
@@ -161,7 +162,7 @@ public class AuthService {
             }
             // 验证成功：返回 Token 信息或业务响应
             return Response.ok()
-                    .entity(R.ok(Map.of("userId", jwt.getSubject(), "exp", jwt.getExpirationTime()),"Token valid"))
+                    .entity(R.ok(Map.of("userId", jwt.getSubject(), "exp", jwt.getExpirationTime()), "Token valid"))
                     .build();
         } catch (ParseException e) {
             // 捕获验证失败（e.g., 过期、签名无效）
@@ -175,8 +176,5 @@ public class AuthService {
                     .build();
         }
     }
-
-  
-
 
 }

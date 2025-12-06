@@ -8,7 +8,7 @@ import lombok.Data;
 public class DronesDeviceDto {
     private Long id;
 
-     /**
+    /**
      * 设备ID
      */
     private String deviceId;
@@ -53,12 +53,10 @@ public class DronesDeviceDto {
      */
     private String course;
 
-
     /**
      * 设备位置
      */
     private String location;
-
 
     /**
      * 设备型号

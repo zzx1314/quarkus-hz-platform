@@ -24,11 +24,11 @@ import lombok.experimental.Accessors;
 @Data
 @Entity
 @Accessors(chain = true)
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 public class DronesDevice extends PanacheEntityBase {
     @Id
-	@GeneratedValue
-	private Long id;
+    @GeneratedValue
+    private Long id;
 
     /**
      * 设备ID
@@ -88,7 +88,7 @@ public class DronesDevice extends PanacheEntityBase {
     /**
      * 更新时间
      */
-	private LocalDateTime updateTime;
+    private LocalDateTime updateTime;
 
     /**
      * 最后通信时间
@@ -99,6 +99,6 @@ public class DronesDevice extends PanacheEntityBase {
     /**
      * 是否删除
      */
-     @Column(columnDefinition = "INT DEFAULT 0")
-     private Integer isDeleted;
+    @Column(columnDefinition = "INT DEFAULT 0")
+    private Integer isDeleted;
 }

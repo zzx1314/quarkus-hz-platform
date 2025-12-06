@@ -101,6 +101,7 @@ public class MenuVo implements Serializable {
 
 	/**
 	 * menuId 相同则相同
+	 * 
 	 * @param obj
 	 * @return
 	 */

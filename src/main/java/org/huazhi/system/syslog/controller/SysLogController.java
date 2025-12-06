@@ -35,7 +35,6 @@ public class SysLogController {
     @Inject
     SysLogService sysLogService;
 
-
     @GET
     @Path("/getPage")
     public R<PageResult<SysLog>> getPage(@BeanParam SysLogQueryDto dto, @BeanParam PageRequest pageRequest) {
@@ -66,7 +65,7 @@ public class SysLogController {
     @Transactional
     public R<SysLog> update(SysLogDto dto) {
         SysLog entity = SysLog.findById(dto.getId());
-        if(entity == null) {
+        if (entity == null) {
             throw new NotFoundException();
         }
         mapper.updateEntityFromDto(dto, entity);

@@ -45,30 +45,29 @@ public class SysMenuController {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
-
     @GET
     public R<Object> getUserMenu() {
         // 获取符合条件的菜单
-        List<Long> roleIds  = securityUtil.getRole();
+        List<Long> roleIds = securityUtil.getRole();
         List<MenuVo> listMenuByRoleId = sysMenuService.listMenuByRoleId(roleIds.get(0));
         if (listMenuByRoleId != null && !listMenuByRoleId.isEmpty()) {
-            List<MenuTree> menuTreeList = listMenuByRoleId.stream().map(one ->{
+            List<MenuTree> menuTreeList = listMenuByRoleId.stream().map(one -> {
                 MenuMeta menuMeta = new MenuMeta();
-				menuMeta.setIcon(one.getIcon());
-				menuMeta.setRank(one.getSort());
-				menuMeta.setShowParent(one.getLeaf());
-				menuMeta.setTitle(one.getName());
-				menuMeta.setAuths(one.getAuths());
-				one.setMeta(menuMeta);
-				return one;
+                menuMeta.setIcon(one.getIcon());
+                menuMeta.setRank(one.getSort());
+                menuMeta.setShowParent(one.getLeaf());
+                menuMeta.setTitle(one.getName());
+                menuMeta.setAuths(one.getAuths());
+                one.setMeta(menuMeta);
+                return one;
             })
-            .filter(menuVo -> !CommonConstants.ACTION_BUTTON.equals(menuVo.getType()))
-				.map(MenuTree::new)
-				.sorted(Comparator.comparingInt(one -> one.getMeta().getRank()))
-            .collect(Collectors.toList());
+                    .filter(menuVo -> !CommonConstants.ACTION_BUTTON.equals(menuVo.getType()))
+                    .map(MenuTree::new)
+                    .sorted(Comparator.comparingInt(one -> one.getMeta().getRank()))
+                    .collect(Collectors.toList());
             ArrayNode arrayNode = mapper.convertValue(menuTreeList, ArrayNode.class);
             return R.ok(TreeUtil.listToTree(arrayNode));
-        } else{
+        } else {
             return R.failed();
         }
     }

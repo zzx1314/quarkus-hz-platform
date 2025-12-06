@@ -17,9 +17,10 @@ import jakarta.inject.Inject;
 public class SysDictItemServiceImp implements SysDictItemService {
     @Inject
     SysDictItemRepository repository;
+
     @Override
     public List<SysDictItem> listEntitys() {
-        return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
+        return repository.list("isDeleted = ?1", Sort.by("createTime"), 0);
     }
 
     @Override

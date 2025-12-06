@@ -3,7 +3,7 @@ package org.huazhi.drones.device.entity.dto;
 import lombok.Data;
 
 /**
- *  无人机上报状态数据
+ * 无人机上报状态数据
  */
 @Data
 public class DronesDeviceStatusDto {

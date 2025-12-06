@@ -59,7 +59,8 @@ public class JsonUtil {
      */
     public static Map<String, Object> fromJsonToMap(String json) {
         try {
-            return objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {});
+            return objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {
+            });
         } catch (Exception e) {
             throw new RuntimeException("JSON 转 Map 失败", e);
         }

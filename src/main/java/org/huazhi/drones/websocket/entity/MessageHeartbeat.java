@@ -12,6 +12,4 @@ public class MessageHeartbeat {
 
     private MessageDrones drones;
 
-
-
 }

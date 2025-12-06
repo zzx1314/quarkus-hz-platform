@@ -16,26 +16,26 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class SysLogRepository implements PanacheRepository<SysLog> {
 
-     public List<SysLog> selectList(SysLogQueryDto queryDto) {
-        QueryBuilder qb = QueryBuilder.create()
-                .equal("isDeleted", 0);
-        return find(qb.getQuery(), qb.getParams()).list();
-    }
+        public List<SysLog> selectList(SysLogQueryDto queryDto) {
+                QueryBuilder qb = QueryBuilder.create()
+                                .equal("isDeleted", 0);
+                return find(qb.getQuery(), qb.getParams()).list();
+        }
 
-    public PageResult<SysLog> selectPage(SysLogQueryDto dto, PageRequest pageRequest) {
-        QueryBuilder qb = QueryBuilder.create()
-                .equal("isDeleted", 0)
-                .between("createTime", dto.getBeginTime(), dto.getEndTime())
-                .orderBy("createTime desc");
+        public PageResult<SysLog> selectPage(SysLogQueryDto dto, PageRequest pageRequest) {
+                QueryBuilder qb = QueryBuilder.create()
+                                .equal("isDeleted", 0)
+                                .between("createTime", dto.getBeginTime(), dto.getEndTime())
+                                .orderBy("createTime desc");
 
-        PanacheQuery<SysLog> query = find(qb.getQuery(), qb.getParams())
-                .page(Page.of(pageRequest.getPageIndex(), pageRequest.getSize()));
+                PanacheQuery<SysLog> query = find(qb.getQuery(), qb.getParams())
+                                .page(Page.of(pageRequest.getPageIndex(), pageRequest.getSize()));
 
-        return new PageResult<>(
-                query.list(),
-                query.count(),
-                pageRequest.getPage(),
-                pageRequest.getSize());
-    }
+                return new PageResult<>(
+                                query.list(),
+                                query.count(),
+                                pageRequest.getPage(),
+                                pageRequest.getSize());
+        }
 
 }

@@ -30,28 +30,28 @@ import jakarta.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class SysAuthController {
-    @Inject
-    SysAuthService sysAuthService;
+	@Inject
+	SysAuthService sysAuthService;
 
-    @Inject
-    SysMenuService sysMenuService;
+	@Inject
+	SysMenuService sysMenuService;
 
-    @Inject
+	@Inject
 	SysRoleService sysRoleService;
 
-    @GET
-    @Path("/getMenuData/{adminCode}")
-    public R<Object> getMenuBtnPath(@PathParam("adminCode") String adminCode) {
+	@GET
+	@Path("/getMenuData/{adminCode}")
+	public R<Object> getMenuBtnPath(@PathParam("adminCode") String adminCode) {
 		return sysAuthService.getRoleAuth(adminCode);
 	}
 
-    @POST
-    @Path("/setMenuAuth")
-    @Transactional
-    public R<Object> setMenuAuth(SysAuthDto sysAuthDto) {
-        SysRoleQueryDto sysRoleDto = new SysRoleQueryDto();
-        sysRoleDto.setCode(sysAuthDto.getRoleCode());
-        SysRole sysRole = sysRoleService.listRoleByDto(sysRoleDto);
+	@POST
+	@Path("/setMenuAuth")
+	@Transactional
+	public R<Object> setMenuAuth(SysAuthDto sysAuthDto) {
+		SysRoleQueryDto sysRoleDto = new SysRoleQueryDto();
+		sysRoleDto.setCode(sysAuthDto.getRoleCode());
+		SysRole sysRole = sysRoleService.listRoleByDto(sysRoleDto);
 		// 将角色和菜单信息保存
 		List<Integer> authList = sysAuthDto.getAuthList();
 
@@ -60,8 +60,8 @@ public class SysAuthController {
 
 		Set<Integer> menuIdSet = new HashSet<>();
 		if (!authList.isEmpty()) {
-            SysMenuQueryDto sysMenuQueryDto = new SysMenuQueryDto();
-            sysMenuQueryDto.setIds(authList);
+			SysMenuQueryDto sysMenuQueryDto = new SysMenuQueryDto();
+			sysMenuQueryDto.setIds(authList);
 			List<SysMenu> sysMenus = sysMenuService.listEntitysByDto(sysMenuQueryDto);
 			Set<Integer> oneParentIdSet = sysMenus.stream().map(SysMenu::getParentId).collect(Collectors.toSet());
 			Set<Integer> authSetId = sysMenus.stream().map(SysMenu::getId).collect(Collectors.toSet());
@@ -72,20 +72,18 @@ public class SysAuthController {
 			}
 			menuIdSet.addAll(authSetId);
 
-
-            sysMenuQueryDto.setIds(menuIdSet.stream().collect(Collectors.toList()));
-            List<SysMenu> newSysMenus = sysMenuService.listEntitysByDto(sysMenuQueryDto);
-            sysRole.setMenus(newSysMenus);
+			sysMenuQueryDto.setIds(menuIdSet.stream().collect(Collectors.toList()));
+			List<SysMenu> newSysMenus = sysMenuService.listEntitysByDto(sysMenuQueryDto);
+			sysRole.setMenus(newSysMenus);
 		}
 		return R.ok();
-    }
+	}
 
-    private void getMenuIds(Integer parntId, Map<Integer, SysMenu> menuMap, Set<Integer> parentIdSet) {
+	private void getMenuIds(Integer parntId, Map<Integer, SysMenu> menuMap, Set<Integer> parentIdSet) {
 		SysMenu sysMenu = menuMap.get(parntId);
 		if (sysMenu == null) {
 			return;
-		}
-		else {
+		} else {
 			parentIdSet.add(sysMenu.getId());
 			getMenuIds(sysMenu.getParentId(), menuMap, parentIdSet);
 		}

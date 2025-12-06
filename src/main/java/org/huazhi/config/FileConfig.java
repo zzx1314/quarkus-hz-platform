@@ -8,5 +8,5 @@ import io.smallrye.config.ConfigMapping;
 public interface FileConfig {
     String basePath();
 
-   Map<String, String> unknown();
+    Map<String, String> unknown();
 }

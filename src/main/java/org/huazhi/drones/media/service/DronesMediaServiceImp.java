@@ -32,9 +32,10 @@ public class DronesMediaServiceImp implements DronesMediaService {
 
     @Inject
     SecurityUtil securityUtil;
+
     @Override
     public List<DronesMedia> listEntitys() {
-        return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
+        return repository.list("isDeleted = ?1", Sort.by("createTime"), 0);
     }
 
     @Override
@@ -83,14 +84,14 @@ public class DronesMediaServiceImp implements DronesMediaService {
 
     @Override
     public R<Object> uploadFile(FileUpload file, DronesMediaDto mediaDto) {
-         log.info("Uploading file: {}", file.fileName());
+        log.info("Uploading file: {}", file.fileName());
         // Save the file to a designated path
         String mcpFilePath = fileConfig.basePath() + "/media/" + securityUtil.getUserId();
         FileUtil.saveFile(file, mcpFilePath);
         if (mediaDto.getId() != null) {
             // Update existing record
             this.replaceByDto(mediaDto);
-        } else{
+        } else {
             // Create new record
             DronesMedia dronesMedia = new DronesMedia();
             dronesMedia.setMediaName(file.fileName());

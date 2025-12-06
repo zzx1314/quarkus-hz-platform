@@ -9,7 +9,8 @@ int main(void)
   curl_global_init(CURL_GLOBAL_DEFAULT);
 
   curl = curl_easy_init();
-  if(curl) {
+  if (curl)
+  {
     curl_easy_setopt(curl, CURLOPT_URL, "https://huazhi:4433/api/device/oBusLogs/reportLog");
 
     // 设置请求头
@@ -45,7 +46,7 @@ int main(void)
     res = curl_easy_perform(curl);
 
     // 检查错误
-    if(res != CURLE_OK)
+    if (res != CURLE_OK)
       fprintf(stderr, "curl_easy_perform() failed: %s\n",
               curl_easy_strerror(res));
 

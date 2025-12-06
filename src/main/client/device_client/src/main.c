@@ -2,15 +2,19 @@
 #include "Common.h"
 #include "Report.h"
 
-int main(void) {
-	char* token = NULL;
-	char* deviceId = "9527";
+int main(void)
+{
+	char *token = NULL;
+	char *deviceId = "9527";
 
 	// 请求认证
 	ClientAuth(&token);
-	if (token != NULL) {
+	if (token != NULL)
+	{
 		printf("token%s\n", token);
-	} else {
+	}
+	else
+	{
 		printf("failed to authen");
 	}
 

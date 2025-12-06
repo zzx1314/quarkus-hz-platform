@@ -23,13 +23,13 @@ import jakarta.persistence.Table;
 @Data
 @Entity
 @Table(name = "p_sys_menu")
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 public class SysMenu extends PanacheEntityBase {
 	/**
 	 * 主键
 	 */
 	@Id
-    @GeneratedValue
+	@GeneratedValue
 	private Integer id;
 
 	/**
@@ -122,6 +122,6 @@ public class SysMenu extends PanacheEntityBase {
 
 	@ManyToMany(mappedBy = "menus", fetch = FetchType.LAZY)
 	@JsonIgnore
-    public List<SysRole> roles = new ArrayList<>();
+	public List<SysRole> roles = new ArrayList<>();
 
 }

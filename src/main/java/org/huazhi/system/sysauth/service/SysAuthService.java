@@ -25,30 +25,29 @@ import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class SysAuthService {
-    @Inject
+	@Inject
 	private SysMenuService sysMenuService;
 
-    @Inject
+	@Inject
 	private SysRoleService sysRoleService;
 
-    @Inject
-    SysAuthMapper sysAuthMapper;
+	@Inject
+	SysAuthMapper sysAuthMapper;
 
-
-    public R<Object> getRoleAuth(String adminCode) {
+	public R<Object> getRoleAuth(String adminCode) {
 		List<SysAuthMenuVo> sysMenuVoList = new ArrayList<>();
 		// 所拥有的菜单
-        SysMenuQueryDto sysMenuQueryDto = new SysMenuQueryDto();
-        sysMenuQueryDto.setRoleCode(adminCode);
+		SysMenuQueryDto sysMenuQueryDto = new SysMenuQueryDto();
+		sysMenuQueryDto.setRoleCode(adminCode);
 		List<SysMenu> allMenu = sysMenuService.listEntitysByDto(sysMenuQueryDto);
 		if (!allMenu.isEmpty()) {
 			Map<Integer, SysMenu> allMenuMap = EntityUtils.toMap(allMenu, SysMenu::getId, e -> e);
 			// 找到按钮
-            sysMenuQueryDto.setType(2);
+			sysMenuQueryDto.setType(2);
 			List<SysMenu> sysMenuList = sysMenuService.listEntitysByDto(sysMenuQueryDto);
 			// 将按钮按照父节点进行分组
 			Map<Integer, List<SysMenu>> parentIdMap = sysMenuList.stream()
-				.collect(Collectors.groupingBy(SysMenu::getParentId));
+					.collect(Collectors.groupingBy(SysMenu::getParentId));
 			try {
 				parentIdMap.forEach((key, value) -> {
 					List<String> menuPathList = new ArrayList<>();
@@ -65,11 +64,10 @@ public class SysAuthService {
 					sysAuthMenuVo.setUseAuthList(this.getUseMenu(adminCode, key));
 
 					sysAuthMenuVo
-						.setIsCheckAll(sysAuthMenuVo.getAuthList().size() == sysAuthMenuVo.getUseAuthList().size());
+							.setIsCheckAll(sysAuthMenuVo.getAuthList().size() == sysAuthMenuVo.getUseAuthList().size());
 					sysMenuVoList.add(sysAuthMenuVo);
 				});
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				return R.failed("当前角色的权限路径不完整，请再菜单管理检查角色权限范围路径！");
 			}
 			for (int i = 0; i < sysMenuVoList.size(); i++) {
@@ -78,13 +76,12 @@ public class SysAuthService {
 			}
 		}
 		List<SysAuthMenuVo> result = sysMenuVoList.stream()
-			.sorted(Comparator.comparing(SysAuthMenuVo::getTitle))
-			.collect(Collectors.toList());
+				.sorted(Comparator.comparing(SysAuthMenuVo::getTitle))
+				.collect(Collectors.toList());
 		return R.ok(result);
 	}
 
-
-    private void getMenPath(Integer id, List<String> menuPathList, Map<Integer, SysMenu> allMenuMap) {
+	private void getMenPath(Integer id, List<String> menuPathList, Map<Integer, SysMenu> allMenuMap) {
 		if (id != -1) {
 			SysMenu sysMenu = allMenuMap.get(id);
 			menuPathList.add(sysMenu.getName());
@@ -93,18 +90,18 @@ public class SysAuthService {
 	}
 
 	private Set<Integer> getUseMenu(String adminCode, Integer id) {
-        SysMenuQueryDto queryDto = new SysMenuQueryDto();
-        queryDto.setParentId(id);
+		SysMenuQueryDto queryDto = new SysMenuQueryDto();
+		queryDto.setParentId(id);
 		List<SysMenu> menuList = sysMenuService.listEntitysByDto(queryDto);
 		List<Integer> mensonId = menuList.stream().map(SysMenu::getId).collect(Collectors.toList());
 
-        SysRoleQueryDto roleQueryDto = new SysRoleQueryDto();
-        roleQueryDto.setCode(adminCode);
+		SysRoleQueryDto roleQueryDto = new SysRoleQueryDto();
+		roleQueryDto.setCode(adminCode);
 		SysRole sysRole = sysRoleService.listRoleByDto(roleQueryDto);
 		List<Integer> allMenuId = sysRole.getMenus().stream().map(SysMenu::getId).collect(Collectors.toList());
 
-        // 取交集
-        Set<Integer> intersection = mensonId.stream().filter(allMenuId::contains).collect(Collectors.toSet());
-        return intersection;
+		// 取交集
+		Set<Integer> intersection = mensonId.stream().filter(allMenuId::contains).collect(Collectors.toSet());
+		return intersection;
 	}
 }

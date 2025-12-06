@@ -41,7 +41,7 @@ public class DronesModelServiceImp implements DronesModelService {
 
     @Override
     public List<DronesModel> listEntitys() {
-        return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
+        return repository.list("isDeleted = ?1", Sort.by("createTime"), 0);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class DronesModelServiceImp implements DronesModelService {
         if (modelDto.getId() != null) {
             // Update existing record
             this.replaceByDto(modelDto);
-        } else{
+        } else {
             // Create new record
             DronesModel dronesModel = new DronesModel();
             dronesModel.setModelName(modelDto.getModelName());

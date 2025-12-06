@@ -1,6 +1,5 @@
 package org.huazhi.drones.command.entity.webscoketdto.action;
 
-
 import org.huazhi.drones.command.entity.webscoketdto.DronesRoute;
 
 import lombok.Data;
@@ -32,7 +31,6 @@ public class DronesActionParam {
      * 循环间隔
      */
     private Integer intervalSec;
-
 
     /**
      * service -type

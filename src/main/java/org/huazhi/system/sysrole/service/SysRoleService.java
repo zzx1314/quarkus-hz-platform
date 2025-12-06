@@ -10,12 +10,11 @@ import org.huazhi.util.PageResult;
 public interface SysRoleService {
     List<SysRole> listRoles();
 
-   List<SysRole> listRolesByDto(SysRoleQueryDto sysRoleDto);
+    List<SysRole> listRolesByDto(SysRoleQueryDto sysRoleDto);
 
-   PageResult<SysRole> listRolePage(SysRoleQueryDto dto, PageRequest pageRequest);
+    PageResult<SysRole> listRolePage(SysRoleQueryDto dto, PageRequest pageRequest);
 
+    SysRole listRoleByDto(SysRoleQueryDto sysRoleQueryDto);
 
-   SysRole listRoleByDto(SysRoleQueryDto sysRoleQueryDto);
-
-   Boolean registerRole(SysRole sysRole);
+    Boolean registerRole(SysRole sysRole);
 }

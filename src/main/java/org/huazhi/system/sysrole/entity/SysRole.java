@@ -26,14 +26,14 @@ import jakarta.persistence.Table;
 @Data
 @Entity
 @Table(name = "p_sys_role")
-@EqualsAndHashCode(callSuper=false)
-public class SysRole extends PanacheEntityBase{
+@EqualsAndHashCode(callSuper = false)
+public class SysRole extends PanacheEntityBase {
 
 	/**
 	 * 主键
 	 */
 	@Id
-    @GeneratedValue
+	@GeneratedValue
 	private Long id;
 
 	/**
@@ -88,17 +88,12 @@ public class SysRole extends PanacheEntityBase{
 	private String dsScope;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "p_sys_role_menu",
-        joinColumns = @JoinColumn(name = "role_id"),
-        inverseJoinColumns = @JoinColumn(name = "menu_id")
-    )
+	@JoinTable(name = "p_sys_role_menu", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "menu_id"))
 	@JsonIgnore
-    public List<SysMenu> menus = new ArrayList<>();
-
+	public List<SysMenu> menus = new ArrayList<>();
 
 	@ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
 	@JsonIgnore
-    public List<SysUser> users = new ArrayList<>();
+	public List<SysUser> users = new ArrayList<>();
 
 }

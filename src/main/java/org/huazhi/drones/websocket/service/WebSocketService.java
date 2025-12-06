@@ -20,16 +20,16 @@ import lombok.extern.slf4j.Slf4j;
  * websocket服务
  * ws://192.168.41.227:8080/api/notice/9527/a2ed64b9095b4def83afcab1d4ca5a72
  * 心跳响应：
-    {
-    "deviceId": "9527",
-    "type": "heartbeat",
-    "status": "success",
-    "speed": 4km/h,
-    "height": 1000m,
-    "battery": 100%,
-    "course": 0°,
-    "location": "116.397428,39.90923"
-    }
+ * {
+ * "deviceId": "9527",
+ * "type": "heartbeat",
+ * "status": "success",
+ * "speed": 4km/h,
+ * "height": 1000m,
+ * "battery": 100%,
+ * "course": 0°,
+ * "location": "116.397428,39.90923"
+ * }
  */
 @Slf4j
 @WebSocket(path = "/notice/{deviceId}/{accessToken}")

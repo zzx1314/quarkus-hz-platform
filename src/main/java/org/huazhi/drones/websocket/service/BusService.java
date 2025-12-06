@@ -39,7 +39,7 @@ public class BusService {
         DronesDeviceQueryDto queryDto = new DronesDeviceQueryDto();
         queryDto.setDeviceId(clientId);
         DronesDevice findDev = dronesDeviceService.listOne(queryDto);
-        if (findDev == null){
+        if (findDev == null) {
             return false;
         }
         return true;
@@ -50,7 +50,7 @@ public class BusService {
      */
     public boolean checkToken(String clientId, String token) {
         String auth = redisUtil.get(token);
-        if (StringUtil.isNullOrEmpty(auth) || !clientId.equals(auth)){
+        if (StringUtil.isNullOrEmpty(auth) || !clientId.equals(auth)) {
             return false;
         } else {
             redisUtil.expire(token, 60 * 10);
@@ -60,6 +60,7 @@ public class BusService {
 
     /**
      * 设备状态上报
+     * 
      * @param dto
      * @return
      */
@@ -91,7 +92,7 @@ public class BusService {
     /**
      * 断开连接
      */
-    public void closeConnect(String clientId){
+    public void closeConnect(String clientId) {
         DronesDeviceDto data = new DronesDeviceDto();
         data.setStatus("心跳丢失");
         DronesDeviceQueryDto queryDto = new DronesDeviceQueryDto();
@@ -102,7 +103,7 @@ public class BusService {
     /**
      * 保存指令消息
      */
-    public Long saveCommand(DronesCommandWebsocketV1 messageInfo){
+    public Long saveCommand(DronesCommandWebsocketV1 messageInfo) {
         DronesCommand command = new DronesCommand();
         command.setCommandParams(JsonUtil.toJson(messageInfo));
         command.setStatus("已下发");
@@ -112,11 +113,10 @@ public class BusService {
         return command.getId();
     }
 
-
     /**
      * 更新指令执行结果
      */
-    public void updateCommandReport(Long id, String status, String returnValue){
+    public void updateCommandReport(Long id, String status, String returnValue) {
         if ("success".equals(status)) {
             status = "执行成功";
         } else if ("error".equals(status)) {
@@ -128,6 +128,5 @@ public class BusService {
         dto.setReturnValue(returnValue);
         dronesCommandService.replaceByDto(dto);
     }
-
 
 }

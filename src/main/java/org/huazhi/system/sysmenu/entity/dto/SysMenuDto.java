@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class SysMenuDto {
 	private Long id;
-    /**
+	/**
 	 * 名称
 	 */
 	private String name;

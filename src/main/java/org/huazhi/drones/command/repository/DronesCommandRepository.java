@@ -23,7 +23,7 @@ public class DronesCommandRepository implements PanacheRepository<DronesCommand>
     @Inject
     DronesCommandMapper mapper;
 
-     public List<DronesCommand> selectList(DronesCommandQueryDto queryDto) {
+    public List<DronesCommand> selectList(DronesCommandQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();

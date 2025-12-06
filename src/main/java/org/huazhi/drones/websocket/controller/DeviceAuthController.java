@@ -54,6 +54,7 @@ public class DeviceAuthController {
 
     /**
      * 设备注册接口
+     * 
      * @param deviceDto
      * @param authToken
      * @return
@@ -64,7 +65,7 @@ public class DeviceAuthController {
         log.info("device register:{}, {}", deviceDto, authToken);
         // 设备是否通过认证，如果认证通过可以进行
         boolean checkRes = checkClientTokenUtil.checkToken(deviceDto.getDeviceId(), authToken);
-        if (!checkRes){
+        if (!checkRes) {
             return R.failed("无效的token信息");
         }
         registerDevice(deviceDto);
@@ -92,6 +93,7 @@ public class DeviceAuthController {
 
     /**
      * 处理设备型号
+     * 
      * @param device
      */
     private void handleDeviceMode(DronesDeviceDto device) {

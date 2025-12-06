@@ -16,11 +16,11 @@ import lombok.experimental.Accessors;
 @Data
 @Entity
 @Accessors(chain = true)
-@EqualsAndHashCode(callSuper=false)
-public class DronesServices  extends PanacheEntityBase{
+@EqualsAndHashCode(callSuper = false)
+public class DronesServices extends PanacheEntityBase {
     @Id
-	@GeneratedValue
-	private Long id;
+    @GeneratedValue
+    private Long id;
 
     /**
      * 类型

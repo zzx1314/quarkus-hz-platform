@@ -7,7 +7,7 @@ import java.util.List;
 import org.huazhi.system.sysuser.entity.SysUser;
 
 @Data
-public class UserInfo{
+public class UserInfo {
 
 	/**
 	 * 用户基本信息

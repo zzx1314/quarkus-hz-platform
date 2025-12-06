@@ -2,24 +2,26 @@
 #include <string.h>
 #include <curl/curl.h>
 
-int main(void) {
+int main(void)
+{
     CURL *curl;
     CURLcode res;
 
     // 初始化libcurl
     curl = curl_easy_init();
-    if(curl) {
+    if (curl)
+    {
         // 设置URL
         curl_easy_setopt(curl, CURLOPT_URL, "https://agent:4433/api/client/register");
 
         // 设置POST数据（JSON格式）
         const char *postFields = "{"
-            "\"deviceId\": \"9527\","
-            "\"deviceIp\": \"192.168.137.101\","
-            "\"os\": \"CleverOS\","
-            "\"osVersion\": \"2.0\","
-            "\"arch\": \"aarch64\""
-        "}";
+                                 "\"deviceId\": \"9527\","
+                                 "\"deviceIp\": \"192.168.137.101\","
+                                 "\"os\": \"CleverOS\","
+                                 "\"osVersion\": \"2.0\","
+                                 "\"arch\": \"aarch64\""
+                                 "}";
 
         // 设置HTTP头信息
         struct curl_slist *headers = NULL;
@@ -35,9 +37,10 @@ int main(void) {
         res = curl_easy_perform(curl);
 
         // 检查错误
-        if(res != CURLE_OK){
+        if (res != CURLE_OK)
+        {
             fprintf(stderr, "curl_easy_perform() failed: %s\n",
-                            curl_easy_strerror(res));
+                    curl_easy_strerror(res));
         }
 
         // 清理

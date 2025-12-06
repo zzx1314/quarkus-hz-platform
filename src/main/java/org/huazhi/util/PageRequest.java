@@ -8,7 +8,8 @@ public class PageRequest {
     @QueryParam("size")
     private int size = 10;
 
-    public PageRequest() {}
+    public PageRequest() {
+    }
 
     public PageRequest(int page, int size) {
         this.page = page;
@@ -27,4 +28,3 @@ public class PageRequest {
         return getPage() - 1;
     }
 }
-
