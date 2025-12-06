@@ -67,7 +67,7 @@ public class ConnectionManager {
         if (conn != null && conn.isOpen()) {
             // 保存指令并获取指令ID
             Long id = busService.saveCommand(message);
-            message.setMissionId(id);
+            message.setMissionId(id + "");
             String jsonString = JsonUtil.toJson(message);
             log.info("Sending message to deviceId {}: {}", deviceId, jsonString);
             conn.sendTextAndAwait(jsonString);

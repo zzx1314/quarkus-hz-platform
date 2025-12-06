@@ -17,7 +17,7 @@ public class DronesCommandWebsocketV1 {
     /**
      * 指令id
      */
-    private Long missionId;
+    private String missionId;
 
     /**
      * 路线

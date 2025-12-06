@@ -79,6 +79,9 @@ public class WebSocketService {
             // 处理指令结果
             MessageInfo messageInfo = JsonUtil.fromJson(message, MessageInfo.class);
             busService.updateCommandReport(messageInfo.getId(), messageInfo.getStatus(), messageInfo.getReturnValue());
+        } else if (messageJson.get("type").equals("torosReport")) {
+            // 处理Toros指令结果
+           log.info("处理torosReport {}: {}", deviceId, message);
         }
     }
 }
