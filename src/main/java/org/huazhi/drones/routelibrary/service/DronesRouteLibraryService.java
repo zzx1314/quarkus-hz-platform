@@ -19,7 +19,7 @@ public interface DronesRouteLibraryService {
 
    PageResult<DronesRouteLibrary> listPage(DronesRouteLibraryQueryDto dto, PageRequest pageRequest);
 
-   Boolean register(DronesRouteLibrary entity);
+   Long register(DronesRouteLibrary entity);
 
    void replaceById(DronesRouteLibrary entity);
 

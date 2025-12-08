@@ -94,12 +94,12 @@ public class DronesTaskServiceImp implements DronesTaskService {
     }
 
     @Override
-    public Boolean register(DronesTask entity) {
+    public Long register(DronesTask entity) {
         entity.setIsDeleted(0);
         entity.setTaskStatus("未开始");
         entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);
-        return true;
+        return entity.getId();
     }
 
     @Override

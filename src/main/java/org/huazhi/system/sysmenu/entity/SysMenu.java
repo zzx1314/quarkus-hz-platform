@@ -30,7 +30,7 @@ public class SysMenu extends PanacheEntityBase {
 	 */
 	@Id
 	@GeneratedValue
-	private Integer id;
+	private Long id;
 
 	/**
 	 * 名称

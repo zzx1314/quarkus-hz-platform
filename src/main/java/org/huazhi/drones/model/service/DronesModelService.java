@@ -20,7 +20,7 @@ public interface DronesModelService {
 
    PageResult<DronesModel> listPage(DronesModelQueryDto dto, PageRequest pageRequest);
 
-   Boolean register(DronesModel entity);
+   Long register(DronesModel entity);
 
    void replaceById(DronesModel entity);
 

@@ -23,7 +23,7 @@ public class SysOrg extends PanacheEntityBase {
 	 */
 	@Id
 	@GeneratedValue
-	private Integer id;
+	private Long id;
 
 	/**
 	 * 组织名称
@@ -38,7 +38,7 @@ public class SysOrg extends PanacheEntityBase {
 	/**
 	 * 父ID
 	 */
-	private Integer parentId;
+	private Long parentId;
 
 	/**
 	 * 父节点名称

@@ -49,10 +49,11 @@ public class SysMenuServiceImp implements SysMenuService {
     }
 
     @Override
-    public Boolean register(SysMenu entity) {
+    public Long register(SysMenu entity) {
+        entity.setIsDeleted(0);
         entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);
-        return true;
+        return entity.getId();
     }
 
     @Override

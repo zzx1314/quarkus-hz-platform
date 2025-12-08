@@ -15,7 +15,7 @@ public interface SysDictService {
 
    PageResult<SysDict> listPage(SysDictQueryDto dto, PageRequest pageRequest);
 
-   Boolean register(SysDict entity);
+   Long register(SysDict entity);
 
    List<SysDictItem> getItemByType(String string);
 }

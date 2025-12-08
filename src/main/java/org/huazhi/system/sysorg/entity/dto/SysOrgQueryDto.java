@@ -20,5 +20,5 @@ public class SysOrgQueryDto {
     @QueryParam("endTime")
     private String endTime;
 
-    private Integer notId;
+    private Long notId;
 }

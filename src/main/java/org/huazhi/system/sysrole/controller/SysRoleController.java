@@ -58,7 +58,7 @@ public class SysRoleController {
     @POST
     @Path("/create")
     @Transactional
-    public R<Boolean> createRole(SysRole sysRole) {
+    public R<Long> createRole(SysRole sysRole) {
         return R.ok(sysRoleService.registerRole(sysRole));
     }
 

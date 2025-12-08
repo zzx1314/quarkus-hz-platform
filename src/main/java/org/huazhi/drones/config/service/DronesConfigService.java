@@ -18,7 +18,7 @@ public interface DronesConfigService {
 
    PageResult<DronesConfig> listPage(DronesConfigQueryDto dto, PageRequest pageRequest);
 
-   Boolean register(DronesConfig entity);
+   Long register(DronesConfig entity);
 
    void replaceById(DronesConfig entity);
 

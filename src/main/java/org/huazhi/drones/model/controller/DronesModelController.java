@@ -62,7 +62,7 @@ public class DronesModelController {
     @POST
     @Path("/create")
     @Transactional
-    public R<Boolean> create(DronesModel entity) {
+    public R<Long> create(DronesModel entity) {
         return R.ok(dronesModelService.register(entity));
     }
 

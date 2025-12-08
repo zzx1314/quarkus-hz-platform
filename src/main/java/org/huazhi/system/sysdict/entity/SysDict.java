@@ -29,7 +29,7 @@ public class SysDict extends PanacheEntityBase {
 	 */
 	@Id
 	@GeneratedValue
-	private Integer id;
+	private Long id;
 
 	/**
 	 * 类型

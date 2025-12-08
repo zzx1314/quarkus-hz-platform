@@ -73,7 +73,7 @@ public class DronesWorkflowController {
     @POST
     @Path("/create")
     @Transactional
-    public R<Boolean> create(DronesWorkflow entity) {
+    public R<Long> create(DronesWorkflow entity) {
         return R.ok(dronesWorkflowService.register(entity));
     }
 

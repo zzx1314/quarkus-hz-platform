@@ -10,9 +10,9 @@ public class SysOrgVo {
 	/**
 	 * 主键
 	 */
-	private Integer id;
+	private Long id;
 
-	private Integer value;
+	private Long value;
 
 	/**
 	 * 组织名称

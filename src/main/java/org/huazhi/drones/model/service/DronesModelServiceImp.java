@@ -61,11 +61,11 @@ public class DronesModelServiceImp implements DronesModelService {
 
     @Override
     @Transactional
-    public Boolean register(DronesModel entity) {
+    public Long register(DronesModel entity) {
         entity.setIsDeleted(0);
         entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);
-        return true;
+        return entity.getId();
     }
 
     @Override

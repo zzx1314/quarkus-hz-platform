@@ -14,7 +14,7 @@ import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class SysOrgRepository implements PanacheRepositoryBase<SysOrg, Integer> {
+public class SysOrgRepository implements PanacheRepositoryBase<SysOrg, Long> {
 
         public List<SysOrg> selectOrgList(SysOrgQueryDto sysOrgDto) {
                 QueryBuilder qb = QueryBuilder.create()

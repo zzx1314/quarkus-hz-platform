@@ -48,9 +48,9 @@ public class SysOrgServiceImp implements SysOrgService {
 		List<SysOrg> resultOrg = new ArrayList<>();
 		if (!selectOrgList.isEmpty()) {
 			// 通过id进行分组
-			Map<Integer, List<SysOrg>> collect = selectOrgList.stream().collect(Collectors.groupingBy(SysOrg::getId));
+			Map<Long, List<SysOrg>> collect = selectOrgList.stream().collect(Collectors.groupingBy(SysOrg::getId));
 			// 通过parentid进行分组
-			Map<Integer, List<SysOrg>> groupByParentId = selectOrgList.stream()
+			Map<Long, List<SysOrg>> groupByParentId = selectOrgList.stream()
 					.collect(Collectors.groupingBy(SysOrg::getParentId));
 
 			if (!StringUtil.isNullOrEmpty(dto.getName()) || !StringUtil.isNullOrEmpty(dto.getType())) {
@@ -68,7 +68,7 @@ public class SysOrgServiceImp implements SysOrgService {
 				resultOrg.addAll(selectOrgList);
 			}
 			// 去除重复的元素
-			Map<Integer, SysOrg> resultMap = new HashMap<>();
+			Map<Long, SysOrg> resultMap = new HashMap<>();
 			if (resultOrg != null && resultOrg.size() > 0) {
 				resultOrg.stream().forEach(one -> {
 					resultMap.put(one.getId(), one);
@@ -96,7 +96,7 @@ public class SysOrgServiceImp implements SysOrgService {
 		return TreeUtil.buildByLoop(treeList, 0);
 	}
 
-	private void getParentOrgs(SysOrg oneOrg, List<SysOrg> resultOrg, Map<Integer, List<SysOrg>> sumOrg) {
+	private void getParentOrgs(SysOrg oneOrg, List<SysOrg> resultOrg, Map<Long, List<SysOrg>> sumOrg) {
 		if (oneOrg.getParentId() != 0) {
 			resultOrg.add(oneOrg);
 			this.getParentOrgs(sumOrg.get(oneOrg.getParentId()).get(0), resultOrg, sumOrg);
@@ -105,7 +105,7 @@ public class SysOrgServiceImp implements SysOrgService {
 		}
 	}
 
-	private void getSonOrgs(SysOrg oneOrg, List<SysOrg> resultOrg, Map<Integer, List<SysOrg>> sumParentOrg) {
+	private void getSonOrgs(SysOrg oneOrg, List<SysOrg> resultOrg, Map<Long, List<SysOrg>> sumParentOrg) {
 		if (sumParentOrg.get(oneOrg.getId()) != null && !sumParentOrg.get(oneOrg.getId()).isEmpty()) {
 			List<SysOrg> sonOrgs = sumParentOrg.get(oneOrg.getId());
 			resultOrg.addAll(sonOrgs);
@@ -119,14 +119,14 @@ public class SysOrgServiceImp implements SysOrgService {
 	}
 
 	@Override
-	public R<Void> registerOrg(SysOrgTreeDto sysOrg) {
+	public R<Long> registerOrg(SysOrgTreeDto sysOrg) {
 		// 顶部门判断只能有一个
 		if ("top".equals(sysOrg.getType())) {
 			SysOrgQueryDto queryDto = new SysOrgQueryDto();
 			queryDto.setType("top");
 			List<SysOrg> list = sysOrgRepository.selectOrgList(queryDto);
 			if (list.size() > 0) {
-				return R.failed("顶部门只能添加一个!");
+				return R.failed(0L,"顶部门只能添加一个!");
 			}
 		}
 		/**
@@ -138,29 +138,29 @@ public class SysOrgServiceImp implements SysOrgService {
 				// 上级是单位
 				if ("company".equals(sysOrg.getType()) || "common".equals(sysOrg.getType())) {
 				} else {
-					return R.failed("上级是单位只能添加单位或者是部门！");
+					return R.failed(0L,"上级是单位只能添加单位或者是部门！");
 				}
 			} else if ("common".equals(parentOrg.getType())) {
 				// 上级是部门
 				if ("common".equals(sysOrg.getType())) {
 				} else {
-					return R.failed("上级是部门只能添加部门！");
+					return R.failed(0L,"上级是部门只能添加部门！");
 				}
 			}
 		}
 		// 校验部门名称是否已存在
-		int parentId = sysOrg.getParentId();
+		Long parentId = sysOrg.getParentId();
 		if (this.checkOrgName(sysOrg.getName(), parentId)) {
 			// 代表存在相同的
 			SysOrg entity = sysOrgMapper.toEntity(sysOrg);
 			entity.setCreateTime(LocalDateTime.now());
 			sysOrgRepository.persist(entity);
-			return R.ok();
+			return R.ok(entity.getId());
 		}
-		return R.failed("本层级下已存在:" + sysOrg.getName() + "部门");
+		return R.failed(0L,"本层级下已存在:" + sysOrg.getName() + "部门");
 	}
 
-	public Boolean checkOrgName(String orgName, Integer parentId) {
+	public Boolean checkOrgName(String orgName, Long parentId) {
 		List<SysOrg> sonOrg = sysOrgRepository.list("parentId = ?1 and name = ?2", parentId, orgName);
 		if (sonOrg != null && sonOrg.size() > 0) {
 			return false;
@@ -174,9 +174,9 @@ public class SysOrgServiceImp implements SysOrgService {
 		List<SysOrg> resultOrg = new ArrayList<>();
 		if (listOrg != null && listOrg.size() > 0) {
 			// 通过id进行分组
-			Map<Integer, List<SysOrg>> collect = listOrg.stream().collect(Collectors.groupingBy(SysOrg::getId));
+			Map<Long, List<SysOrg>> collect = listOrg.stream().collect(Collectors.groupingBy(SysOrg::getId));
 			// 通过parentid进行分组
-			Map<Integer, List<SysOrg>> groupByParentId = listOrg.stream()
+			Map<Long, List<SysOrg>> groupByParentId = listOrg.stream()
 					.collect(Collectors.groupingBy(SysOrg::getParentId));
 			if (!StringUtil.isNullOrEmpty(queryDto.getName()) || !StringUtil.isNullOrEmpty(queryDto.getType())) {
 				listOrg = sysOrgRepository.selectOrgList(queryDto);
@@ -196,7 +196,7 @@ public class SysOrgServiceImp implements SysOrgService {
 				resultOrg.addAll(listOrg);
 			}
 			// 去除重复的元素
-			Map<Integer, SysOrg> resultMap = new HashMap<>();
+			Map<Long, SysOrg> resultMap = new HashMap<>();
 
 			if (!resultOrg.isEmpty()) {
 				resultOrg.stream().forEach(one -> {

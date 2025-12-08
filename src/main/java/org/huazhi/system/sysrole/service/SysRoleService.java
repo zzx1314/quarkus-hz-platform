@@ -16,5 +16,5 @@ public interface SysRoleService {
 
     SysRole listRoleByDto(SysRoleQueryDto sysRoleQueryDto);
 
-    Boolean registerRole(SysRole sysRole);
+    Long registerRole(SysRole sysRole);
 }

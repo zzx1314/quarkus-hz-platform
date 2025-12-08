@@ -17,7 +17,7 @@ public interface DronesCommandService {
 
    PageResult<DronesCommand> listPage(DronesCommandQueryDto dto, PageRequest pageRequest);
 
-   Boolean register(DronesCommand entity);
+   Long register(DronesCommand entity);
 
    void replaceById(DronesCommand entity);
 

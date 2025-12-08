@@ -14,5 +14,5 @@ public interface SysLogService {
 
    PageResult<SysLog> listPage(SysLogQueryDto dto, PageRequest pageRequest);
 
-   Boolean register(SysLog entity);
+   Long register(SysLog entity);
 }

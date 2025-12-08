@@ -18,7 +18,7 @@ public interface SysMenuService {
 
    List<MenuVo> listMenuByRoleId(Long roleId);
 
-   Boolean register(SysMenu entity);
+   Long register(SysMenu entity);
 
    SysMenu updateMenu(SysMenuDto dto);
 }

@@ -34,10 +34,10 @@ public class SysRoleServiceImp implements SysRoleService {
     }
 
     @Override
-    public Boolean registerRole(SysRole sysRole) {
+    public Long registerRole(SysRole sysRole) {
         sysRole.setCreateTime(LocalDateTime.now());
         sysRoleRepository.persist(sysRole);
-        return true;
+        return sysRole.getId();
     }
 
     @Override

@@ -7,9 +7,9 @@ import java.util.List;
 @Data
 public class TreeNode {
 
-	protected int id;
+	protected Long id;
 
-	protected int parentId;
+	protected Long parentId;
 
 	protected List<TreeNode> children;
 

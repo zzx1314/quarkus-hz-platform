@@ -19,7 +19,7 @@ public interface DronesWorkflowService {
 
    PageResult<DronesWorkflow> listPage(DronesWorkflowQueryDto dto, PageRequest pageRequest);
 
-   Boolean register(DronesWorkflow entity);
+   Long register(DronesWorkflow entity);
 
    void replaceById(DronesWorkflow entity);
 

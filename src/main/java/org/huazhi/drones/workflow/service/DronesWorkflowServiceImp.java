@@ -14,7 +14,6 @@ import org.huazhi.drones.routelibrary.entity.dto.DronesRouteLibraryQueryDto;
 import org.huazhi.drones.routelibrary.entity.mapper.DronesRouteLibraryMapper;
 import org.huazhi.drones.routelibrary.entity.vo.DronesRouteLibraryVo;
 import org.huazhi.drones.routelibrary.service.DronesRouteLibraryService;
-import org.huazhi.drones.task.entity.DronesTask;
 import org.huazhi.drones.task.service.DronesTaskService;
 import org.huazhi.drones.workflow.entity.DronesWorkflow;
 import org.huazhi.drones.workflow.entity.EdgeEntity;
@@ -73,28 +72,11 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
     }
 
     @Override
-    public Boolean register(DronesWorkflow entity) {
-        log.info(JsonUtil.toJson(entity));
-        // 1、查询uuid是否存在，如果不存在进行注册，如果存在进行更新
-        DronesWorkflowQueryDto queryDto = new DronesWorkflowQueryDto().setUuid(entity.getUuid());
-        DronesWorkflow existingWorkflow = repository.selectOne(queryDto);
-        if (null != existingWorkflow) {
-            entity.setId(existingWorkflow.getId());
-            entity.setUpdateTime(LocalDateTime.now());
-            repository.updateById(entity);
-            return true;
-        }
-        entity.setCreateTime(LocalDateTime.now());
+    public Long register(DronesWorkflow entity) {
         entity.setIsDeleted(0);
+        entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);
-
-        // 修改任务的workflowId
-        DronesTask task = new DronesTask();
-        task.setId(entity.getTaskId());
-        task.setWorkflowId(entity.getId());
-        task.setWorkflowUuid(entity.getUuid());
-        taskService.replaceById(task);
-        return true;
+        return entity.getId();
     }
 
     @Override

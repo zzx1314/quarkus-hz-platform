@@ -56,7 +56,7 @@ public class SysLogController {
     @POST
     @Path("/create")
     @Transactional
-    public R<Boolean> create(SysLog entity) {
+    public R<Long> create(SysLog entity) {
         return R.ok(sysLogService.register(entity));
     }
 

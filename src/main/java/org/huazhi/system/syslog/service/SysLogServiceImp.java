@@ -16,28 +16,28 @@ import jakarta.inject.Inject;
 @ApplicationScoped
 public class SysLogServiceImp implements SysLogService {
     @Inject
-    SysLogRepository repository;
+    SysLogRepository sysLogRepository;
 
     @Override
     public List<SysLog> listEntitys() {
-        return repository.list("isDeleted = ?1", Sort.by("createTime"), 0);
+        return sysLogRepository.list("isDeleted = ?1", Sort.by("createTime"), 0);
     }
 
     @Override
     public List<SysLog> listEntitysByDto(SysLogQueryDto sysOrgDto) {
-        return repository.selectList(sysOrgDto);
+        return sysLogRepository.selectList(sysOrgDto);
     }
 
     @Override
     public PageResult<SysLog> listPage(SysLogQueryDto dto, PageRequest pageRequest) {
-        return repository.selectPage(dto, pageRequest);
+        return sysLogRepository.selectPage(dto, pageRequest);
     }
 
     @Override
-    public Boolean register(SysLog entity) {
+    public Long register(SysLog entity) {
+        entity.setIsDeleted(0);
         entity.setCreateTime(LocalDateTime.now());
-        repository.persist(entity);
-        return true;
+        sysLogRepository.persist(entity);
+        return entity.getId();
     }
-
 }

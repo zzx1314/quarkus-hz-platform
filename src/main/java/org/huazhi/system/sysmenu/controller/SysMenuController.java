@@ -87,7 +87,7 @@ public class SysMenuController {
     @POST
     @Path("/create")
     @Transactional
-    public R<Boolean> create(SysMenu entity) {
+    public R<Long> create(SysMenu entity) {
         return R.ok(sysMenuService.register(entity));
     }
 

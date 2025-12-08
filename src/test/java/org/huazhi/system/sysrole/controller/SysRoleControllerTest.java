@@ -1,4 +1,4 @@
-package org.huazhi.system.sysuser.controller;
+package org.huazhi.system.sysrole.controller;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
@@ -11,16 +11,16 @@ import org.junit.jupiter.api.TestMethodOrder;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
-import org.huazhi.system.sysuser.entity.dto.SysUserDto;
+import org.huazhi.system.sysrole.entity.SysRole;
 import org.huazhi.util.JsonUtil;
 
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class SystemUserControllerTest {
+public class SysRoleControllerTest {
 
     private static String authToken;
 
-    private static Long createdUserId;
+    private static Long createdRoleId;
 
     @BeforeAll
     public static void setup() {
@@ -40,39 +40,36 @@ public class SystemUserControllerTest {
         return authToken;
     }
 
-    private Long getUserId() {
-        return createdUserId;
+    private Long getRoleId() {
+        return createdRoleId;
     }
 
     @Test
     @Order(1)
-    public void testCreateUser() {
+    public void testCreateRole() {
         String token = getAuthToken();
-        SysUserDto newUser = new SysUserDto();
-        newUser.setUsername("testuser");
-        newUser.setPassword("Test123!");
-        newUser.setRealName("TestUser");
-        newUser.setOrgId(1L);
-        newUser.setRole(1L);
-        newUser.setEnable(1);
+        SysRole newRole = new SysRole();
+        newRole.setName("测试角色");
+        newRole.setCode("TEST_ROLE");
+        newRole.setDescription("测试用角色");
 
-        createdUserId = given()
+        createdRoleId = given()
                 .contentType(ContentType.JSON)
                 .header("Authorization", "Bearer " + token)
-                .body(JsonUtil.toJson(newUser))
-                .when().post("/sysUser/create")
+                .body(JsonUtil.toJson(newRole))
+                .when().post("/sysRole/create")
                 .then()
                 .statusCode(200)
-                .extract().path("data.id");
+                .extract().path("data");
     }
 
     @Test
     @Order(2)
-    public void testGetUserList() {
+    public void testGetRoleList() {
         String token = getAuthToken();
         given()
                 .header("Authorization", "Bearer " + token)
-                .when().get("/sysUser/getPage")
+                .when().get("/sysRole/getPage")
                 .then()
                 .statusCode(200)
                 .body("data.records.size()", greaterThan(0));
@@ -80,23 +77,20 @@ public class SystemUserControllerTest {
 
     @Test
     @Order(3)
-    public void testUpdateUserRole() {
+    public void testUpdateRole() {
         String token = getAuthToken();
 
-        SysUserDto updateUserDto = new SysUserDto();
-        updateUserDto.setId(getUserId());
-        updateUserDto.setUsername("roleupdateuser");
-        updateUserDto.setPassword("Role123!");
-        updateUserDto.setRealName("RoleUpdateUser");
-        updateUserDto.setOrgId(1L);
-        updateUserDto.setRole(2L);
+        SysRole updateRole = new SysRole();
+        updateRole.setId(getRoleId());
+        updateRole.setName("更新测试角色");
+        updateRole.setCode("UPDATE_TEST_ROLE");
+        updateRole.setDescription("更新测试用角色");
 
-        // 更新用户角色
         given()
                 .contentType(ContentType.JSON)
                 .header("Authorization", "Bearer " + token)
-                .body(JsonUtil.toJson(updateUserDto))
-                .when().put("/sysUser/update")
+                .body(JsonUtil.toJson(updateRole))
+                .when().put("/sysRole/update")
                 .then()
                 .statusCode(200)
                 .body("code", equalTo(10200));
@@ -104,12 +98,11 @@ public class SystemUserControllerTest {
 
     @Test
     @Order(4)
-    public void testDeleteUser() {
+    public void testDeleteRole() {
         String token = getAuthToken();
-        // 删除用户
         given()
                 .header("Authorization", "Bearer " + token)
-                .when().delete("/sysUser/" + getUserId())
+                .when().delete("/sysRole/" + getRoleId())
                 .then()
                 .statusCode(200);
     }

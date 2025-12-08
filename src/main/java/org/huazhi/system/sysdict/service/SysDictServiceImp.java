@@ -17,33 +17,34 @@ import jakarta.inject.Inject;
 @ApplicationScoped
 public class SysDictServiceImp implements SysDictService {
     @Inject
-    SysDictRepository repository;
+    SysDictRepository sysDictRepository;
 
     @Override
     public List<SysDict> listEntitys() {
-        return repository.list("isDeleted = ?1", Sort.by("createTime"), 0);
+        return sysDictRepository.list("isDeleted = ?1", Sort.by("createTime"), 0);
     }
 
     @Override
     public List<SysDict> listEntitysByDto(SysDictQueryDto sysOrgDto) {
-        return repository.selectList(sysOrgDto);
+        return sysDictRepository.selectList(sysOrgDto);
     }
 
     @Override
     public PageResult<SysDict> listPage(SysDictQueryDto dto, PageRequest pageRequest) {
-        return repository.selectPage(dto, pageRequest);
+        return sysDictRepository.selectPage(dto, pageRequest);
     }
 
     @Override
-    public Boolean register(SysDict entity) {
+    public Long register(SysDict entity) {
+        entity.setIsDeleted(0);
         entity.setCreateTime(LocalDateTime.now());
-        repository.persist(entity);
-        return true;
+        sysDictRepository.persist(entity);
+        return entity.getId();
     }
 
     @Override
     public List<SysDictItem> getItemByType(String type) {
-        SysDict oneDict = repository.find("type = ?1", type).singleResult();
+        SysDict oneDict = sysDictRepository.find("type = ?1", type).singleResult();
         return oneDict.getSysDictItems();
     }
 

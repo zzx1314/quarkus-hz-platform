@@ -66,7 +66,7 @@ public class DronesRouteLibraryController {
     @POST
     @Path("/create")
     @Transactional
-    public R<Boolean> create(DronesRouteLibrary entity) {
+    public R<Long> create(DronesRouteLibrary entity) {
         return R.ok(dronesRouteLibraryService.register(entity));
     }
 

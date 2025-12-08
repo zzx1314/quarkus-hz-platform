@@ -34,10 +34,11 @@ public class SysDictItemServiceImp implements SysDictItemService {
     }
 
     @Override
-    public Boolean register(SysDictItem entity) {
+    public Long register(SysDictItem entity) {
+        entity.setIsDeleted(0);
         entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);
-        return true;
+        return entity.getId();
     }
 
     @Override

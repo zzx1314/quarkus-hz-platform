@@ -18,7 +18,7 @@ public interface SysOrgService {
 
    List<SysOrgVo> listAllOrgVo(SysOrgQueryDto queryDto);
 
-   R<Void> registerOrg(SysOrgTreeDto sysOrg);
+   R<Long> registerOrg(SysOrgTreeDto sysOrg);
 
    R<Object> updateOrg(SysOrgTreeDto sysOrg);
 }

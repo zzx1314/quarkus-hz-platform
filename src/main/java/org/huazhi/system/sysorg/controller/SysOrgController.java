@@ -56,7 +56,7 @@ public class SysOrgController {
     @POST
     @Path("/create")
     @Transactional
-    public R<Void> createOrg(SysOrgTreeDto sysOrg) {
+    public R<Long> createOrg(SysOrgTreeDto sysOrg) {
         return sysOrgService.registerOrg(sysOrg);
     }
 
