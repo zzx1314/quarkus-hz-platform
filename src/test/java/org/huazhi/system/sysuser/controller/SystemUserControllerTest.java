@@ -71,7 +71,7 @@ public class SystemUserControllerTest {
         String token = getAuthToken();
 
         SysUserDto updateUserDto = new SysUserDto();
-        updateUserDto.setId(152L);
+        updateUserDto.setId(1L);
         updateUserDto.setUsername("roleupdateuser");
         updateUserDto.setPassword("Role123!");
         updateUserDto.setRealName("RoleUpdateUser");
@@ -92,7 +92,7 @@ public class SystemUserControllerTest {
     @Test
     public void testDeleteUser() {
         String token = getAuthToken();
-        Long userId = 152L;
+        Long userId = 1L;
         // 删除用户
         given()
                 .header("Authorization", "Bearer " + token)
