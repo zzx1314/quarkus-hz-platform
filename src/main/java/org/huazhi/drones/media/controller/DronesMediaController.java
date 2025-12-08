@@ -68,7 +68,7 @@ public class DronesMediaController {
     @POST
     @Path("/create")
     @Transactional
-    public R<Boolean> create(DronesMedia entity) {
+    public R<Long> create(DronesMedia entity) {
         return R.ok(dronesMediaService.register(entity));
     }
 
@@ -95,7 +95,7 @@ public class DronesMediaController {
     @POST
     @Path(value = "/uploadFile")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public R<Object> uploadFile(@RestForm("file") FileUpload file, @RestForm String mediaInfo) throws Exception {
+    public R<Long> uploadFile(@RestForm("file") FileUpload file, @RestForm String mediaInfo) throws Exception {
         DronesMediaDto mediaDto = JsonUtil.fromJson(mediaInfo, DronesMediaDto.class);
         return dronesMediaService.uploadFile(file, mediaDto);
     }

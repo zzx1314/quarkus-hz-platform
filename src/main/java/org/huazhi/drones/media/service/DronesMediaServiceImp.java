@@ -55,11 +55,11 @@ public class DronesMediaServiceImp implements DronesMediaService {
 
     @Override
     @Transactional
-    public Boolean register(DronesMedia entity) {
+    public Long register(DronesMedia entity) {
         entity.setIsDeleted(0);
         entity.setCreateTime(LocalDateTime.now());
         repository.persist(entity);
-        return true;
+        return entity.getId();
     }
 
     @Override
@@ -83,7 +83,7 @@ public class DronesMediaServiceImp implements DronesMediaService {
     }
 
     @Override
-    public R<Object> uploadFile(FileUpload file, DronesMediaDto mediaDto) {
+    public R<Long> uploadFile(FileUpload file, DronesMediaDto mediaDto) {
         log.info("Uploading file: {}", file.fileName());
         // Save the file to a designated path
         String mcpFilePath = fileConfig.basePath() + "/media/" + securityUtil.getUserId();
@@ -91,6 +91,8 @@ public class DronesMediaServiceImp implements DronesMediaService {
         if (mediaDto.getId() != null) {
             // Update existing record
             this.replaceByDto(mediaDto);
+            log.info("Updating media record: {}", mediaDto.getId());
+            return R.ok(mediaDto.getId());
         } else {
             // Create new record
             DronesMedia dronesMedia = new DronesMedia();
@@ -100,8 +102,9 @@ public class DronesMediaServiceImp implements DronesMediaService {
             dronesMedia.setMediaSize(file.size());
             dronesMedia.setRemarks(mediaDto.getRemarks());
             this.register(dronesMedia);
+            log.info("Creating new media record: {}", dronesMedia.getId());
+            return R.ok(dronesMedia.getId());
         }
-        return R.ok("File uploaded successfully");
     }
 
 }

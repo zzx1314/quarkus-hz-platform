@@ -19,7 +19,7 @@ public interface DronesMediaService {
 
    PageResult<DronesMedia> listPage(DronesMediaQueryDto dto, PageRequest pageRequest);
 
-   Boolean register(DronesMedia entity);
+   Long register(DronesMedia entity);
 
    void replaceById(DronesMedia entity);
 
@@ -29,5 +29,5 @@ public interface DronesMediaService {
 
    void removeByIds(List<Long> ids);
 
-   R<Object> uploadFile(FileUpload file, DronesMediaDto modelDto);
+   R<Long> uploadFile(FileUpload file, DronesMediaDto modelDto);
 }
