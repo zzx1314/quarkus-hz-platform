@@ -1,8 +1,10 @@
 package org.huazhi.system.sysuser.service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.huazhi.system.sysdictitem.entity.SysDictItem;
@@ -23,6 +25,7 @@ import org.huazhi.util.R;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.NotFoundException;
 
 @ApplicationScoped
 public class SysUserServiceImp implements SysUserService {
@@ -99,7 +102,7 @@ public class SysUserServiceImp implements SysUserService {
 		LocalDateTime passUpdateTime = LocalDateTime.now();
 		sysUser.setPassUpdateTime(passUpdateTime.minusDays(passChane));
         // 用户绑定多个角色
-		if (sysUserDto.getRoleIdList().isEmpty() == false){
+		if (sysUserDto.getRoleIdList() != null){
 			for (Long roleId : sysUserDto.getRoleIdList()) {
 				SysRole sysRole = new SysRole();
 				sysRole.setId(roleId);
@@ -128,5 +131,37 @@ public class SysUserServiceImp implements SysUserService {
     @Override
     public SysUser listOne(SysUserQueryDto queryDto) {
         return sysUserRepository.selectOne(queryDto);
+    }
+
+    @Override
+    public R<Void> updateUser(SysUserDto sysUserDto) {
+        SysUser entity = SysUser.findById(sysUserDto.getId());
+        if (entity == null) {
+            throw new NotFoundException();
+        }
+        entity.setUpdateTime(LocalDateTime.now());
+        sysUserMapper.updateEntityFromDto(sysUserDto, entity);
+
+         if (sysUserDto.getPassword().isBlank() == false) {
+			entity.setPassword("{MD5}" + MD5Util.encrypt(sysUserDto.getPassword()));
+		}
+        entity.getRoles().clear();
+        Set<Long> roleIds = new HashSet<>();
+
+        if (sysUserDto.getRoleIdList() != null) {
+            roleIds.addAll(sysUserDto.getRoleIdList());
+        }
+
+        if (sysUserDto.getRole() != null) {
+            roleIds.add(sysUserDto.getRole());
+        }
+
+        for (Long roleId : roleIds) {
+            SysRole role = SysRole.findById(roleId);
+            if (role != null) {
+                entity.getRoles().add(role);
+            }
+        }
+        return R.ok();
     }
 }

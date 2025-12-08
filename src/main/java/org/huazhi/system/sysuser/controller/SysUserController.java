@@ -1,6 +1,5 @@
 package org.huazhi.system.sysuser.controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -92,14 +91,8 @@ public class SysUserController {
     @PUT
     @Path("/update")
     @Transactional
-    public R<SysUser> update(SysUserDto sysUserDto) {
-        SysUser entity = SysUser.findById(sysUserDto.getId());
-        if (entity == null) {
-            throw new NotFoundException();
-        }
-        entity.setUpdateTime(LocalDateTime.now());
-        sysUserMapper.updateEntityFromDto(sysUserDto, entity);
-        return R.ok(entity);
+    public R<Void> update(SysUserDto sysUserDto) {
+        return userService.updateUser(sysUserDto);
     }
 
     @DELETE

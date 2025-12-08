@@ -61,7 +61,7 @@ public class SysUser extends PanacheEntityBase {
 	/**
 	 * 组织ID
 	 */
-	private Integer orgId;
+	private Long orgId;
 
 	/**
 	 * 锁定时间
