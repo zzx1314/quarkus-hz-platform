@@ -104,8 +104,10 @@ public class BusService {
     /**
      * 保存指令消息
      */
-    public Long saveCommand(DronesCommandWebsocketV1 messageInfo) {
+    public Long saveCommand(DronesCommandWebsocketV1 messageInfo, String deviceId, Long taskId) {
         DronesCommand command = new DronesCommand();
+        command.setDeviceId(deviceId);
+        command.setTaskId(taskId);
         command.setCommandParams(JsonUtil.toJson(messageInfo));
         command.setStatus("已下发");
         command.setCreateTime(LocalDateTime.now());

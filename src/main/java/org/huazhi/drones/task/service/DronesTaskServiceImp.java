@@ -250,7 +250,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
         commandWebsocket.setOnErrorActions(errorNodes);
 
         log.info("发送指令信息：{}", JsonUtil.toJson(commandWebsocket));
-        connectionManager.sendMessageByDeviceId(device.getDeviceId(), commandWebsocket);
+        connectionManager.sendMessageByDeviceId(device.getDeviceId(), commandWebsocket, id);
     }
 
     /**

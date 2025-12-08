@@ -62,11 +62,11 @@ public class ConnectionManager {
     /**
      * 通过deviceId发送消息
      */
-    public void sendMessageByDeviceId(String deviceId, DronesCommandWebsocketV1 message) {
+    public void sendMessageByDeviceId(String deviceId, DronesCommandWebsocketV1 message, Long taskId) {
         WebSocketConnection conn = connections.get(deviceId);
         if (conn != null && conn.isOpen()) {
             // 保存指令并获取指令ID
-            Long id = busService.saveCommand(message);
+            Long id = busService.saveCommand(message, deviceId, taskId);
             message.setMissionId(id + "");
             String jsonString = JsonUtil.toJson(message);
             log.info("Sending message to deviceId {}: {}", deviceId, jsonString);

@@ -1,4 +1,4 @@
-package org.huazhi.drones.command.entity;
+package org.huazhi.drones.commanditem.entity;
 
 import java.time.LocalDateTime;
 
@@ -13,51 +13,28 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
-/**
- * <p>
- * 无人机指令
- * </p>
- *
- * @author zzx
- * @since 2024-06-10
- */
 @Data
 @Entity
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
-public class DronesCommand extends PanacheEntityBase {
+public class DronesCommandResultItem extends PanacheEntityBase{
     @Id
     @GeneratedValue
     private Long id;
 
-    /**
-     * 指令名称
+    /*
+     * 指令ID
      */
-    private String commandName;
+    private Long commandId;
 
-    /**
-     * 指令参数
-     */
-    @Column(columnDefinition = "TEXT")
-    private String commandParams;
 
-    /**
-     * 目标设备ID
-     */
-    private String deviceId;
-
-    /**
-     * 指令状态
-     */
-    private String status;
-
-    /**
-     * 返回值
+    /*
+     * 指令结果
      */
     @Column(columnDefinition = "TEXT")
-    private String returnValue;
+    private String commandResult;
 
-    /**
+     /**
      * 创建时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
@@ -66,17 +43,13 @@ public class DronesCommand extends PanacheEntityBase {
     /**
      * 更新时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private LocalDateTime updateTime;
 
-    /**
+     /**
      * 是否删除
      */
     @Column(columnDefinition = "INT DEFAULT 0")
     private Integer isDeleted;
-
-    /**
-     * 任务ID
-     */
-    private Long taskId;
 
 }
