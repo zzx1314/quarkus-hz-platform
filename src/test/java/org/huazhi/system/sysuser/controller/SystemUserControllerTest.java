@@ -3,7 +3,10 @@ package org.huazhi.system.sysuser.controller;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
@@ -12,6 +15,7 @@ import org.huazhi.system.sysuser.entity.dto.SysUserDto;
 import org.huazhi.util.JsonUtil;
 
 @QuarkusTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SystemUserControllerTest {
 
     private static String authToken;
@@ -35,6 +39,7 @@ public class SystemUserControllerTest {
     }
 
     @Test
+    @Order(1)
     public void testCreateUser() {
         String token = getAuthToken();
         SysUserDto newUser = new SysUserDto();
@@ -56,6 +61,7 @@ public class SystemUserControllerTest {
     }
 
     @Test
+    @Order(2)
     public void testGetUserList() {
         String token = getAuthToken();
         given()
@@ -67,6 +73,7 @@ public class SystemUserControllerTest {
     }
 
     @Test
+    @Order(3)
     public void testUpdateUserRole() {
         String token = getAuthToken();
 
@@ -90,6 +97,7 @@ public class SystemUserControllerTest {
     }
 
     @Test
+    @Order(4)
     public void testDeleteUser() {
         String token = getAuthToken();
         Long userId = 1L;

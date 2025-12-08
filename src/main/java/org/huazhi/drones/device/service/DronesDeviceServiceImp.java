@@ -20,8 +20,9 @@ import java.time.LocalDateTime;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @ApplicationScoped
 public class DronesDeviceServiceImp implements DronesDeviceService {
     @Inject
@@ -48,11 +49,12 @@ public class DronesDeviceServiceImp implements DronesDeviceService {
     }
 
     @Override
-    @Transactional
-    public Boolean register(DronesDevice entity) {
+    public Long register(DronesDevice entity) {
         entity.setCreateTime(LocalDateTime.now());
+        entity.setIsDeleted(0);
         repository.persist(entity);
-        return true;
+        log.info("新增设备：{}", entity.getId());
+        return entity.getId();
     }
 
     @Override
