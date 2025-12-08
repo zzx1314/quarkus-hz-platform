@@ -24,8 +24,8 @@ TEMPLATES = {
 
 # 数据模型---修改
 data = {
-    "base_package_name": "org.huazhi.drones.services", #修改
-    "entity_name": "DronesServices" #修改
+    "base_package_name": "org.huazhi.drones.commanditem", #修改
+    "entity_name": "DronesCommandResultItem" #修改
 }
 
 # -------------------- 初始化 Jinja2 --------------------

@@ -82,6 +82,7 @@ public class WebSocketService {
         } else if (messageJson.get("type").equals("torosReport")) {
             // 处理Toros指令结果
            log.info("处理torosReport {}: {}", deviceId, message);
+           busService.saveCommandReport(Long.valueOf(messageJson.get("missionId").toString()), message);
         }
     }
 }

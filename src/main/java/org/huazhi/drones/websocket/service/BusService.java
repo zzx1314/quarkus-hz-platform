@@ -6,6 +6,8 @@ import org.huazhi.drones.command.entity.DronesCommand;
 import org.huazhi.drones.command.entity.dto.DronesCommandDto;
 import org.huazhi.drones.command.entity.webscoketdto.DronesCommandWebsocketV1;
 import org.huazhi.drones.command.service.DronesCommandService;
+import org.huazhi.drones.commanditem.entity.DronesCommandResultItem;
+import org.huazhi.drones.commanditem.service.DronesCommandResultItemService;
 import org.huazhi.drones.device.entity.DronesDevice;
 import org.huazhi.drones.device.entity.dto.DronesDeviceDto;
 import org.huazhi.drones.device.entity.dto.DronesDeviceQueryDto;
@@ -30,6 +32,9 @@ public class BusService {
 
     @Inject
     DronesCommandService dronesCommandService;
+
+    @Inject
+    DronesCommandResultItemService dronesCommandResultItemService;
 
     /**
      * 检查客户端id
@@ -130,6 +135,18 @@ public class BusService {
         dto.setStatus(status);
         dto.setReturnValue(returnValue);
         dronesCommandService.replaceByDto(dto);
+    }
+
+    /**
+     * 保存任务指令执行结果
+     */
+    public void saveCommandReport(Long id, String returnValue) {
+        DronesCommandResultItem item = new DronesCommandResultItem();
+        item.setCommandId(id);
+        item.setCommandResult(returnValue);
+        item.setCreateTime(LocalDateTime.now());
+        item.setUpdateTime(LocalDateTime.now());
+        dronesCommandResultItemService.register(item);
     }
 
 }

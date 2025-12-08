@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 @Entity
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
-public class DronesCommandResultItem extends PanacheEntityBase{
+public class DronesCommandResultItem extends PanacheEntityBase {
     @Id
     @GeneratedValue
     private Long id;
@@ -27,14 +27,13 @@ public class DronesCommandResultItem extends PanacheEntityBase{
      */
     private Long commandId;
 
-
     /*
      * 指令结果
      */
     @Column(columnDefinition = "TEXT")
     private String commandResult;
 
-     /**
+    /**
      * 创建时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
@@ -46,7 +45,7 @@ public class DronesCommandResultItem extends PanacheEntityBase{
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private LocalDateTime updateTime;
 
-     /**
+    /**
      * 是否删除
      */
     @Column(columnDefinition = "INT DEFAULT 0")
