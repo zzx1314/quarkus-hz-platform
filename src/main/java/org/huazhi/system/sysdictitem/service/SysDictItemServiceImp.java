@@ -39,4 +39,9 @@ public class SysDictItemServiceImp implements SysDictItemService {
         repository.persist(entity);
         return true;
     }
+
+    @Override
+    public SysDictItem getOneByType(String type) {
+        return repository.find("type = ?1 and isDeleted = ?2", type, 0).firstResult();
+    }
 }

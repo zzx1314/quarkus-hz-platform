@@ -20,5 +20,5 @@ public interface SysUserService {
 
    R<SysUserDto> authenticate(String username, String password);
 
-   Boolean registerUser(SysUser sysUser);
+   R<Void> registerUser(SysUserDto sysUser);
 }

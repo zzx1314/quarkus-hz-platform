@@ -85,8 +85,8 @@ public class SysUserController {
     @POST
     @Path("/create")
     @Transactional
-    public R<Boolean> createUser(SysUser sysUser) {
-        return R.ok(userService.registerUser(sysUser));
+    public R<Void> createUser(SysUserDto sysUser) {
+        return userService.registerUser(sysUser);
     }
 
     @PUT

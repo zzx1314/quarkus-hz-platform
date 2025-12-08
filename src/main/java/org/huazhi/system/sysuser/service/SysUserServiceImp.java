@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.huazhi.system.sysdictitem.entity.SysDictItem;
+import org.huazhi.system.sysdictitem.service.SysDictItemService;
 import org.huazhi.system.sysmenu.entity.SysMenu;
 import org.huazhi.system.sysrole.entity.SysRole;
 import org.huazhi.system.sysuser.entity.SysUser;
@@ -29,6 +31,9 @@ public class SysUserServiceImp implements SysUserService {
 
     @Inject
     SysUserMapper sysUserMapper;
+
+    @Inject
+    SysDictItemService sysDictItemService;
 
     @Override
     public List<SysUser> listUsers() {
@@ -78,11 +83,47 @@ public class SysUserServiceImp implements SysUserService {
     }
 
     @Override
-    public Boolean registerUser(SysUser sysUser) {
+    public R<Void> registerUser(SysUserDto sysUserDto) {
+        Boolean checkResult = this.checkUserName(sysUserDto.getUsername());
+		if (!checkResult){
+			// 没有通过检查
+			return R.failed("账号已存在！");
+		}
+        SysUser sysUser = sysUserMapper.toEntity(sysUserDto);
+        sysUser.setIsDeleted(0);
+		sysUser.setPassword("{MD5}" + MD5Util.encrypt(sysUserDto.getPassword()));
         sysUser.setCreateTime(LocalDateTime.now());
+
+        SysDictItem sysPassChange = sysDictItemService.getOneByType("sysPassChange");
+		int passChane = Integer.parseInt(sysPassChange.getValue());
+		LocalDateTime passUpdateTime = LocalDateTime.now();
+		sysUser.setPassUpdateTime(passUpdateTime.minusDays(passChane));
+        // 用户绑定多个角色
+		if (sysUserDto.getRoleIdList().isEmpty() == false){
+			for (Long roleId : sysUserDto.getRoleIdList()) {
+				SysRole sysRole = new SysRole();
+				sysRole.setId(roleId);
+				sysUser.getRoles().add(sysRole);
+			}
+		}
+        // 用户绑定单个角色
+		if (sysUserDto.getRole() != null){
+			SysRole sysRole = new SysRole();
+            sysRole.setId(sysUserDto.getRole());
+            sysUser.getRoles().add(sysRole);
+		}
         sysUserRepository.persist(sysUser);
-        return true;
+        return R.ok();
     }
+
+    public Boolean checkUserName(String userName){
+		// 查询是否有重名的账号
+		List<SysUser> list = sysUserRepository.list("username = ?1 and isDeleted = ?2", userName, 0);
+		if (list.isEmpty() == false) {
+			return false;
+		}
+		return true;
+	}
 
     @Override
     public SysUser listOne(SysUserQueryDto queryDto) {

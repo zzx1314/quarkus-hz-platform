@@ -56,7 +56,6 @@ public class SysUser extends PanacheEntityBase {
 	/**
 	 * 密码
 	 */
-	@JsonIgnore
 	private String password;
 
 	/**
