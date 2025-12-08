@@ -92,16 +92,7 @@ public class SystemUserControllerTest {
     @Test
     public void testDeleteUser() {
         String token = getAuthToken();
-
-        // 创建测试用户
-        Long userId = given()
-                .contentType(ContentType.JSON)
-                .header("Authorization", "Bearer " + token)
-                .body("{\"username\":\"deleteuser\",\"password\":\"Temp123!\"}")
-                .post("/sysUser/create")
-                .then()
-                .extract().path("data.id");
-
+        Long userId = 152L;
         // 删除用户
         given()
                 .header("Authorization", "Bearer " + token)

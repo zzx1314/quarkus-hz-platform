@@ -104,6 +104,7 @@ public class SysUserController {
             throw new NotFoundException();
         }
         entity.setIsDeleted(1);
+        entity.getRoles().clear(); 
         entity.persist();
         return R.ok();
     }
