@@ -13,7 +13,7 @@ public class DronesActionParam {
     /**
      * 目标高度
      */
-    private String targetAlt;
+    private Double targetAlt;
 
     private DronesActionParamEvent event;
 
