@@ -21,7 +21,8 @@ public class RedisUtil {
     private final ValueCommands<String, String> valueCommands;
     private final KeyCommands<String> keyCommands;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Inject
+    ObjectMapper objectMapper;
 
     @Inject
     public RedisUtil(RedisDataSource ds) {

@@ -89,4 +89,16 @@ public class DronesTaskController {
         return R.ok();
     }
 
+    /**
+     * 查看任务状态
+     * @param id
+     * @return
+     */
+    @GET
+    @Path("/stopTask/{id}")
+    public R<Void> getTaskStatus(@PathParam("id") Long id) {
+        dronesTaskService.getTaskStatus(id);
+        return R.ok();  
+    }
+
 }

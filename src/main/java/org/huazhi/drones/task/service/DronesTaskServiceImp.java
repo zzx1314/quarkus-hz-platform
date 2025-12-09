@@ -7,10 +7,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.huazhi.drones.command.entity.DronesCommand;
+import org.huazhi.drones.command.entity.dto.DronesCommandQueryDto;
 import org.huazhi.drones.command.entity.webscoketdto.DronesCommandWebsocketV1;
 import org.huazhi.drones.command.entity.webscoketdto.DronesRoute;
 import org.huazhi.drones.command.entity.webscoketdto.action.DronesAction;
 import org.huazhi.drones.command.entity.webscoketdto.task.DronesTaskWebScoket;
+import org.huazhi.drones.command.service.DronesCommandService;
+import org.huazhi.drones.commanditem.service.DronesCommandResultItemService;
 import org.huazhi.drones.config.service.DronesConfigService;
 import org.huazhi.drones.device.entity.DronesDevice;
 import org.huazhi.drones.device.service.DronesDeviceService;
@@ -72,6 +76,12 @@ public class DronesTaskServiceImp implements DronesTaskService {
 
     @Inject
     DronesServicesService servicesService;
+
+    @Inject
+    DronesCommandResultItemService commandResultItemService;
+
+    @Inject
+    DronesCommandService commandService;
 
     @Override
     public List<DronesTask> listEntitys() {
@@ -453,6 +463,17 @@ public class DronesTaskServiceImp implements DronesTaskService {
             }
         }
         return taskNodes;
+    }
+
+    @Override
+    public void getTaskStatus(Long id) {
+        // 获取下发的任务
+        List<DronesCommand> listEntitysByDto = commandService
+                .listEntitysByDto(new DronesCommandQueryDto().setTaskId(id));
+        if (!listEntitysByDto.isEmpty()) {
+            DronesCommand dronesCommand = listEntitysByDto.get(0);
+            log.info("任务状态：{}", dronesCommand.getStatus());
+        }
     }
 
 }

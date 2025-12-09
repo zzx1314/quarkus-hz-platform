@@ -11,7 +11,7 @@ import org.huazhi.util.PageResult;
 public interface DronesCommandService {
    List<DronesCommand> listEntitys();
 
-   List<DronesCommand> listEntitysByDto(DronesCommandQueryDto sysOrgDto);
+   List<DronesCommand> listEntitysByDto(DronesCommandQueryDto queryDto);
 
    DronesCommand listOne(DronesCommandQueryDto dto);
 

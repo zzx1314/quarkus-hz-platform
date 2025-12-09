@@ -22,4 +22,10 @@ public class DronesCommandQueryDto {
     @QueryParam("deviceId")
     private String deviceId;
 
+    @QueryParam("status")
+    private String status;
+
+    @QueryParam("taskId")
+    private Long taskId;
+
 }
