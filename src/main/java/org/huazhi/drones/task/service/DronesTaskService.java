@@ -5,6 +5,7 @@ import java.util.List;
 import org.huazhi.drones.task.entity.DronesTask;
 import org.huazhi.drones.task.entity.dto.DronesTaskDto;
 import org.huazhi.drones.task.entity.dto.DronesTaskQueryDto;
+import org.huazhi.drones.task.entity.vo.DronesTaskStatusVo;
 import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
 
@@ -35,5 +36,5 @@ public interface DronesTaskService {
 
    void startTask(Long id);
 
-   void getTaskStatus(Long id);
+   DronesTaskStatusVo getTaskStatus(Long id);
 }

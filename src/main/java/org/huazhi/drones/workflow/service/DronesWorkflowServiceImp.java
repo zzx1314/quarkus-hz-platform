@@ -14,6 +14,7 @@ import org.huazhi.drones.routelibrary.entity.dto.DronesRouteLibraryQueryDto;
 import org.huazhi.drones.routelibrary.entity.mapper.DronesRouteLibraryMapper;
 import org.huazhi.drones.routelibrary.entity.vo.DronesRouteLibraryVo;
 import org.huazhi.drones.routelibrary.service.DronesRouteLibraryService;
+import org.huazhi.drones.task.entity.DronesTask;
 import org.huazhi.drones.task.service.DronesTaskService;
 import org.huazhi.drones.workflow.entity.DronesWorkflow;
 import org.huazhi.drones.workflow.entity.EdgeEntity;
@@ -73,10 +74,24 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
 
     @Override
     public Long register(DronesWorkflow entity) {
-        entity.setIsDeleted(0);
-        entity.setCreateTime(LocalDateTime.now());
-        repository.persist(entity);
-        return entity.getId();
+        DronesWorkflow oneFlow = this.listOne(new DronesWorkflowQueryDto().setUuid(entity.getUuid()));
+        if (oneFlow != null) {
+            entity.setId(oneFlow.getId());
+            this.replaceById(entity);
+            return oneFlow.getId();
+        } else {
+            entity.setIsDeleted(0);
+            entity.setCreateTime(LocalDateTime.now());
+            repository.persist(entity);
+            // 修改任务表
+            DronesTask task = new DronesTask();
+            task.setId(entity.getTaskId());
+            task.setWorkflowId(entity.getId());
+            task.setWorkflowUuid(entity.getUuid());
+            taskService.replaceById(task);
+            return entity.getId();
+        }
+
     }
 
     @Override

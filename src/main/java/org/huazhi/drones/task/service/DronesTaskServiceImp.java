@@ -14,6 +14,8 @@ import org.huazhi.drones.command.entity.webscoketdto.DronesRoute;
 import org.huazhi.drones.command.entity.webscoketdto.action.DronesAction;
 import org.huazhi.drones.command.entity.webscoketdto.task.DronesTaskWebScoket;
 import org.huazhi.drones.command.service.DronesCommandService;
+import org.huazhi.drones.commanditem.entity.DronesCommandResultItem;
+import org.huazhi.drones.commanditem.entity.dto.DronesCommandResultItemQueryDto;
 import org.huazhi.drones.commanditem.service.DronesCommandResultItemService;
 import org.huazhi.drones.config.service.DronesConfigService;
 import org.huazhi.drones.device.entity.DronesDevice;
@@ -27,6 +29,7 @@ import org.huazhi.drones.services.service.DronesServicesService;
 import org.huazhi.drones.task.entity.DronesTask;
 import org.huazhi.drones.task.entity.dto.DronesTaskDto;
 import org.huazhi.drones.task.entity.dto.DronesTaskQueryDto;
+import org.huazhi.drones.task.entity.vo.DronesTaskStatusVo;
 import org.huazhi.drones.task.repository.DronesTaskRepository;
 import org.huazhi.drones.util.DateUtil;
 import org.huazhi.drones.websocket.service.ConnectionManager;
@@ -41,6 +44,7 @@ import org.huazhi.util.PageResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
@@ -240,7 +244,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
 
             // 构建任务步骤
             DronesTaskWebScoket taskInfo = new DronesTaskWebScoket();
-            taskInfo.setTaskId(String.valueOf(i + 1));
+            taskInfo.setTaskId(taskNode.getId());
             taskInfo.setFromWp(taskNode.getData().getTaskInfo().getFromWp());
             taskInfo.setToWp(taskNode.getData().getTaskInfo().getToWp());
             taskInfo.setEvent(taskNode.getData().getTaskInfo().getEvent());
@@ -466,14 +470,42 @@ public class DronesTaskServiceImp implements DronesTaskService {
     }
 
     @Override
-    public void getTaskStatus(Long id) {
+    public DronesTaskStatusVo getTaskStatus(Long id) {
+        DronesTaskStatusVo statusVo = new DronesTaskStatusVo();
+        List<String> successIds = new ArrayList<>();
+        List<String> failIds = new ArrayList<>();
+        Map<String, String> errorInfoMap = new HashMap<>();
         // 获取下发的任务
         List<DronesCommand> listEntitysByDto = commandService
                 .listEntitysByDto(new DronesCommandQueryDto().setTaskId(id));
         if (!listEntitysByDto.isEmpty()) {
             DronesCommand dronesCommand = listEntitysByDto.get(0);
             log.info("任务状态：{}", dronesCommand.getStatus());
+            // 获取任务结果项
+            List<DronesCommandResultItem> resultItem = commandResultItemService
+                    .listEntitysByDto(new DronesCommandResultItemQueryDto().setCommandId(dronesCommand.getId()));
+            if (!resultItem.isEmpty()) {
+                for (DronesCommandResultItem item : resultItem) {
+                    JsonNode commandResult = JsonUtil.toJsonObject(item.getCommandResult());
+                    JsonNode stateNode = commandResult.path("actionResult").path("state");
+                    Boolean state = stateNode.isMissingNode() || stateNode.isNull()
+                            ? null
+                            : stateNode.asBoolean();
+                    if (state != null && state) {
+                        successIds.add(commandResult.path("actionId").asText());
+                    } else {
+                        failIds.add(commandResult.path("actionId").asText());
+                        String errorInfo = commandResult.path("actionResult").path("err_msg").asText();
+                        errorInfoMap.put(commandResult.path("actionId").asText(), errorInfo);
+                    }
+                }
+                // 如果action都成功，任务的状态是成功
+            }
         }
+        statusVo.setSuccessIds(successIds);
+        statusVo.setFailIds(failIds);
+        statusVo.setErrorInfoMap(errorInfoMap);
+        return statusVo;
     }
 
 }

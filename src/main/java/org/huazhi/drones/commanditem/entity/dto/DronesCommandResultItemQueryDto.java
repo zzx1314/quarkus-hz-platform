@@ -15,4 +15,7 @@ public class DronesCommandResultItemQueryDto {
 
     @QueryParam("endTime")
     private String endTime;
+
+    @QueryParam("commandId")
+    private Long commandId;
 }
