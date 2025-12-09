@@ -66,7 +66,7 @@ public class SysMenuServiceImp implements SysMenuService {
             List<SysMenu> menus = role.getMenus();
 
             // 权限组合
-            Map<Integer, List<SysMenu>> greoupByPIdMap = menus.stream()
+            Map<Long, List<SysMenu>> greoupByPIdMap = menus.stream()
                     .filter(sysMenu -> sysMenu.getType() == 2)
                     .collect(Collectors.groupingBy(SysMenu::getParentId));
 

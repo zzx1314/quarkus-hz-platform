@@ -11,7 +11,7 @@ public class SysAuthMenuVo {
 	/**
 	 * id
 	 */
-	private Integer id;
+	private Long id;
 
 	/**
 	 * 标题
@@ -31,6 +31,6 @@ public class SysAuthMenuVo {
 	/**
 	 * 已使用的权限
 	 */
-	private Set<Integer> useAuthList;
+	private Set<Long> useAuthList;
 
 }

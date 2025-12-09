@@ -75,7 +75,7 @@ public class SysDictController {
     @POST
     @Path("/create")
     @Transactional
-    public R<Boolean> create(SysDict entity) {
+    public R<Long> create(SysDict entity) {
         return R.ok(sysDictService.register(entity));
     }
 

@@ -22,7 +22,7 @@ public class MenuVo implements Serializable {
 	/**
 	 * 菜单ID
 	 */
-	private Integer id;
+	private Long id;
 
 	/**
 	 * 菜单名称
@@ -42,7 +42,7 @@ public class MenuVo implements Serializable {
 	/**
 	 * 父菜单ID
 	 */
-	private Integer parentId;
+	private Long parentId;
 
 	/**
 	 * 图标
@@ -103,7 +103,7 @@ public class MenuVo implements Serializable {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof MenuVo) {
-			Integer targetMenuId = ((MenuVo) obj).getId();
+			Long targetMenuId = ((MenuVo) obj).getId();
 			return id.equals(targetMenuId);
 		}
 		return super.equals(obj);

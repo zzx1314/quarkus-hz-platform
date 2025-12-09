@@ -60,7 +60,7 @@ public class SysMenu extends PanacheEntityBase {
 	/**
 	 * 父菜单ID
 	 */
-	private Integer parentId;
+	private Long parentId;
 
 	/**
 	 * VUE页面

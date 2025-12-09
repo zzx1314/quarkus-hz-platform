@@ -14,13 +14,13 @@ public class SysMenuQueryDto {
     private Long id;
 
     @QueryParam("ids")
-    private List<Integer> ids;
+    private List<Long> ids;
 
     @QueryParam("type")
     private Integer type;
 
     @QueryParam("parentId")
-    private Integer parentId;
+    private Long parentId;
 
     @QueryParam("roleCode")
     private String roleCode;

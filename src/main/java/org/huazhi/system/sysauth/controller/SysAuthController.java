@@ -53,20 +53,20 @@ public class SysAuthController {
 		sysRoleDto.setCode(sysAuthDto.getRoleCode());
 		SysRole sysRole = sysRoleService.listRoleByDto(sysRoleDto);
 		// 将角色和菜单信息保存
-		List<Integer> authList = sysAuthDto.getAuthList();
+		List<Long> authList = sysAuthDto.getAuthList();
 
 		List<SysMenu> allMenu = sysMenuService.listEntitys();
-		Map<Integer, SysMenu> menuMap = allMenu.stream().collect(Collectors.toMap(SysMenu::getId, sysMenu -> sysMenu));
+		Map<Long, SysMenu> menuMap = allMenu.stream().collect(Collectors.toMap(SysMenu::getId, sysMenu -> sysMenu));
 
-		Set<Integer> menuIdSet = new HashSet<>();
+		Set<Long> menuIdSet = new HashSet<>();
 		if (!authList.isEmpty()) {
 			SysMenuQueryDto sysMenuQueryDto = new SysMenuQueryDto();
 			sysMenuQueryDto.setIds(authList);
 			List<SysMenu> sysMenus = sysMenuService.listEntitysByDto(sysMenuQueryDto);
-			Set<Integer> oneParentIdSet = sysMenus.stream().map(SysMenu::getParentId).collect(Collectors.toSet());
-			Set<Integer> authSetId = sysMenus.stream().map(SysMenu::getId).collect(Collectors.toSet());
+			Set<Long> oneParentIdSet = sysMenus.stream().map(SysMenu::getParentId).collect(Collectors.toSet());
+			Set<Long> authSetId = sysMenus.stream().map(SysMenu::getId).collect(Collectors.toSet());
 
-			for (Integer oneParentId : oneParentIdSet) {
+			for (Long oneParentId : oneParentIdSet) {
 				menuIdSet.add(oneParentId);
 				this.getMenuIds(oneParentId, menuMap, menuIdSet);
 			}
@@ -79,7 +79,7 @@ public class SysAuthController {
 		return R.ok();
 	}
 
-	private void getMenuIds(Integer parntId, Map<Integer, SysMenu> menuMap, Set<Integer> parentIdSet) {
+	private void getMenuIds(Long parntId, Map<Long, SysMenu> menuMap, Set<Long> parentIdSet) {
 		SysMenu sysMenu = menuMap.get(parntId);
 		if (sysMenu == null) {
 			return;

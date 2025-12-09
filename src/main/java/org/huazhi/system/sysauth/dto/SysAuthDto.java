@@ -15,6 +15,6 @@ public class SysAuthDto {
 	/**
 	 * 角色权限
 	 */
-	private List<Integer> authList;
+	private List<Long> authList;
 
 }
