@@ -10,7 +10,7 @@ import lombok.Data;
  */
 @Data
 public class NodeEntityData {
-    private Integer taskId;
+    private String taskId;
 
     private Long routeId;
 
