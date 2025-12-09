@@ -472,8 +472,8 @@ public class DronesTaskServiceImp implements DronesTaskService {
     @Override
     public DronesTaskStatusVo getTaskStatus(Long id) {
         DronesTaskStatusVo statusVo = new DronesTaskStatusVo();
-        List<String> successIds = new ArrayList<>();
-        List<String> failIds = new ArrayList<>();
+        Set<String> successIds = new HashSet<>();
+        Set<String> failIds = new HashSet<>();
         Map<String, String> errorInfoMap = new HashMap<>();
         // 获取下发的任务
         List<DronesCommand> listEntitysByDto = commandService
@@ -493,13 +493,18 @@ public class DronesTaskServiceImp implements DronesTaskService {
                             : stateNode.asBoolean();
                     if (state != null && state) {
                         successIds.add(commandResult.path("actionId").asText());
+                        successIds.add(commandResult.path("taskId").asText());
                     } else {
                         failIds.add(commandResult.path("actionId").asText());
+                        failIds.add(commandResult.path("taskId").asText());
                         String errorInfo = commandResult.path("actionResult").path("err_msg").asText();
                         errorInfoMap.put(commandResult.path("actionId").asText(), errorInfo);
                     }
                 }
                 // 如果action都成功，任务的状态是成功
+                if (!successIds.isEmpty()) {
+                    successIds.removeAll(failIds);
+                }
             }
         }
         statusVo.setSuccessIds(successIds);

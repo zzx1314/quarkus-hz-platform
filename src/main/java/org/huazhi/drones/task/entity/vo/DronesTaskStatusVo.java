@@ -1,7 +1,7 @@
 package org.huazhi.drones.task.entity.vo;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import lombok.Data;
 
@@ -10,12 +10,12 @@ public class DronesTaskStatusVo {
     /**
      * 成功的id
      */
-    private List<String> successIds;
+    private Set<String> successIds;
 
     /**
      * 失败的id
      */
-    private List<String> failIds;
+    private Set<String> failIds;
 
 
     /**
