@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.huazhi.drones.command.entity.DronesCommand;
 import org.huazhi.drones.command.entity.dto.DronesCommandQueryDto;
@@ -257,6 +258,8 @@ public class DronesTaskServiceImp implements DronesTaskService {
 
         // 批量获取服务列表（优化N+1查询）
         List<DronesServicesVo> services = getServicesByNames(serviceNames);
+        // services不为空，将服务的params放到action中
+        setActionService(tasks, services);
 
         // 组装命令对象
         commandWebsocket.setServices(services);
@@ -265,6 +268,84 @@ public class DronesTaskServiceImp implements DronesTaskService {
 
         log.info("发送指令信息：{}", JsonUtil.toJson(commandWebsocket));
         connectionManager.sendMessageByDeviceId(device.getDeviceId(), commandWebsocket, id);
+    }
+
+    private static final class ServiceConfig {
+        String serviceType;
+        String completeEventFrom;
+
+        ServiceConfig(String serviceType, String completeEventFrom) {
+            this.serviceType = serviceType;
+            this.completeEventFrom = completeEventFrom;
+        }
+    }
+
+    // actionType -> service 配置
+    private static final Map<String, ServiceConfig> SERVICE_MAP = Map.of(
+            "SERVICE_START_YOLO", new ServiceConfig("YOLO", "onStart"),
+            "SERVICE_STOP_YOLO", new ServiceConfig("YOLO", "onStop"),
+
+            "SERVICE_START_DEEPSORT", new ServiceConfig("DEEPSORT", "onStart"),
+            "SERVICE_STOP_DEEPSORT", new ServiceConfig("DEEPSORT", "onStop"),
+
+            "SERVICE_START_RTSP", new ServiceConfig("RTSP", "onStart"),
+            "SERVICE_STOP_RTSP", new ServiceConfig("RTSP", "onStop"));
+
+    private void fillEventParams(JsonNode jsonNode, DronesAction action, String completeFrom) {
+        JsonNode event = jsonNode.path("event");
+        var actEvent = action.getParams().getEvent();
+
+        actEvent.setOnStart(event.path("onStart").asText());
+        actEvent.setOnStop(event.path("onStop").asText());
+        actEvent.setOnLost(event.path("onLost").asText());
+        actEvent.setOnTracked(event.path("onTracked").asText());
+        actEvent.setOnComplete(event.path(completeFrom).asText());
+    }
+
+    private void fillParams(JsonNode jsonNode, DronesAction action) {
+        var p = action.getParams();
+
+        // YOLO 参数
+        if (jsonNode.has("model"))
+            p.setModel(jsonNode.path("model").asText());
+        if (jsonNode.has("input"))
+            p.setInput(jsonNode.path("input").asText());
+
+        // DEEPSORT 参数
+        if (jsonNode.has("max_age"))
+            p.setMax_age(jsonNode.path("max_age").asInt());
+
+        // RTSP 参数
+        if (jsonNode.has("url"))
+            p.setUrl(jsonNode.path("url").asText());
+        if (jsonNode.has("bitrate"))
+            p.setBitrate(jsonNode.path("bitrate").asText());
+    }
+
+    private void setActionService(List<DronesTaskWebScoket> tasks, List<DronesServicesVo> services) {
+        if (services.isEmpty())
+            return;
+        Map<String, List<DronesServicesVo>> serverMap = services.stream()
+                .collect(Collectors.groupingBy(DronesServicesVo::getType));
+
+        for (DronesTaskWebScoket task : tasks) {
+            for (DronesAction action : task.getActions()) {
+                ServiceConfig cfg = SERVICE_MAP.get(action.getType());
+                if (cfg == null)
+                    continue;
+                DronesServicesVo vo = serverMap.getOrDefault(cfg.serviceType, List.of()).stream()
+                        .findFirst().orElse(null);
+                if (vo == null)
+                    continue;
+
+                JsonNode json = vo.getParams();
+
+                // 统一设置 param
+                fillParams(json, action);
+                // 统一设置 event
+                fillEventParams(json, action, cfg.completeEventFrom);
+            }
+        }
     }
 
     /**

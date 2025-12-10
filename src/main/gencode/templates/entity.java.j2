@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -19,7 +19,7 @@ import jakarta.persistence.Table;
 @EqualsAndHashCode(callSuper=false)
 public class {{ entity_name }} extends PanacheEntityBase {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
 	private Integer id;
 
     {% for field in fields %}

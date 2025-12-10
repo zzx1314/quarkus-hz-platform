@@ -5,7 +5,7 @@ import org.huazhi.drones.command.entity.webscoketdto.DronesRoute;
 import lombok.Data;
 
 @Data
-public class DronesActionParam {
+public class  DronesActionParam {
     /**
      * 悬停时间
      */
@@ -15,6 +15,9 @@ public class DronesActionParam {
      */
     private Double targetAlt;
 
+    /**
+     * 事件
+     */
     private DronesActionParamEvent event;
 
     /**
@@ -41,4 +44,19 @@ public class DronesActionParam {
      * 失败原因
      */
     private String reason;
+
+    // yolo 相关参数
+    private String model;
+
+    private String input;
+
+
+    // deepsort 相关参数
+    private Integer max_age;
+
+
+    // RTSP 相关参数
+    private String url;
+
+    private String bitrate;
 }
