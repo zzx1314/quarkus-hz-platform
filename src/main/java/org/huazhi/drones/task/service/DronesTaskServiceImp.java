@@ -220,8 +220,13 @@ public class DronesTaskServiceImp implements DronesTaskService {
      */
     @Override
     public String getCommandJsonString(Long id) {
-        DronesCommandWebsocketV1 commandWebsocket = getCommandWebsocket(id);
-        return JsonUtil.toJson(commandWebsocket);
+        try {
+            DronesCommandWebsocketV1 commandWebsocket = getCommandWebsocket(id);
+            return JsonUtil.toJson(commandWebsocket);
+        } catch (Exception e) {
+            log.error("getCommandJsonString error: {}", e.getMessage());
+            return "";
+        }
     }
 
     /**
@@ -302,6 +307,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
         commandWebsocket.setOnErrorActions(errorNodes);
         return commandWebsocket;
     }
+
     /**
      * 补充航点信息
      */
