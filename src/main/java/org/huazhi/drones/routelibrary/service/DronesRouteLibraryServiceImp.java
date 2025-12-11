@@ -11,6 +11,9 @@ import org.huazhi.drones.common.SelectOption;
 import org.huazhi.drones.model.entity.DronesModel;
 import org.huazhi.drones.model.entity.dto.DronesModelQueryDto;
 import org.huazhi.drones.model.service.DronesModelService;
+import org.huazhi.drones.routeitem.entity.DronesRouteItem;
+import org.huazhi.drones.routeitem.entity.dto.DronesRouteItemQueryDto;
+import org.huazhi.drones.routeitem.service.DronesRouteItemService;
 import org.huazhi.drones.routelibrary.entity.DronesRouteLibrary;
 import org.huazhi.drones.routelibrary.entity.dto.DronesRouteLibraryDto;
 import org.huazhi.drones.routelibrary.entity.dto.DronesRouteLibraryQueryDto;
@@ -42,6 +45,9 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
 
     @Inject
     DronesModelService modelService;
+
+    @Inject
+    DronesRouteItemService routeItemService;
 
     @Inject
     FileConfig fileConfig;
@@ -224,6 +230,17 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
                             .constructCollectionType(List.class, Double.class)));
             data.setStartCoordinates(mapper.writeValueAsString(result.get(0)));
             data.setEndCoordinates(mapper.writeValueAsString(result.get(result.size() - 1)));
+
+            // 补充航点数据
+            for (int i = 0; i < result.size(); i++ ){
+                 List<Double> point = result.get(i);
+                DronesRouteItem routeItem = new DronesRouteItem();
+                routeItem.setRouteItemName("航点" + (i + 1));
+                routeItem.setRouteValue(point.get(0) + "," + point.get(1));
+                routeItem.setRouteLibraryId(data.getId());
+                routeItem.setCreateTime(LocalDateTime.now());
+                routeItemService.register(routeItem);
+            }
             repository.updateByDto(data);
         } catch (JsonMappingException e) {
             e.printStackTrace();
@@ -249,24 +266,16 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
         return R.ok("操作成功");
     }
 
+    /**
+     * 根据航线获取航点下拉
+     */
     @Override
     public List<SelectOption> getRouteOption(Long id) {
         // 获取所有航点
         List<SelectOption> routePoints = new ArrayList<>();
-        ObjectMapper mapper = new ObjectMapper();
-        DronesRouteLibrary route = repository.findById(id);
-        try {
-            List<List<Double>> result = mapper.readValue(route.getRouteData(), mapper.getTypeFactory()
-                    .constructCollectionType(List.class, mapper.getTypeFactory()
-                            .constructCollectionType(List.class, Double.class)));
-            for (int i = 0; i < result.size(); i++) {
-                List<Double> point = result.get(i);
-                routePoints.add(new SelectOption("航点" + (i + 1), point.get(0) + "," + point.get(1)));
-            }
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+        List<DronesRouteItem> items = routeItemService.listEntitysByDto(new DronesRouteItemQueryDto().setRouteLibraryId(id));
+        for (DronesRouteItem item : items) {
+            routePoints.add(new SelectOption(item.getRouteItemName(), item.getId()));
         }
         return routePoints;
     }

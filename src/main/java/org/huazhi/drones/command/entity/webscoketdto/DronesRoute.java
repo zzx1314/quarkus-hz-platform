@@ -7,7 +7,7 @@ public class DronesRoute {
     /**
      * 航点id
      */
-    private String wpId;
+    private long wpId;
 
     /**
      * 经度
