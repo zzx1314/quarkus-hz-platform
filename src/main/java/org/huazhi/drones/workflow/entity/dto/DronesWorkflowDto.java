@@ -20,4 +20,9 @@ public class DronesWorkflowDto {
 	 * 任务ID
 	 */
 	private Long taskId;
+
+	/**
+	 * 命令JSON字符串
+	 */
+	private String commandJsonString;
 }
