@@ -10,6 +10,11 @@ import lombok.Data;
 
 @Data
 public class DronesCommandWebsocketV1 {
+
+    /*
+    * 设备id
+    */
+    private String deviceId;
     /**
      * 类型
      */

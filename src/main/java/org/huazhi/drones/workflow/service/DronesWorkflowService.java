@@ -34,4 +34,6 @@ public interface DronesWorkflowService {
    DronesWorkflow getWorkflow(Long taskId);
 
    List<DronesRouteLibraryVo> getRouteByTaskId(Long taskId);
+
+   String getCommandJsonString(Long taskId);
 }

@@ -36,5 +36,7 @@ public interface DronesTaskService {
 
    void startTask(Long id);
 
+   String getCommandJsonString(Long id);
+
    DronesTaskStatusVo getTaskStatus(Long id);
 }

@@ -75,13 +75,16 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
     @Override
     public Long register(DronesWorkflow entity) {
         DronesWorkflow oneFlow = this.listOne(new DronesWorkflowQueryDto().setUuid(entity.getUuid()));
+        String commandJsonString = taskService.getCommandJsonString(entity.getTaskId());
         if (oneFlow != null) {
             entity.setId(oneFlow.getId());
+            entity.setCommandJsonString(commandJsonString);
             this.replaceById(entity);
             return oneFlow.getId();
         } else {
             entity.setIsDeleted(0);
             entity.setCreateTime(LocalDateTime.now());
+            entity.setCommandJsonString(commandJsonString);
             repository.persist(entity);
             // 修改任务表
             DronesTask task = new DronesTask();
@@ -194,6 +197,16 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
             }
         }
         return result;
+    }
+
+    @Override
+    public String getCommandJsonString(Long taskId) {
+        DronesWorkflowQueryDto queryDto = new DronesWorkflowQueryDto().setTaskId(taskId);
+        DronesWorkflow dronesWorkflow = repository.selectOne(queryDto);
+        if (dronesWorkflow != null) {
+            return dronesWorkflow.getCommandJsonString();
+        }
+        return null;
     }
 
 }

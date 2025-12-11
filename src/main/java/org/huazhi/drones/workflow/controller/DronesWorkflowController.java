@@ -59,6 +59,12 @@ public class DronesWorkflowController {
     }
 
     @GET
+    @Path("/getCommandJsonString/{taskId}")
+    public R<String> getCommandJsonString(@PathParam("taskId") Long taskId) {
+        return R.ok(dronesWorkflowService.getCommandJsonString(taskId));
+    }
+
+    @GET
     @Path("/getRouteByTaskId/{taskId}")
     public R<List<DronesRouteLibraryVo>> getRouteByTaskId(@PathParam("taskId") Long taskId) {
         return R.ok(dronesWorkflowService.getRouteByTaskId(taskId));

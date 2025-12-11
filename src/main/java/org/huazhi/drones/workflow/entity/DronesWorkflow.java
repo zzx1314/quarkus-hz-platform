@@ -61,4 +61,10 @@ public class DronesWorkflow extends PanacheEntityBase {
 	 */
 	@Column(columnDefinition = "INT DEFAULT 0")
 	private Integer isDeleted;
+
+	/**
+	 * 命令字符串
+	 */
+	@Column(columnDefinition = "TEXT")
+	private String commandJsonString;
 }

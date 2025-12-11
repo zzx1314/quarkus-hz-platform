@@ -34,8 +34,10 @@ import org.huazhi.drones.task.entity.vo.DronesTaskStatusVo;
 import org.huazhi.drones.task.repository.DronesTaskRepository;
 import org.huazhi.drones.util.DateUtil;
 import org.huazhi.drones.websocket.service.ConnectionManager;
+import org.huazhi.drones.workflow.entity.DronesWorkflow;
 import org.huazhi.drones.workflow.entity.NodeEntity;
 import org.huazhi.drones.workflow.entity.NodeEntityData;
+import org.huazhi.drones.workflow.entity.dto.DronesWorkflowQueryDto;
 import org.huazhi.drones.workflow.service.DronesWorkflowService;
 import org.huazhi.drones.workflow.vo.DronesWorkflowVo;
 import org.huazhi.util.JsonUtil;
@@ -202,6 +204,31 @@ public class DronesTaskServiceImp implements DronesTaskService {
      */
     @Override
     public void startTask(Long id) {
+       DronesWorkflow dronesWorkflow = workflowService.listOne(new DronesWorkflowQueryDto().setTaskId(id));
+       if (dronesWorkflow != null) {
+        String dronesCommand = dronesWorkflow.getCommandJsonString();
+        log.info("发送指令信息：{}", dronesCommand);
+        DronesCommandWebsocketV1 commandWebsocket = JsonUtil.fromJson(dronesCommand, DronesCommandWebsocketV1.class);
+        connectionManager.sendMessageByDeviceId(commandWebsocket.getDeviceId(), commandWebsocket, id);
+       }
+    }
+
+     /*
+     * 获取任务状态的指令字符串
+     */
+    @Override
+    public String getCommandJsonString(Long id) {
+        DronesCommandWebsocketV1 commandWebsocket = getCommandWebsocket(id);
+        return JsonUtil.toJson(commandWebsocket);
+    }
+
+    /**
+     * 获取指令实体
+     * 
+     * @param id 任务ID
+     * @return 任务状态
+     */
+    private DronesCommandWebsocketV1 getCommandWebsocket(Long id) { 
         // 更新任务状态
         DronesTask task = repository.findById(id);
         if (task == null) {
@@ -230,10 +257,14 @@ public class DronesTaskServiceImp implements DronesTaskService {
         long routeId = firstTaskNode.getData().getRouteId();
 
         // 补充航线路径
-        commandWebsocket.setRoute(getRoutesById(routeId));
-
+        if (routeId != 0) {
+            commandWebsocket.setRoute(getRoutesById(routeId));
+        } else {
+            commandWebsocket.setRoute(new ArrayList<>());
+        }
         // 获取设备信息（用于后续发送消息）
         DronesDevice device = deviceService.listById(deviceId);
+        commandWebsocket.setDeviceId(device.getDeviceId());
 
         // 构建任务步骤列表
         List<DronesTaskWebScoket> tasks = new ArrayList<>();
@@ -265,9 +296,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
         commandWebsocket.setServices(services);
         commandWebsocket.setTasks(tasks);
         commandWebsocket.setOnErrorActions(errorNodes);
-
-        log.info("发送指令信息：{}", JsonUtil.toJson(commandWebsocket));
-        connectionManager.sendMessageByDeviceId(device.getDeviceId(), commandWebsocket, id);
+        return commandWebsocket;
     }
 
     private static final class ServiceConfig {
