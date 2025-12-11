@@ -89,6 +89,12 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
     @Override
     public void replaceByDto(DronesRouteLibraryDto dto) {
         repository.updateByDto(dto);
+        // 修改item的数据
+        if (dto.getRouteItems() != null && !dto.getRouteItems().isEmpty()) {
+            for (DronesRouteItem itemDto : dto.getRouteItems()) {
+                routeItemService.replaceById(itemDto);
+            }
+        }
     }
 
     @Override

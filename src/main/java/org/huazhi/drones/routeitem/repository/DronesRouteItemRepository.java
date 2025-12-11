@@ -27,7 +27,8 @@ public class DronesRouteItemRepository implements PanacheRepository<DronesRouteI
         QueryBuilder qb = QueryBuilder.create()
                 .equal("id", queryDto.getId())
                 .equal("routeLibraryId", queryDto.getRouteLibraryId())
-                .equal("isDeleted", 0);
+                .equal("isDeleted", 0)
+                .orderBy("createTime asc");
         return find(qb.getQuery(), qb.getParams()).list();
     }
 
