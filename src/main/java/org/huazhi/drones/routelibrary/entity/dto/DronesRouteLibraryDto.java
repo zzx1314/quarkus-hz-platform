@@ -22,4 +22,9 @@ public class DronesRouteLibraryDto {
      */
     private String endCoordinates;
 
+    /**
+     * 描述
+     */
+    private String routeDescription;
+
 }
