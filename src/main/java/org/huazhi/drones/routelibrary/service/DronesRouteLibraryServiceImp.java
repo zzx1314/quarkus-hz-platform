@@ -21,6 +21,7 @@ import org.huazhi.drones.routelibrary.repository.DronesRouteLibraryRepository;
 import org.huazhi.drones.util.DateUtil;
 import org.huazhi.util.FileUtil;
 import org.huazhi.util.ImageUtil;
+import org.huazhi.util.JsonUtil;
 import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
 import org.huazhi.util.R;
@@ -88,13 +89,20 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
 
     @Override
     public void replaceByDto(DronesRouteLibraryDto dto) {
-        repository.updateByDto(dto);
         // 修改item的数据
         if (dto.getRouteItems() != null && !dto.getRouteItems().isEmpty()) {
+            List<List<Double>> item = new ArrayList<>();
             for (DronesRouteItem itemDto : dto.getRouteItems()) {
                 routeItemService.replaceById(itemDto);
+                String[] itemArray = itemDto.getRouteValue().split(",");
+                List<Double> itemOne = new ArrayList<>();
+                itemOne.add(Double.parseDouble(itemArray[0]));
+                itemOne.add(Double.parseDouble(itemArray[1]));
+                item.add(itemOne);
             }
+            dto.setRouteData(JsonUtil.toJson(item));
         }
+        repository.updateByDto(dto);
     }
 
     @Override
