@@ -5,4 +5,6 @@ import lombok.Data;
 @Data
 public class DronesRouteItemDto {
     private Long id;
+
+    private Long routeLibraryId;
 }

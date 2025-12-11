@@ -37,6 +37,7 @@ import io.quarkus.panache.common.Sort;
 import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
@@ -222,6 +223,7 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
     }
 
     @Override
+    @Transactional
     public void saveRouteData(DronesRouteLibraryDto data) {
         ObjectMapper mapper = new ObjectMapper();
         try {
@@ -231,11 +233,25 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
             data.setStartCoordinates(mapper.writeValueAsString(result.get(0)));
             data.setEndCoordinates(mapper.writeValueAsString(result.get(result.size() - 1)));
 
+            List<List<Double>> resultList = new ArrayList<>();
+            List<Double> source = new ArrayList<>();
+            source.add(0.0);
+            source.add(0.0);
+            resultList.add(source);
+            resultList.addAll(result);
+
+            // 删除之前的数据
+            routeItemService.removeByRouteLibraryId(data.getId());
             // 补充航点数据
-            for (int i = 0; i < result.size(); i++ ){
-                 List<Double> point = result.get(i);
+            for (int i = 0; i < resultList.size(); i++ ){
+                List<Double> point = resultList.get(i);
                 DronesRouteItem routeItem = new DronesRouteItem();
-                routeItem.setRouteItemName("航点" + (i + 1));
+                routeItem.setIsDeleted(0);
+                if (i == 0) {
+                     routeItem.setRouteItemName("起点" );
+                } else{
+                    routeItem.setRouteItemName("航点" + i );
+                }
                 routeItem.setRouteValue(point.get(0) + "," + point.get(1));
                 routeItem.setRouteLibraryId(data.getId());
                 routeItem.setCreateTime(LocalDateTime.now());

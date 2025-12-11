@@ -77,4 +77,8 @@ public class DronesRouteItemRepository implements PanacheRepository<DronesRouteI
         }
     }
 
+    public void deleteByRouteLibraryId(Long id) {
+        this.delete("routeLibraryId =?1", id);
+    }
+
 }

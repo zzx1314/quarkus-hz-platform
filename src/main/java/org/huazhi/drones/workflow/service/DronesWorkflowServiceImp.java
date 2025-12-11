@@ -75,8 +75,8 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
     @Override
     public Long register(DronesWorkflow entity) {
         DronesWorkflow oneFlow = this.listOne(new DronesWorkflowQueryDto().setUuid(entity.getUuid()));
-        String commandJsonString = taskService.getCommandJsonString(entity.getTaskId());
         if (oneFlow != null) {
+            String commandJsonString = taskService.getCommandJsonString(entity.getTaskId());
             entity.setId(oneFlow.getId());
             entity.setCommandJsonString(commandJsonString);
             this.replaceById(entity);
@@ -84,8 +84,8 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
         } else {
             entity.setIsDeleted(0);
             entity.setCreateTime(LocalDateTime.now());
-            entity.setCommandJsonString(commandJsonString);
             repository.persist(entity);
+
             // 修改任务表
             DronesTask task = new DronesTask();
             task.setId(entity.getTaskId());

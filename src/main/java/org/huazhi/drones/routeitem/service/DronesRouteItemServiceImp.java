@@ -73,4 +73,9 @@ public class DronesRouteItemServiceImp implements DronesRouteItemService {
         return repository.findById(id);
     }
 
+    @Override
+    public void removeByRouteLibraryId(Long id) {
+        repository.deleteByRouteLibraryId(id);
+    }
+
 }
