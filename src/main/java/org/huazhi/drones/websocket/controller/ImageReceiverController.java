@@ -32,27 +32,19 @@ public class ImageReceiverController {
 
     @GET
     @Path("/start")
-    public R<Void> start(@QueryParam("taskId") Long taskId) {
-        List<DronesCommand> commands = commandService.listEntitysByDto(new DronesCommandQueryDto().setTaskId(taskId));
-        if (!commands.isEmpty()) {
-            DronesCommand command  = commands.getFirst();
-            DronesDevice device = deviceService.listOne(new DronesDeviceQueryDto().setDeviceId(command.getDeviceId()));
-            log.info("start ImageReceiver--deviceId=" + device.getDeviceId());
-            pool.start(device.getDeviceIp(), 9650);
-        }
+    public R<Void> start(@QueryParam("deviceId") Long deviceId) {
+        DronesDevice device = deviceService.listById(deviceId);
+        log.info("start ImageReceiver--deviceId=" + device.getDeviceId());
+        pool.start(device.getDeviceIp(), 9650);
         return R.ok();
     }
 
     @GET
     @Path("/stop")
-    public R<Void> stop(@QueryParam("taskId") Long taskId) {
-        List<DronesCommand> commands = commandService.listEntitysByDto(new DronesCommandQueryDto().setTaskId(taskId));
-        if (!commands.isEmpty()) {
-            DronesCommand command  = commands.getFirst();
-            DronesDevice device = deviceService.listOne(new DronesDeviceQueryDto().setDeviceId(command.getDeviceId()));
-            log.info("stop ImageReceiver--deviceId=" + device.getDeviceId());
-            pool.start(device.getDeviceIp(), 9650);
-        }
+    public R<Void> stop(@QueryParam("taskId") Long deviceId) {
+         DronesDevice device = deviceService.listById(deviceId);
+        log.info("start ImageReceiver--deviceId=" + device.getDeviceId());
+        pool.stop(device.getDeviceIp(), 9650);
         return R.ok();
     }
 }
