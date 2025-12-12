@@ -281,10 +281,33 @@ function worldToPixel([wx, wy]) {
   };
 }
 
+function startImage() {
+  const param = {
+    deviceId: props.deviceId
+  };
+  dronesDeviceStartImage(param).then(res => {
+    if (res.code === SUCCESS) {
+      console.log("start Image");
+    }
+  });
+}
+
+function stopImage() {
+  const param = {
+    deviceId: props.deviceId
+  };
+  dronesDeviceStopImage(param).then(res => {
+    if (res.code === SUCCESS) {
+      console.log("stop Image");
+    }
+  });
+}
+
 let timer = null;
 
 onMounted(() => {
   getModelOptions();
+  startImage();
   timer = window.setInterval(() => {
     console.log("每 2 秒执行一次任务");
     if (props.deviceId) {
@@ -303,6 +326,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+  stopImage();
   if (timer) {
     clearInterval(timer);
   }

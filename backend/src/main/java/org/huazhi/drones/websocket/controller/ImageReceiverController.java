@@ -36,7 +36,7 @@ public class ImageReceiverController {
 
     @GET
     @Path("/stop")
-    public R<Void> stop(@QueryParam("taskId") Long deviceId) {
+    public R<Void> stop(@QueryParam("deviceId") Long deviceId) {
          DronesDevice device = deviceService.listById(deviceId);
         log.info("start ImageReceiver--deviceId=" + device.getDeviceId());
         pool.stop(device.getDeviceIp(), 9650);

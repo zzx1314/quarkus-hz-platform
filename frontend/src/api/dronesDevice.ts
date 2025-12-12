@@ -21,7 +21,9 @@ const dronesDeviceUrls = {
   delete: `/api/dronesDevice/`,
   update: "/api/dronesDevice/update",
   getSelectOption: "/api/dronesDevice/getSelectOption",
-  getStatus: "/api/dronesDevice/getStatus/"
+  getStatus: "/api/dronesDevice/getStatus/",
+  startImageReceiver: "/api/imageReceiver/start",
+  stopImageReceiver: "/api/imageReceiver/stop"
 };
 
 // 分页
@@ -47,4 +49,18 @@ export const dronesDeviceGetSelectOptions = (query?: object) => {
 // 获取设备状态
 export const dronesDeviceGetStatus = (id: string | number) => {
   return http.axiosGetRequest<Result>(dronesDeviceUrls.getStatus + id, {});
+};
+// 启动图像获取
+export const dronesDeviceStartImage = (query?: object) => {
+  return http.axiosGetRequest<ResultPage>(
+    dronesDeviceUrls.startImageReceiver,
+    query
+  );
+};
+// 停止图像获取
+export const dronesDeviceStopImage = (query?: object) => {
+  return http.axiosGetRequest<ResultPage>(
+    dronesDeviceUrls.stopImageReceiver,
+    query
+  );
 };
