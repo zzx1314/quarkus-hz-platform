@@ -45,6 +45,14 @@ public class ConnectionManager {
         return map != null ? map.get(key) : null;
     }
 
+    public Boolean isAlive(String deviceId) {
+        WebSocketConnection connection = connections.get(deviceId);
+        if (connection != null && connection.isOpen()) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * 发送心跳响应
      */

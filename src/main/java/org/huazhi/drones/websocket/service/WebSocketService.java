@@ -72,9 +72,15 @@ public class WebSocketService {
             // 心跳消息
             MessageHeartbeat heartbeat = JsonUtil.fromJson(message, MessageHeartbeat.class);
             heartbeat.setDeviceId(deviceId);
-            MessageInfo messageInfo = busService.reportStatus(heartbeat);
             // 发送心跳响应
-            connectionManager.sendHeartBeatReturn(heartbeat.getDeviceId(), messageInfo);
+            if (connectionManager.isAlive(deviceId)) {
+                 MessageInfo messageInfo = busService.reportStatus(heartbeat);
+                 connectionManager.sendHeartBeatReturn(heartbeat.getDeviceId(), messageInfo);
+            } else {
+                // 断开连接
+                log.info("Device {} disconnected.", deviceId);
+            }
+           
         } else if (messageJson.get("type").equals("report")) {
             // 处理指令结果
             MessageInfo messageInfo = JsonUtil.fromJson(message, MessageInfo.class);
