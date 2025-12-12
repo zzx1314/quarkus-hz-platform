@@ -229,6 +229,17 @@ public class DronesTaskServiceImp implements DronesTaskService {
         }
     }
 
+    @Override
+    public String getCommandJsonString(DronesWorkflow entity) {
+          try {
+            DronesCommandWebsocketV1 commandWebsocket = getCommandWebsocket(entity);
+            return JsonUtil.toJson(commandWebsocket);
+        } catch (Exception e) {
+            log.error("getCommandJsonString error: {}", e.getMessage());
+            return "";
+        }
+    }
+
     /**
      * 获取指令实体
      * 
@@ -236,18 +247,23 @@ public class DronesTaskServiceImp implements DronesTaskService {
      * @return 任务状态
      */
     private DronesCommandWebsocketV1 getCommandWebsocket(Long id) {
-        // 更新任务状态
-        DronesTask task = repository.findById(id);
-        if (task == null) {
-            throw new RuntimeException("任务不存在：" + id);
-        }
-        task.setTaskStatus("进行中");
-        repository.updateById(task);
-
         // 获取任务流程图
         DronesWorkflowVo workflowGraph = workflowService.getWorkflowGraph(id);
         log.info("任务流程图：{}", JsonUtil.toJson(workflowGraph));
+        DronesCommandWebsocketV1 commandWebsocket = getCommandWebsocketCommon(workflowGraph);
+        return commandWebsocket;
+    }
 
+    private DronesCommandWebsocketV1 getCommandWebsocket(DronesWorkflow fromWorkflow) {
+        // 获取任务流程图
+        DronesWorkflowVo workflowGraph = workflowService.getWorkflowGraph(fromWorkflow);
+        log.info("任务流程图：{}", JsonUtil.toJson(workflowGraph));
+
+        DronesCommandWebsocketV1 commandWebsocket = getCommandWebsocketCommon(workflowGraph);
+        return commandWebsocket;
+    }
+
+     private DronesCommandWebsocketV1 getCommandWebsocketCommon(DronesWorkflowVo workflowGraph) {
         // 获取任务节点
         List<NodeEntity> taskNodes = findTasknodes(workflowGraph);
         if (taskNodes.isEmpty()) {
@@ -306,7 +322,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
         commandWebsocket.setTasks(tasks);
         commandWebsocket.setOnErrorActions(errorNodes);
         return commandWebsocket;
-    }
+     }
 
     /**
      * 补充航点信息

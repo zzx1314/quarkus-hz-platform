@@ -31,6 +31,9 @@ public interface DronesWorkflowService {
 
    DronesWorkflowVo getWorkflowGraph(Long taskId);
 
+
+   DronesWorkflowVo getWorkflowGraph(DronesWorkflow dronesWorkflow);
+
    DronesWorkflow getWorkflow(Long taskId);
 
    List<DronesRouteLibraryVo> getRouteByTaskId(Long taskId);

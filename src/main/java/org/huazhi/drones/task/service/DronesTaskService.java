@@ -6,6 +6,7 @@ import org.huazhi.drones.task.entity.DronesTask;
 import org.huazhi.drones.task.entity.dto.DronesTaskDto;
 import org.huazhi.drones.task.entity.dto.DronesTaskQueryDto;
 import org.huazhi.drones.task.entity.vo.DronesTaskStatusVo;
+import org.huazhi.drones.workflow.entity.DronesWorkflow;
 import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
 
@@ -36,7 +37,8 @@ public interface DronesTaskService {
 
    void startTask(Long id);
 
-   String getCommandJsonString(Long id);
+   String getCommandJsonString(Long taskId);
+   String getCommandJsonString(DronesWorkflow entity);
 
    DronesTaskStatusVo getTaskStatus(Long id);
 }

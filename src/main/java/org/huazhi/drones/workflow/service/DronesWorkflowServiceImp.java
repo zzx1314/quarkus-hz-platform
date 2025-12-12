@@ -76,14 +76,18 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
     public Long register(DronesWorkflow entity) {
         DronesWorkflow oneFlow = this.listOne(new DronesWorkflowQueryDto().setUuid(entity.getUuid()));
         if (oneFlow != null) {
+            // 修改
             String commandJsonString = taskService.getCommandJsonString(entity.getTaskId());
             entity.setId(oneFlow.getId());
             entity.setCommandJsonString(commandJsonString);
             this.replaceById(entity);
             return oneFlow.getId();
         } else {
+            // 新增
             entity.setIsDeleted(0);
             entity.setCreateTime(LocalDateTime.now());
+            String commandJsonString = taskService.getCommandJsonString(entity);
+            entity.setCommandJsonString(commandJsonString);
             repository.persist(entity);
 
             // 修改任务表
@@ -121,6 +125,15 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
     public DronesWorkflowVo getWorkflowGraph(Long taskId) {
         DronesWorkflowQueryDto queryDto = new DronesWorkflowQueryDto().setTaskId(taskId);
         DronesWorkflow dronesWorkflow = repository.selectOne(queryDto);
+        return getWorkflowGraphItem(dronesWorkflow);
+    }
+
+    @Override
+    public DronesWorkflowVo getWorkflowGraph(DronesWorkflow dronesWorkflow) {
+         return getWorkflowGraphItem(dronesWorkflow);
+    }
+
+    private DronesWorkflowVo getWorkflowGraphItem (DronesWorkflow dronesWorkflow){
         DronesWorkflowVo dronesWorkflowVo = new DronesWorkflowVo();
         if (null != dronesWorkflow) {
             String nodes = dronesWorkflow.getNodes();
