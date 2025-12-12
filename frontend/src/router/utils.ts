@@ -3,7 +3,7 @@ import {
   type RouteRecordRaw,
   type RouteComponent,
   createWebHistory,
-  createWebHashHistory
+  createWebHashHistory,
 } from "vue-router";
 import { router } from "./index";
 import { isProxy, nextTick, toRaw } from "vue";
@@ -14,7 +14,7 @@ import {
   isAllEmpty,
   intersection,
   storageSession,
-  isIncludeAllChildren
+  isIncludeAllChildren,
 } from "@pureadmin/utils";
 import { getConfig } from "@/config";
 import { userKey, type DataInfo } from "@/utils/auth";
@@ -47,17 +47,17 @@ function ascending(arr: any[]) {
   return arr.sort(
     (a: { meta: { rank: number } }, b: { meta: { rank: number } }) => {
       return a?.meta.rank - b?.meta.rank;
-    }
+    },
   );
 }
 
 /** 过滤meta中showLink为false的菜单 */
 function filterTree(data: RouteComponent[]) {
   const newTree = cloneDeep(data).filter(
-    (v: { meta: { showLink: boolean } }) => v.meta?.showLink !== false
+    (v: { meta: { showLink: boolean } }) => v.meta?.showLink !== false,
   );
   newTree.forEach(
-    (v: { children }) => v.children && (v.children = filterTree(v.children))
+    (v: { children }) => v.children && (v.children = filterTree(v.children)),
   );
   return newTree;
 }
@@ -66,7 +66,7 @@ function filterTree(data: RouteComponent[]) {
 function filterChildrenTree(data: RouteComponent[]) {
   const newTree = cloneDeep(data).filter((v: any) => v?.children?.length !== 0);
   newTree.forEach(
-    (v: { children }) => v.children && (v.children = filterTree(v.children))
+    (v: { children }) => v.children && (v.children = filterTree(v.children)),
   );
   return newTree;
 }
@@ -85,10 +85,10 @@ function filterNoPermissionTree(data: RouteComponent[]) {
   const currentRoles =
     storageSession().getItem<DataInfo<number>>(userKey)?.roles ?? [];
   const newTree = cloneDeep(data).filter((v: any) =>
-    isOneOfArray(v.meta?.roles, currentRoles)
+    isOneOfArray(v.meta?.roles, currentRoles),
   );
   newTree.forEach(
-    (v: any) => v.children && (v.children = filterNoPermissionTree(v.children))
+    (v: any) => v.children && (v.children = filterNoPermissionTree(v.children)),
   );
   return filterChildrenTree(newTree);
 }
@@ -127,7 +127,7 @@ function getParentPaths(value: string, routes: RouteRecordRaw[], key = "path") {
 export function getAllBreadcrumbList(
   treeDatas: any[],
   result: Array<object> = [],
-  pathList: Array<any> = []
+  pathList: Array<any> = [],
 ) {
   for (let i = 0; i < treeDatas.length; i++) {
     const item = treeDatas[i];
@@ -137,7 +137,7 @@ export function getAllBreadcrumbList(
     } else {
       result.push({
         pathList: [...pathList],
-        parentPath: getParentPaths(item.path, treeDatas as any)[0]
+        parentPath: getParentPaths(item.path, treeDatas as any)[0],
       });
     }
     pathList.pop();
@@ -176,7 +176,7 @@ function addPathMatch() {
     router.addRoute({
       path: "/:pathMatch(.*)",
       name: "pathMatch",
-      redirect: "/error/404"
+      redirect: "/error/404",
     });
   }
 }
@@ -195,19 +195,19 @@ async function handleAsyncRoutes(routeList) {
 
   // 去除已存在的子路由
   const existingPaths = new Set(
-    router.options.routes[0]?.children?.map(r => r.path) || []
+    router.options.routes[0]?.children?.map((r) => r.path) || [],
   );
-  const newChildren = flatRoutes.filter(r => !existingPaths.has(r.path));
+  const newChildren = flatRoutes.filter((r) => !existingPaths.has(r.path));
 
   const newRouteNames = newChildren
-    .filter(r => typeof r.name === "string")
-    .map(r => r.name as string);
+    .filter((r) => typeof r.name === "string")
+    .map((r) => r.name as string);
   usePermissionStoreHook().setDynamicRouteNames(newRouteNames);
 
   // 排序并合并 children
   const updatedChildren = ascending([
     ...(router.options.routes[0]?.children || []),
-    ...newChildren
+    ...newChildren,
   ]);
 
   // 更新 router.options.routes[0].children（内存结构）
@@ -217,7 +217,7 @@ async function handleAsyncRoutes(routeList) {
   const layoutRoute = {
     path: "/",
     component: router.options.routes[0].component,
-    children: updatedChildren
+    children: updatedChildren,
   };
 
   // 注意：Vue Router 中不允许重复 addRoute 同名路由
@@ -225,7 +225,7 @@ async function handleAsyncRoutes(routeList) {
     router.addRoute(layoutRoute);
   } else {
     // 如果已存在则更新其 children
-    const root = router.getRoutes().find(r => r.path === "/");
+    const root = router.getRoutes().find((r) => r.path === "/");
     if (root) root.children = updatedChildren;
   }
   // 更新菜单存储
@@ -236,15 +236,15 @@ async function handleAsyncRoutes(routeList) {
     useMultiTagsStoreHook().handleTags("equal", [
       ...routerArrays,
       ...usePermissionStoreHook().flatteningRoutes.filter(
-        v => v?.meta?.fixedTag
-      )
+        (v) => v?.meta?.fixedTag,
+      ),
     ]);
   }
   // 添加 pathMatch (404)
   addPathMatch();
   // 等待路由刷新
   await nextTick();
-  await new Promise(resolve => setTimeout(resolve, 0));
+  await new Promise((resolve) => setTimeout(resolve, 0));
   return true;
 }
 
@@ -255,12 +255,12 @@ function initRouter() {
     const key = "async-routes";
     const asyncRouteList = storageSession().getItem(key) as any;
     if (asyncRouteList && asyncRouteList?.length > 0) {
-      return new Promise(async resolve => {
+      return new Promise(async (resolve) => {
         await handleAsyncRoutes(asyncRouteList);
         resolve(router);
       });
     } else {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         getAsyncRoutes().then(async ({ data }) => {
           await handleAsyncRoutes(cloneDeep(data));
           storageSession().setItem(key, data);
@@ -269,12 +269,12 @@ function initRouter() {
       });
     }
   } else {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       getAsyncRoutes().then(async ({ data }) => {
         const routerData = JSON.stringify(data);
         await handleAsyncRoutes(JSON.parse(routerData));
         await nextTick();
-        await new Promise(r => setTimeout(r));
+        await new Promise((r) => setTimeout(r));
         resolve(router);
       });
     });
@@ -315,7 +315,7 @@ function formatTwoStageRoutes(routesList: RouteRecordRaw[]) {
         path: v.path,
         redirect: v.redirect,
         meta: v.meta,
-        children: []
+        children: [],
       });
     } else {
       newRoutesList[0]?.children.push({ ...v });
@@ -330,30 +330,30 @@ function handleAliveRoute({ name }: ToRouteType, mode?: string) {
     case "add":
       usePermissionStoreHook().cacheOperate({
         mode: "add",
-        name
+        name,
       });
       break;
     case "delete":
       usePermissionStoreHook().cacheOperate({
         mode: "delete",
-        name
+        name,
       });
       break;
     case "refresh":
       usePermissionStoreHook().cacheOperate({
         mode: "refresh",
-        name
+        name,
       });
       break;
     default:
       usePermissionStoreHook().cacheOperate({
         mode: "delete",
-        name
+        name,
       });
       useTimeoutFn(() => {
         usePermissionStoreHook().cacheOperate({
           mode: "add",
-          name
+          name,
         });
       }, 100);
   }
@@ -377,8 +377,8 @@ function addAsyncRoutes(arrRoutes: Array<RouteRecordRaw>) {
     } else {
       // 对后端传component组件路径和不传做兼容（如果后端传component组件路径，那么path可以随便写，如果不传，component组件路径会跟path保持一致）
       const index = v?.component
-        ? modulesRoutesKeys.findIndex(ev => ev.includes(v.component as any))
-        : modulesRoutesKeys.findIndex(ev => ev.includes(v.path));
+        ? modulesRoutesKeys.findIndex((ev) => ev.includes(v.component as any))
+        : modulesRoutesKeys.findIndex((ev) => ev.includes(v.path));
       v.component = modulesRoutes[modulesRoutesKeys[index]];
     }
     if (v?.children && v.children.length) {
@@ -431,7 +431,7 @@ function hasAuth(value: string | Array<string>): boolean {
 function handleTopMenu(route) {
   if (route?.children && route.children.length > 1) {
     if (route.redirect) {
-      return route.children.filter(cur => cur.path === route.redirect)[0];
+      return route.children.filter((cur) => cur.path === route.redirect)[0];
     } else {
       return route.children[0];
     }
@@ -443,7 +443,7 @@ function handleTopMenu(route) {
 /** 获取所有菜单中的第一个菜单（顶级菜单）*/
 function getTopMenu(tag = false): menuType {
   const topMenu = handleTopMenu(
-    usePermissionStoreHook().wholeMenus[0]?.children[0]
+    usePermissionStoreHook().wholeMenus[0]?.children[0],
   );
   tag && useMultiTagsStoreHook().handleTags("push", topMenu);
   return topMenu;
@@ -465,5 +465,5 @@ export {
   handleAliveRoute,
   formatTwoStageRoutes,
   formatFlatteningRoutes,
-  filterNoPermissionTree
+  filterNoPermissionTree,
 };

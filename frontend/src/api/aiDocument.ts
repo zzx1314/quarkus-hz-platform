@@ -28,7 +28,7 @@ const aiDocumentUrls = {
   storeParagraph: "/api/aiDocument/storeParagraph",
   hitTest: "/api/aiDocument/hitTest",
   previewFile: "/api/aiDocument/previewFile",
-  getDocByKbId: "/api/aiDocument/getDocByKbId/"
+  getDocByKbId: "/api/aiDocument/getDocByKbId/",
 };
 
 // 文档分页
@@ -69,7 +69,7 @@ export const aiDocumentDelete = (param?: object) => {
 // 删除段落
 export const aiDocumentDeleteParagraph = (param?: any) => {
   return http.axiosDelete<Result>(
-    aiDocumentUrls.deleteParagraph + param.id + "/" + param.knowledgeId
+    aiDocumentUrls.deleteParagraph + param.id + "/" + param.knowledgeId,
   );
 };
 // 命中测试
