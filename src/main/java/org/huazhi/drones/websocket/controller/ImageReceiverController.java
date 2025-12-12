@@ -6,13 +6,8 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
-
-import org.huazhi.drones.command.entity.DronesCommand;
-import org.huazhi.drones.command.entity.dto.DronesCommandQueryDto;
 import org.huazhi.drones.command.service.DronesCommandService;
 import org.huazhi.drones.device.entity.DronesDevice;
-import org.huazhi.drones.device.entity.dto.DronesDeviceQueryDto;
 import org.huazhi.drones.device.service.DronesDeviceService;
 import org.huazhi.drones.websocket.service.ImageReceiverPool;
 import org.huazhi.util.R;
