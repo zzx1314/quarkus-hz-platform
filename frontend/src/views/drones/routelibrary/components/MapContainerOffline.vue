@@ -108,7 +108,11 @@ import {
   dronesRouteLibrarySaveRouteData
 } from "@/api/dronesRouteLibrary";
 import { dronesModelGetSelectOption } from "@/api/dronesModel";
-import { dronesDeviceGetStatus } from "@/api/dronesDevice";
+import {
+  dronesDeviceGetStatus,
+  dronesDeviceStartImage,
+  dronesDeviceStopImage
+} from "@/api/dronesDevice";
 import { SUCCESS } from "@/api/base";
 import { message } from "@/utils/message";
 import WebSocketClient from "@/components/ReWebSocket";
@@ -173,24 +177,6 @@ const startport = `
 		</g>
 	</svg>
 `;
-
-webSocketImag.value = new WebSocketClient();
-
-webSocketImag.value.connect({
-  onConnect: () => {
-    console.log("连接成功");
-  },
-  onError: function (error) {
-    console.log("连接失败", error);
-  },
-  onClose: function () {
-    console.log("连接关闭");
-  },
-  onData: function (data) {
-    //收到数据时回调
-    imageSrc.value = "data:image/jpeg;base64," + data;
-  }
-});
 
 //  仅保留一条路径
 let currentPath = [];
@@ -304,11 +290,51 @@ function stopImage() {
 }
 
 let timer = null;
+function startWebscoket() {
+  webSocketImag.value = new WebSocketClient();
+
+  webSocketImag.value.connect({
+    onConnect: () => {
+      console.log("连接成功");
+    },
+    onError: function (error) {
+      console.log("连接失败", error);
+    },
+    onClose: function () {
+      console.log("连接关闭");
+    },
+    onData: function (data) {
+      //收到数据时回调
+      imageSrc.value = "data:image/jpeg;base64," + data;
+    }
+  });
+}
+
+function stopImageOnUnload() {
+  if (!props.deviceId) return;
+  const ok = navigator.sendBeacon(
+    "/api/imageReceiver/stop",
+    new Blob([JSON.stringify({ deviceId: props.deviceId })], {
+      type: "application/json"
+    })
+  );
+}
+
+function handlePageClose() {
+  stopImageOnUnload();
+
+  if (webSocketImag.value) {
+    webSocketImag.value.disconnect();
+  }
+}
 
 onMounted(() => {
+  startWebscoket();
   getModelOptions();
   startImage();
-  timer = window.setInterval(() => {
+  window.addEventListener("beforeunload", handlePageClose);
+  window.addEventListener("pagehide", handlePageClose);
+  /* timer = window.setInterval(() => {
     console.log("每 2 秒执行一次任务");
     if (props.deviceId) {
       dronesDeviceGetStatus(props.deviceId).then(res => {
@@ -322,10 +348,12 @@ onMounted(() => {
         }
       });
     }
-  }, 2000);
+  }, 2000); */
 });
 
 onUnmounted(() => {
+  window.removeEventListener("beforeunload", handlePageClose);
+  window.removeEventListener("pagehide", handlePageClose);
   stopImage();
   if (timer) {
     clearInterval(timer);
