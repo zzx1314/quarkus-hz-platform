@@ -1,7 +1,5 @@
 package org.huazhi.drones.websocket.service;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -40,8 +38,6 @@ public class ImageWebSocket {
     }
 
      public static void broadcast(byte[] jpeg) {
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-        System.out.println(LocalDateTime.now().format(fmt));
         for (WebSocketConnection conn : sessions) {
             if (!conn.isOpen()) continue;
 
