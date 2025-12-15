@@ -93,7 +93,7 @@
             </div>
           </template>
           <div class="container-status">
-            <img ref="videoImg" style="width: 500px" />
+            <img ref="videoImg" width="500" height="300" />
           </div>
         </el-card>
       </div>
@@ -133,8 +133,12 @@ const height = ref(0);
 const battery = ref(100);
 const course = ref(0);
 const location = ref("");
-const imageSrc = ref("");
 const webSocketImag = ref(null);
+
+// ===== 视频相关（新增）=====
+let latestFrame = null;
+let rendering = false;
+let lastObjectUrl = null;
 
 const props = defineProps({
   deviceId: {
@@ -201,14 +205,29 @@ function loadSVGImage(svg) {
 }
 
 // 绘制图标
+let cachedDroneIcon = null;
+let cachedStartPortIcon = null;
+
 async function drawIcon(x, y) {
-  const img = await loadSVGImage(svgIcon);
-  ctx.drawImage(img, x - img.width / 2, y - img.height / 2);
+  if (!cachedDroneIcon) {
+    cachedDroneIcon = await loadSVGImage(svgIcon);
+  }
+  ctx.drawImage(
+    cachedDroneIcon,
+    x - cachedDroneIcon.width / 2,
+    y - cachedDroneIcon.height / 2
+  );
 }
 
 async function drawStartPort(x, y) {
-  const img = await loadSVGImage(startport);
-  ctx.drawImage(img, x - img.width / 2, y - img.height / 2);
+  if (!cachedStartPortIcon) {
+    cachedStartPortIcon = await loadSVGImage(startport);
+  }
+  ctx.drawImage(
+    cachedStartPortIcon,
+    x - cachedStartPortIcon.width / 2,
+    y - cachedStartPortIcon.height / 2
+  );
 }
 
 // 获取航线图片 base64
@@ -293,6 +312,28 @@ let timer = null;
 let lastUrl = null;
 const videoImg = ref(null);
 
+function renderVideoLoop() {
+  if (latestFrame && !rendering && videoImg.value) {
+    rendering = true;
+
+    const blob = new Blob([latestFrame], { type: "image/jpeg" });
+    const url = URL.createObjectURL(blob);
+
+    videoImg.value.onload = () => {
+      if (lastObjectUrl) {
+        URL.revokeObjectURL(lastObjectUrl);
+      }
+      lastObjectUrl = url;
+      rendering = false;
+    };
+
+    videoImg.value.src = url;
+    latestFrame = null;
+  }
+
+  requestAnimationFrame(renderVideoLoop);
+}
+
 function startWebscoket() {
   webSocketImag.value = new WebSocketClient();
 
@@ -307,17 +348,7 @@ function startWebscoket() {
       console.log("连接关闭");
     },
     onData: function (data) {
-      //收到数据时回调
-      console.log("收到数据" + new Date().toLocaleString());
-
-      // imageSrc.value = "data:image/jpeg;base64," + data;
-      const blob = new Blob([data], { type: "image/jpeg" });
-      const url = URL.createObjectURL(blob);
-      videoImg.value.src = url;
-      if (lastUrl) {
-        URL.revokeObjectURL(lastUrl);
-      }
-      lastUrl = url;
+      latestFrame = data;
     }
   });
 }
@@ -342,6 +373,7 @@ function handlePageClose() {
 
 onMounted(() => {
   startWebscoket();
+  renderVideoLoop();
   getModelOptions();
   startImage();
   window.addEventListener("beforeunload", handlePageClose);
