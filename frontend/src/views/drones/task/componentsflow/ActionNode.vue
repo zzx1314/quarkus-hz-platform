@@ -65,7 +65,7 @@ const rules = reactive<FormRules>({
           callback(new Error("起飞高度必填"));
         } else callback();
       },
-      trigger: "change"
+      trigger: "blur"
     }
   ],
 
@@ -96,7 +96,8 @@ const rules = reactive<FormRules>({
         ) {
           callback(new Error("X 坐标必填"));
         } else callback();
-      }
+      },
+      trigger: "blur"
     }
   ],
   ypoint: [
@@ -109,7 +110,8 @@ const rules = reactive<FormRules>({
         ) {
           callback(new Error("Y 坐标必填"));
         } else callback();
-      }
+      },
+      trigger: "blur"
     }
   ],
   zpoint: [
@@ -122,7 +124,8 @@ const rules = reactive<FormRules>({
         ) {
           callback(new Error("Z 坐标必填"));
         } else callback();
-      }
+      },
+      trigger: "blur"
     }
   ],
 
@@ -137,7 +140,7 @@ const rules = reactive<FormRules>({
           callback(new Error("拍照数量必填"));
         } else callback();
       },
-      trigger: "change"
+      trigger: "blur"
     }
   ],
 
@@ -152,7 +155,7 @@ const rules = reactive<FormRules>({
           callback(new Error("拍照间隔必填"));
         } else callback();
       },
-      trigger: "change"
+      trigger: "blur"
     }
   ],
 
