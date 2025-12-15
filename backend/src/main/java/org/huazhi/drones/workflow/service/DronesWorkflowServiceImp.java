@@ -77,9 +77,10 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
         DronesWorkflow oneFlow = this.listOne(new DronesWorkflowQueryDto().setUuid(entity.getUuid()));
         if (oneFlow != null) {
             // 修改
-            String commandJsonString = taskService.getCommandJsonString(entity.getTaskId());
+            String commandJsonString = taskService.getCommandJsonString(entity);
             entity.setId(oneFlow.getId());
             entity.setCommandJsonString(commandJsonString);
+            log.info("修改json："+ commandJsonString);
             this.replaceById(entity);
             return oneFlow.getId();
         } else {
