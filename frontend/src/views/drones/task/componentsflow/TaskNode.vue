@@ -105,6 +105,8 @@ if (originalData.value) {
       routePointListOptions.value.push(...res.data);
       console.log("routePointListOptions", routePointListOptions.value);
     });
+    isCustomeRoute.value = false;
+    emit("showCustomPoint", false);
   } else {
     isCustomeRoute.value = true;
     emit("showCustomPoint", true);
@@ -160,6 +162,8 @@ const handleChangeRoute = value => {
         updateNodeData(props.id, taskForm.value);
       }
     });
+    isCustomeRoute.value = false;
+    emit("showCustomPoint", false);
   } else {
     // 选择自定义航线
     isCustomeRoute.value = true;

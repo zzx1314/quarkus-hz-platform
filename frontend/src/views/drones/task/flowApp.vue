@@ -233,8 +233,8 @@ const handlePaneClick = () => {
   selectedNodeId.value = "";
 };
 
-const handleShowCustomPoint = () => {
-  isShowCustomPoint.value = true;
+const handleShowCustomPoint = param => {
+  isShowCustomPoint.value = param;
 };
 
 const nodeStatus = id => {
