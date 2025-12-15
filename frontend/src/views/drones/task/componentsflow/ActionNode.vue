@@ -167,7 +167,7 @@ const rules = reactive<FormRules>({
           callback(new Error("悬停时间必填"));
         } else callback();
       },
-      trigger: "change"
+      trigger: "blur"
     }
   ]
 });
@@ -447,7 +447,7 @@ onBeforeUnmount(() => {
           v-if="actionForm.action && actionForm.action.type === 'TAKEOFF'"
           label="起飞高度"
           prop="action.params.targetAlt"
-          :required="true"
+          required
         >
           <el-input-number
             v-model="actionForm.action.params.targetAlt"
@@ -465,7 +465,7 @@ onBeforeUnmount(() => {
             !props.isShowCustomPoint
           "
           label="航点动作"
-          :required="true"
+          required
           prop="action.params.targetWpStr"
         >
           <el-select
@@ -488,7 +488,7 @@ onBeforeUnmount(() => {
           "
           prop="xpoint"
           label="目标点X坐标"
-          :required="true"
+          required
         >
           <el-input-number
             v-model="actionForm.xpoint"
@@ -506,7 +506,7 @@ onBeforeUnmount(() => {
           "
           prop="ypoint"
           label="目标点Y坐标"
-          :required="true"
+          required
         >
           <el-input-number
             v-model="actionForm.ypoint"
@@ -524,7 +524,7 @@ onBeforeUnmount(() => {
           "
           prop="zpoint"
           label="目标点Z坐标"
-          :required="true"
+          required
         >
           <el-input-number
             v-model="actionForm.zpoint"
@@ -539,7 +539,7 @@ onBeforeUnmount(() => {
           v-if="actionForm.action && actionForm.action.type === 'PHOTO'"
           label="拍照数量"
           prop="action.params.num"
-          :required="true"
+          required
         >
           <el-input-number
             v-model="actionForm.action.params.num"
@@ -553,7 +553,7 @@ onBeforeUnmount(() => {
           v-if="actionForm.action && actionForm.action.type === 'PHOTO'"
           label="拍照间隔"
           prop="action.params.intervalSec"
-          :required="true"
+          required
         >
           <el-input-number
             v-model="actionForm.action.params.intervalSec"
@@ -568,7 +568,7 @@ onBeforeUnmount(() => {
           v-if="actionForm.action && actionForm.action.type === 'HOVER'"
           label="悬停时间"
           prop="action.params.timeSec"
-          :required="true"
+          required
         >
           <el-input-number
             v-model="actionForm.action.params.timeSec"
