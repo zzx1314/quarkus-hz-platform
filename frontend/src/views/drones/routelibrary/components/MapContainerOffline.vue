@@ -93,7 +93,7 @@
             </div>
           </template>
           <div class="container-status">
-            <img :src="imageSrc" style="width: 640px" />
+            <img :src="imageSrc" style="width: 700px" />
           </div>
         </el-card>
       </div>
@@ -608,7 +608,7 @@ canvas {
 .container-status {
   display: flex;
   flex-direction: column;
-  width: 400px;
+  width: 600px;
   height: 100px;
 }
 
