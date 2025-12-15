@@ -38,7 +38,7 @@ public class ImageReceiverController {
     public R<Void> start(@QueryParam("deviceId") Long deviceId) {
         DronesDevice device = deviceService.listById(deviceId);
         log.info("start ImageReceiver--deviceId=" + device.getDeviceId());
-        pool.start("192.168.41.20", 9650);
+        pool.start(device.getDeviceIp(), 9650);
         return R.ok();
     }
 
@@ -49,7 +49,7 @@ public class ImageReceiverController {
         Long deviceId = body.get("deviceId");
         DronesDevice device = deviceService.listById(deviceId);
         log.info("stop ImageReceiver--deviceId=" + device.getDeviceId());
-        pool.stop("192.168.41.20", 9650);
+        pool.stop(device.getDeviceIp(), 9650);
         return R.ok();
     }
 }
