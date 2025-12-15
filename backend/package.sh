@@ -111,7 +111,7 @@ fi
 # 构建前端项目
 if [ "$BUILD_FRONTEND" = true ]; then
     echo "4. 构建前端项目..."
-    FRONTEND_PROJECT="../vue-pure-admin-max"
+    FRONTEND_PROJECT="../frontend"
     
     if [ -d "$FRONTEND_PROJECT" ] && [ -f "$FRONTEND_PROJECT/build.sh" ]; then
         echo "进入前端项目目录并执行构建..."
