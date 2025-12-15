@@ -19,13 +19,14 @@ class WebSocketClient {
    */
   connect(params: {
     onConnect: () => void;
-    onData: (data: string) => void;
+    onData: (data: ArrayBuffer) => void;
     onClose: () => void;
     onError: (error: string) => void;
   }): void {
     if (window.WebSocket) {
       // 如果支持websocket
       this._connection = new WebSocket(this.getWebSocketUrl());
+      this._connection.binaryType = "arraybuffer";
     } else {
       // 否则报错
       params.onError("WebSocket Not Supported");
@@ -37,8 +38,11 @@ class WebSocketClient {
     };
 
     this._connection.onmessage = evt => {
-      const data = evt.data.toString();
-      params.onData(data);
+      if (evt.data instanceof ArrayBuffer) {
+        params.onData(evt.data);
+      } else {
+        console.warn("收到非二进制消息:", evt.data);
+      }
     };
 
     this._connection.onclose = () => {

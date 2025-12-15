@@ -93,7 +93,7 @@
             </div>
           </template>
           <div class="container-status">
-            <img :src="imageSrc" style="width: 700px" />
+            <img ref="videoImg" style="width: 500px" />
           </div>
         </el-card>
       </div>
@@ -290,6 +290,9 @@ function stopImage() {
 }
 
 let timer = null;
+let lastUrl = null;
+const videoImg = ref(null);
+
 function startWebscoket() {
   webSocketImag.value = new WebSocketClient();
 
@@ -305,7 +308,16 @@ function startWebscoket() {
     },
     onData: function (data) {
       //收到数据时回调
-      imageSrc.value = "data:image/jpeg;base64," + data;
+      console.log("收到数据" + new Date().toLocaleString());
+
+      // imageSrc.value = "data:image/jpeg;base64," + data;
+      const blob = new Blob([data], { type: "image/jpeg" });
+      const url = URL.createObjectURL(blob);
+      videoImg.value.src = url;
+      if (lastUrl) {
+        URL.revokeObjectURL(lastUrl);
+      }
+      lastUrl = url;
     }
   });
 }
@@ -608,7 +620,7 @@ canvas {
 .container-status {
   display: flex;
   flex-direction: column;
-  width: 600px;
+  width: 500px;
   height: 100px;
 }
 

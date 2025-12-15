@@ -7,7 +7,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Base64;
 
 @Slf4j
 public class ImageReceiver implements Runnable {
@@ -69,7 +68,7 @@ public class ImageReceiver implements Runnable {
                     byte[] jpeg = new byte[imageSize - 4];
                     System.arraycopy(block, 4, jpeg, 0, jpeg.length);
 
-                    ImageWebSocket.broadcast(Base64.getEncoder().encodeToString(jpeg));
+                    ImageWebSocket.broadcast(jpeg);
                 }
 
             } catch (Exception e) {
