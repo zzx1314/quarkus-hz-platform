@@ -9,19 +9,22 @@ import io.quarkus.websockets.next.WebSocket;
 import io.quarkus.websockets.next.WebSocketConnection;
 
 import io.vertx.core.buffer.Buffer;
+import lombok.extern.slf4j.Slf4j;
 
-
+@Slf4j
 @WebSocket(path = "/ws/image")
 public class ImageWebSocket {
     private static final Set<WebSocketConnection> sessions = ConcurrentHashMap.newKeySet();
 
     @OnOpen
     void onOpen(WebSocketConnection conn) {
+        log.info("开启image---webscoket连接");
         sessions.add(conn);
     }
 
     @OnClose
     void onClose(WebSocketConnection conn) {
+        log.info("关闭image---webscoket连接");
         sessions.remove(conn);
     }
 
