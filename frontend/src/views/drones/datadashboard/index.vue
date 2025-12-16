@@ -51,6 +51,7 @@ defineOptions({
       :route-data="routeData"
       :type="type"
       :device-id="deviceId"
+      :task-id="taskId"
     />
   </div>
 </template>

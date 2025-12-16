@@ -1,10 +1,12 @@
 package org.huazhi.drones.command.entity.dto;
 
+import java.util.List;
+
 import lombok.Data;
 
 @Data
 public class DronesCommandParam {
-    private String type;
+    private List<String> type;
 
     private String param;
 

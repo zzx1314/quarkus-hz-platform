@@ -88,8 +88,24 @@
         <el-card class="video-card">
           <template #header>
             <div class="card-header">
-              <LucideDrone style="font-size: 25px" />
-              <span style="margin-left: 5px">无人机视频监控</span>
+              <span class="label-container">
+                <div class="left">
+                  <LucideDrone style="font-size: 25px" />
+                  无人机视频监控
+                </div>
+                <el-button
+                  link
+                  type="primary"
+                  :icon="useRenderIcon(RiRestartFill)"
+                  @click="issueCommand('start')"
+                />
+                <el-button
+                  link
+                  type="primary"
+                  :icon="useRenderIcon(RiStopCircleLine)"
+                  @click="issueCommand('stop')"
+                />
+              </span>
             </div>
           </template>
           <div class="container-status">
@@ -121,6 +137,9 @@ import RiWifiLine from "~icons/ri/wifi-line";
 import RiFlightTakeoffLine from "~icons/ri/flight-takeoff-line";
 import GisLayerPoi from "~icons/gis/layer-poi";
 import LucideDrone from "~icons/lucide/drone";
+import RiRestartFill from "~icons/ri/restart-fill?raw";
+import RiStopCircleLine from "~icons/ri/stop-circle-line?raw";
+import { S } from "vue-router/dist/router-CWoNjPRp.mjs";
 
 const canvas = ref(null);
 const imgBase64 = ref("");
@@ -143,6 +162,10 @@ let lastObjectUrl = null;
 const props = defineProps({
   deviceId: {
     type: Number,
+    default: null
+  },
+  taskId: {
+    type: String,
     default: null
   },
   type: {
@@ -368,6 +391,21 @@ function handlePageClose() {
   if (webSocketImag.value) {
     webSocketImag.value.disconnect();
   }
+}
+function issueCommand(params) {
+  const params = {
+    deviceId: props.deviceId,
+    taskId: Number(props.taskId),
+    type: ["yolo", "rtsp"],
+    param: params
+  };
+  dronesCommandIssueCommand(params).then(res => {
+    if (res.code === SUCCESS) {
+      message("下发成功！", { type: "success" });
+    } else {
+      message(res.message, { type: "error" });
+    }
+  });
 }
 
 onMounted(() => {
@@ -667,5 +705,16 @@ canvas {
   width: 200px;
   height: 50px;
   color: #fff;
+}
+.label-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.left {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 </style>

@@ -112,34 +112,36 @@ public class DronesCommandServiceImp implements DronesCommandService {
         taskInfo.setEvent(initId);
         // 补充action
         List<DronesAction> actions = new ArrayList<>();
-        DronesAction action = new DronesAction();
-        action.setActionId("node_"+ IdUtil.simpleUUID());
-        action.setAfter(initId);
-        action.setTimeoutSec(200);
-        if (param.getType().equals("yolo")) {
-            // yolo信息
-            if ("start".equals(param.getParam())) {
-                action.setType("SERVICE_START_YOLO");
-            } else if ("stop".equals(param.getParam())) {
-                action.setType("SERVICE_STOP_YOLO");
+        for (String type : param.getType()) { 
+            DronesAction action = new DronesAction();
+            action.setActionId("node_"+ IdUtil.simpleUUID());
+            action.setAfter(initId);
+            action.setTimeoutSec(200);
+            if ("yolo".equals(type)) {
+                // yolo信息
+                if ("start".equals(param.getParam())) {
+                    action.setType("SERVICE_START_YOLO");
+                } else if ("stop".equals(param.getParam())) {
+                    action.setType("SERVICE_STOP_YOLO");
+                }
+                this.getYoloAction(action);
+            } else if ("rtsp".equals(param.getParam())) {
+                // rtsp信息
+                if ("start".equals(param.getParam())) {
+                    action.setType("SERVICE_START_RTSP");
+                } else if ("stop".equals(param.getParam())) {
+                    action.setType("SERVICE_STOP_RTSP");
+                }
+                this.getRtspAction(action);
             }
-            this.getYoloAction(action);
-        } else if (param.getType().equals("rtsp")) {
-            // rtsp信息
-            if ("start".equals(param.getParam())) {
-                action.setType("SERVICE_START_RTSP");
-            } else if ("stop".equals(param.getParam())) {
-                action.setType("SERVICE_STOP_RTSP");
-            }
-            this.getRtspAction(action);
+            actions.add(action);
         }
-        actions.add(action);
         taskInfo.setActions(actions);
 
         tasks.add(taskInfo);
 
         commandWebsocket.setTasks(tasks);
-        connectionManager.sendMessageByDeviceId(commandWebsocket.getDeviceId(), commandWebsocket, param.getTaskId(), param.getType());
+        connectionManager.sendMessageByDeviceId(commandWebsocket.getDeviceId(), commandWebsocket, param.getTaskId(), "SERVER");
         return true;
     }
 
