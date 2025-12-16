@@ -111,6 +111,23 @@ public class BusService {
      */
     public Long saveCommand(DronesCommandWebsocketV1 messageInfo, String deviceId, Long taskId) {
         DronesCommand command = new DronesCommand();
+        command.setCommandType("task");
+        command.setDeviceId(deviceId);
+        command.setTaskId(taskId);
+        command.setCommandParams(JsonUtil.toJson(messageInfo));
+        command.setStatus("已下发");
+        command.setCreateTime(LocalDateTime.now());
+        command.setUpdateTime(LocalDateTime.now());
+        dronesCommandService.register(command);
+        return command.getId();
+    }
+
+    /**
+     * 保存命令--类型信息
+     */
+    public Long saveCommand(DronesCommandWebsocketV1 messageInfo, String deviceId, Long taskId, String commandType) {
+        DronesCommand command = new DronesCommand();
+        command.setCommandType(commandType);
         command.setDeviceId(deviceId);
         command.setTaskId(taskId);
         command.setCommandParams(JsonUtil.toJson(messageInfo));

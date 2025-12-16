@@ -1,11 +1,26 @@
 package org.huazhi.drones.command.service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.huazhi.drones.command.entity.DronesCommand;
 import org.huazhi.drones.command.entity.dto.DronesCommandDto;
+import org.huazhi.drones.command.entity.dto.DronesCommandParam;
 import org.huazhi.drones.command.entity.dto.DronesCommandQueryDto;
+import org.huazhi.drones.command.entity.webscoketdto.DronesCommandWebsocketV1;
+import org.huazhi.drones.command.entity.webscoketdto.action.DronesAction;
+import org.huazhi.drones.command.entity.webscoketdto.action.DronesActionParam;
+import org.huazhi.drones.command.entity.webscoketdto.task.DronesTaskWebScoket;
 import org.huazhi.drones.command.repository.DronesCommandRepository;
+import org.huazhi.drones.device.entity.DronesDevice;
+import org.huazhi.drones.device.service.DronesDeviceService;
+import org.huazhi.drones.services.entity.DronesServices;
+import org.huazhi.drones.services.service.DronesServicesService;
+import org.huazhi.drones.websocket.service.ConnectionManager;
+import org.huazhi.util.IdUtil;
+import org.huazhi.util.JsonUtil;
 import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
 
@@ -20,6 +35,15 @@ import jakarta.transaction.Transactional;
 public class DronesCommandServiceImp implements DronesCommandService {
     @Inject
     DronesCommandRepository repository;
+
+    @Inject
+    ConnectionManager connectionManager;
+
+    @Inject
+    DronesServicesService servicesService;
+
+    @Inject
+    DronesDeviceService deviceService;
 
     @Override
     public List<DronesCommand> listEntitys() {
@@ -70,4 +94,77 @@ public class DronesCommandServiceImp implements DronesCommandService {
         repository.deleteByIds(ids);
     }
 
+    /**
+     * 下发服务指令
+     */
+    @Override
+    public Boolean serverCommand(DronesCommandParam param) {
+        DronesDevice dronesDevice = deviceService.listById(param.getDeviceId());
+        DronesCommandWebsocketV1 commandWebsocket = new DronesCommandWebsocketV1();
+        commandWebsocket.setDeviceId(dronesDevice.getDeviceId());
+        commandWebsocket.setType("toros");
+        // 任务信息
+        List<DronesTaskWebScoket> tasks = new ArrayList<>();
+
+        DronesTaskWebScoket taskInfo = new DronesTaskWebScoket();
+        taskInfo.setTaskId("node_"+ IdUtil.simpleUUID());
+        String initId = "init_" + IdUtil.simpleUUID();
+        taskInfo.setEvent(initId);
+        // 补充action
+        List<DronesAction> actions = new ArrayList<>();
+        DronesAction action = new DronesAction();
+        action.setActionId("node_"+ IdUtil.simpleUUID());
+        action.setAfter(initId);
+        action.setTimeoutSec(200);
+        if (param.getType().equals("yolo")) {
+            // yolo信息
+            if ("start".equals(param.getParam())) {
+                action.setType("SERVICE_START_YOLO");
+            } else if ("stop".equals(param.getParam())) {
+                action.setType("SERVICE_STOP_YOLO");
+            }
+            this.getYoloAction(action);
+        } else if (param.getType().equals("rtsp")) {
+            // rtsp信息
+            if ("start".equals(param.getParam())) {
+                action.setType("SERVICE_START_RTSP");
+            } else if ("stop".equals(param.getParam())) {
+                action.setType("SERVICE_STOP_RTSP");
+            }
+            this.getRtspAction(action);
+        }
+        actions.add(action);
+        taskInfo.setActions(actions);
+
+        tasks.add(taskInfo);
+
+        commandWebsocket.setTasks(tasks);
+        connectionManager.sendMessageByDeviceId(commandWebsocket.getDeviceId(), commandWebsocket, param.getTaskId(), param.getType());
+        return true;
+    }
+
+    /**
+     * 补充yolo参数
+     */
+    private void getYoloAction(DronesAction action) {
+        Set<String> types = new HashSet<>();
+        types.add("YOLO");
+        List<DronesServices> services =  servicesService.listByTypes(types);
+        DronesActionParam param = JsonUtil.fromJson(services.getFirst().getParams(), DronesActionParam.class);
+        action.setParams(param);
+    }
+
+
+    /**
+     * 补充rtsp参数
+     */
+    private void getRtspAction(DronesAction action) {
+        Set<String> types = new HashSet<>();
+        types.add("RTSP");
+        List<DronesServices> services =  servicesService.listByTypes(types);
+        DronesActionParam param = JsonUtil.fromJson(services.getFirst().getParams(), DronesActionParam.class);
+        action.setParams(param);
+    }
+
+    
 }

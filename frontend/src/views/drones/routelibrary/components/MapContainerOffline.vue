@@ -309,7 +309,6 @@ function stopImage() {
 }
 
 let timer = null;
-let lastUrl = null;
 const videoImg = ref(null);
 
 function renderVideoLoop() {
@@ -378,7 +377,7 @@ onMounted(() => {
   startImage();
   window.addEventListener("beforeunload", handlePageClose);
   window.addEventListener("pagehide", handlePageClose);
-  /* timer = window.setInterval(() => {
+  timer = window.setInterval(() => {
     console.log("每 2 秒执行一次任务");
     if (props.deviceId) {
       dronesDeviceGetStatus(props.deviceId).then(res => {
@@ -392,7 +391,7 @@ onMounted(() => {
         }
       });
     }
-  }, 2000); */
+  }, 2000);
 });
 
 onUnmounted(() => {

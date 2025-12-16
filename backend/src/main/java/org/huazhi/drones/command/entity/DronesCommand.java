@@ -37,6 +37,11 @@ public class DronesCommand extends PanacheEntityBase {
     private String commandName;
 
     /**
+     * 指令类型
+     */
+    private String commandType;
+
+    /**
      * 指令参数
      */
     @Column(columnDefinition = "TEXT")

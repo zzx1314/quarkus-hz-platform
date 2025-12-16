@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.huazhi.drones.command.entity.DronesCommand;
 import org.huazhi.drones.command.entity.dto.DronesCommandDto;
+import org.huazhi.drones.command.entity.dto.DronesCommandParam;
 import org.huazhi.drones.command.entity.dto.DronesCommandQueryDto;
 import org.huazhi.drones.command.service.DronesCommandService;
 import org.huazhi.util.PageRequest;
@@ -55,6 +56,13 @@ public class DronesCommandController {
     @Transactional
     public R<Long> create(DronesCommand entity) {
         return R.ok(dronesCommandService.register(entity));
+    }
+
+    @POST
+    @Path("/issueCommand")
+    @Transactional
+    public R<Boolean> issueCommand(DronesCommandParam param) {
+        return R.ok(dronesCommandService.serverCommand(param));
     }
 
     @PUT

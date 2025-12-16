@@ -83,4 +83,18 @@ public class ConnectionManager {
             log.warn("Connection for deviceId {} is not available.", deviceId);
         }
     }
+
+     public void sendMessageByDeviceId(String deviceId, DronesCommandWebsocketV1 message, Long taskId, String commandType) {
+        WebSocketConnection conn = connections.get(deviceId);
+        if (conn != null && conn.isOpen()) {
+            // 保存指令并获取指令ID
+            Long id = busService.saveCommand(message, deviceId, taskId, commandType);
+            message.setMissionId(id + "");
+            String jsonString = JsonUtil.toJson(message);
+            log.info("Sending message to deviceId {}: {}", deviceId, jsonString);
+            conn.sendTextAndAwait(jsonString);
+        } else {
+            log.warn("Connection for deviceId {} is not available.", deviceId);
+        }
+    }
 }

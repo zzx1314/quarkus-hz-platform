@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.huazhi.drones.command.entity.DronesCommand;
 import org.huazhi.drones.command.entity.dto.DronesCommandDto;
+import org.huazhi.drones.command.entity.dto.DronesCommandParam;
 import org.huazhi.drones.command.entity.dto.DronesCommandQueryDto;
 import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
@@ -26,4 +27,7 @@ public interface DronesCommandService {
    void removeById(Long id);
 
    void removeByIds(List<Long> ids);
+
+   Boolean serverCommand(DronesCommandParam param);
+
 }
