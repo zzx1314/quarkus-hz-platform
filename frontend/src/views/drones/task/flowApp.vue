@@ -267,8 +267,14 @@ const cancel = () => {
   state.data = {};
 };
 
-const showErrorInfo = () => {
-  console.log("showErrorInfo");
+const errorInfoMsg = ref("");
+const showErrorInfo = actionId => {
+  console.log("showErrorInfo", actionId);
+  if (errorInfoMap.value && errorInfoMap.value[actionId]) {
+    errorInfoMsg.value = errorInfoMap.value[actionId];
+  } else {
+    errorInfoMsg.value = "未找到对应错误信息";
+  }
   dialogFormVisible.value = true;
 };
 
@@ -395,7 +401,7 @@ watch(
           :pathInfo="pathInfo"
           :isShowCustomPoint="isShowCustomPoint"
           @select="handleSelect"
-          @show-error-info="showErrorInfo"
+          @show-error-info="showErrorInfo(props.id)"
         />
       </template>
       <template #node-error="props">
@@ -438,7 +444,9 @@ watch(
       width="500px"
       @close="cancel"
     >
-      <h1>错误信息</h1>
+      <div>
+        {{ errorInfoMsg }}
+      </div>
     </el-dialog>
 
     <el-dialog

@@ -653,7 +653,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
                     } else if (state != null && !state) {
                         failIds.add(commandResult.path("actionId").asText());
                         failIds.add(commandResult.path("taskId").asText());
-                        String errorInfo = commandResult.path("actionResult").path("err_msg").asText();
+                        String errorInfo = commandResult.path("actionResult").path("msg").asText();
                         errorInfoMap.put(commandResult.path("actionId").asText(), errorInfo);
                     }
                 }
