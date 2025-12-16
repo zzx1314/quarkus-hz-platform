@@ -30,7 +30,9 @@ import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @ApplicationScoped
 public class DronesCommandServiceImp implements DronesCommandService {
     @Inject
@@ -125,7 +127,8 @@ public class DronesCommandServiceImp implements DronesCommandService {
                     action.setType("SERVICE_STOP_YOLO");
                 }
                 this.getYoloAction(action);
-            } else if ("rtsp".equals(param.getParam())) {
+            }  
+            if ("rtsp".equals(type)) {
                 // rtsp信息
                 if ("start".equals(param.getParam())) {
                     action.setType("SERVICE_START_RTSP");
@@ -141,6 +144,7 @@ public class DronesCommandServiceImp implements DronesCommandService {
         tasks.add(taskInfo);
 
         commandWebsocket.setTasks(tasks);
+        log.info("下发服务命令：{}", JsonUtil.toJson(commandWebsocket));
         connectionManager.sendMessageByDeviceId(commandWebsocket.getDeviceId(), commandWebsocket, param.getTaskId(), "SERVER");
         return true;
     }

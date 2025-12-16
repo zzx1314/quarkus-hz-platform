@@ -93,18 +93,22 @@
                   <LucideDrone style="font-size: 25px" />
                   无人机视频监控
                 </div>
-                <el-button
-                  link
-                  type="primary"
-                  :icon="useRenderIcon(RiRestartFill)"
-                  @click="issueCommand('start')"
-                />
-                <el-button
-                  link
-                  type="primary"
-                  :icon="useRenderIcon(RiStopCircleLine)"
-                  @click="issueCommand('stop')"
-                />
+                <div class="right">
+                  <el-button
+                    link
+                    style="color: #67c23a; font-size: 25px"
+                    type="primary"
+                    :icon="useRenderIcon(RiRestartFill)"
+                    @click="issueCommand('start')"
+                  />
+                  <el-button
+                    link
+                    style="color: red; font-size: 25px"
+                    type="primary"
+                    :icon="useRenderIcon(RiStopCircleLine)"
+                    @click="issueCommand('stop')"
+                  />
+                </div>
               </span>
             </div>
           </template>
@@ -129,6 +133,8 @@ import {
   dronesDeviceStartImage,
   dronesDeviceStopImage
 } from "@/api/dronesDevice";
+
+import { dronesCommandIssueCommand } from "@/api/dronesCommand";
 import { SUCCESS } from "@/api/base";
 import { message } from "@/utils/message";
 import WebSocketClient from "@/components/ReWebSocket";
@@ -137,8 +143,9 @@ import RiWifiLine from "~icons/ri/wifi-line";
 import RiFlightTakeoffLine from "~icons/ri/flight-takeoff-line";
 import GisLayerPoi from "~icons/gis/layer-poi";
 import LucideDrone from "~icons/lucide/drone";
-import RiRestartFill from "~icons/ri/restart-fill?raw";
-import RiStopCircleLine from "~icons/ri/stop-circle-line?raw";
+import RiRestartFill from "~icons/ri/restart-fill";
+import RiStopCircleLine from "~icons/ri/stop-circle-line";
+import { useRenderIcon } from "@/components/ReIcon/src/hooks.js";
 
 const canvas = ref(null);
 const imgBase64 = ref("");
@@ -376,7 +383,7 @@ function startWebscoket() {
 
 function stopImageOnUnload() {
   if (!props.deviceId) return;
-  const ok = navigator.sendBeacon(
+  navigator.sendBeacon(
     "/api/imageReceiver/stop",
     new Blob([JSON.stringify({ deviceId: props.deviceId })], {
       type: "application/json"
@@ -391,12 +398,13 @@ function handlePageClose() {
     webSocketImag.value.disconnect();
   }
 }
-function issueCommand(params) {
+function issueCommand(paramsInput) {
+  console.log("issueCommand", paramsInput);
   const params = {
     deviceId: props.deviceId,
     taskId: Number(props.taskId),
     type: ["yolo", "rtsp"],
-    param: params
+    param: paramsInput
   };
   dronesCommandIssueCommand(params).then(res => {
     if (res.code === SUCCESS) {
@@ -414,7 +422,7 @@ onMounted(() => {
   startImage();
   window.addEventListener("beforeunload", handlePageClose);
   window.addEventListener("pagehide", handlePageClose);
-  timer = window.setInterval(() => {
+  /* timer = window.setInterval(() => {
     console.log("每 2 秒执行一次任务");
     if (props.deviceId) {
       dronesDeviceGetStatus(props.deviceId).then(res => {
@@ -428,7 +436,7 @@ onMounted(() => {
         }
       });
     }
-  }, 2000);
+  }, 2000); */
 });
 
 onUnmounted(() => {
@@ -712,6 +720,12 @@ canvas {
   width: 100%;
 }
 .left {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.right {
+  margin-left: auto;
   display: inline-flex;
   align-items: center;
   gap: 4px;
