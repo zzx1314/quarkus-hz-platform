@@ -5,6 +5,7 @@ import java.util.List;
 import org.huazhi.drones.task.entity.DronesTask;
 import org.huazhi.drones.task.entity.dto.DronesTaskDto;
 import org.huazhi.drones.task.entity.dto.DronesTaskQueryDto;
+import org.huazhi.drones.task.entity.vo.DronesTaskStatusVo;
 import org.huazhi.drones.task.service.DronesTaskService;
 import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
@@ -96,9 +97,8 @@ public class DronesTaskController {
      */
     @GET
     @Path("/getTaskStatus/{id}")
-    public R<Void> getTaskStatus(@PathParam("id") Long id) {
-        dronesTaskService.getTaskStatus(id);
-        return R.ok();  
+    public R<DronesTaskStatusVo> getTaskStatus(@PathParam("id") Long id) {
+        return R.ok(dronesTaskService.getTaskStatus(id));  
     }
 
 }

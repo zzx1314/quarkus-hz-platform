@@ -44,6 +44,7 @@ public class DronesCommandResultItemServiceImp implements DronesCommandResultIte
     @Override
     public Boolean register(DronesCommandResultItem entity) {
         entity.setCreateTime(LocalDateTime.now());
+        entity.setIsDeleted(0);
         repository.persist(entity);
         return true;
     }

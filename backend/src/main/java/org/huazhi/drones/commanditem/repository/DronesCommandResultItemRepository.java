@@ -25,6 +25,8 @@ public class DronesCommandResultItemRepository implements PanacheRepository<Dron
 
     public List<DronesCommandResultItem> selectList(DronesCommandResultItemQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
+                .equal("id", queryDto.getId())
+                .equal("commandId", queryDto.getCommandId())
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
     }
