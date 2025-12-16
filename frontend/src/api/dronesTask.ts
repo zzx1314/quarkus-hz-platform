@@ -31,7 +31,8 @@ const dronesTaskUrls = {
   getFlow: "/api/dronesWorkflow/getWorkflowByTaskId/",
   startTask: "/api/dronesTask/startTask/",
   getRouteByTaskId: "/api/dronesWorkflow/getRouteByTaskId/",
-  getCommandJsonString: "/api/dronesWorkflow/getCommandJsonString/"
+  getCommandJsonString: "/api/dronesWorkflow/getCommandJsonString/",
+  getTaskStatus: "/api/dronesTask/getTaskStatus/"
 };
 
 // 分页
@@ -78,6 +79,13 @@ export const dronesTaskGetRouteByTaskId = (id: string | number) => {
 export const droneGetCommandJsonString = (id: string | number) => {
   return http.axiosGetRequest<ResultOne>(
     `${dronesTaskUrls.getCommandJsonString}${id}`,
+    {}
+  );
+};
+// 查看任务状态
+export const droneGetTaskStatus = (id: string | number) => {
+  return http.axiosGetRequest<ResultOne>(
+    `${dronesTaskUrls.getTaskStatus}${id}`,
     {}
   );
 };

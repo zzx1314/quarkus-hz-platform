@@ -95,7 +95,7 @@ public class DronesTaskController {
      * @return
      */
     @GET
-    @Path("/stopTask/{id}")
+    @Path("/getTaskStatus/{id}")
     public R<Void> getTaskStatus(@PathParam("id") Long id) {
         dronesTaskService.getTaskStatus(id);
         return R.ok();  

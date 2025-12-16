@@ -17,7 +17,11 @@ import { router } from "@/store/utils.js";
 import { message } from "@/utils/message.js";
 import Position from "~icons/ep/position";
 import { useAlignmentGuidelines } from "./componentsflow/useAlignmentGuidelines";
-import { dronesTaskSaveFlow, dronesTaskGetFlow } from "@/api/dronesTask";
+import {
+  dronesTaskSaveFlow,
+  dronesTaskGetFlow,
+  droneGetTaskStatus
+} from "@/api/dronesTask";
 import { SUCCESS } from "@/api/base.js";
 
 import { reactive, watch } from "vue";
@@ -58,6 +62,7 @@ const isPassed = ref(true);
 const isShowSave = getParameter.taskType === "taskDesign";
 const isSuccessNodeId = ref([]);
 const isErrorNodeId = ref([]);
+const errorInfoMap = ref({});
 
 const dialogFormVisible = ref(false);
 const dialogFormVisibleString = ref(false);
@@ -205,10 +210,21 @@ async function saveActivity() {
   }
 }
 
+function getTaskStatus() {
+  droneGetTaskStatus(getParameter.taskId).then(res => {
+    if (res.code === SUCCESS) {
+      isSuccessNodeId.value = res.data.successIds;
+      isErrorNodeId.value = res.data.failIds;
+      errorInfoMap.value = res.data.errorInfoMap;
+    }
+  });
+}
+
 onMounted(() => {
   nextTick(() => {
     window.addEventListener("keydown", handleKeydown);
     getFlowData();
+    getTaskStatus();
     if (getParameter.isShowSave) {
       isShowSave.value = getParameter.isShowSave;
     }
