@@ -139,7 +139,6 @@ import GisLayerPoi from "~icons/gis/layer-poi";
 import LucideDrone from "~icons/lucide/drone";
 import RiRestartFill from "~icons/ri/restart-fill?raw";
 import RiStopCircleLine from "~icons/ri/stop-circle-line?raw";
-import { S } from "vue-router/dist/router-CWoNjPRp.mjs";
 
 const canvas = ref(null);
 const imgBase64 = ref("");
