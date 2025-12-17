@@ -28,6 +28,7 @@ import { reactive, watch } from "vue";
 import "vue-json-pretty/lib/styles.css";
 import VueJsonPretty from "vue-json-pretty";
 import Search from "~icons/ep/search";
+import WebSocketClient from "@/components/ReWebSocket";
 
 import {
   droneGetCommandJsonString,
@@ -66,7 +67,9 @@ const errorInfoMap = ref({});
 
 const dialogFormVisible = ref(false);
 const dialogFormVisibleString = ref(false);
+const dialogFormVisibleTreacking = ref(false);
 const isShowCustomPoint = ref(false);
+const needWebSocket = ref(false);
 
 // 注册区
 const nodeRefs = ref({});
@@ -136,6 +139,14 @@ function getFlowData() {
         nodes.value = JSON.parse(nodeData);
         edges.value = JSON.parse(edgeData);
         rawNodes.value = JSON.parse(JSON.stringify(nodes.value));
+        // 判断是否有目标跟踪节点
+        console.log("nodesData", rawNodes.value);
+        needWebSocket.value = rawNodes.value.some(
+          node =>
+            node.type === "action" &&
+            node.data?.action?.type === "SERVICE_START_DEEPSORT"
+        );
+        startWebSocket();
         nextTick(() => {
           pathInfo.value = nodeRoute();
           console.log("初始化 pathInfo:", pathInfo.value);
@@ -233,6 +244,11 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   window.removeEventListener("keydown", handleKeydown);
+
+  if (webSocketImag.value) {
+    webSocketImag.value.disconnect?.();
+    webSocketImag.value = null;
+  }
 });
 
 const back = () => {
@@ -311,6 +327,46 @@ const updateCommandJsonString = () => {
     }
   });
 };
+
+const videoImg = ref(null);
+const webSocketImag = ref(null);
+let lastObjectUrl = null;
+
+function startWebSocket() {
+  if (!needWebSocket.value) {
+    return;
+  }
+  if (webSocketImag.value) return;
+  webSocketImag.value = new WebSocketClient();
+
+  webSocketImag.value.connect({
+    path: "/api/ws/track",
+    onConnect: () => {
+      console.log("连接成功");
+    },
+    onError: function (error) {
+      console.log("连接失败", error);
+    },
+    onClose: function () {
+      console.log("连接关闭");
+    },
+    onData: function (data) {
+      // 数据处理
+      const blob = new Blob([data], { type: "image/jpeg" });
+      const url = URL.createObjectURL(blob);
+
+      if (videoImg.value) {
+        videoImg.value.onload = () => {
+          if (lastObjectUrl) {
+            URL.revokeObjectURL(lastObjectUrl);
+          }
+          lastObjectUrl = url;
+        };
+        videoImg.value.src = url;
+      }
+    }
+  });
+}
 
 const defaultData = {};
 
@@ -446,6 +502,17 @@ watch(
     >
       <div>
         {{ errorInfoMsg }}
+      </div>
+    </el-dialog>
+
+    <el-dialog
+      v-model="dialogFormVisibleTreacking"
+      title="目标跟踪"
+      width="500px"
+      @close="cancel"
+    >
+      <div>
+        <img ref="videoImg" width="500" height="300" />
       </div>
     </el-dialog>
 

@@ -2,15 +2,16 @@ class WebSocketClient {
   private _connection: WebSocket | null = null;
 
   /**
-   * 根据location路径生成WebSocket地址
+   * 根据location路径生成WebSocket地址，可传入自定义path
+   * @param path WebSocket路径，默认 "/api/ws/image"
    * @returns {string} WebSocket地址
    */
-  getWebSocketUrl(): string {
+  getWebSocketUrl(path: string = "/api/ws/image"): string {
     let protocol = "ws://";
     if (window.location.protocol === "https:") {
       protocol = "wss://";
     }
-    return protocol + window.location.host + "/api/ws/image";
+    return protocol + window.location.host + path;
   }
 
   /**
@@ -18,20 +19,20 @@ class WebSocketClient {
    * @param params
    */
   connect(params: {
+    path?: string; // 可选，自定义WebSocket路径
     onConnect: () => void;
     onData: (data: ArrayBuffer) => void;
     onClose: () => void;
     onError: (error: string) => void;
   }): void {
-    if (window.WebSocket) {
-      // 如果支持websocket
-      this._connection = new WebSocket(this.getWebSocketUrl());
-      this._connection.binaryType = "arraybuffer";
-    } else {
-      // 否则报错
+    if (!window.WebSocket) {
       params.onError("WebSocket Not Supported");
       return;
     }
+
+    // 使用可选路径参数生成URL
+    this._connection = new WebSocket(this.getWebSocketUrl(params.path));
+    this._connection.binaryType = "arraybuffer";
 
     this._connection.onopen = () => {
       params.onConnect();
@@ -47,6 +48,10 @@ class WebSocketClient {
 
     this._connection.onclose = () => {
       params.onClose();
+    };
+
+    this._connection.onerror = err => {
+      params.onError(err.toString());
     };
   }
 
