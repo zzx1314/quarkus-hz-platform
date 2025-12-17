@@ -5,7 +5,7 @@
 int main(void)
 {
 	char *token = NULL;
-	char *deviceId = "9527";
+	char *deviceId = "00022025C0600001";
 
 	// 请求认证
 	ClientAuth(&token);

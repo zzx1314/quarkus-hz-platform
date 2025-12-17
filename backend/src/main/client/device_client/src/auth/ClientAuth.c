@@ -38,7 +38,7 @@ size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
 Status ClientAuth(char **token)
 {
     char tokenString[32];
-    char deviceId[16] = "9527";
+    char deviceId[17] = "00022025C0600001";
     char requestUrl[128];
 
     CURL *curl;
