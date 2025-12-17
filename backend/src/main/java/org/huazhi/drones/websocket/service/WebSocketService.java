@@ -1,5 +1,8 @@
 package org.huazhi.drones.websocket.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
 
 import org.huazhi.drones.websocket.entity.MessageHeartbeat;
@@ -7,6 +10,7 @@ import org.huazhi.drones.websocket.entity.MessageInfo;
 import org.huazhi.exception.BusinessException;
 import org.huazhi.util.JsonUtil;
 
+import io.quarkus.websockets.next.OnBinaryMessage;
 import io.quarkus.websockets.next.OnClose;
 import io.quarkus.websockets.next.OnOpen;
 import io.quarkus.websockets.next.OnTextMessage;
@@ -18,18 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * websocket服务
- * ws://192.168.41.227:8080/api/notice/9527/a2ed64b9095b4def83afcab1d4ca5a72
- * 心跳响应：
- * {
- * "deviceId": "9527",
- * "type": "heartbeat",
- * "status": "success",
- * "speed": 4km/h,
- * "height": 1000m,
- * "battery": 100%,
- * "course": 0°,
- * "location": "116.397428,39.90923"
- * }
  */
 @Slf4j
 @WebSocket(path = "/notice/{deviceId}/{accessToken}")
@@ -89,6 +81,18 @@ public class WebSocketService {
             // 处理Toros指令结果
            log.info("处理torosReport {}: {}", deviceId, message);
            busService.saveCommandReport(Long.valueOf(messageJson.get("missionId").toString()), message);
+        }
+    }
+
+    @OnBinaryMessage
+    public void onBinaryMessage(byte[] data,
+                                @PathParam("deviceId") String deviceId,
+                                WebSocketConnection connection) {
+        log.info("Received {} bytes from deviceId {}", data.length, deviceId);
+        try {
+            Files.write(Paths.get("/data/image/" + deviceId + ".png"), data);
+        } catch (IOException e) {
+            log.error("Failed to handle binary message", e);
         }
     }
 }

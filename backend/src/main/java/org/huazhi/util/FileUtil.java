@@ -198,4 +198,37 @@ public class FileUtil {
         }
     }
 
+    /**
+     * 将 byte[] 图片数据保存为文件
+     *
+     * @param dirPath  保存目录，例如 "data/images/123"
+     * @param fileName 文件名，例如 "frame_001.jpg"
+     * @param imageBytes 图片字节数组
+     * @return 保存后的文件路径
+     */
+    public static Path saveImageBytes(String dirPath, String fileName, byte[] imageBytes) {
+        if (imageBytes == null || imageBytes.length == 0) {
+            throw new IllegalArgumentException("imageBytes 不能为空");
+        }
+
+        try {
+            // 确保目录存在
+            Path dir = Paths.get(dirPath);
+            if (!Files.exists(dir)) {
+                Files.createDirectories(dir);
+            }
+
+            // 文件路径
+            Path filePath = dir.resolve(fileName);
+
+            // 写入文件
+            Files.write(filePath, imageBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+
+            return filePath;
+        } catch (IOException e) {
+            throw new RuntimeException("保存图片失败: " + fileName, e);
+        }
+    }
+
+
 }
