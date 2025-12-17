@@ -1,12 +1,12 @@
-package org.huazhi.drones.websocket.service;
+package org.huazhi.drones.websocket.endpoint;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Map;
 
+import org.huazhi.config.FileConfig;
 import org.huazhi.drones.websocket.entity.MessageHeartbeat;
 import org.huazhi.drones.websocket.entity.MessageInfo;
+import org.huazhi.drones.websocket.service.BusService;
+import org.huazhi.drones.websocket.service.ConnectionManager;
 import org.huazhi.exception.BusinessException;
 import org.huazhi.util.JsonUtil;
 
@@ -32,6 +32,9 @@ public class WebSocketService {
 
     @Inject
     BusService busService;
+
+    @Inject
+    FileConfig fileConfig;
 
     @OnOpen(broadcast = true)
     public void onOpen(WebSocketConnection connection, @PathParam("deviceId") String deviceId,
@@ -89,10 +92,6 @@ public class WebSocketService {
                                 @PathParam("deviceId") String deviceId,
                                 WebSocketConnection connection) {
         log.info("Received {} bytes from deviceId {}", data.length, deviceId);
-        try {
-            Files.write(Paths.get("/data/image/" + deviceId + ".png"), data);
-        } catch (IOException e) {
-            log.error("Failed to handle binary message", e);
-        }
+        TrackWebSocket.broadcast(data);
     }
 }

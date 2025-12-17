@@ -1,4 +1,4 @@
-package org.huazhi.drones.websocket.service;
+package org.huazhi.drones.websocket.endpoint;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;

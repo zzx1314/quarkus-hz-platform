@@ -8,6 +8,8 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import org.huazhi.drones.websocket.endpoint.ImageWebSocket;
+
 @Slf4j
 public class ImageReceiver implements Runnable {
 
