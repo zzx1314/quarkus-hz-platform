@@ -316,6 +316,7 @@ function worldToPixel([wx, wy]) {
 }
 
 function startImage() {
+  if (!props.deviceId) return;
   const param = {
     deviceId: props.deviceId
   };
@@ -327,6 +328,7 @@ function startImage() {
 }
 
 function stopImage() {
+  if (!props.deviceId) return;
   const param = {
     deviceId: props.deviceId
   };
