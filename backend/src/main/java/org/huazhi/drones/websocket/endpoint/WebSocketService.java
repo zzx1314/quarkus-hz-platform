@@ -139,8 +139,6 @@ public class WebSocketService {
         if (out != null) {
             try {
                 out.write(data);
-                // 可选：实时广播给其他客户端
-                TrackWebSocket.broadcast(data);
             } catch (IOException e) {
                 log.error("Failed to append data to stream {}", streamId, e);
             }
@@ -157,6 +155,9 @@ public class WebSocketService {
 
             Path filePath = dirPath.resolve(deviceId + "_" + streamId + ".jpg");
             Files.write(filePath, bytes, StandardOpenOption.CREATE);
+
+            // 可选：实时广播给其他客户端
+            TrackWebSocket.broadcast(bytes);
             log.info("Saved file: {}", filePath.toString());
         } catch (IOException e) {
             log.error("Failed to save file for device {} stream {}", deviceId, streamId, e);

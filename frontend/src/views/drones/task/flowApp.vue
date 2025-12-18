@@ -34,6 +34,7 @@ import {
   droneGetCommandJsonString,
   dronesTaskUpdateFlow
 } from "@/api/dronesTask";
+import { de } from "element-plus/es/locale/index.mjs";
 
 const { guideline } = useAlignmentGuidelines(5);
 
@@ -351,19 +352,22 @@ function startWebSocket() {
       console.log("连接关闭");
     },
     onData: function (data) {
+      debugger;
+      dialogFormVisibleTreacking.value = true;
       // 数据处理
       const blob = new Blob([data], { type: "image/jpeg" });
       const url = URL.createObjectURL(blob);
 
-      if (videoImg.value) {
-        videoImg.value.onload = () => {
-          if (lastObjectUrl) {
-            URL.revokeObjectURL(lastObjectUrl);
-          }
-          lastObjectUrl = url;
-        };
+      nextTick(() => {
+        if (!videoImg.value) return;
+
+        if (lastObjectUrl) {
+          URL.revokeObjectURL(lastObjectUrl);
+        }
+
         videoImg.value.src = url;
-      }
+        lastObjectUrl = url;
+      });
     }
   });
 }

@@ -211,16 +211,11 @@ const props = defineProps({
     default: false
   },
   getNodeDataById: Function,
-  getNodeInfoById: Function,
-  upstreamId: {
-    type: String,
-    default: ""
-  }
+  getNodeInfoById: Function
 });
 
 const isSuccess = props.status === "success";
 const isError = props.status === "error";
-console.log("upstreamId", props.upstreamId);
 
 // 回显信息
 const originalData = computed(() => props.getNodeDataById?.(props.id));
