@@ -20,7 +20,8 @@ const dronesCommandUrls = {
   save: "/api/dronesCommand/create",
   delete: `/api/dronesCommand/`,
   update: "/api/dronesCommand/update",
-  issueCommand: "/api/dronesCommand/issueCommand"
+  issueCommand: "/api/dronesCommand/issueCommand",
+  issueCommonCommand: "/api/dronesCommand/issueCommonCommand"
 };
 
 // 分页
@@ -34,6 +35,13 @@ export const dronesCommandSave = (param?: object) => {
 // 下发指令
 export const dronesCommandIssueCommand = (param?: object) => {
   return http.axiosPostRequest<Result>(dronesCommandUrls.issueCommand, param);
+};
+// 下发通用指令
+export const dronesCommandIssueCommonCommand = (param?: object) => {
+  return http.axiosPostRequest<Result>(
+    dronesCommandUrls.issueCommonCommand,
+    param
+  );
 };
 // 修改
 export const dronesCommandUpdate = (param?: object) => {
