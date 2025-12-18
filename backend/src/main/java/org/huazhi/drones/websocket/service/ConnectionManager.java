@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.huazhi.drones.command.entity.dto.DronesCommonCommand;
 import org.huazhi.drones.command.entity.webscoketdto.DronesCommandWebsocket;
 import org.huazhi.drones.websocket.entity.MessageInfo;
 import org.huazhi.util.JsonUtil;
@@ -61,6 +62,21 @@ public class ConnectionManager {
         if (conn != null && conn.isOpen()) {
             String jsonString = JsonUtil.toJson(message);
             log.info("Sending heartbeat response to deviceId {}: {}", deviceId, jsonString);
+            conn.sendTextAndAwait(jsonString);
+        } else {
+            log.warn("Connection for deviceId {} is not available.", deviceId);
+        }
+    }
+
+    /**
+     * 发送通用指令
+     * 通过agent 发送消息
+     */
+     public void sendCommonCommand(String deviceId, DronesCommonCommand message) {
+        WebSocketConnection conn = connections.get(deviceId);
+        if (conn != null && conn.isOpen()) {
+            String jsonString = JsonUtil.toJson(message);
+            log.info("Sending common command to deviceId {}: {}", deviceId, jsonString);
             conn.sendTextAndAwait(jsonString);
         } else {
             log.warn("Connection for deviceId {} is not available.", deviceId);

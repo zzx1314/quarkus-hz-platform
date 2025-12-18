@@ -6,6 +6,7 @@ import org.huazhi.drones.command.entity.DronesCommand;
 import org.huazhi.drones.command.entity.dto.DronesCommandDto;
 import org.huazhi.drones.command.entity.dto.DronesCommandParam;
 import org.huazhi.drones.command.entity.dto.DronesCommandQueryDto;
+import org.huazhi.drones.command.entity.dto.DronesCommonCommand;
 import org.huazhi.drones.command.service.DronesCommandService;
 import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
@@ -63,6 +64,13 @@ public class DronesCommandController {
     @Transactional
     public R<Boolean> issueCommand(DronesCommandParam param) {
         return R.ok(dronesCommandService.serverCommand(param));
+    }
+
+    @POST
+    @Path("/issueCommonCommand")
+    @Transactional
+    public R<Boolean> issueCommonCommand(DronesCommonCommand param) {
+        return R.ok(dronesCommandService.commonCommand(param));
     }
 
     @PUT

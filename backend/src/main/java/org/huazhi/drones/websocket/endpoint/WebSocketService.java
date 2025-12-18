@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.huazhi.config.FileConfig;
+import org.huazhi.drones.command.entity.dto.DronesCommandReturn;
 import org.huazhi.drones.websocket.entity.MessageHeartbeat;
 import org.huazhi.drones.websocket.entity.MessageInfo;
 import org.huazhi.drones.websocket.service.BusService;
@@ -110,7 +111,11 @@ public class WebSocketService {
                 }
                 deviceCurrentStream.remove(deviceId);
                 break;
-
+            case "service":
+                DronesCommandReturn commandReturn = JsonUtil.fromJson(message, DronesCommandReturn.class);
+                String params = commandReturn.getParams().toString();
+                busService.updateCommandReport(commandReturn.getCommandId(), commandReturn.getStatus(), params);
+                break;
             case "report":
                 MessageInfo messageInfo = JsonUtil.fromJson(message, MessageInfo.class);
                 busService.updateCommandReport(messageInfo.getId(), messageInfo.getStatus(), messageInfo.getReturnValue());

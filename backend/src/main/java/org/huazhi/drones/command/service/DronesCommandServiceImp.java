@@ -9,6 +9,7 @@ import org.huazhi.drones.command.entity.DronesCommand;
 import org.huazhi.drones.command.entity.dto.DronesCommandDto;
 import org.huazhi.drones.command.entity.dto.DronesCommandParam;
 import org.huazhi.drones.command.entity.dto.DronesCommandQueryDto;
+import org.huazhi.drones.command.entity.dto.DronesCommonCommand;
 import org.huazhi.drones.command.entity.webscoketdto.DronesCommandWebsocket;
 import org.huazhi.drones.command.entity.webscoketdto.action.DronesAction;
 import org.huazhi.drones.command.entity.webscoketdto.action.DronesActionParam;
@@ -170,6 +171,21 @@ public class DronesCommandServiceImp implements DronesCommandService {
         List<DronesServices> services =  servicesService.listByTypes(types);
         DronesActionParam param = JsonUtil.fromJson(services.getFirst().getParams(), DronesActionParam.class);
         action.setParams(param);
+    }
+
+    /**
+     * 下发普通指令
+     */
+    @Override
+    public Boolean commonCommand(DronesCommonCommand param) {
+        log.info("下发普通指令" + JsonUtil.toJson(param));
+        DronesCommand command = new DronesCommand();
+        command.setCommandType("server");
+        command.setCommandParams(JsonUtil.toJson(param));
+        this.register(command);
+        param.setCommandId(command.getId());
+        connectionManager.sendCommonCommand(param.getDeviceId(), param);
+        return true;
     }
 
     
