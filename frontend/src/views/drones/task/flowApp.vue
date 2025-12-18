@@ -435,7 +435,9 @@ const onMouseUp = e => {
   // 防止误点生成 0 尺寸框
   if (rect.w < 5 || rect.h < 5) return;
 
-  rects.value.push(rect);
+  // rects.value.push(rect);
+  // 只保留最新的框
+  rects.value = [rect];
   redraw();
 };
 
