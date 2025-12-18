@@ -22,6 +22,7 @@ import {
   dronesTaskGetFlow,
   droneGetTaskStatus
 } from "@/api/dronesTask";
+import { dronesCommandIssueCommonCommand } from "@/api/dronesCommand";
 import { SUCCESS } from "@/api/base.js";
 
 import { reactive, watch } from "vue";
@@ -452,6 +453,20 @@ const drawRect = (x, y, w, h) => {
   ctx.value.lineWidth = 2;
   ctx.value.strokeRect(x, y, w, h);
 };
+function issueCommand() {
+  const param = {
+    taskId: getParameter.taskId,
+    type: "server-command",
+    params: rects.value[0]
+  };
+  dronesCommandIssueCommonCommand(param).then(res => {
+    if (res.code === SUCCESS) {
+      message("指令下发成功", { type: "success" });
+    } else {
+      message("指令下发失败", { type: "error" });
+    }
+  });
+}
 
 const defaultData = {};
 
@@ -596,6 +611,15 @@ watch(
       width="500px"
       @close="cancel"
     >
+      <div>
+        <el-button
+          type="primary"
+          link
+          :icon="useRenderIcon(Position)"
+          @click="issueCommand"
+          >下发跟踪目标</el-button
+        >
+      </div>
       <div class="img-wrapper">
         <img ref="videoImg" @load="onImgLoad" />
         <canvas

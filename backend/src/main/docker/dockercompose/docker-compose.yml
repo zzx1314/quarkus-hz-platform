@@ -41,7 +41,6 @@ services:
       QUARKUS_DATASOURCE_USERNAME: quarkus_test
       QUARKUS_DATASOURCE_PASSWORD: quarkus_test
       QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://postgres:5432/hz_drones
-      QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION: update
     volumes:
       - /home/root/dockerdata/drones:/data
     depends_on:
