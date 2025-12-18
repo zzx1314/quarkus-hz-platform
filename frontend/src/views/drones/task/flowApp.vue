@@ -352,7 +352,6 @@ function startWebSocket() {
       console.log("连接关闭");
     },
     onData: function (data) {
-      debugger;
       dialogFormVisibleTreacking.value = true;
       // 数据处理
       const blob = new Blob([data], { type: "image/jpeg" });
