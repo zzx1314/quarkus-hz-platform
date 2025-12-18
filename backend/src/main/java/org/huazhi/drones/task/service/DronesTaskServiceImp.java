@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 import org.huazhi.drones.command.entity.DronesCommand;
 import org.huazhi.drones.command.entity.dto.DronesCommandQueryDto;
-import org.huazhi.drones.command.entity.webscoketdto.DronesCommandWebsocketV1;
+import org.huazhi.drones.command.entity.webscoketdto.DronesCommandWebsocket;
 import org.huazhi.drones.command.entity.webscoketdto.DronesRoute;
 import org.huazhi.drones.command.entity.webscoketdto.action.DronesAction;
 import org.huazhi.drones.command.entity.webscoketdto.task.DronesTaskWebScoket;
@@ -209,8 +209,8 @@ public class DronesTaskServiceImp implements DronesTaskService {
         if (dronesWorkflow != null) {
             String dronesCommand = dronesWorkflow.getCommandJsonString();
             log.info("发送指令信息：{}", dronesCommand);
-            DronesCommandWebsocketV1 commandWebsocket = JsonUtil.fromJson(dronesCommand,
-                    DronesCommandWebsocketV1.class);
+            DronesCommandWebsocket commandWebsocket = JsonUtil.fromJson(dronesCommand,
+                    DronesCommandWebsocket.class);
             connectionManager.sendMessageByDeviceId(commandWebsocket.getDeviceId(), commandWebsocket, id);
         }
     }
@@ -221,7 +221,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
     @Override
     public String getCommandJsonString(Long id) {
         try {
-            DronesCommandWebsocketV1 commandWebsocket = getCommandWebsocket(id);
+            DronesCommandWebsocket commandWebsocket = getCommandWebsocket(id);
             return JsonUtil.toJson(commandWebsocket);
         } catch (Exception e) {
             log.error("getCommandJsonString error: {}", e.getMessage());
@@ -232,7 +232,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
     @Override
     public String getCommandJsonString(DronesWorkflow entity) {
           try {
-            DronesCommandWebsocketV1 commandWebsocket = getCommandWebsocket(entity);
+            DronesCommandWebsocket commandWebsocket = getCommandWebsocket(entity);
             return JsonUtil.toJson(commandWebsocket);
         } catch (Exception e) {
             log.error("getCommandJsonString error: {}", e.getMessage());
@@ -246,24 +246,24 @@ public class DronesTaskServiceImp implements DronesTaskService {
      * @param id 任务ID
      * @return 任务状态
      */
-    private DronesCommandWebsocketV1 getCommandWebsocket(Long id) {
+    private DronesCommandWebsocket getCommandWebsocket(Long id) {
         // 获取任务流程图
         DronesWorkflowVo workflowGraph = workflowService.getWorkflowGraph(id);
         log.info("任务流程图：{}", JsonUtil.toJson(workflowGraph));
-        DronesCommandWebsocketV1 commandWebsocket = getCommandWebsocketCommon(workflowGraph);
+        DronesCommandWebsocket commandWebsocket = getCommandWebsocketCommon(workflowGraph);
         return commandWebsocket;
     }
 
-    private DronesCommandWebsocketV1 getCommandWebsocket(DronesWorkflow fromWorkflow) {
+    private DronesCommandWebsocket getCommandWebsocket(DronesWorkflow fromWorkflow) {
         // 获取任务流程图
         DronesWorkflowVo workflowGraph = workflowService.getWorkflowGraph(fromWorkflow);
         log.info("任务流程图：{}", JsonUtil.toJson(workflowGraph));
 
-        DronesCommandWebsocketV1 commandWebsocket = getCommandWebsocketCommon(workflowGraph);
+        DronesCommandWebsocket commandWebsocket = getCommandWebsocketCommon(workflowGraph);
         return commandWebsocket;
     }
 
-     private DronesCommandWebsocketV1 getCommandWebsocketCommon(DronesWorkflowVo workflowGraph) {
+     private DronesCommandWebsocket getCommandWebsocketCommon(DronesWorkflowVo workflowGraph) {
         // 获取任务节点
         List<NodeEntity> taskNodes = findTasknodes(workflowGraph);
         if (taskNodes.isEmpty()) {
@@ -271,7 +271,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
         }
 
         // 初始化命令对象
-        DronesCommandWebsocketV1 commandWebsocket = new DronesCommandWebsocketV1();
+        DronesCommandWebsocket commandWebsocket = new DronesCommandWebsocket();
         commandWebsocket.setType("toros");
 
         // 获取首个任务节点的设备和航线信息

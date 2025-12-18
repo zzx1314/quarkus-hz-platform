@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import org.huazhi.drones.command.entity.DronesCommand;
 import org.huazhi.drones.command.entity.dto.DronesCommandDto;
-import org.huazhi.drones.command.entity.webscoketdto.DronesCommandWebsocketV1;
+import org.huazhi.drones.command.entity.webscoketdto.DronesCommandWebsocket;
 import org.huazhi.drones.command.service.DronesCommandService;
 import org.huazhi.drones.commanditem.entity.DronesCommandResultItem;
 import org.huazhi.drones.commanditem.service.DronesCommandResultItemService;
@@ -109,7 +109,7 @@ public class BusService {
     /**
      * 保存指令消息
      */
-    public Long saveCommand(DronesCommandWebsocketV1 messageInfo, String deviceId, Long taskId) {
+    public Long saveCommand(DronesCommandWebsocket messageInfo, String deviceId, Long taskId) {
         DronesCommand command = new DronesCommand();
         command.setCommandType("task");
         command.setDeviceId(deviceId);
@@ -125,7 +125,7 @@ public class BusService {
     /**
      * 保存命令--类型信息
      */
-    public Long saveCommand(DronesCommandWebsocketV1 messageInfo, String deviceId, Long taskId, String commandType) {
+    public Long saveCommand(DronesCommandWebsocket messageInfo, String deviceId, Long taskId, String commandType) {
         DronesCommand command = new DronesCommand();
         command.setCommandType(commandType);
         command.setDeviceId(deviceId);

@@ -9,7 +9,7 @@ import org.huazhi.drones.services.entity.vo.DronesServicesVo;
 import lombok.Data;
 
 @Data
-public class DronesCommandWebsocketV1 {
+public class DronesCommandWebsocket {
 
     /*
     * 设备id

@@ -9,7 +9,7 @@ import org.huazhi.drones.command.entity.DronesCommand;
 import org.huazhi.drones.command.entity.dto.DronesCommandDto;
 import org.huazhi.drones.command.entity.dto.DronesCommandParam;
 import org.huazhi.drones.command.entity.dto.DronesCommandQueryDto;
-import org.huazhi.drones.command.entity.webscoketdto.DronesCommandWebsocketV1;
+import org.huazhi.drones.command.entity.webscoketdto.DronesCommandWebsocket;
 import org.huazhi.drones.command.entity.webscoketdto.action.DronesAction;
 import org.huazhi.drones.command.entity.webscoketdto.action.DronesActionParam;
 import org.huazhi.drones.command.entity.webscoketdto.task.DronesTaskWebScoket;
@@ -102,7 +102,7 @@ public class DronesCommandServiceImp implements DronesCommandService {
     @Override
     public Boolean serverCommand(DronesCommandParam param) {
         DronesDevice dronesDevice = deviceService.listById(param.getDeviceId());
-        DronesCommandWebsocketV1 commandWebsocket = new DronesCommandWebsocketV1();
+        DronesCommandWebsocket commandWebsocket = new DronesCommandWebsocket();
         commandWebsocket.setDeviceId(dronesDevice.getDeviceId());
         commandWebsocket.setType("toros");
         // 任务信息

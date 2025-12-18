@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.huazhi.drones.command.entity.webscoketdto.DronesCommandWebsocketV1;
+import org.huazhi.drones.command.entity.webscoketdto.DronesCommandWebsocket;
 import org.huazhi.drones.websocket.entity.MessageInfo;
 import org.huazhi.util.JsonUtil;
 
@@ -68,9 +68,10 @@ public class ConnectionManager {
     }
 
     /**
+     * 发送无人机ROS指令
      * 通过deviceId发送消息
      */
-    public void sendMessageByDeviceId(String deviceId, DronesCommandWebsocketV1 message, Long taskId) {
+    public void sendMessageByDeviceId(String deviceId, DronesCommandWebsocket message, Long taskId) {
         WebSocketConnection conn = connections.get(deviceId);
         if (conn != null && conn.isOpen()) {
             // 保存指令并获取指令ID
@@ -84,7 +85,11 @@ public class ConnectionManager {
         }
     }
 
-     public void sendMessageByDeviceId(String deviceId, DronesCommandWebsocketV1 message, Long taskId, String commandType) {
+    /**
+     * 发送无人机ROS指令-服务指令
+     * 通过deviceId发送消息
+     */
+     public void sendMessageByDeviceId(String deviceId, DronesCommandWebsocket message, Long taskId, String commandType) {
         WebSocketConnection conn = connections.get(deviceId);
         if (conn != null && conn.isOpen()) {
             // 保存指令并获取指令ID
