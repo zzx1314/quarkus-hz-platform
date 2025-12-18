@@ -34,7 +34,6 @@ import {
   droneGetCommandJsonString,
   dronesTaskUpdateFlow
 } from "@/api/dronesTask";
-import { de } from "element-plus/es/locale/index.mjs";
 
 const { guideline } = useAlignmentGuidelines(5);
 
@@ -281,6 +280,7 @@ const nodeStatus = id => {
 const cancel = () => {
   dialogFormVisible.value = false;
   dialogFormVisibleString.value = false;
+  dialogFormVisibleTreacking.value = false;
   state.data = {};
 };
 
@@ -366,10 +366,90 @@ function startWebSocket() {
 
         videoImg.value.src = url;
         lastObjectUrl = url;
+        redraw();
       });
     }
   });
 }
+
+const ctx = ref(null);
+const drawing = ref(false);
+const start = reactive({ x: 0, y: 0 });
+const rects = ref([]); // 保存所有框
+const canvasRef = ref(null);
+
+const onImgLoad = () => {
+  const img = videoImg.value;
+  const canvas = canvasRef.value;
+  ctx.value = canvas.getContext("2d");
+
+  // img 的真实像素尺寸
+  const w = img.naturalWidth;
+  const h = img.naturalHeight;
+
+  img.width = w;
+  img.height = h;
+
+  canvas.width = w;
+  canvas.height = h;
+
+  redraw();
+};
+
+const getPos = e => {
+  const rect = canvasRef.value.getBoundingClientRect();
+  return {
+    x: Math.round(e.clientX - rect.left),
+    y: Math.round(e.clientY - rect.top)
+  };
+};
+
+const onMouseDown = e => {
+  drawing.value = true;
+  Object.assign(start, getPos(e));
+};
+
+const onMouseMove = e => {
+  if (!drawing.value) return;
+
+  const { x, y } = getPos(e);
+  redraw();
+  drawRect(start.x, start.y, x - start.x, y - start.y);
+};
+
+const normalizeRect = (x1, y1, x2, y2) => {
+  const x = Math.min(x1, x2);
+  const y = Math.min(y1, y2);
+  const w = Math.abs(x2 - x1);
+  const h = Math.abs(y2 - y1);
+  return { x, y, w, h };
+};
+
+const onMouseUp = e => {
+  if (!drawing.value) return;
+  drawing.value = false;
+
+  const end = getPos(e);
+  const rect = normalizeRect(start.x, start.y, end.x, end.y);
+
+  // 防止误点生成 0 尺寸框
+  if (rect.w < 5 || rect.h < 5) return;
+
+  rects.value.push(rect);
+  redraw();
+};
+
+const redraw = () => {
+  ctx.value.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height);
+
+  rects.value.forEach(r => drawRect(r.x, r.y, r.w, r.h));
+};
+
+const drawRect = (x, y, w, h) => {
+  ctx.value.strokeStyle = "red";
+  ctx.value.lineWidth = 2;
+  ctx.value.strokeRect(x, y, w, h);
+};
 
 const defaultData = {};
 
@@ -514,8 +594,15 @@ watch(
       width="500px"
       @close="cancel"
     >
-      <div>
-        <img ref="videoImg" width="500" height="300" />
+      <div class="img-wrapper">
+        <img ref="videoImg" @load="onImgLoad" />
+        <canvas
+          ref="canvasRef"
+          class="overlay"
+          @mousedown="onMouseDown"
+          @mousemove="onMouseMove"
+          @mouseup="onMouseUp"
+        />
       </div>
     </el-dialog>
 
@@ -638,5 +725,17 @@ watch(
   left: 0;
   right: 0;
   height: 1px;
+}
+
+.img-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: auto;
 }
 </style>
