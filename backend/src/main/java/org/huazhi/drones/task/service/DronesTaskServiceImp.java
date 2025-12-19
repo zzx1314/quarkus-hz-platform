@@ -208,11 +208,11 @@ public class DronesTaskServiceImp implements DronesTaskService {
         DronesWorkflow dronesWorkflow = workflowService.listOne(new DronesWorkflowQueryDto().setTaskId(id));
         if (dronesWorkflow != null) {
             String dronesCommand = dronesWorkflow.getCommandJsonString();
-            log.info("发送指令信息：{}", dronesCommand);
             DronesCommandWebsocket commandWebsocket = JsonUtil.fromJson(dronesCommand,
                     DronesCommandWebsocket.class);
 
             commandWebsocket = fillDronesCommandRoutePoint(commandWebsocket);
+            log.info("发送指令信息：{}", JsonUtil.toJson(commandWebsocket));
             connectionManager.sendMessageByDeviceId(commandWebsocket.getDeviceId(), commandWebsocket, id);
         }
     }
