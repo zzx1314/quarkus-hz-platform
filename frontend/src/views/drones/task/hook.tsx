@@ -1,6 +1,7 @@
 import { computed, nextTick, onMounted, reactive, ref } from "vue";
 import type { PaginationProps } from "@pureadmin/table";
 import type { FormRules } from "element-plus";
+import { ElMessageBox } from "element-plus";
 import {
   dronesTaskSave,
   dronesTaskPage,
@@ -253,13 +254,33 @@ export function useDronesTask() {
   // 启动任务
   function startTask(row) {
     console.log("startTask", row);
-    dronesTaskStart(row.id).then(res => {
-      if (res.code === SUCCESS) {
-        message("任务启动成功", {
-          type: "success"
-        });
+    ElMessageBox.confirm(
+      `确定要<strong>启动</strong><strong style='color:var(--el-color-primary)'>${
+        row.taskName
+      }</strong>任务吗?`,
+      "系统提示",
+      {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        dangerouslyUseHTMLString: true,
+        draggable: true
       }
-    });
+    )
+      .then(() => {
+        dronesTaskStart(row.id).then(res => {
+          if (res.code === SUCCESS) {
+            message("任务启动成功", {
+              type: "success"
+            });
+          }
+        });
+      })
+      .catch(() => {
+        message("已取消", {
+          type: "info"
+        });
+      });
   }
   // 数据看板
   function datadashBoard(row) {

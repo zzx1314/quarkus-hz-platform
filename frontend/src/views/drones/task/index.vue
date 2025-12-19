@@ -143,22 +143,16 @@ const {
                     </el-button>
                   </el-dropdown-item>
                   <el-dropdown-item>
-                    <el-popconfirm
-                      :title="`是否确认启动流程【${row.taskName}】?`"
-                      @confirm="startTask(row)"
+                    <el-button
+                      :class="['status-btn', buttonClass]"
+                      link
+                      type="primary"
+                      :size="size"
+                      :icon="useRenderIcon(RiRestartFill)"
+                      @click="startTask(row)"
                     >
-                      <template #reference>
-                        <el-button
-                          :class="['status-btn', buttonClass]"
-                          link
-                          type="primary"
-                          :size="size"
-                          :icon="useRenderIcon(RiRestartFill)"
-                        >
-                          启动流程
-                        </el-button>
-                      </template>
-                    </el-popconfirm>
+                      启动流程
+                    </el-button>
                   </el-dropdown-item>
                   <el-dropdown-item>
                     <el-button
