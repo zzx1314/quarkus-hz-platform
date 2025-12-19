@@ -8,6 +8,7 @@ import org.huazhi.drones.workflow.entity.dto.DronesWorkflowDto;
 import org.huazhi.drones.workflow.entity.dto.DronesWorkflowQueryDto;
 import org.huazhi.drones.workflow.service.DronesWorkflowService;
 import org.huazhi.drones.workflow.vo.DronesWorkflowVo;
+import org.huazhi.oauth.annotation.TokenRequired;
 import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
 import org.huazhi.util.R;
@@ -27,6 +28,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
 @Path("/dronesWorkflow")
+@TokenRequired
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class DronesWorkflowController {

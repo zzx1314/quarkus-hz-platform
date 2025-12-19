@@ -3,6 +3,7 @@ package org.huazhi.system.sysuser.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.huazhi.oauth.annotation.TokenRequired;
 import org.huazhi.system.sysmenu.entity.SysMenu;
 import org.huazhi.system.sysrole.entity.SysRole;
 import org.huazhi.system.sysuser.entity.SysUser;
@@ -41,18 +42,21 @@ public class SysUserController {
 
     @GET
     @Path("/getPage")
+    @TokenRequired
     public R<PageResult<SysUser>> getPage(@BeanParam SysUserQueryDto sysUserDto, @BeanParam PageRequest pageRequest) {
         return R.ok(userService.listUserPage(sysUserDto, pageRequest));
     }
 
     @GET
     @Path("/getByDto")
+    @TokenRequired
     public R<List<SysUser>> getByDto(@BeanParam SysUserQueryDto sysUserDto) {
         return R.ok(userService.listUsersByDto(sysUserDto));
     }
 
     @GET
     @Path("/getInfo")
+    @TokenRequired
     public R<UserInfo> getInfo(@BeanParam SysUserQueryDto sysUserDto) {
         UserInfo userInfo = new UserInfo();
         SysUser users = userService.listOne(sysUserDto);
@@ -77,6 +81,7 @@ public class SysUserController {
 
     @GET
     @Path("/getAll")
+    @TokenRequired
     public R<List<SysUser>> getAll() {
         return R.ok(userService.listUsers());
     }
@@ -84,6 +89,7 @@ public class SysUserController {
     @POST
     @Path("/create")
     @Transactional
+    @TokenRequired
     public R<Void> createUser(SysUserDto sysUser) {
         return userService.registerUser(sysUser);
     }
@@ -91,6 +97,7 @@ public class SysUserController {
     @PUT
     @Path("/update")
     @Transactional
+    @TokenRequired
     public R<Void> update(SysUserDto sysUserDto) {
         return userService.updateUser(sysUserDto);
     }
@@ -98,6 +105,7 @@ public class SysUserController {
     @DELETE
     @Path("/{id}")
     @Transactional
+    @TokenRequired
     public R<Void> delete(@PathParam("id") Long id) {
         SysUser entity = SysUser.findById(id);
         if (entity == null) {

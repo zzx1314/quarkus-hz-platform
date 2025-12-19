@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.huazhi.oauth.annotation.TokenRequired;
 import org.huazhi.system.sysauth.dto.SysAuthDto;
 import org.huazhi.system.sysauth.service.SysAuthService;
 import org.huazhi.system.sysmenu.entity.SysMenu;
@@ -27,6 +28,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
 @Path("/sysAuth")
+@TokenRequired
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class SysAuthController {

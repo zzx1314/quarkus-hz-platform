@@ -8,6 +8,7 @@ import org.huazhi.drones.command.entity.dto.DronesCommandParam;
 import org.huazhi.drones.command.entity.dto.DronesCommandQueryDto;
 import org.huazhi.drones.command.entity.dto.DronesCommonCommand;
 import org.huazhi.drones.command.service.DronesCommandService;
+import org.huazhi.oauth.annotation.TokenRequired;
 import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
 import org.huazhi.util.R;
@@ -27,6 +28,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
 @Path("/dronesCommand")
+@TokenRequired
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class DronesCommandController {

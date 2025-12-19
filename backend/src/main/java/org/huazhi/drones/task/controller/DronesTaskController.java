@@ -7,6 +7,7 @@ import org.huazhi.drones.task.entity.dto.DronesTaskDto;
 import org.huazhi.drones.task.entity.dto.DronesTaskQueryDto;
 import org.huazhi.drones.task.entity.vo.DronesTaskStatusVo;
 import org.huazhi.drones.task.service.DronesTaskService;
+import org.huazhi.oauth.annotation.TokenRequired;
 import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
 import org.huazhi.util.R;
@@ -26,6 +27,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
 @Path("/dronesTask")
+@TokenRequired
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class DronesTaskController {

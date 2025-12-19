@@ -7,6 +7,7 @@ import org.huazhi.drones.model.entity.DronesModel;
 import org.huazhi.drones.model.entity.dto.DronesModelDto;
 import org.huazhi.drones.model.entity.dto.DronesModelQueryDto;
 import org.huazhi.drones.model.service.DronesModelService;
+import org.huazhi.oauth.annotation.TokenRequired;
 import org.huazhi.util.JsonUtil;
 import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
@@ -29,6 +30,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
 @Path("/dronesModel")
+@TokenRequired
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class DronesModelController {

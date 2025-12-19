@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.huazhi.oauth.annotation.TokenRequired;
 import org.huazhi.system.sysmenu.entity.SysMenu;
 import org.huazhi.system.sysmenu.entity.dto.SysMenuDto;
 import org.huazhi.system.sysmenu.entity.dto.SysMenuQueryDto;
@@ -46,6 +47,7 @@ public class SysMenuController {
     private static final ObjectMapper mapper = new ObjectMapper();
 
     @GET
+    @TokenRequired
     public R<Object> getUserMenu() {
         // 获取符合条件的菜单
         List<Long> roleIds = securityUtil.getRole();

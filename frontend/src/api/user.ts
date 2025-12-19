@@ -100,9 +100,12 @@ export const userLogout = (): Promise<UserResult> => {
 
 /** 刷新`token` */
 export const refreshTokenApi = (refresh_token?: string) => {
-  return http.axiosPost<RefreshTokenResult>(
+  return http.post<RefreshTokenResult, any>(
     urls.refreshToken + refresh_token,
-    {}
+    {},
+    {
+      skipAuthRefresh: true
+    }
   );
 };
 

@@ -16,7 +16,7 @@ import type { UserResult } from "@/api/user";
 import { message } from "@/utils/message";
 import { useUserStoreHook } from "@/store/modules/user";
 
-// 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
+// 默认 Axios 配置
 const defaultConfig: AxiosRequestConfig = {
   // 请求超时时间
   timeout: 100000,
@@ -40,6 +40,7 @@ export const cleanQuery = (query: Record<string, any>): Record<string, any> => {
   );
 };
 
+// 判断 token 是否即将过期
 function isTokenExpiringSoon(expires: number, ahead = 300) {
   const now = Math.floor(Date.now() / 1000);
   return expires - now <= ahead;
@@ -51,10 +52,13 @@ class PureHttp {
     this.httpInterceptorsResponse();
   }
 
-  /** `token`过期后，暂存待执行的请求 */
-  private static requests = [];
-
-  /** 防止重复刷新`token` */
+  /** token过期挂起请求队列 */
+  private static requests: Array<{
+    resolve: (value?: any) => void;
+    reject: (reason?: any) => void;
+    config: PureHttpRequestConfig;
+  }> = [];
+  /** 防止重复刷新 token */
   private static isRefreshing = false;
 
   /** 初始化配置对象 */
@@ -115,53 +119,50 @@ class PureHttp {
 
     instance.interceptors.response.use(
       (response: PureHttpResponse) => {
-        const $config = response.config;
-        // 关闭进度条动画
         NProgress.done();
-        // 优先判断post/get等方法是否传入回调，否则执行初始化设置等回调
-        if (typeof $config.beforeResponseCallback === "function") {
-          $config.beforeResponseCallback(response);
-          return response.data;
-        }
-        if (PureHttp.initConfig.beforeResponseCallback) {
-          PureHttp.initConfig.beforeResponseCallback(response);
-          return response.data;
-        }
-        return response.data;
+        return response.data; // 统一返回 response.data
       },
       async (error: any) => {
         const { response, config } = error;
         NProgress.done();
 
-        if (!response || !config) {
+        if (!response || !config) return Promise.reject(error);
+
+        if (config.skipAuthRefresh) {
           return Promise.reject(error);
         }
-
-        // 是否需要刷新 token
         const needRefresh =
           response.status === 401 ||
           (response.status === 200 && config.headers?.["X-Token-Refresh"]);
 
-        // 防止无限重试
         if (needRefresh && !config._retry) {
           config._retry = true;
 
-          // 如果当前没有在刷新，发起 refresh
+          const retryRequest = new Promise((resolve, reject) => {
+            PureHttp.requests.push({ resolve, reject, config });
+          });
+
           if (!PureHttp.isRefreshing) {
             PureHttp.isRefreshing = true;
-
             try {
               const tokenData = getToken();
-              // 存新 token（按你项目方式）
               const res = await useUserStoreHook().handRefreshToken(
                 tokenData.refreshToken
               );
               const newAccessToken = res.access_token;
-              // 重放所有挂起请求
-              PureHttp.requests.forEach(cb => cb(newAccessToken));
+
+              // 重放所有挂起请求，返回 response.data
+              PureHttp.requests.forEach(req => {
+                req.config.headers["Authorization"] =
+                  formatToken(newAccessToken);
+                PureHttp.axiosInstance(req.config)
+                  .then(resp => req.resolve(resp))
+                  .catch(req.reject);
+              });
               PureHttp.requests = [];
             } catch (e) {
-              // refresh 失败，才真正退出
+              // token刷新失败，拒绝所有挂起请求
+              PureHttp.requests.forEach(req => req.reject(e));
               PureHttp.requests = [];
               message("登录已过期，请重新登录", { type: "error" });
               useUserStoreHook().logOut();
@@ -171,32 +172,19 @@ class PureHttp {
             }
           }
 
-          // 当前请求进入等待队列
-          return new Promise(resolve => {
-            PureHttp.requests.push((token: string) => {
-              config.headers["Authorization"] = formatToken(token);
-              resolve(instance(config));
-            });
-          });
-        }
-        if (response.status === 500) {
-          message("服务器错误", { type: "error" });
-          useUserStoreHook().logOut();
-        } else if (response.status === 401 && response.data?.msg) {
-          message(response.data.msg, { type: "error" });
-          useUserStoreHook().logOut();
-        } else if (
-          response.status === 424 &&
-          response.data &&
-          response.data.msg
-        ) {
-          message(response.data.msg, { type: "error" });
-          useUserStoreHook().logOut();
-        } else {
-          message("系统错误", { type: "error" });
-          useUserStoreHook().logOut();
+          // 当前请求挂起
+          return retryRequest;
         }
 
+        // 处理其他错误
+        if (response.status === 500) {
+          message("服务器错误", { type: "error" });
+        } else if ([401, 424].includes(response.status) && response.data?.msg) {
+          message(response.data.msg, { type: "error" });
+        } else {
+          message("系统错误", { type: "error" });
+        }
+        useUserStoreHook().logOut();
         return Promise.reject(error);
       }
     );

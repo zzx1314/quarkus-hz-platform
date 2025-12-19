@@ -11,6 +11,7 @@ import org.huazhi.drones.statistics.entity.BarChartData;
 import org.huazhi.drones.statistics.entity.ChartData;
 import org.huazhi.drones.statistics.entity.DocChatData;
 import org.huazhi.drones.task.service.DronesTaskService;
+import org.huazhi.oauth.annotation.TokenRequired;
 import org.huazhi.util.R;
 
 import jakarta.inject.Inject;
@@ -21,6 +22,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
 @Path("/dronesStatistics")
+@TokenRequired
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class DronesStatisticsController {

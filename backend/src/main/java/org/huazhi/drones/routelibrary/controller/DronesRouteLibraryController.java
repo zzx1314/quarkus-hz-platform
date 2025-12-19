@@ -7,6 +7,7 @@ import org.huazhi.drones.routelibrary.entity.DronesRouteLibrary;
 import org.huazhi.drones.routelibrary.entity.dto.DronesRouteLibraryDto;
 import org.huazhi.drones.routelibrary.entity.dto.DronesRouteLibraryQueryDto;
 import org.huazhi.drones.routelibrary.service.DronesRouteLibraryService;
+import org.huazhi.oauth.annotation.TokenRequired;
 import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
 import org.huazhi.util.R;
@@ -26,6 +27,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
 @Path("/dronesRouteLibrary")
+@TokenRequired
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class DronesRouteLibraryController {

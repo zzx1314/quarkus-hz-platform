@@ -12,6 +12,7 @@ import org.huazhi.drones.media.entity.DronesMedia;
 import org.huazhi.drones.media.entity.dto.DronesMediaDto;
 import org.huazhi.drones.media.entity.dto.DronesMediaQueryDto;
 import org.huazhi.drones.media.service.DronesMediaService;
+import org.huazhi.oauth.annotation.TokenRequired;
 import org.huazhi.util.FileUtil;
 import org.huazhi.util.JsonUtil;
 import org.huazhi.util.PageRequest;
@@ -38,6 +39,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 @Path("/dronesMedia")
+@TokenRequired
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class DronesMediaController {
