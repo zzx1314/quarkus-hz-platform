@@ -59,17 +59,17 @@ export function useDronesTask() {
       width: 70
     },
     {
-      label: "流程名称",
+      label: "任务名称",
       prop: "taskName",
       width: 150
     },
     {
-      label: "流程描述",
+      label: "任务描述",
       prop: "taskDescription",
       minWidth: 180
     },
     {
-      label: "流程状态",
+      label: "任务状态",
       prop: "taskStatus",
       cellRenderer: ({ row, props }) => (
         <el-tag

@@ -17,7 +17,7 @@ export function useCollectorBusDevForm() {
 
   const columnsQueryForm: PlusColumn[] = [
     {
-      label: "流程名称",
+      label: "任务名称",
       prop: "taskName",
       valueType: "copy",
       colProps: {
