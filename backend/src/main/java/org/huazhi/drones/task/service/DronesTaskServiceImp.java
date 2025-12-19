@@ -211,8 +211,40 @@ public class DronesTaskServiceImp implements DronesTaskService {
             log.info("发送指令信息：{}", dronesCommand);
             DronesCommandWebsocket commandWebsocket = JsonUtil.fromJson(dronesCommand,
                     DronesCommandWebsocket.class);
+
+            commandWebsocket = fillDronesCommandRoutePoint(commandWebsocket);
             connectionManager.sendMessageByDeviceId(commandWebsocket.getDeviceId(), commandWebsocket, id);
         }
+    }
+
+    /**
+     * 补充航点坐标
+     */
+    private DronesCommandWebsocket fillDronesCommandRoutePoint(DronesCommandWebsocket dronesCommandWebsocket) { 
+        List<DronesRoute> routeItemList = dronesCommandWebsocket.getRoute();
+        for (DronesRoute routeItem : routeItemList) {
+             Long routeItemId = routeItem.getWpId();
+             DronesRouteItem routeItemEntity = routeItemService.listOne(new DronesRouteItemQueryDto().setId(routeItemId));
+             String routeValue = routeItemEntity.getRouteValue();
+             routeItem.setLat(Double.valueOf(routeValue.split(",")[0]));
+             routeItem.setLon(Double.valueOf(routeValue.split(",")[1]));
+        }
+        List<DronesTaskWebScoket> tasks = dronesCommandWebsocket.getTasks();
+        for (DronesTaskWebScoket task : tasks) { 
+            DronesRouteItem listOne = routeItemService.listOne(new DronesRouteItemQueryDto().setId(task.getFromWp().getWpId()));
+            task.getFromWp().setLat(Double.valueOf(listOne.getRouteValue().split(",")[0]));
+            task.getFromWp().setLon(Double.valueOf(listOne.getRouteValue().split(",")[1]));
+            listOne = routeItemService.listOne(new DronesRouteItemQueryDto().setId(task.getToWp().getWpId()));
+            task.getToWp().setLat(Double.valueOf(listOne.getRouteValue().split(",")[0]));
+            task.getToWp().setLon(Double.valueOf(listOne.getRouteValue().split(",")[1]));
+            // 补充actions的坐标
+            for (DronesAction action : task.getActions()) {
+                DronesRouteItem actionRouteItem = routeItemService.listOne(new DronesRouteItemQueryDto().setId(action.getParams().getTargetWp().getWpId()));
+                action.getParams().getTargetWp().setLat(Double.valueOf(actionRouteItem.getRouteValue().split(",")[0]));
+                action.getParams().getTargetWp().setLon(Double.valueOf(actionRouteItem.getRouteValue().split(",")[1]));
+            }
+        }
+        return dronesCommandWebsocket;
     }
 
     /*
@@ -222,6 +254,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
     public String getCommandJsonString(Long id) {
         try {
             DronesCommandWebsocket commandWebsocket = getCommandWebsocket(id);
+            commandWebsocket = fillDronesCommandRoutePoint(commandWebsocket);
             return JsonUtil.toJson(commandWebsocket);
         } catch (Exception e) {
             log.error("getCommandJsonString error: {}", e.getMessage());

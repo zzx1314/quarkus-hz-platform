@@ -81,9 +81,6 @@ public class DronesTaskController {
 
     /**
      * 启动任务
-     * 
-     * @param id
-     * @return
      */
     @GET
     @Path("/startTask/{id}")
@@ -94,8 +91,6 @@ public class DronesTaskController {
 
     /**
      * 查看任务状态
-     * @param id
-     * @return
      */
     @GET
     @Path("/getTaskStatus/{id}")
