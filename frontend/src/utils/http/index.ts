@@ -40,12 +40,6 @@ export const cleanQuery = (query: Record<string, any>): Record<string, any> => {
   );
 };
 
-// 判断 token 是否即将过期
-function isTokenExpiringSoon(expires: number, ahead = 300) {
-  const now = Math.floor(Date.now() / 1000);
-  return expires - now <= ahead;
-}
-
 class PureHttp {
   constructor() {
     this.httpInterceptorsRequest();
@@ -96,11 +90,6 @@ class PureHttp {
               if (data) {
                 // 在请求头添加权限
                 config.headers["Authorization"] = formatToken(data.accessToken);
-
-                //  只做“即将过期”标记，不刷新
-                if (isTokenExpiringSoon(data.expires)) {
-                  config.headers["X-Token-Refresh"] = "1";
-                }
                 resolve(config);
               } else {
                 resolve(config);
@@ -131,9 +120,7 @@ class PureHttp {
         if (config.skipAuthRefresh) {
           return Promise.reject(error);
         }
-        const needRefresh =
-          response.status === 401 ||
-          (response.status === 200 && config.headers?.["X-Token-Refresh"]);
+        const needRefresh = response.status === 401;
 
         if (needRefresh && !config._retry) {
           config._retry = true;
