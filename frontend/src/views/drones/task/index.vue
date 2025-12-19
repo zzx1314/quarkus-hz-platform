@@ -120,7 +120,7 @@ const {
                 </el-button>
               </template>
             </el-popconfirm>
-            <el-dropdown class="ml-2">
+            <el-dropdown class="ml-2" trigger="click" :hide-on-click="false">
               <el-button
                 class="ml-4 mt-0.5"
                 link
@@ -143,8 +143,26 @@ const {
                     </el-button>
                   </el-dropdown-item>
                   <el-dropdown-item>
+                    <el-popconfirm
+                      :title="`是否确认启动流程【${row.taskName}】?`"
+                      @confirm="startTask(row)"
+                    >
+                      <template #reference>
+                        <el-button
+                          :class="['status-btn', buttonClass]"
+                          link
+                          type="primary"
+                          :size="size"
+                          :icon="useRenderIcon(RiRestartFill)"
+                        >
+                          启动流程
+                        </el-button>
+                      </template>
+                    </el-popconfirm>
+                  </el-dropdown-item>
+                  <el-dropdown-item>
                     <el-button
-                      :class="buttonClass"
+                      :class="[buttonClass]"
                       link
                       type="primary"
                       :size="size"
@@ -152,19 +170,6 @@ const {
                       @click="flowRouteStatus(row)"
                     >
                       执行状态
-                    </el-button>
-                  </el-dropdown-item>
-
-                  <el-dropdown-item>
-                    <el-button
-                      :class="buttonClass"
-                      link
-                      type="primary"
-                      :size="size"
-                      :icon="useRenderIcon(RiRestartFill)"
-                      @click="startTask(row)"
-                    >
-                      启动流程
                     </el-button>
                   </el-dropdown-item>
                   <el-dropdown-item>
@@ -228,5 +233,9 @@ const {
 }
 :deep(.el-form-item) {
   margin-bottom: 12px;
+}
+
+.status-btn :deep(svg) {
+  color: #67c23a;
 }
 </style>

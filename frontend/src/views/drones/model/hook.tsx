@@ -97,7 +97,7 @@ export function useDronesModel() {
     {
       label: "描述信息",
       prop: "remarks",
-      width: 150
+      minWidth: 150
     },
     {
       label: "创建时间",
@@ -107,7 +107,7 @@ export function useDronesModel() {
     {
       label: "操作",
       fixed: "right",
-      minWidth: 150,
+      width: 150,
       slot: "operation"
     }
   ];

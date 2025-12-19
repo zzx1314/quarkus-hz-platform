@@ -239,7 +239,11 @@ public class DronesTaskServiceImp implements DronesTaskService {
             task.getToWp().setLon(Double.valueOf(listOne.getRouteValue().split(",")[1]));
             // 补充actions的坐标
             for (DronesAction action : task.getActions()) {
-                DronesRouteItem actionRouteItem = routeItemService.listOne(new DronesRouteItemQueryDto().setId(action.getParams().getTargetWp().getWpId()));
+                if (action.getParams().getTargetWp() == null) {
+                    break;
+                }
+                long wpId = action.getParams().getTargetWp().getWpId();
+                DronesRouteItem actionRouteItem = routeItemService.listOne(new DronesRouteItemQueryDto().setId(wpId));
                 action.getParams().getTargetWp().setLat(Double.valueOf(actionRouteItem.getRouteValue().split(",")[0]));
                 action.getParams().getTargetWp().setLon(Double.valueOf(actionRouteItem.getRouteValue().split(",")[1]));
             }
