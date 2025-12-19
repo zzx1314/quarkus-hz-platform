@@ -244,8 +244,6 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
             List<List<Double>> result = mapper.readValue(data.getRouteData(), mapper.getTypeFactory()
                     .constructCollectionType(List.class, mapper.getTypeFactory()
                             .constructCollectionType(List.class, Double.class)));
-            data.setStartCoordinates(mapper.writeValueAsString(result.get(0)));
-            data.setEndCoordinates(mapper.writeValueAsString(result.get(result.size() - 1)));
 
             List<List<Double>> resultList = new ArrayList<>();
             List<Double> source = new ArrayList<>();

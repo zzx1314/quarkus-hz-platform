@@ -44,16 +44,6 @@ public class DronesRouteLibrary extends PanacheEntityBase {
     private String routeDescription;
 
     /**
-     * 起点坐标
-     */
-    private String startCoordinates;
-
-    /**
-     * 终点坐标
-     */
-    private String endCoordinates;
-
-    /**
      * 关联模型的id
      */
     private long modelId;

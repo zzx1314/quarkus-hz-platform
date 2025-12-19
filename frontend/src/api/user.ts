@@ -1,5 +1,4 @@
 import { http } from "@/utils/http";
-const FORM_CONTENT_TYPE = "application/x-www-form-urlencoded";
 
 export type UserResult = {
   success: boolean;
@@ -31,7 +30,7 @@ export type RefreshTokenResult = {
   /** 用于调用刷新`accessToken`的接口时所需的`token` */
   refresh_token: string;
   /** `accessToken`的过期时间（格式'xxxx/xx/xx xx:xx:xx'） */
-  expires_in: string;
+  expires_in: number;
 };
 
 export type UserInfo = {
@@ -70,6 +69,7 @@ type ResultTable = {
 
 const urls = {
   token: `/api/token`,
+  refreshToken: `/api/token/refresh/`,
   logout: `/api/token/logout`,
   getInfo: `/api/sysUser/info`,
   checkToken: `/api/token/check_token`,
@@ -99,20 +99,11 @@ export const userLogout = (): Promise<UserResult> => {
 };
 
 /** 刷新`token` */
-export const refreshTokenApi = (refresh_token?: object) => {
-  const basicAuth =
-    "Basic " + window.btoa(import.meta.env.VITE_OAUTH2_PASSWORD_CLIENT);
-  const grant_type = "refresh_token";
-  const scope = "server";
-  const dataParam = {
-    headers: {
-      skipToken: true,
-      Authorization: basicAuth,
-      "Content-Type": FORM_CONTENT_TYPE
-    },
-    data: { refresh_token, grant_type, scope }
-  };
-  return http.request<RefreshTokenResult>("post", urls.token, dataParam);
+export const refreshTokenApi = (refresh_token?: string) => {
+  return http.axiosPost<RefreshTokenResult>(
+    urls.refreshToken + refresh_token,
+    {}
+  );
 };
 
 /** 账户设置-个人信息 */

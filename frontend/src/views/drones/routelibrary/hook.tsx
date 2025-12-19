@@ -101,16 +101,6 @@ export function useDronesRouteLibrary() {
       minWidth: 100
     },
     {
-      label: "起点坐标",
-      prop: "startCoordinates",
-      width: 200
-    },
-    {
-      label: "终点坐标",
-      prop: "endCoordinates",
-      width: 200
-    },
-    {
       label: "航点信息",
       prop: "routeData",
       width: 250

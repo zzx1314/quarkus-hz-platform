@@ -17,16 +17,6 @@ public class DronesRouteLibraryDto {
     private Long modelId;
 
     /**
-     * 起点坐标
-     */
-    private String startCoordinates;
-
-    /**
-     * 终点坐标
-     */
-    private String endCoordinates;
-
-    /**
      * 描述
      */
     private String routeDescription;

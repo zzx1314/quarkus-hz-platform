@@ -105,13 +105,6 @@ watch(
 
 onMounted(() => {
   getSubMenuData();
-  const tokenCheckIn = usePermissionStoreHook().getCheckTokenTimeId();
-  if (tokenCheckIn === null) {
-    const tokenCheckInterval = setInterval(() => {
-      checkToken();
-    }, 20000);
-    usePermissionStoreHook().setCheckTokenTimeId(tokenCheckInterval);
-  }
   emitter.on("logoChange", key => {
     showLogo.value = key;
   });

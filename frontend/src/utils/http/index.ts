@@ -40,6 +40,11 @@ export const cleanQuery = (query: Record<string, any>): Record<string, any> => {
   );
 };
 
+function isTokenExpiringSoon(expires: number, ahead = 300) {
+  const now = Math.floor(Date.now() / 1000);
+  return expires - now <= ahead;
+}
+
 class PureHttp {
   constructor() {
     this.httpInterceptorsRequest();
@@ -57,16 +62,6 @@ class PureHttp {
 
   /** 保存当前`Axios`实例对象 */
   private static axiosInstance: AxiosInstance = Axios.create(defaultConfig);
-
-  /** 重连原始请求 */
-  private static retryOriginalRequest(config: PureHttpRequestConfig) {
-    return new Promise(resolve => {
-      PureHttp.requests.push((token: string) => {
-        config.headers["Authorization"] = formatToken(token);
-        resolve(config);
-      });
-    });
-  }
 
   /** 请求拦截 */
   private httpInterceptorsRequest(): void {
@@ -97,6 +92,11 @@ class PureHttp {
               if (data) {
                 // 在请求头添加权限
                 config.headers["Authorization"] = formatToken(data.accessToken);
+
+                //  只做“即将过期”标记，不刷新
+                if (isTokenExpiringSoon(data.expires)) {
+                  config.headers["X-Token-Refresh"] = "1";
+                }
                 resolve(config);
               } else {
                 resolve(config);
@@ -112,6 +112,7 @@ class PureHttp {
   /** 响应拦截 */
   private httpInterceptorsResponse(): void {
     const instance = PureHttp.axiosInstance;
+
     instance.interceptors.response.use(
       (response: PureHttpResponse) => {
         const $config = response.config;
@@ -128,31 +129,75 @@ class PureHttp {
         }
         return response.data;
       },
-      (error: any) => {
-        console.log("拦截异常：", error.response);
-        const $error = error;
-        $error.isCancelRequest = Axios.isCancel($error);
-        // 关闭进度条动画
+      async (error: any) => {
+        const { response, config } = error;
         NProgress.done();
-        if (error.response.status === 500) {
+
+        if (!response || !config) {
+          return Promise.reject(error);
+        }
+
+        // 是否需要刷新 token
+        const needRefresh =
+          response.status === 401 ||
+          (response.status === 200 && config.headers?.["X-Token-Refresh"]);
+
+        // 防止无限重试
+        if (needRefresh && !config._retry) {
+          config._retry = true;
+
+          // 如果当前没有在刷新，发起 refresh
+          if (!PureHttp.isRefreshing) {
+            PureHttp.isRefreshing = true;
+
+            try {
+              const tokenData = getToken();
+              // 存新 token（按你项目方式）
+              const res = await useUserStoreHook().handRefreshToken(
+                tokenData.refreshToken
+              );
+              const newAccessToken = res.access_token;
+              // 重放所有挂起请求
+              PureHttp.requests.forEach(cb => cb(newAccessToken));
+              PureHttp.requests = [];
+            } catch (e) {
+              // refresh 失败，才真正退出
+              PureHttp.requests = [];
+              message("登录已过期，请重新登录", { type: "error" });
+              useUserStoreHook().logOut();
+              return Promise.reject(e);
+            } finally {
+              PureHttp.isRefreshing = false;
+            }
+          }
+
+          // 当前请求进入等待队列
+          return new Promise(resolve => {
+            PureHttp.requests.push((token: string) => {
+              config.headers["Authorization"] = formatToken(token);
+              resolve(instance(config));
+            });
+          });
+        }
+        if (response.status === 500) {
           message("服务器错误", { type: "error" });
           useUserStoreHook().logOut();
-        } else if (error.response.status === 401 && error.response.data.msg) {
-          message(error.response.data.msg, { type: "error" });
+        } else if (response.status === 401 && response.data?.msg) {
+          message(response.data.msg, { type: "error" });
           useUserStoreHook().logOut();
         } else if (
-          error.response.status === 424 &&
-          error.response.data &&
-          error.response.data.msg
+          response.status === 424 &&
+          response.data &&
+          response.data.msg
         ) {
-          message(error.response.data.msg, { type: "error" });
+          message(response.data.msg, { type: "error" });
           useUserStoreHook().logOut();
         } else {
           message("系统错误", { type: "error" });
           useUserStoreHook().logOut();
         }
-        // 所有的响应异常 区分来源为取消请求/非取消请求
-        return Promise.reject($error);
+
+        return Promise.reject(error);
       }
     );
   }
