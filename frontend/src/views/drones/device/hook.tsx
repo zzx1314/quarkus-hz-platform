@@ -76,12 +76,7 @@ export function useDronesDevice() {
     {
       label: "IP地址",
       prop: "deviceIp",
-      width: 200
-    },
-    {
-      label: "固件版本",
-      prop: "firmwareVersion",
-      width: 100
+      width: 180
     },
     {
       label: "创建时间",

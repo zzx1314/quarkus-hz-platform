@@ -63,7 +63,7 @@ export function useDronesModel() {
     {
       label: "模型名称",
       prop: "modelName",
-      width: 100
+      width: 150
     },
     {
       label: "模型类型",
@@ -107,7 +107,7 @@ export function useDronesModel() {
     {
       label: "操作",
       fixed: "right",
-      minWidth: 180,
+      minWidth: 150,
       slot: "operation"
     }
   ];

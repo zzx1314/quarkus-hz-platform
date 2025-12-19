@@ -9,6 +9,7 @@ import { createApp, type Directive } from "vue";
 import { useVxeTable } from "@/plugins/vxeTable";
 import { useElementPlus } from "@/plugins/elementPlus";
 import { injectResponsiveStorage } from "@/utils/responsive";
+import { initRouter } from "@/router/utils";
 
 import Table from "@pureadmin/table";
 import PureDescriptions from "@pureadmin/descriptions";
@@ -56,6 +57,7 @@ app.use(VueTippy);
 
 getPlatformConfig(app).then(async config => {
   setupStore(app);
+  await initRouter();
   app.use(router);
   await router.isReady();
   injectResponsiveStorage(app, config);
