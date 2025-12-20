@@ -34,4 +34,6 @@ public interface DronesCommandService {
 
    Boolean commonCommand(DronesCommonCommand param);
 
+   DronesCommand listById(Long id);
+
 }

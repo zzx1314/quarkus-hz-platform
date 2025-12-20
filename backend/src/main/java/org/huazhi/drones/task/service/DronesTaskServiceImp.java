@@ -214,6 +214,8 @@ public class DronesTaskServiceImp implements DronesTaskService {
             commandWebsocket = fillDronesCommandRoutePoint(commandWebsocket);
             log.info("发送指令信息：{}", JsonUtil.toJson(commandWebsocket));
             connectionManager.sendMessageByDeviceId(commandWebsocket.getDeviceId(), commandWebsocket, id);
+            // 修改任务状态
+            repository.update("taskStatus = ?1 where id = ?2", "进行中", id);
         }
     }
 

@@ -188,5 +188,11 @@ public class DronesCommandServiceImp implements DronesCommandService {
         return true;
     }
 
+    @Override
+    public DronesCommand listById(Long id) {
+        DronesCommand command = repository.findById(id);
+        return command;
+    }
+
     
 }

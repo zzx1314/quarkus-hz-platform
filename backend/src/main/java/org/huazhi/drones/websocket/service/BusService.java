@@ -12,10 +12,14 @@ import org.huazhi.drones.device.entity.DronesDevice;
 import org.huazhi.drones.device.entity.dto.DronesDeviceDto;
 import org.huazhi.drones.device.entity.dto.DronesDeviceQueryDto;
 import org.huazhi.drones.device.service.DronesDeviceService;
+import org.huazhi.drones.task.entity.dto.DronesTaskDto;
+import org.huazhi.drones.task.service.DronesTaskService;
 import org.huazhi.drones.websocket.entity.MessageHeartbeat;
 import org.huazhi.drones.websocket.entity.MessageInfo;
 import org.huazhi.util.JsonUtil;
 import org.huazhi.util.RedisUtil;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import io.quarkus.runtime.util.StringUtil;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -35,6 +39,9 @@ public class BusService {
 
     @Inject
     DronesCommandResultItemService dronesCommandResultItemService;
+
+    @Inject
+    DronesTaskService dronesTaskService;
 
     /**
      * 检查客户端id
@@ -164,6 +171,50 @@ public class BusService {
         item.setCreateTime(LocalDateTime.now());
         item.setUpdateTime(LocalDateTime.now());
         dronesCommandResultItemService.register(item);
+
+        JsonNode returnNode = JsonUtil.toJsonObject(returnValue);
+        if (returnNode.path("missionId") != null) {
+            // 更新任务状态
+            DronesCommand command = dronesCommandService.listById(id);
+            DronesTaskDto dronesTaskDto = new DronesTaskDto();
+            dronesTaskDto.setId(command.getTaskId());
+            dronesTaskDto.setTaskStatus(getTaskStatus(returnNode) ? "已完成" : "失败");
+            dronesTaskService.replaceByDto(dronesTaskDto);
+        }
+    }
+
+    /**
+     * 获取任务状态
+     */
+    private Boolean getTaskStatus(JsonNode returnNode) {
+        if (returnNode == null || returnNode.isNull()) {
+            return false;
+        }
+        JsonNode missionResultNode = returnNode.get("missionResult");
+        if (missionResultNode == null || !missionResultNode.isArray()) {
+            return false;
+        }
+        for (JsonNode mission : missionResultNode) {
+            JsonNode taskResultNode = mission.get("taskResult");
+            if (taskResultNode == null || !taskResultNode.isArray()) {
+                continue;
+            }
+            for (JsonNode task : taskResultNode) {
+                JsonNode actionResultNode = task.get("actionResult");
+                if (actionResultNode == null) {
+                    continue;
+                }
+                JsonNode stateNode = actionResultNode.get("state");
+                if (stateNode != null && stateNode.isBoolean()) {
+                    if (!stateNode.asBoolean()) {
+                        // 只要有一个 false，直接返回 false
+                        return false;
+                    }
+                }
+            }
+        }
+        // 全部为 true
+        return true;
     }
 
 }

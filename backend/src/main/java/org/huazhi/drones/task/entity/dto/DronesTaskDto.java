@@ -16,4 +16,9 @@ public class DronesTaskDto {
      */
     private String taskDescription;
 
+    /**
+     * 任务状态
+     */
+    private String taskStatus;
+
 }
