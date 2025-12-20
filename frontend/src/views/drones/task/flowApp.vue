@@ -286,6 +286,7 @@ const cancel = () => {
   dialogFormVisibleString.value = false;
   dialogFormVisibleTreacking.value = false;
   state.data = {};
+  rects.value = [];
 };
 
 const errorInfoMsg = ref("");
