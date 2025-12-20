@@ -53,6 +53,7 @@ import java.time.LocalDateTime;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -204,6 +205,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
      * @param id 任务ID
      */
     @Override
+    @Transactional
     public void startTask(Long id) {
         DronesWorkflow dronesWorkflow = workflowService.listOne(new DronesWorkflowQueryDto().setTaskId(id));
         if (dronesWorkflow != null) {
