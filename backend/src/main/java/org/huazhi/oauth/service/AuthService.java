@@ -77,6 +77,7 @@ public class AuthService {
         String jwt = userDtoOpt
         .map(userDto -> generateToken(userDto.getUsername(), userDto))
         .orElseThrow(() -> new RuntimeException("User not found"));
+        refreshToken = generateRefreshToken(userDtoOpt.get());
         return createTokenResponse(jwt, refreshToken, userDtoOpt.get());
     }
 
