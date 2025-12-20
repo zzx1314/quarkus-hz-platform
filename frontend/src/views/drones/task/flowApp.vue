@@ -271,6 +271,9 @@ const handleShowCustomPoint = param => {
 };
 
 const nodeStatus = id => {
+  if (isShowSave) {
+    return "default";
+  }
   return isSuccessNodeId.value?.includes(id)
     ? "success"
     : isErrorNodeId.value?.includes(id)
