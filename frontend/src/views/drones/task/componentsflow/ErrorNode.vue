@@ -53,8 +53,8 @@ const props = defineProps({
   getNodeDataById: Function
 });
 
-const isSuccess = props.status === "success";
-const isError = props.status === "error";
+const isSuccess = computed(() => props.status === "success");
+const isError = computed(() => props.status === "error");
 
 const originalData = computed(() => props.getNodeDataById?.(props.id));
 console.log("originalData--error", originalData);

@@ -75,7 +75,13 @@ export function useDronesTask() {
       cellRenderer: ({ row, props }) => (
         <el-tag
           size={props.size}
-          type={row.taskStatus === "启动" ? "success" : "warning"}
+          type={
+            row.taskStatus === "成功"
+              ? "success"
+              : row.taskStatus === "失败"
+                ? "error"
+                : "warning"
+          }
         >
           {row.taskStatus}
         </el-tag>

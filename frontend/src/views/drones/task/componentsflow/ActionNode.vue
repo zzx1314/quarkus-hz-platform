@@ -214,8 +214,8 @@ const props = defineProps({
   getNodeInfoById: Function
 });
 
-const isSuccess = props.status === "success";
-const isError = props.status === "error";
+const isSuccess = computed(() => props.status === "success");
+const isError = computed(() => props.status === "error");
 
 // 回显信息
 const originalData = computed(() => props.getNodeDataById?.(props.id));

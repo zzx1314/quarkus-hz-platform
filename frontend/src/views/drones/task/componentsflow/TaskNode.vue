@@ -60,8 +60,8 @@ const rules = reactive<FormRules>({
   ]
 });
 
-const isSuccess = props.status === "success";
-const isError = props.status === "error";
+const isSuccess = computed(() => props.status === "success");
+const isError = computed(() => props.status === "error");
 const isActive = ref(false);
 const taskFormRef = ref<FormInstance>();
 const deviceListOptions = ref([]);
