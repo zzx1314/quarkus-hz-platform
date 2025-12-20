@@ -1,22 +1,36 @@
 <script setup>
+/* ======================================================
+ * 1. Vue & 基础
+ * ====================================================== */
 import { nextTick, onBeforeUnmount, onMounted, ref, provide } from "vue";
 import { VueFlow, useVueFlow, MarkerType } from "@vue-flow/core";
+import { reactive, watch } from "vue";
+
+/* ======================================================
+ * 2. Flow 组件
+ * ====================================================== */
 import DropzoneBackground from "./componentsflow/DropzoneBackground.vue";
 import Sidebar from "./componentsflow/Sidebar.vue";
-import useDragAndDrop from "./componentsflow/useDnD.js";
 import StartNode from "@/views/drones/task/componentsflow/StartNode.vue";
 import EndNode from "@/views/drones/task/componentsflow/EndNode.vue";
 import ActionNode from "@/views/drones/task/componentsflow/ActionNode.vue";
 import ErrorNode from "@/views/drones/task/componentsflow/ErrorNode.vue";
-import { useProcess } from "@/views/drones/task/flowHook.tsx";
 import TaskNode from "@/views/drones/task/componentsflow/TaskNode.vue";
+import { useAlignmentGuidelines } from "./componentsflow/useAlignmentGuidelines";
+
+/* ======================================================
+ * 3. Hooks
+ * ====================================================== */
+import { useProcess } from "@/views/drones/task/flowHook.tsx";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks.js";
-import Back from "~icons/ep/back";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags.js";
 import { router } from "@/store/utils.js";
 import { message } from "@/utils/message.js";
-import Position from "~icons/ep/position";
-import { useAlignmentGuidelines } from "./componentsflow/useAlignmentGuidelines";
+import useDragAndDrop from "./componentsflow/useDnD.js";
+
+/* ======================================================
+ * 4. API / WS
+ * ====================================================== */
 import {
   dronesTaskSaveFlow,
   dronesTaskGetFlow,
@@ -24,17 +38,26 @@ import {
 } from "@/api/dronesTask";
 import { dronesCommandIssueCommonCommand } from "@/api/dronesCommand";
 import { SUCCESS } from "@/api/base.js";
-
-import { reactive, watch } from "vue";
-import "vue-json-pretty/lib/styles.css";
-import VueJsonPretty from "vue-json-pretty";
-import Search from "~icons/ep/search";
 import WebSocketClient from "@/components/ReWebSocket";
 
 import {
   droneGetCommandJsonString,
   dronesTaskUpdateFlow
 } from "@/api/dronesTask";
+
+/* ======================================================
+ * 5. UI
+ * ====================================================== */
+import "vue-json-pretty/lib/styles.css";
+import VueJsonPretty from "vue-json-pretty";
+
+import Search from "~icons/ep/search";
+import Position from "~icons/ep/position";
+import Back from "~icons/ep/back";
+
+/* ======================================================
+ * 6. Flow 实例
+ * ====================================================== */
 
 const { guideline } = useAlignmentGuidelines(5);
 
@@ -56,6 +79,9 @@ initToDetail();
 
 console.log("getParameter", getParameter);
 
+/* ======================================================
+ * 7. 状态
+ * ====================================================== */
 const nodes = ref([]);
 const edges = ref([]);
 const isSubmit = ref(false);
@@ -65,6 +91,7 @@ const isShowSave = getParameter.taskType === "taskDesign";
 const isSuccessNodeId = ref([]);
 const isErrorNodeId = ref([]);
 const errorInfoMap = ref({});
+const rawNodes = ref("");
 
 const dialogFormVisible = ref(false);
 const dialogFormVisibleString = ref(false);
@@ -72,7 +99,9 @@ const dialogFormVisibleTreacking = ref(false);
 const isShowCustomPoint = ref(false);
 const needWebSocket = ref(false);
 
-// 注册区
+/* ======================================================
+ * 8. Node Ref 注册
+ * ====================================================== */
 const nodeRefs = ref({});
 provide("registerNodeRef", (id, ref) => {
   nodeRefs.value[id] = ref;
@@ -81,6 +110,9 @@ provide("unregisterNodeRef", id => {
   delete nodeRefs.value[id];
 });
 
+/* ======================================================
+ * 9. 连线规则
+ * ====================================================== */
 onConnect(params => {
   const sourceNode = getNodeInfoById(params.source);
   const targetNode = getNodeInfoById(params.target);
@@ -118,6 +150,9 @@ onConnect(params => {
   ]);
 });
 
+/* ======================================================
+ * 10. 键盘删除
+ * ====================================================== */
 function handleKeydown(event) {
   if (event.key === "Delete") {
     const selectedNodes = getSelectedNodes;
@@ -128,8 +163,59 @@ function handleKeydown(event) {
   }
 }
 
-const rawNodes = ref("");
+/* ======================================================
+ * 11. Flow 信息
+ * ====================================================== */
+const nodeRoute = () => {
+  for (const node of getNodes.value) {
+    if (node.type === "task") {
+      const taskData = node.data;
+      if (taskData.routePointListOptions) {
+        return taskData.routePointListOptions;
+      }
+    }
+  }
+  return [];
+};
+const pathInfo = ref(nodeRoute());
+const errorInfoMsg = ref("");
+function getNodeDataById(id) {
+  if (rawNodes.value) {
+    return rawNodes.value.find(n => n.id === id)?.data;
+  }
+}
 
+function getNodeInfoById(id) {
+  const node = getNodes.value.find(n => n.id === id);
+  return node?.data;
+}
+
+function updateRoute(newRoutePointListOptions) {
+  pathInfo.value = newRoutePointListOptions;
+  console.log("保存路径:", pathInfo.value);
+}
+
+const handleShowCustomPoint = param => {
+  isShowCustomPoint.value = param;
+};
+
+const cancel = () => {
+  dialogFormVisible.value = false;
+  dialogFormVisibleString.value = false;
+  dialogFormVisibleTreacking.value = false;
+  state.data = {};
+  rects.value = [];
+};
+
+const showErrorInfo = actionId => {
+  console.log("showErrorInfo", actionId);
+  if (errorInfoMap.value && errorInfoMap.value[actionId]) {
+    errorInfoMsg.value = errorInfoMap.value[actionId];
+  } else {
+    errorInfoMsg.value = "未找到对应错误信息";
+  }
+  dialogFormVisible.value = true;
+};
 function getFlowData() {
   if (getParameter.taskId) {
     dronesTaskGetFlow(getParameter.taskId).then(res => {
@@ -157,37 +243,9 @@ function getFlowData() {
   }
 }
 
-function getNodeDataById(id) {
-  if (rawNodes.value) {
-    return rawNodes.value.find(n => n.id === id)?.data;
-  }
-}
-
-function getNodeInfoById(id) {
-  const node = getNodes.value.find(n => n.id === id);
-  return node?.data;
-}
-
-const nodeRoute = () => {
-  for (const node of getNodes.value) {
-    if (node.type === "task") {
-      const taskData = node.data;
-      if (taskData.routePointListOptions) {
-        return taskData.routePointListOptions;
-      }
-    }
-  }
-  return [];
-};
-
-const pathInfo = ref(nodeRoute());
-
-function updateRoute(newRoutePointListOptions) {
-  pathInfo.value = newRoutePointListOptions;
-  console.log("保存路径:", pathInfo.value);
-}
-
-// 保存流程
+/* ======================================================
+ * 12. 保存
+ * ====================================================== */
 async function saveActivity() {
   isPassed.value = true;
 
@@ -221,6 +279,20 @@ async function saveActivity() {
     }
   }
 }
+/* ======================================================
+ * 13. 节点选中
+ * ====================================================== */
+const handleSelect = id => {
+  selectedNodeId.value = id;
+};
+
+const handlePaneClick = () => {
+  selectedNodeId.value = "";
+};
+
+/* ======================================================
+ * 14. 状态
+ * ====================================================== */
 
 function getTaskStatus() {
   droneGetTaskStatus(getParameter.taskId).then(res => {
@@ -231,44 +303,6 @@ function getTaskStatus() {
     }
   });
 }
-
-onMounted(() => {
-  nextTick(() => {
-    window.addEventListener("keydown", handleKeydown);
-    getFlowData();
-    getTaskStatus();
-    if (getParameter.isShowSave) {
-      isShowSave.value = getParameter.isShowSave;
-    }
-  });
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener("keydown", handleKeydown);
-
-  if (webSocketImag.value) {
-    webSocketImag.value.disconnect?.();
-    webSocketImag.value = null;
-  }
-});
-
-const back = () => {
-  console.log("back");
-  useMultiTagsStoreHook().handleTags("splice", "/drones/task/flowApp");
-  router.push({ path: "/drones/task/index" });
-};
-
-const handleSelect = id => {
-  selectedNodeId.value = id;
-};
-
-const handlePaneClick = () => {
-  selectedNodeId.value = "";
-};
-
-const handleShowCustomPoint = param => {
-  isShowCustomPoint.value = param;
-};
 
 const nodeStatus = id => {
   if (isShowSave) {
@@ -281,63 +315,12 @@ const nodeStatus = id => {
       : "default";
 };
 
-const cancel = () => {
-  dialogFormVisible.value = false;
-  dialogFormVisibleString.value = false;
-  dialogFormVisibleTreacking.value = false;
-  state.data = {};
-  rects.value = [];
-};
-
-const errorInfoMsg = ref("");
-const showErrorInfo = actionId => {
-  console.log("showErrorInfo", actionId);
-  if (errorInfoMap.value && errorInfoMap.value[actionId]) {
-    errorInfoMsg.value = errorInfoMap.value[actionId];
-  } else {
-    errorInfoMsg.value = "未找到对应错误信息";
-  }
-  dialogFormVisible.value = true;
-};
-
-const showJsonString = () => {
-  console.log("showJsonString");
-  droneGetCommandJsonString(getParameter.taskId).then(res => {
-    if (res.code === SUCCESS) {
-      try {
-        const jsonData = JSON.parse(res.data);
-        state.data = jsonData;
-        state.val = JSON.stringify(jsonData);
-        dialogFormVisibleString.value = true;
-      } catch (error) {
-        console.error("Failed to parse JSON:", error);
-      }
-    } else {
-      message("获取指令集JSON字符串失败", { type: "error" });
-    }
-  });
-};
-
-const updateCommandJsonString = () => {
-  // 此处可添加逻辑以处理更新后的 JSON 数据
-  console.log("Updated Command JSON Data:", state.val);
-  const param = {
-    taskId: getParameter.taskId,
-    commandJsonString: state.val
-  };
-  dronesTaskUpdateFlow(param).then(res => {
-    if (res.code === SUCCESS) {
-      message("指令集JSON字符串更新成功", { type: "success" });
-    } else {
-      message("指令集JSON字符串更新失败", { type: "error" });
-    }
-  });
-};
-
+/* ======================================================
+ * 15. WebSocket
+ * ====================================================== */
 const videoImg = ref(null);
 const webSocketImag = ref(null);
 let lastObjectUrl = null;
-
 function startWebSocket() {
   if (!needWebSocket.value) {
     return;
@@ -377,6 +360,9 @@ function startWebSocket() {
   });
 }
 
+/* ======================================================
+ * 16. Canvas
+ * ====================================================== */
 const ctx = ref(null);
 const drawing = ref(false);
 const start = reactive({ x: 0, y: 0 });
@@ -458,6 +444,9 @@ const drawRect = (x, y, w, h) => {
   ctx.value.lineWidth = 2;
   ctx.value.strokeRect(x, y, w, h);
 };
+/* ======================================================
+ * 17. 指令
+ * ====================================================== */
 function issueCommand() {
   const param = {
     taskId: getParameter.taskId,
@@ -473,6 +462,9 @@ function issueCommand() {
   });
 }
 
+/* ======================================================
+ * 18. JSON
+ * ====================================================== */
 const defaultData = {};
 
 const state = reactive({
@@ -488,6 +480,40 @@ const state = reactive({
   deep: 3
 });
 
+const showJsonString = () => {
+  console.log("showJsonString");
+  droneGetCommandJsonString(getParameter.taskId).then(res => {
+    if (res.code === SUCCESS) {
+      try {
+        const jsonData = JSON.parse(res.data);
+        state.data = jsonData;
+        state.val = JSON.stringify(jsonData);
+        dialogFormVisibleString.value = true;
+      } catch (error) {
+        console.error("Failed to parse JSON:", error);
+      }
+    } else {
+      message("获取指令集JSON字符串失败", { type: "error" });
+    }
+  });
+};
+
+const updateCommandJsonString = () => {
+  // 此处可添加逻辑以处理更新后的 JSON 数据
+  console.log("Updated Command JSON Data:", state.val);
+  const param = {
+    taskId: getParameter.taskId,
+    commandJsonString: state.val
+  };
+  dronesTaskUpdateFlow(param).then(res => {
+    if (res.code === SUCCESS) {
+      message("指令集JSON字符串更新成功", { type: "success" });
+    } else {
+      message("指令集JSON字符串更新失败", { type: "error" });
+    }
+  });
+};
+
 watch(
   () => state.data,
   (newVal, oldVal) => {
@@ -501,6 +527,38 @@ watch(
     }
   }
 );
+
+/* ======================================================
+ * 19. 返回
+ * ====================================================== */
+const back = () => {
+  console.log("back");
+  useMultiTagsStoreHook().handleTags("splice", "/drones/task/flowApp");
+  router.push({ path: "/drones/task/index" });
+};
+
+/* ======================================================
+ * 20. 生命周期
+ * ====================================================== */
+onMounted(() => {
+  nextTick(() => {
+    window.addEventListener("keydown", handleKeydown);
+    getFlowData();
+    getTaskStatus();
+    if (getParameter.isShowSave) {
+      isShowSave.value = getParameter.isShowSave;
+    }
+  });
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("keydown", handleKeydown);
+
+  if (webSocketImag.value) {
+    webSocketImag.value.disconnect?.();
+    webSocketImag.value = null;
+  }
+});
 </script>
 
 <template>
