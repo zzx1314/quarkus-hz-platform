@@ -446,6 +446,7 @@ const onMouseUp = e => {
 };
 
 const redraw = () => {
+  if (!ctx.value || !canvasRef.value) return;
   ctx.value.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height);
 
   rects.value.forEach(r => drawRect(r.x, r.y, r.w, r.h));

@@ -6,6 +6,8 @@ import lombok.Data;
 public class DronesCommonCommand {
     private Long commandId;
 
+    private Long taskId;
+
     private String deviceId;
 
     private String type;
