@@ -99,7 +99,6 @@ int callback(struct lws *wsi, enum lws_callback_reasons reason, void *user, void
         break;
 
     case LWS_CALLBACK_TIMER:
-        lws_set_timeout(wsi, 1, 60);
         lws_callback_on_writable(wsi);
         break;
     default:
@@ -165,6 +164,12 @@ Status Report(char *token, char *deviceId)
     ctx_info.gid = -1;
     ctx_info.uid = -1;
     ctx_info.options = LWS_SERVER_OPTION_DO_SSL_GLOBAL_INIT;
+
+    /* ===== WebSocket keepalive ===== */
+    ctx_info.ka_time = 30;        // 30 秒无数据 → 自动 ping
+    ctx_info.ka_interval = 10;   // ping 间隔
+    ctx_info.ka_probes = 3;      // 连续失败 3 次断线
+
     ctx_info.client_ssl_ca_filepath = "/home/zhangzexin/IdeaProjects/hz_server/src/main/client/cer/rootca.crt";
 
     struct lws_context *context = lws_create_context(&ctx_info);
