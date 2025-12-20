@@ -3,7 +3,6 @@ import {
   type userType,
   store,
   router,
-  resetRouter,
   routerArrays,
   storageSession
 } from "../utils";
@@ -100,7 +99,6 @@ export const useUserStore = defineStore("pure-user", {
       removeToken();
       refreshConfig();
       useMultiTagsStoreHook().handleTags("equal", [...routerArrays]);
-      resetRouter();
       router.push("/login");
     },
     /** 刷新`token` */

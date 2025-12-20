@@ -7,13 +7,7 @@ import { buildHierarchyTree } from "@/utils/tree";
 import remainingRouter from "./modules/remaining";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
 import { usePermissionStoreHook } from "@/store/modules/permission";
-import {
-  isUrl,
-  openLink,
-  cloneDeep,
-  isAllEmpty,
-  storageSession
-} from "@pureadmin/utils";
+import { isUrl, openLink, isAllEmpty, storageSession } from "@pureadmin/utils";
 import {
   ascending,
   getTopMenu,
@@ -31,12 +25,7 @@ import {
   type RouteComponent,
   createRouter
 } from "vue-router";
-import {
-  type DataInfo,
-  userKey,
-  removeToken,
-  multipleTabsKey
-} from "@/utils/auth";
+import { type DataInfo, userKey, multipleTabsKey } from "@/utils/auth";
 
 /** 自动导入全部静态路由，无需再手动引入！匹配 src/router/modules 目录（任何嵌套级别）中具有 .ts 扩展名的所有文件，除了 remaining.ts 文件
  * 如何匹配所有文件请看：https://github.com/mrmlnc/fast-glob#basic-syntax
@@ -60,9 +49,6 @@ Object.keys(modules).forEach(key => {
 export const constantRoutes: Array<RouteRecordRaw> = formatTwoStageRoutes(
   formatFlatteningRoutes(buildHierarchyTree(ascending(routes.flat(Infinity))))
 );
-
-/** 初始的静态路由，用于退出登录时重置路由 */
-const initConstantRoutes: Array<RouteRecordRaw> = cloneDeep(constantRoutes);
 
 /** 用于渲染菜单，保持原始层级 */
 export const constantMenus: Array<RouteComponent> = ascending(
@@ -98,32 +84,20 @@ export const router: Router = createRouter({
 export function resetRouter() {
   const permissionStore = usePermissionStoreHook();
 
-  // 安全地移除动态路由
+  if (permissionStore.isRouterReset) return;
+
+  // 只移除“动态路由”
   permissionStore.dynamicRouteNames.forEach(name => {
     if (router.hasRoute(name)) {
       router.removeRoute(name);
     }
   });
 
-  permissionStore.clearDynamicRouteNames(); // 清空记录
+  // 清空动态路由记录
+  permissionStore.clearDynamicRouteNames();
 
-  // 重新添加静态路由
-  const baseRoutes = initConstantRoutes.concat(...(remainingRouter as any));
-
-  // 先移除所有已存在的路由
-  router.getRoutes().forEach(route => {
-    if (route.name) {
-      router.removeRoute(route.name);
-    }
-  });
-
-  // 重新添加基础路由
-  baseRoutes.forEach((route: RouteRecordRaw) => {
-    router.addRoute(route);
-  });
-
-  console.log("initConstantRoutes", router.getRoutes());
-  usePermissionStoreHook().clearAllCachePage();
+  // 清空 keep-alive / tags / cache
+  permissionStore.clearAllCachePage();
 }
 
 /** 路由白名单 */
@@ -182,6 +156,8 @@ router.beforeEach((to: ToRouteType, _from, next) => {
         to.path !== "/login"
       ) {
         initRouter().then((router: Router) => {
+          const permissionStore = usePermissionStoreHook();
+          permissionStore.isRouterReset = false;
           if (!useMultiTagsStoreHook().getMultiTagsCache) {
             const { path } = to;
             // 使用当前router实例而不是传入的router
@@ -220,17 +196,22 @@ router.beforeEach((to: ToRouteType, _from, next) => {
       toCorrectRoute();
     }
   } else {
-    if (to.path !== "/login") {
-      if (whiteList.indexOf(to.path) !== -1) {
-        next();
-      } else {
-        removeToken();
-        resetRouter(); // 登出时重置路由
-        next({ path: "/login" });
-      }
-    } else {
+    // 未登录状态
+    if (to.path === "/login") {
       next();
+      return;
     }
+    // 白名单放行
+    if (whiteList.includes(to.path)) {
+      next();
+      return;
+    }
+    // 只 reset 一次
+    const permissionStore = usePermissionStoreHook();
+    if (!permissionStore.isRouterReset) {
+      resetRouter();
+    }
+    next({ path: "/login" });
   }
 });
 

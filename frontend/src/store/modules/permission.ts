@@ -24,6 +24,7 @@ export const usePermissionStore = defineStore("pure-permission", {
     cachePageList: [],
     // 检测token是否过期
     checkTokenTimeId: null,
+    isRouterReset: false,
     dynamicRouteNames: [] as string[]
   }),
   actions: {
