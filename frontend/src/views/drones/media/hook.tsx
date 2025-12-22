@@ -11,32 +11,49 @@ import { SUCCESS } from "@/api/base";
 import { message } from "@/utils/message";
 
 export function useDronesMedia() {
-  // ----变量定义-----
+  // ---------------------------------
+  // state
+  // ---------------------------------
+
+  // 查询条件
   const queryForm = ref({
     name: "",
     beginTime: "",
     endTime: ""
   });
   const moreCondition = ref(false);
+
+  // 表格数据
   const dataList = ref([]);
   const loading = ref(true);
+
+  // 弹窗 & 表单
   const dialogFormVisible = ref(false);
   const title = ref("");
+  const addForm = ref({
+    id: null,
+    remarks: ""
+  });
   const fileList = ref<UploadUserFile[]>([]);
 
+  // 分页
   const pagination = reactive<PaginationProps>({
     total: 0,
     pageSize: 10,
     currentPage: 1,
     background: true
   });
-  const addForm = ref({
-    id: null,
-    remarks: ""
-  });
+
+  // ---------------------------------
+  // config
+  // ---------------------------------
+
+  // 表单校验
   const rules = reactive<FormRules>({
     remarks: [{ required: true, message: "文件描述必填", trigger: "blur" }]
   });
+
+  // 表格列
   const columns: TableColumnList = [
     {
       type: "selection",
@@ -83,6 +100,11 @@ export function useDronesMedia() {
       slot: "operation"
     }
   ];
+
+  // ---------------------------------
+  // computed
+  // ---------------------------------
+
   const buttonClass = computed(() => {
     return [
       "!h-[20px]",
@@ -93,26 +115,11 @@ export function useDronesMedia() {
     ];
   });
 
-  // -----方法定义---
-  function handleUpdate(row, formEl) {
-    console.log(row);
-    const data = JSON.stringify(row);
-    addForm.value = JSON.parse(data);
-    openDia("修改配置", formEl);
-  }
-  // 删除
-  function handleDelete(row) {
-    console.log(row);
-    dronesMediaDelete(row.id).then(res => {
-      if (res.code === SUCCESS) {
-        message("删除成功！", { type: "success" });
-        onSearch();
-      } else {
-        message(res.msg, { type: "error" });
-      }
-    });
-  }
+  // ---------------------------------
+  // actions
+  // ---------------------------------
 
+  // 表格行为
   function handleSizeChange(val: number) {
     pagination.pageSize = val;
     onSearch();
@@ -127,6 +134,27 @@ export function useDronesMedia() {
     console.log("handleSelectionChange", val);
   }
 
+  // 表单相关
+  function handleUpdate(row, formEl) {
+    console.log(row);
+    const data = JSON.stringify(row);
+    addForm.value = JSON.parse(data);
+    openDia("修改配置", formEl);
+  }
+
+  function handleDelete(row) {
+    console.log(row);
+    dronesMediaDelete(row.id).then(res => {
+      if (res.code === SUCCESS) {
+        message("删除成功！", { type: "success" });
+        onSearch();
+      } else {
+        message(res.msg, { type: "error" });
+      }
+    });
+  }
+
+  // 下载
   function handleDown(row) {
     const param = {
       filePath: row.mediaPath,
@@ -134,21 +162,25 @@ export function useDronesMedia() {
     };
     dronesMediaDownloadByPath(param);
   }
+
+  // 上传
   const onUpload = async option => {
     const loading = ElLoading.service({
       lock: true,
       text: "上传中",
       background: "rgba(0, 0, 0, 0.7)"
     });
-    const formData = new FormData();
 
+    const formData = new FormData();
     const modelFile = {
       id: addForm.value.id,
       mediaType: option.file.name.split(".").pop(),
       remarks: addForm.value.remarks
     };
+
     formData.append("file", option.file);
     formData.append("mediaInfo", JSON.stringify(modelFile));
+
     await dronesMediaUploadFile(formData).then(res => {
       if (res.code == SUCCESS) {
         console.log(res.data);
@@ -158,6 +190,7 @@ export function useDronesMedia() {
         message("上传失败", { type: "error" });
       }
     });
+
     loading.close();
   };
 
@@ -184,6 +217,7 @@ export function useDronesMedia() {
     }, 500);
   }
 
+  // 弹窗 & 表单工具
   const resetForm = formEl => {
     if (!formEl) return;
     nextTick(() => {
@@ -197,7 +231,7 @@ export function useDronesMedia() {
     formEl.resetFields();
     cancel();
   };
-  // 取消
+
   function cancel() {
     addForm.value = {
       id: null,
@@ -209,41 +243,54 @@ export function useDronesMedia() {
     dialogFormVisible.value = false;
     onSearch();
   }
-  // 打开弹框
+
   function openDia(param, formEl) {
     dialogFormVisible.value = true;
     title.value = param;
     resetForm(formEl);
   }
 
+  // ---------------------------------
+  // lifecycle
+  // ---------------------------------
+
   onMounted(() => {
     onSearch();
   });
 
+  // ---------------------------------
+  // expose
+  // ---------------------------------
+
   return {
+    // state
     queryForm,
     dataList,
     loading,
-    dialogFormVisible,
-    title,
     pagination,
     addForm,
+    dialogFormVisible,
+    title,
+    fileList,
+    moreCondition,
+
+    // config
     rules,
     columns,
-    fileList,
     buttonClass,
-    moreCondition,
+
+    // actions
     onSearch,
-    resetForm,
     handleUpdate,
     handleDelete,
     handleSizeChange,
     handleCurrentChange,
     handleSelectionChange,
     handleDown,
-    cancel,
+    onUpload,
+    resetForm,
     restartForm,
-    openDia,
-    onUpload
+    cancel,
+    openDia
   };
 }

@@ -14,20 +14,17 @@ import { message } from "@/utils/message";
 import { usePlanning } from "./planning/planningHook";
 
 export function useDronesRouteLibrary() {
-  // ----变量定义-----
-  const queryForm = ref({
-    name: "",
-    beginTime: "",
-    endTime: ""
-  });
-  const moreCondition = ref(false);
+  // ---------------------------------
+  // state
+  // ---------------------------------
+  const queryForm = ref({ name: "", beginTime: "", endTime: "" });
   const dataList = ref([]);
   const loading = ref(true);
+  const moreCondition = ref(false);
   const dialogFormVisible = ref(false);
   const title = ref("");
   const { toDetail } = usePlanning();
   const switchLoadMap = ref({});
-
   const pagination = reactive<PaginationProps>({
     total: 0,
     pageSize: 10,
@@ -41,10 +38,14 @@ export function useDronesRouteLibrary() {
     routeDescription: "",
     routeItems: []
   });
+  // ---------------------------------
+  // config
+  // ---------------------------------
   const rules = reactive<FormRules>({
     routeName: [{ required: true, message: "路线名称必填", trigger: "blur" }],
     routeType: [{ required: true, message: "路线类型必填", trigger: "change" }]
   });
+  // 表格列
   const columns: TableColumnList = [
     {
       type: "selection",
@@ -117,6 +118,9 @@ export function useDronesRouteLibrary() {
       slot: "operation"
     }
   ];
+  // ---------------------------------
+  // computed
+  // ---------------------------------
   const buttonClass = computed(() => {
     return [
       "!h-[20px]",
@@ -127,7 +131,9 @@ export function useDronesRouteLibrary() {
     ];
   });
 
-  // -----方法定义---
+  // ---------------------------------
+  // 表格行为
+  // ---------------------------------
   function onChange({ row, index }) {
     ElMessageBox.confirm(
       `确认要<strong>${
@@ -184,6 +190,7 @@ export function useDronesRouteLibrary() {
           : (row.routeStatus = "启用");
       });
   }
+
   function handleUpdate(row, formEl) {
     console.log(row);
     if (row.routeStatus === "启用") {
@@ -205,7 +212,7 @@ export function useDronesRouteLibrary() {
     });
     openDia("修改", formEl);
   }
-  // 删除
+
   function handleDelete(row) {
     console.log(row);
     if (row.routeStatus === "启用") {
@@ -242,7 +249,43 @@ export function useDronesRouteLibrary() {
     console.log(err, "err");
   };
 
-  // 保存
+  async function onSearch() {
+    loading.value = true;
+    console.log("查询信息");
+    const page = {
+      size: pagination.pageSize,
+      current: pagination.currentPage
+    };
+    const query = {
+      ...page,
+      ...queryForm.value
+    };
+    if (query.endTime) {
+      query.endTime = query.endTime + " 23:59:59";
+    }
+    const { data } = await dronesRouteLibraryPage(query);
+    dataList.value = data.records;
+    pagination.total = data.total;
+    setTimeout(() => {
+      loading.value = false;
+    }, 500);
+  }
+
+  function designRoute(row) {
+    console.log("设计航线", row);
+    const param = {
+      id: row.id,
+      name: row.routeName,
+      type: row.routeType,
+      routeData: row.routeData,
+      modelId: row.modelId
+    };
+    toDetail(param);
+  }
+
+  // ---------------------------------
+  // 表单行为
+  // ---------------------------------
   const handleSubmit = async (formEl: FormInstance | undefined) => {
     if (!formEl) return;
     await formEl.validate(valid => {
@@ -273,30 +316,6 @@ export function useDronesRouteLibrary() {
       }
     });
   };
-
-  // 查询
-  async function onSearch() {
-    loading.value = true;
-    console.log("查询信息");
-    const page = {
-      size: pagination.pageSize,
-      current: pagination.currentPage
-    };
-    const query = {
-      ...page,
-      ...queryForm.value
-    };
-    if (query.endTime) {
-      query.endTime = query.endTime + " 23:59:59";
-    }
-    const { data } = await dronesRouteLibraryPage(query);
-    dataList.value = data.records;
-    pagination.total = data.total;
-    setTimeout(() => {
-      loading.value = false;
-    }, 500);
-  }
-
   const resetForm = formEl => {
     if (!formEl) return;
     nextTick(() => {
@@ -310,7 +329,7 @@ export function useDronesRouteLibrary() {
     formEl.resetFields();
     cancel();
   };
-  // 取消
+
   function cancel() {
     addForm.value = {
       id: null,
@@ -332,18 +351,9 @@ export function useDronesRouteLibrary() {
     resetForm(formEl);
   }
 
-  function designRoute(row) {
-    console.log("设计航线", row);
-    const param = {
-      id: row.id,
-      name: row.routeName,
-      type: row.routeType,
-      routeData: row.routeData,
-      modelId: row.modelId
-    };
-    toDetail(param);
-  }
-
+  // ---------------------------------
+  // lifecycle
+  // ---------------------------------
   onMounted(() => {
     onSearch();
   });

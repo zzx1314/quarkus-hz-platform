@@ -15,37 +15,56 @@ import { SUCCESS } from "@/api/base";
 import { message } from "@/utils/message";
 
 export function useDronesModel() {
-  // ----变量定义-----
+  // ---------------------------------
+  // state
+  // ---------------------------------
+
+  // 查询条件
   const queryForm = ref({
     name: "",
     beginTime: "",
     endTime: ""
   });
   const moreCondition = ref(false);
+
+  // 表格数据
   const dataList = ref([]);
   const loading = ref(true);
+
+  // 弹窗 & 表单
   const dialogFormVisible = ref(false);
   const title = ref("");
-  const fileList = ref<UploadUserFile[]>([]);
-  const uploadFileTemp = ref<UploadFile>(null);
-
-  const pagination = reactive<PaginationProps>({
-    total: 0,
-    pageSize: 10,
-    currentPage: 1,
-    background: true
-  });
   const addForm = ref({
     id: null,
     modelType: "",
     modelName: "",
     remarks: ""
   });
+
+  // 上传相关
+  const fileList = ref<UploadUserFile[]>([]);
+  const uploadFileTemp = ref<UploadFile>(null);
+
+  // 分页
+  const pagination = reactive<PaginationProps>({
+    total: 0,
+    pageSize: 10,
+    currentPage: 1,
+    background: true
+  });
+
+  // ---------------------------------
+  // config
+  // ---------------------------------
+
+  // 表单校验
   const rules = reactive<FormRules>({
     modelName: [{ required: true, message: "模型名称必填", trigger: "blur" }],
     modelType: [{ required: true, message: "模型类型必填", trigger: "blur" }],
     remarks: [{ required: true, message: "文件描述必填", trigger: "blur" }]
   });
+
+  // 表格列
   const columns: TableColumnList = [
     {
       type: "selection",
@@ -111,6 +130,11 @@ export function useDronesModel() {
       slot: "operation"
     }
   ];
+
+  // ---------------------------------
+  // computed
+  // ---------------------------------
+
   const buttonClass = computed(() => {
     return [
       "!h-[20px]",
@@ -121,26 +145,11 @@ export function useDronesModel() {
     ];
   });
 
-  // -----方法定义---
-  function handleUpdate(row, formEl) {
-    console.log(row);
-    const data = JSON.stringify(row);
-    addForm.value = JSON.parse(data);
-    openDia("修改配置", formEl);
-  }
-  // 删除
-  function handleDelete(row) {
-    console.log(row);
-    dronesModelDelete(row.id).then(res => {
-      if (res.code === SUCCESS) {
-        message("删除成功！", { type: "success" });
-        onSearch();
-      } else {
-        message(res.msg, { type: "error" });
-      }
-    });
-  }
+  // ---------------------------------
+  // actions
+  // ---------------------------------
 
+  // 表格行为
   function handleSizeChange(val: number) {
     pagination.pageSize = val;
     onSearch();
@@ -153,6 +162,26 @@ export function useDronesModel() {
 
   function handleSelectionChange(val) {
     console.log("handleSelectionChange", val);
+  }
+
+  // 表单行为
+  function handleUpdate(row, formEl) {
+    console.log(row);
+    const data = JSON.stringify(row);
+    addForm.value = JSON.parse(data);
+    openDia("修改配置", formEl);
+  }
+
+  function handleDelete(row) {
+    console.log(row);
+    dronesModelDelete(row.id).then(res => {
+      if (res.code === SUCCESS) {
+        message("删除成功！", { type: "success" });
+        onSearch();
+      } else {
+        message(res.msg, { type: "error" });
+      }
+    });
   }
 
   // 查询
@@ -178,6 +207,7 @@ export function useDronesModel() {
     }, 500);
   }
 
+  // 弹窗 & 表单工具
   const resetForm = formEl => {
     if (!formEl) return;
     nextTick(() => {
@@ -191,7 +221,7 @@ export function useDronesModel() {
     formEl.resetFields();
     cancel();
   };
-  // 取消
+
   function cancel() {
     addForm.value = {
       id: null,
@@ -207,21 +237,22 @@ export function useDronesModel() {
     uploadFileTemp.value = null;
     onSearch();
   }
-  // 打开弹框
+
   function openDia(param, formEl) {
     dialogFormVisible.value = true;
     title.value = param;
     resetForm(formEl);
   }
 
+  // 上传
   const onUpload = async option => {
     const loading = ElLoading.service({
       lock: true,
       text: "上传中",
       background: "rgba(0, 0, 0, 0.7)"
     });
-    const formData = new FormData();
 
+    const formData = new FormData();
     const modelFile = {
       id: addForm.value.id,
       modelType: addForm.value.modelType,
@@ -231,8 +262,10 @@ export function useDronesModel() {
       fileSize: option.file.size,
       remarks: addForm.value.remarks
     };
+
     formData.append("file", option.file);
     formData.append("modelInfo", JSON.stringify(modelFile));
+
     await dronesModelUploadFile(formData).then(res => {
       if (res.code == SUCCESS) {
         console.log(res.data);
@@ -242,37 +275,51 @@ export function useDronesModel() {
         message("上传失败", { type: "error" });
       }
     });
+
     loading.close();
   };
+
+  // ---------------------------------
+  // lifecycle
+  // ---------------------------------
 
   onMounted(() => {
     onSearch();
   });
 
+  // ---------------------------------
+  // expose
+  // ---------------------------------
+
   return {
+    // state
     queryForm,
     dataList,
     loading,
-    dialogFormVisible,
-    title,
     pagination,
     addForm,
-    rules,
+    dialogFormVisible,
+    title,
     fileList,
+    uploadFileTemp,
+    moreCondition,
+
+    // config
+    rules,
     columns,
     buttonClass,
-    moreCondition,
-    uploadFileTemp,
+
+    // actions
     onSearch,
-    resetForm,
     handleUpdate,
     handleDelete,
     handleSizeChange,
     handleCurrentChange,
     handleSelectionChange,
-    cancel,
+    onUpload,
+    resetForm,
     restartForm,
-    openDia,
-    onUpload
+    cancel,
+    openDia
   };
 }

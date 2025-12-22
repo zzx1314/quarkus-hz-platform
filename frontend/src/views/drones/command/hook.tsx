@@ -12,30 +12,51 @@ import { message } from "@/utils/message";
 import type { FieldValues } from "plus-pro-components";
 
 export function useDronesCommand() {
-  // ----变量定义-----
+  /**
+   * ==============================
+   * State - 状态定义
+   * ==============================
+   */
+
+  // 查询条件
   const queryForm = ref({
     name: "",
     beginTime: "",
     endTime: ""
   });
   const moreCondition = ref(false);
+
+  // 表格数据
   const dataList = ref([]);
   const loading = ref(true);
+
+  // 弹窗 & 表单
   const dialogFormVisible = ref(false);
   const title = ref("");
+  const addForm = ref({
+    id: null
+  });
 
+  // 分页
   const pagination = reactive<PaginationProps>({
     total: 0,
     pageSize: 10,
     currentPage: 1,
     background: true
   });
-  const addForm = ref({
-    id: null
-  });
+
+  /**
+   * ==============================
+   * Static Config - 静态配置
+   * ==============================
+   */
+
+  // 表单校验规则
   const rules = reactive<FormRules>({
     name: [{ required: true, message: "名称必填", trigger: "blur" }]
   });
+
+  // 表格列
   const columns: TableColumnList = [
     {
       type: "selection",
@@ -87,6 +108,13 @@ export function useDronesCommand() {
       slot: "operation"
     }
   ];
+
+  /**
+   * ==============================
+   * Computed - 计算属性
+   * ==============================
+   */
+
   const buttonClass = computed(() => {
     return [
       "!h-[20px]",
@@ -97,25 +125,13 @@ export function useDronesCommand() {
     ];
   });
 
-  // -----方法定义---
-  function handleUpdate(row, formEl) {
-    console.log(row);
-    const data = JSON.stringify(row);
-    addForm.value = JSON.parse(data);
-    openDia("修改配置", formEl);
-  }
-  // 删除
-  function handleDelete(row) {
-    console.log(row);
-    dronesCommandDelete(row.id).then(res => {
-      if (res.code === SUCCESS) {
-        message("删除成功！", { type: "success" });
-        onSearch();
-      } else {
-        message(res.msg, { type: "error" });
-      }
-    });
-  }
+  /**
+   * ==============================
+   * Actions - 行为方法
+   * ==============================
+   */
+
+  // ===== 表格行为 =====
 
   function handleSizeChange(val: number) {
     pagination.pageSize = val;
@@ -131,15 +147,30 @@ export function useDronesCommand() {
     console.log("handleSelectionChange", val);
   }
 
-  const handleSubmitError = (err: any) => {
-    console.log(err, "err");
-  };
+  // ===== 表单行为 =====
 
-  // 保存
+  function handleUpdate(row, formEl) {
+    console.log(row);
+    const data = JSON.stringify(row);
+    addForm.value = JSON.parse(data);
+    openDia("修改配置", formEl);
+  }
+
+  function handleDelete(row) {
+    console.log(row);
+    dronesCommandDelete(row.id).then(res => {
+      if (res.code === SUCCESS) {
+        message("删除成功！", { type: "success" });
+        onSearch();
+      } else {
+        message(res.msg, { type: "error" });
+      }
+    });
+  }
+
   const handleSubmit = (values: FieldValues) => {
     console.log(values, "Submit");
     if (addForm.value.id) {
-      // 修改
       console.log("修改");
       dronesCommandUpdate(addForm.value).then(res => {
         if (res.code === SUCCESS) {
@@ -150,7 +181,6 @@ export function useDronesCommand() {
         }
       });
     } else {
-      // 新增
       console.log("新增");
       dronesCommandSave(addForm.value).then(res => {
         if (res.code === SUCCESS) {
@@ -163,7 +193,12 @@ export function useDronesCommand() {
     }
   };
 
-  // 查询
+  const handleSubmitError = (err: any) => {
+    console.log(err, "err");
+  };
+
+  // ===== 查询 =====
+
   async function onSearch() {
     loading.value = true;
     console.log("查询信息");
@@ -186,6 +221,8 @@ export function useDronesCommand() {
     }, 500);
   }
 
+  // ===== 弹窗 & 表单工具 =====
+
   const resetForm = formEl => {
     if (!formEl) return;
     nextTick(() => {
@@ -199,7 +236,7 @@ export function useDronesCommand() {
     formEl.resetFields();
     cancel();
   };
-  // 取消
+
   function cancel() {
     addForm.value = {
       id: null
@@ -210,31 +247,47 @@ export function useDronesCommand() {
     dialogFormVisible.value = false;
     onSearch();
   }
-  // 打开弹框
+
   function openDia(param, formEl) {
     dialogFormVisible.value = true;
     title.value = param;
     resetForm(formEl);
   }
 
+  /**
+   * ==============================
+   * Lifecycle - 生命周期
+   * ==============================
+   */
+
   onMounted(() => {
     onSearch();
   });
 
+  /**
+   * ==============================
+   * Expose - 对外暴露
+   * ==============================
+   */
+
   return {
+    // state
     queryForm,
     dataList,
     loading,
-    dialogFormVisible,
-    title,
     pagination,
     addForm,
+    dialogFormVisible,
+    title,
+    moreCondition,
+
+    // config
     rules,
     columns,
     buttonClass,
-    moreCondition,
+
+    // actions
     onSearch,
-    resetForm,
     handleUpdate,
     handleDelete,
     handleSizeChange,
@@ -242,8 +295,9 @@ export function useDronesCommand() {
     handleSelectionChange,
     handleSubmit,
     handleSubmitError,
-    cancel,
+    resetForm,
     restartForm,
+    cancel,
     openDia
   };
 }

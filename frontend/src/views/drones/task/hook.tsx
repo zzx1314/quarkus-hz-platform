@@ -11,17 +11,14 @@ import {
 } from "@/api/dronesTask";
 import { SUCCESS } from "@/api/base";
 import { message } from "@/utils/message";
-import type { FieldValues } from "plus-pro-components";
 import { useProcess } from "./flowHook";
 import { uuid } from "@pureadmin/utils";
 
 export function useDronesTask() {
-  // ----变量定义-----
-  const queryForm = ref({
-    name: "",
-    beginTime: "",
-    endTime: ""
-  });
+  // ---------------------------------
+  // state
+  // ---------------------------------
+  const queryForm = ref({ name: "", beginTime: "", endTime: "" });
   const moreCondition = ref(false);
   const dataList = ref([]);
   const loading = ref(true);
@@ -36,15 +33,19 @@ export function useDronesTask() {
     currentPage: 1,
     background: true
   });
-  const addForm = ref({
-    id: null
-  });
+
+  const addForm = ref({ id: null });
+
+  // ---------------------------------
+  // config
+  // ---------------------------------
   const rules = reactive<FormRules>({
     taskName: [{ required: true, message: "任务名称必填", trigger: "blur" }],
     taskDescription: [
       { required: true, message: "任务描述必填", trigger: "blur" }
     ]
   });
+
   const columns: TableColumnList = [
     {
       type: "selection",
@@ -88,43 +89,31 @@ export function useDronesTask() {
       ),
       width: 100
     },
-    {
-      label: "任务结果",
-      prop: "taskResult",
-      width: 180
-    },
-    {
-      label: "创建时间",
-      prop: "createTime",
-      width: 180
-    },
-    {
-      label: "操作",
-      fixed: "right",
-      minWidth: 180,
-      slot: "operation"
-    }
+    { label: "任务结果", prop: "taskResult", width: 180 },
+    { label: "创建时间", prop: "createTime", width: 180 },
+    { label: "操作", fixed: "right", minWidth: 180, slot: "operation" }
   ];
-  const buttonClass = computed(() => {
-    return [
-      "!h-[20px]",
-      "reset-margin",
-      "!text-gray-500",
-      "dark:!text-white",
-      "dark:hover:!text-primary"
-    ];
-  });
 
-  // -----方法定义---
+  // ---------------------------------
+  // computed
+  // ---------------------------------
+  const buttonClass = computed(() => [
+    "!h-[20px]",
+    "reset-margin",
+    "!text-gray-500",
+    "dark:!text-white",
+    "dark:hover:!text-primary"
+  ]);
+
+  // ---------------------------------
+  // actions
+  // ---------------------------------
   function handleUpdate(row, formEl) {
-    console.log(row);
-    const data = JSON.stringify(row);
-    addForm.value = JSON.parse(data);
+    addForm.value = JSON.parse(JSON.stringify(row));
     openDia("修改配置", formEl);
   }
-  // 删除
+
   function handleDelete(row) {
-    console.log(row);
     dronesTaskDelete(row.id).then(res => {
       if (res.code === SUCCESS) {
         message("删除成功！", { type: "success" });
@@ -153,63 +142,40 @@ export function useDronesTask() {
     console.log(err, "err");
   };
 
-  // 保存
-  const handleSubmit = (values: FieldValues) => {
-    console.log(values, "Submit");
-    if (addForm.value.id) {
-      // 修改
-      console.log("修改");
-      dronesTaskUpdate(addForm.value).then(res => {
-        if (res.code === SUCCESS) {
-          message("修改成功！", { type: "success" });
-          cancel();
-        } else {
-          message("修改失败！", { type: "error" });
-        }
-      });
-    } else {
-      // 新增
-      console.log("新增");
-      dronesTaskSave(addForm.value).then(res => {
-        if (res.code === SUCCESS) {
-          message("保存成功！", { type: "success" });
-          cancel();
-        } else {
-          message(res.msg, { type: "error" });
-        }
-      });
-    }
+  const handleSubmit = () => {
+    const request = addForm.value.id
+      ? dronesTaskUpdate(addForm.value)
+      : dronesTaskSave(addForm.value);
+
+    request.then(res => {
+      if (res.code === SUCCESS) {
+        message(addForm.value.id ? "修改成功！" : "保存成功！", {
+          type: "success"
+        });
+        cancel();
+      } else {
+        message(res.msg, { type: "error" });
+      }
+    });
   };
 
-  // 查询
   async function onSearch() {
     loading.value = true;
-    console.log("查询信息");
-    const page = {
-      size: pagination.pageSize,
-      current: pagination.currentPage
-    };
     const query = {
-      ...page,
+      size: pagination.pageSize,
+      current: pagination.currentPage,
       ...queryForm.value
     };
-    if (query.endTime) {
-      query.endTime = query.endTime + " 23:59:59";
-    }
+    if (query.endTime) query.endTime += " 23:59:59";
     const { data } = await dronesTaskPage(query);
     dataList.value = data.records;
     pagination.total = data.total;
-    setTimeout(() => {
-      loading.value = false;
-    }, 500);
+    setTimeout(() => (loading.value = false), 500);
   }
 
   const resetForm = formEl => {
     if (!formEl) return;
-    nextTick(() => {
-      formEl.formInstance.clearValidate();
-      console.log("resetForm");
-    });
+    nextTick(() => formEl.formInstance.clearValidate());
   };
 
   const restartForm = formEl => {
@@ -217,53 +183,41 @@ export function useDronesTask() {
     formEl.resetFields();
     cancel();
   };
-  // 取消
+
   function cancel() {
-    addForm.value = {
-      id: null
-    };
-    queryForm.value.name = "";
-    queryForm.value.beginTime = "";
-    queryForm.value.endTime = "";
+    addForm.value = { id: null };
+    queryForm.value = { name: "", beginTime: "", endTime: "" };
     dialogFormVisible.value = false;
     onSearch();
   }
-  // 打开弹框
+
   function openDia(param, formEl) {
     dialogFormVisible.value = true;
     title.value = param;
     resetForm(formEl);
   }
 
-  // 流程设计
   function flowRoute(row) {
-    console.log("flowRoute", row);
-    const param = {
+    toDetail({
       taskId: row.id,
       taskType: "taskDesign",
       name: row.taskName,
       workflowId: row.workflowUuid ? row.workflowUuid : uuid(5)
-    };
-    toDetail(param);
+    });
   }
-  // 流程执行状态
+
   function flowRouteStatus(row) {
-    console.log("flowRouteStatus", row);
-    const param = {
+    toDetail({
       taskId: row.id,
       taskType: "taskStatus",
       name: row.taskName,
       workflowId: row.workflowUuid ? row.workflowUuid : uuid(5)
-    };
-    toDetail(param);
+    });
   }
-  // 启动任务
+
   function startTask(row) {
-    console.log("startTask", row);
     ElMessageBox.confirm(
-      `确定要<strong>启动</strong><strong style='color:var(--el-color-primary)'>${
-        row.taskName
-      }</strong>任务吗?`,
+      `确定要<strong>启动</strong><strong style='color:var(--el-color-primary)'>${row.taskName}</strong>任务吗?`,
       "系统提示",
       {
         confirmButtonText: "确定",
@@ -275,37 +229,29 @@ export function useDronesTask() {
     )
       .then(() => {
         dronesTaskStart(row.id).then(res => {
-          if (res.code === SUCCESS) {
-            message("任务启动成功", {
-              type: "success"
-            });
-          }
+          if (res.code === SUCCESS)
+            message("任务启动成功", { type: "success" });
         });
       })
       .catch(() => {
-        message("已取消", {
-          type: "info"
-        });
+        message("已取消", { type: "info" });
       });
   }
-  // 数据看板
+
   function datadashBoard(row) {
-    console.log("datadashBoard", row);
-    // 跳转数据看板页面
-    /* router.push({
-      name: "datadashboardIndex",
-      params: {
-        taskId: row.id
-      }
-    }); */
     window.open(`/#/datadashboard?type=datadash&taskId=` + row.id, "_blank");
   }
 
-  onMounted(() => {
-    onSearch();
-  });
+  // ---------------------------------
+  // lifecycle
+  // ---------------------------------
+  onMounted(onSearch);
 
+  // ---------------------------------
+  // expose
+  // ---------------------------------
   return {
+    // state
     queryForm,
     dataList,
     loading,
@@ -314,12 +260,15 @@ export function useDronesTask() {
     title,
     pagination,
     addForm,
+    moreCondition,
+
+    // config
     rules,
     columns,
     buttonClass,
-    moreCondition,
+
+    // actions
     onSearch,
-    resetForm,
     handleUpdate,
     handleDelete,
     handleSizeChange,
@@ -327,8 +276,9 @@ export function useDronesTask() {
     handleSelectionChange,
     handleSubmit,
     handleSubmitError,
-    cancel,
+    resetForm,
     restartForm,
+    cancel,
     openDia,
     flowRoute,
     flowRouteStatus,
