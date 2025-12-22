@@ -8,7 +8,7 @@ import {
 } from "../utils";
 import { type UserResult, getLogin, refreshTokenApi } from "@/api/user";
 import { useMultiTagsStoreHook } from "./multiTags";
-import { type DataInfo, setToken, removeToken, userKey } from "@/utils/auth";
+import { type DataInfo, setToken, userKey } from "@/utils/auth";
 
 import aesUtils from "@/utils/aes";
 import { refreshConfig } from "@/config";
@@ -96,7 +96,6 @@ export const useUserStore = defineStore("pure-user", {
       this.roles = [];
       this.permissions = [];
       storageSession().clear();
-      removeToken();
       refreshConfig();
       useMultiTagsStoreHook().handleTags("equal", [...routerArrays]);
       router.push("/login");
