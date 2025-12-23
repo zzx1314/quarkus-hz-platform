@@ -133,8 +133,8 @@ import {
   dronesDeviceStartImage,
   dronesDeviceStopImage
 } from "@/api/dronesDevice";
-
 import { dronesCommandIssueCommand } from "@/api/dronesCommand";
+
 import { SUCCESS } from "@/api/base";
 import { message } from "@/utils/message";
 import WebSocketClient from "@/components/ReWebSocket";
@@ -147,24 +147,9 @@ import RiRestartFill from "~icons/ri/restart-fill";
 import RiStopCircleLine from "~icons/ri/stop-circle-line";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks.js";
 
-const canvas = ref(null);
-const imgBase64 = ref("");
-const modelId = ref(null);
-const modelOptions = ref([]);
-let ctx = null;
-
-const speed = ref(0.5);
-const height = ref(0);
-const battery = ref(100);
-const course = ref(0);
-const location = ref("");
-const webSocketImag = ref(null);
-
-// ===== 视频相关（新增）=====
-let latestFrame = null;
-let rendering = false;
-let lastObjectUrl = null;
-
+/* =========================
+ *  props & 常量
+ * ========================= */
 const props = defineProps({
   deviceId: {
     type: Number,
@@ -198,6 +183,34 @@ const paramModelId = props.paramModelId;
 const type = props.type;
 console.log("routeData:", type);
 
+/* =========================
+ * 基础状态 refs
+ * ========================= */
+const canvas = ref(null);
+const imgBase64 = ref("");
+const modelId = ref(null);
+const modelOptions = ref([]);
+
+const speed = ref(0.5);
+const height = ref(0);
+const battery = ref(100);
+const course = ref(0);
+const location = ref("");
+let ctx = null;
+
+/* =========================
+ * Canvas / 坐标 / SVG
+ * ========================= */
+const img = new Image();
+const scale = 2;
+
+let cachedDroneIcon = null;
+let cachedStartPortIcon = null;
+
+// 坐标转换
+const resolution = ref(0.05);
+const origin = ref([-8.7, -17.7]);
+
 const svgIcon = `
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#17436e" fill-rule="evenodd" d="M8.626 7.077a3.5 3.5 0 1 0-1.549 1.549L8.764 12l-1.687 3.374a3.5 3.5 0 1 0 1.549 1.549L12 15.236l3.374 1.687a3.5 3.5 0 1 0 1.549-1.549L15.236 12l1.687-3.374a3.5 3.5 0 1 0-1.549-1.549L12 8.764zm-1.79-.895a1.5 1.5 0 1 0-.654.654l-.447-.894a.5.5 0 1 1 .207-.207zm10.982.654a1.5 1.5 0 1 0-.654-.654l.894-.447a.5.5 0 1 1 .207.207zm-.654 10.982a1.5 1.5 0 1 0 .654-.654l.447.894a.5.5 0 1 1-.207.207zm-10.982-.654a1.5 1.5 0 1 0 .654.654l-.894.447q.057.106.058.235a.5.5 0 1 1-.265-.442zm6.945-5.027q.022.16.097.31L14 14l-1.553-.776a1 1 0 0 0-.894 0L10 14l.776-1.553a1 1 0 0 0 0-.894L10 10l1.553.776a1 1 0 0 0 .894 0L14 10l-.776 1.553a1 1 0 0 0-.097.584" clip-rule="evenodd"/></svg>
 `;
@@ -211,18 +224,6 @@ const startport = `
 	</svg>
 `;
 
-//  仅保留一条路径
-let currentPath = [];
-let drawing = true;
-let mousePos = null;
-
-const img = new Image();
-const scale = 2;
-
-// 坐标转换
-const resolution = ref(0.05);
-const origin = ref([-8.7, -17.7]);
-
 // 将 SVG 转成 Image 对象
 function loadSVGImage(svg) {
   return new Promise(resolve => {
@@ -234,9 +235,6 @@ function loadSVGImage(svg) {
 }
 
 // 绘制图标
-let cachedDroneIcon = null;
-let cachedStartPortIcon = null;
-
 async function drawIcon(x, y) {
   if (!cachedDroneIcon) {
     cachedDroneIcon = await loadSVGImage(svgIcon);
@@ -259,51 +257,18 @@ async function drawStartPort(x, y) {
   );
 }
 
-// 获取航线图片 base64
-function getImageBase64() {
-  if (!modelId.value) return;
-  dronesRouteLibraryGetRoute(modelId.value).then(res => {
-    console.log("航线图片 base64:", res.data);
-    imgBase64.value = res.data.route;
-    resolution.value = res.data.resolution;
-    origin.value = res.data.origin;
-    img.src = imgBase64.value;
+/* =========================
+ * 路径编辑状态
+ * ========================= */
 
-    img.onload = () => {
-      canvas.value.width = img.width * scale;
-      canvas.value.height = img.height * scale;
-      ctx = canvas.value.getContext("2d");
+//  仅保留一条路径
+let currentPath = [];
+let drawing = true;
+let mousePos = null;
 
-      if (routeData) {
-        try {
-          restoreRoute(JSON.parse(routeData));
-        } catch (e) {
-          console.error("routeData 解析失败:", e);
-        }
-      }
-      redraw();
-    };
-  });
-}
-
-// 获取模型选项
-function getModelOptions() {
-  dronesModelGetSelectOption().then(res => {
-    console.log("模型选项:", res.data);
-    modelOptions.value = res.data;
-    if (paramModelId) {
-      modelId.value = Number(paramModelId);
-      getImageBase64();
-    }
-  });
-}
-
-// 恢复航线
-function restoreRoute(worldPath) {
-  currentPath = worldPath.map(pt => worldToPixel(pt));
-  drawing = false;
-}
-
+/* =========================
+ * 坐标转换
+ * ========================= */
 // 将世界坐标转换为像素坐标
 function worldToPixel([wx, wy]) {
   const originalX = (wx - origin.value[0]) / resolution.value;
@@ -315,178 +280,19 @@ function worldToPixel([wx, wy]) {
   };
 }
 
-function startImage() {
-  if (!props.deviceId) return;
-  const param = {
-    deviceId: props.deviceId
-  };
-  dronesDeviceStartImage(param).then(res => {
-    if (res.code === SUCCESS) {
-      console.log("start Image");
-    }
-  });
+function pixelToWorld(p) {
+  const originalX = p.x / scale;
+  const originalY = p.y / scale;
+
+  const wx = origin.value[0] + originalX * resolution.value;
+  const wy = origin.value[1] + (img.height - originalY) * resolution.value;
+
+  return [Number(wx.toFixed(2)), Number(wy.toFixed(2))];
 }
 
-function stopImage() {
-  if (!props.deviceId) return;
-  const param = {
-    deviceId: props.deviceId
-  };
-  dronesDeviceStopImage(param).then(res => {
-    if (res.code === SUCCESS) {
-      console.log("stop Image");
-    }
-  });
-}
-
-let timer = null;
-const videoImg = ref(null);
-
-function renderVideoLoop() {
-  if (latestFrame && !rendering && videoImg.value) {
-    rendering = true;
-
-    const blob = new Blob([latestFrame], { type: "image/jpeg" });
-    const url = URL.createObjectURL(blob);
-
-    videoImg.value.onload = () => {
-      if (lastObjectUrl) {
-        URL.revokeObjectURL(lastObjectUrl);
-      }
-      lastObjectUrl = url;
-      rendering = false;
-    };
-
-    videoImg.value.src = url;
-    latestFrame = null;
-  }
-
-  requestAnimationFrame(renderVideoLoop);
-}
-
-function startWebscoket() {
-  webSocketImag.value = new WebSocketClient();
-
-  webSocketImag.value.connect({
-    onConnect: () => {
-      console.log("连接成功");
-    },
-    onError: function (error) {
-      console.log("连接失败", error);
-    },
-    onClose: function () {
-      console.log("连接关闭");
-    },
-    onData: function (data) {
-      latestFrame = data;
-    }
-  });
-}
-
-function stopImageOnUnload() {
-  if (!props.deviceId) return;
-  navigator.sendBeacon(
-    "/api/imageReceiver/stop",
-    new Blob([JSON.stringify({ deviceId: props.deviceId })], {
-      type: "application/json"
-    })
-  );
-}
-
-function handlePageClose() {
-  stopImageOnUnload();
-
-  if (webSocketImag.value) {
-    webSocketImag.value.disconnect();
-  }
-}
-function issueCommand(paramsInput) {
-  console.log("issueCommand", paramsInput);
-  const params = {
-    deviceId: props.deviceId,
-    taskId: Number(props.taskId),
-    type: ["yolo", "rtsp"],
-    param: paramsInput
-  };
-  dronesCommandIssueCommand(params).then(res => {
-    if (res.code === SUCCESS) {
-      message("下发成功！", { type: "success" });
-    } else {
-      message(res.message, { type: "error" });
-    }
-  });
-}
-
-onMounted(() => {
-  startWebscoket();
-  renderVideoLoop();
-  getModelOptions();
-  startImage();
-  window.addEventListener("beforeunload", handlePageClose);
-  window.addEventListener("pagehide", handlePageClose);
-  /* timer = window.setInterval(() => {
-    console.log("每 2 秒执行一次任务");
-    if (props.deviceId) {
-      dronesDeviceGetStatus(props.deviceId).then(res => {
-        if (res.code === SUCCESS) {
-          console.log("设备状态:", res.data);
-          speed.value = res.data.speed;
-          height.value = res.data.height;
-          battery.value = res.data.battery;
-          course.value = res.data.course;
-          location.value = res.data.location;
-        }
-      });
-    }
-  }, 2000); */
-});
-
-onUnmounted(() => {
-  window.removeEventListener("beforeunload", handlePageClose);
-  window.removeEventListener("pagehide", handlePageClose);
-  stopImage();
-  if (timer) {
-    clearInterval(timer);
-  }
-});
-
-// 鼠标按下
-function handleMouseDown(e) {
-  const pos = getMousePos(e);
-
-  if (e.button === 0) {
-    // 左键：开始或继续绘制
-    if (!drawing) {
-      // 如果上一次结束了，则清空旧路径，重新画新路径
-      currentPath = [];
-      drawing = true;
-    }
-    currentPath.push(pos);
-    redraw();
-  } else if (e.button === 2) {
-    // 右键结束绘制，但不保存多条路径
-    drawing = false;
-    mousePos = null;
-    redraw();
-  }
-}
-
-// 鼠标移动（实时预览）
-function handleMouseMove(e) {
-  if (!drawing || currentPath.length === 0) return;
-  mousePos = getMousePos(e);
-  redraw();
-}
-
-// 鼠标位置
-function getMousePos(e) {
-  const rect = canvas.value.getBoundingClientRect();
-  return {
-    x: e.clientX - rect.left,
-    y: e.clientY - rect.top
-  };
-}
-
+/* =========================
+ * Canvas 绘制
+ * ========================= */
 // 重绘：背景 + 唯一路径 + 实时预览 + 点
 function redraw() {
   ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
@@ -549,6 +355,43 @@ function redraw() {
   drawStartPort(zeroPoint.x, zeroPoint.y);
 }
 
+// 鼠标按下
+function handleMouseDown(e) {
+  const pos = getMousePos(e);
+
+  if (e.button === 0) {
+    // 左键：开始或继续绘制
+    if (!drawing) {
+      // 如果上一次结束了，则清空旧路径，重新画新路径
+      currentPath = [];
+      drawing = true;
+    }
+    currentPath.push(pos);
+    redraw();
+  } else if (e.button === 2) {
+    // 右键结束绘制，但不保存多条路径
+    drawing = false;
+    mousePos = null;
+    redraw();
+  }
+}
+
+// 鼠标移动（实时预览）
+function handleMouseMove(e) {
+  if (!drawing || currentPath.length === 0) return;
+  mousePos = getMousePos(e);
+  redraw();
+}
+
+// 鼠标位置
+function getMousePos(e) {
+  const rect = canvas.value.getBoundingClientRect();
+  return {
+    x: e.clientX - rect.left,
+    y: e.clientY - rect.top
+  };
+}
+
 // 绘制路径线
 function drawPath(path) {
   if (path.length < 2) return;
@@ -561,16 +404,6 @@ function drawPath(path) {
     ctx.lineTo(path[i].x, path[i].y);
   }
   ctx.stroke();
-}
-
-function pixelToWorld(p) {
-  const originalX = p.x / scale;
-  const originalY = p.y / scale;
-
-  const wx = origin.value[0] + originalX * resolution.value;
-  const wy = origin.value[1] + (img.height - originalY) * resolution.value;
-
-  return [Number(wx.toFixed(2)), Number(wy.toFixed(2))];
 }
 
 // 保存路径（仅 currentPath）
@@ -633,6 +466,203 @@ function drawMarkers(path) {
     ctx.fillText("终", end.x, end.y - 20);
   }
 }
+
+/* =========================
+ *  视频流 & WebSocket
+ * ========================= */
+const webSocketImag = ref(null);
+let latestFrame = null;
+let rendering = false;
+let lastObjectUrl = null;
+const videoImg = ref(null);
+
+function renderVideoLoop() {
+  if (latestFrame && !rendering && videoImg.value) {
+    rendering = true;
+
+    const blob = new Blob([latestFrame], { type: "image/jpeg" });
+    const url = URL.createObjectURL(blob);
+
+    videoImg.value.onload = () => {
+      if (lastObjectUrl) {
+        URL.revokeObjectURL(lastObjectUrl);
+      }
+      lastObjectUrl = url;
+      rendering = false;
+    };
+
+    videoImg.value.src = url;
+    latestFrame = null;
+  }
+
+  requestAnimationFrame(renderVideoLoop);
+}
+
+function startWebscoket() {
+  webSocketImag.value = new WebSocketClient();
+
+  webSocketImag.value.connect({
+    onConnect: () => {
+      console.log("连接成功");
+    },
+    onError: function (error) {
+      console.log("连接失败", error);
+    },
+    onClose: function () {
+      console.log("连接关闭");
+    },
+    onData: function (data) {
+      latestFrame = data;
+    }
+  });
+}
+
+function startImage() {
+  if (!props.deviceId) return;
+  const param = {
+    deviceId: props.deviceId
+  };
+  dronesDeviceStartImage(param).then(res => {
+    if (res.code === SUCCESS) {
+      console.log("start Image");
+    }
+  });
+}
+
+function stopImage() {
+  if (!props.deviceId) return;
+  const param = {
+    deviceId: props.deviceId
+  };
+  dronesDeviceStopImage(param).then(res => {
+    if (res.code === SUCCESS) {
+      console.log("stop Image");
+    }
+  });
+}
+
+function stopImageOnUnload() {
+  if (!props.deviceId) return;
+  navigator.sendBeacon(
+    "/api/imageReceiver/stop",
+    new Blob([JSON.stringify({ deviceId: props.deviceId })], {
+      type: "application/json"
+    })
+  );
+}
+
+function handlePageClose() {
+  stopImageOnUnload();
+
+  if (webSocketImag.value) {
+    webSocketImag.value.disconnect();
+  }
+}
+
+/* =========================
+ *  地图图片加载
+ * ========================= */
+// 获取航线图片 base64
+function getImageBase64() {
+  if (!modelId.value) return;
+  dronesRouteLibraryGetRoute(modelId.value).then(res => {
+    console.log("航线图片 base64:", res.data);
+    imgBase64.value = res.data.route;
+    resolution.value = res.data.resolution;
+    origin.value = res.data.origin;
+    img.src = imgBase64.value;
+
+    img.onload = () => {
+      canvas.value.width = img.width * scale;
+      canvas.value.height = img.height * scale;
+      ctx = canvas.value.getContext("2d");
+
+      if (routeData) {
+        try {
+          restoreRoute(JSON.parse(routeData));
+        } catch (e) {
+          console.error("routeData 解析失败:", e);
+        }
+      }
+      redraw();
+    };
+  });
+}
+
+// 获取模型选项
+function getModelOptions() {
+  dronesModelGetSelectOption().then(res => {
+    console.log("模型选项:", res.data);
+    modelOptions.value = res.data;
+    if (paramModelId) {
+      modelId.value = Number(paramModelId);
+      getImageBase64();
+    }
+  });
+}
+
+// 恢复航线
+function restoreRoute(worldPath) {
+  currentPath = worldPath.map(pt => worldToPixel(pt));
+  drawing = false;
+}
+
+/* =========================
+ *  指令下发
+ * ========================= */
+function issueCommand(paramsInput) {
+  console.log("issueCommand", paramsInput);
+  const params = {
+    deviceId: props.deviceId,
+    taskId: Number(props.taskId),
+    type: ["yolo", "rtsp"],
+    param: paramsInput
+  };
+  dronesCommandIssueCommand(params).then(res => {
+    if (res.code === SUCCESS) {
+      message("下发成功！", { type: "success" });
+    } else {
+      message(res.message, { type: "error" });
+    }
+  });
+}
+
+let timer = null;
+/* =========================
+ * 生命周期
+ * ========================= */
+onMounted(() => {
+  startWebscoket();
+  renderVideoLoop();
+  getModelOptions();
+  startImage();
+  window.addEventListener("beforeunload", handlePageClose);
+  window.addEventListener("pagehide", handlePageClose);
+  /* timer = window.setInterval(() => {
+    console.log("每 2 秒执行一次任务");
+    if (props.deviceId) {
+      dronesDeviceGetStatus(props.deviceId).then(res => {
+        if (res.code === SUCCESS) {
+          console.log("设备状态:", res.data);
+          speed.value = res.data.speed;
+          height.value = res.data.height;
+          battery.value = res.data.battery;
+          course.value = res.data.course;
+          location.value = res.data.location;
+        }
+      });
+    }
+  }, 2000); */
+});
+
+onUnmounted(() => {
+  window.removeEventListener("beforeunload", handlePageClose);
+  window.removeEventListener("pagehide", handlePageClose);
+  stopImage();
+  if (timer) {
+    clearInterval(timer);
+  }
+});
 </script>
 
 <style scoped lang="scss">
