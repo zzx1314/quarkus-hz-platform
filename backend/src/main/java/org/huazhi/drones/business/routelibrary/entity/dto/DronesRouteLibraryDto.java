@@ -10,6 +10,8 @@ import lombok.Data;
 public class DronesRouteLibraryDto {
     private Long id;
 
+    private String routeName;
+
     private String routeData;
 
     private String routeStatus;
