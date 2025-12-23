@@ -3,9 +3,14 @@ services:
     image: postgres:17
     container_name: quarkus-postgres
     environment:
+      TZ: Asia/Shanghai
       POSTGRES_USER: quarkus_test
       POSTGRES_PASSWORD: quarkus_test
       POSTGRES_DB: hz_drones
+    command: >
+      postgres
+      -c timezone=Asia/Shanghai
+      -c log_timezone=Asia/Shanghai
     ports:
       - "5433:5432"
     volumes:
@@ -40,7 +45,9 @@ services:
       QUARKUS_PROFILE: prod
       QUARKUS_DATASOURCE_USERNAME: quarkus_test
       QUARKUS_DATASOURCE_PASSWORD: quarkus_test
-      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://postgres:5432/hz_drones
+      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://postgres:5432/hz_drones?options=-c%20timezone=Asia/Shanghai
+      TZ: Asia/Shanghai
+      JAVA_OPTS: -Duser.timezone=Asia/Shanghai
     volumes:
       - /home/root/dockerdata/drones:/data
     depends_on:

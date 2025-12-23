@@ -78,6 +78,7 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
     public Long register(DronesRouteLibrary entity) {
         entity.setIsDeleted(0);
         entity.setCreateTime(LocalDateTime.now());
+        entity.setRouteStatus("停用");
         repository.persist(entity);
         return entity.getId();
     }

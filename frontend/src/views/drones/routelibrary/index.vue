@@ -154,11 +154,14 @@ const {
         :rules="rules"
         label-width="100px"
       >
-        <el-form-item label="路线名称" prop="routeName">
+        <el-form-item label="航线名称" prop="routeName">
           <el-input v-model="addForm.routeName" placeholder="请输出航线名称" />
         </el-form-item>
         <el-form-item label="航线类型" prop="routeType">
-          <el-input v-model="addForm.routeType" placeholder="请输出航线类型" />
+          <el-select v-model="addForm.routeType" placeholder="请选择航线类型">
+            <el-option label="在线地图" value="在线地图" />
+            <el-option label="离线地图" value="离线地图" />
+          </el-select>
         </el-form-item>
         <el-form-item label="航线描述" prop="routeDescription">
           <el-input

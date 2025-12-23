@@ -4,12 +4,12 @@ import type { PlusColumn } from "plus-pro-components";
 export function useCollectorBusDevForm() {
   const columnsForm: PlusColumn[] = [
     {
-      label: "路线名称",
+      label: "航线名称",
       prop: "routeName",
       valueType: "copy"
     },
     {
-      label: "路线类型",
+      label: "航线类型",
       prop: "routeType",
       valueType: "select",
       options: [
