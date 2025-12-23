@@ -32,7 +32,7 @@ export function useCollectorBusDevForm() {
 
   const columnsQueryForm: PlusColumn[] = [
     {
-      label: "路线名称",
+      label: "航线名称",
       prop: "routeName",
       valueType: "copy",
       colProps: {

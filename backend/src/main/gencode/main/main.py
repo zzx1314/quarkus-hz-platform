@@ -36,7 +36,7 @@ def parse_private_fields_with_javadoc(java_file_path):
     """
     解析 Java 实体类文件，只提取 private 字段及前置多行注释（Javadoc）
     :param java_file_path: Java 文件路径
-    :return: 字段对象列表 [{'name': 'routeName', 'comment': '路线名称'}, ...]
+    :return: 字段对象列表 [{'name': 'routeName', 'comment': '航线名称'}, ...]
     """
     with open(java_file_path, 'r', encoding='utf-8') as f:
         lines = f.readlines()

@@ -24,7 +24,7 @@ public class DronesRouteLibrary extends PanacheEntityBase {
     private Long id;
 
     /**
-     * 路线名称
+     * 航线名称
      */
     private String routeName;
 

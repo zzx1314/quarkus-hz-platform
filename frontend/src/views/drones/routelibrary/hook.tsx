@@ -42,7 +42,7 @@ export function useDronesRouteLibrary() {
   // config
   // ---------------------------------
   const rules = reactive<FormRules>({
-    routeName: [{ required: true, message: "路线名称必填", trigger: "blur" }],
+    routeName: [{ required: true, message: "航线名称必填", trigger: "blur" }],
     routeType: [{ required: true, message: "路线类型必填", trigger: "change" }]
   });
   // 表格列
@@ -61,7 +61,7 @@ export function useDronesRouteLibrary() {
       width: 70
     },
     {
-      label: "路线名称",
+      label: "航线名称",
       prop: "routeName",
       width: 100
     },
