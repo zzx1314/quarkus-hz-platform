@@ -1,0 +1,81 @@
+package org.huazhi.drones.business.config.service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.huazhi.drones.business.config.entity.DronesConfig;
+import org.huazhi.drones.business.config.entity.dto.DronesConfigDto;
+import org.huazhi.drones.business.config.entity.dto.DronesConfigQueryDto;
+import org.huazhi.drones.business.config.repository.DronesConfigRepository;
+import org.huazhi.drones.common.SelectOption;
+import org.huazhi.util.PageRequest;
+import org.huazhi.util.PageResult;
+
+import java.time.LocalDateTime;
+
+import io.quarkus.panache.common.Sort;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+
+@ApplicationScoped
+public class DronesConfigServiceImp implements DronesConfigService {
+    @Inject
+    DronesConfigRepository repository;
+
+    @Override
+    public List<DronesConfig> listEntitys() {
+        return repository.list("isDeleted = ?1", Sort.by("createTime"), 0);
+    }
+
+    @Override
+    public List<DronesConfig> listEntitysByDto(DronesConfigQueryDto dto) {
+        return repository.selectList(dto);
+    }
+
+    @Override
+    public DronesConfig listOne(DronesConfigQueryDto dto) {
+        return repository.selectOne(dto);
+    }
+
+    @Override
+    public PageResult<DronesConfig> listPage(DronesConfigQueryDto dto, PageRequest pageRequest) {
+        return repository.selectPage(dto, pageRequest);
+    }
+
+    @Override
+    public Long register(DronesConfig entity) {
+        entity.setIsDeleted(0);
+        entity.setCreateTime(LocalDateTime.now());
+        repository.persist(entity);
+        return entity.getId();
+    }
+
+    @Override
+    public void replaceById(DronesConfig entity) {
+        repository.updateById(entity);
+    }
+
+    @Override
+    public void replaceByDto(DronesConfigDto dto) {
+        repository.updateByDto(dto);
+    }
+
+    @Override
+    public void removeById(Long id) {
+        repository.deleteById(id);
+    }
+
+    @Override
+    public void removeByIds(List<Long> ids) {
+        repository.deleteByIds(ids);
+    }
+
+    @Override
+    public List<SelectOption> getSelectOptions() {
+        List<DronesConfig> listAll = repository.listAll();
+        return listAll.stream()
+                .map(item -> new SelectOption(item.getConfigName(), item.getId()))
+                .collect(Collectors.toList());
+    }
+
+}

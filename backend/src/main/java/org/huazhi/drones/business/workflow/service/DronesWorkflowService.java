@@ -1,0 +1,42 @@
+package org.huazhi.drones.business.workflow.service;
+
+import java.util.List;
+
+import org.huazhi.drones.business.routelibrary.entity.vo.DronesRouteLibraryVo;
+import org.huazhi.drones.business.workflow.entity.DronesWorkflow;
+import org.huazhi.drones.business.workflow.entity.dto.DronesWorkflowDto;
+import org.huazhi.drones.business.workflow.entity.dto.DronesWorkflowQueryDto;
+import org.huazhi.drones.business.workflow.vo.DronesWorkflowVo;
+import org.huazhi.util.PageRequest;
+import org.huazhi.util.PageResult;
+
+public interface DronesWorkflowService {
+   List<DronesWorkflow> listEntitys();
+
+   List<DronesWorkflow> listEntitysByDto(DronesWorkflowQueryDto sysOrgDto);
+
+   DronesWorkflow listOne(DronesWorkflowQueryDto dto);
+
+   PageResult<DronesWorkflow> listPage(DronesWorkflowQueryDto dto, PageRequest pageRequest);
+
+   Long register(DronesWorkflow entity);
+
+   void replaceById(DronesWorkflow entity);
+
+   void replaceByDto(DronesWorkflowQueryDto queryDto, DronesWorkflowDto dto);
+
+   void removeById(Long id);
+
+   void removeByIds(List<Long> ids);
+
+   DronesWorkflowVo getWorkflowGraph(Long taskId);
+
+
+   DronesWorkflowVo getWorkflowGraph(DronesWorkflow dronesWorkflow);
+
+   DronesWorkflow getWorkflow(Long taskId);
+
+   List<DronesRouteLibraryVo> getRouteByTaskId(Long taskId);
+
+   String getCommandJsonString(Long taskId);
+}

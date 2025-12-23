@@ -12,9 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
-import org.huazhi.drones.command.service.DronesCommandService;
-import org.huazhi.drones.device.entity.DronesDevice;
-import org.huazhi.drones.device.service.DronesDeviceService;
+import org.huazhi.drones.business.command.service.DronesCommandService;
+import org.huazhi.drones.business.device.entity.DronesDevice;
+import org.huazhi.drones.business.device.service.DronesDeviceService;
 import org.huazhi.drones.websocket.service.ImageReceiverPool;
 import org.huazhi.util.R;
 

@@ -8,8 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.huazhi.drones.command.entity.dto.DronesCommonCommand;
-import org.huazhi.drones.command.entity.webscoketdto.DronesCommandWebsocket;
+import org.huazhi.drones.business.command.entity.dto.DronesCommonCommand;
+import org.huazhi.drones.business.command.entity.webscoketdto.DronesCommandWebsocket;
 import org.huazhi.drones.websocket.entity.MessageInfo;
 import org.huazhi.util.JsonUtil;
 

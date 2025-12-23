@@ -3,10 +3,10 @@ package org.huazhi.drones.websocket.controller;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import org.huazhi.drones.device.entity.DronesDevice;
-import org.huazhi.drones.device.entity.dto.DronesDeviceDto;
-import org.huazhi.drones.device.entity.dto.DronesDeviceQueryDto;
-import org.huazhi.drones.device.service.DronesDeviceService;
+import org.huazhi.drones.business.device.entity.DronesDevice;
+import org.huazhi.drones.business.device.entity.dto.DronesDeviceDto;
+import org.huazhi.drones.business.device.entity.dto.DronesDeviceQueryDto;
+import org.huazhi.drones.business.device.service.DronesDeviceService;
 import org.huazhi.drones.util.CheckClientTokenUtil;
 import org.huazhi.util.R;
 import org.huazhi.util.RedisUtil;

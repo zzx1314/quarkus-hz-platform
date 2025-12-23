@@ -12,7 +12,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
-import org.huazhi.drones.media.entity.dto.DronesMediaDto;
+import org.huazhi.drones.business.media.entity.dto.DronesMediaDto;
 import org.huazhi.util.JsonUtil;
 
 @QuarkusTest
