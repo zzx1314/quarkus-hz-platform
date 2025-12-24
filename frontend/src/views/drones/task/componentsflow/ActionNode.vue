@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Handle, Position, useVueFlow } from "@vue-flow/core";
 import {
+  nextTick,
   computed,
   inject,
   onBeforeUnmount,
@@ -81,7 +82,7 @@ const rules = reactive<FormRules>({
           callback(new Error("请选择航点"));
         } else callback();
       },
-      trigger: "change"
+      trigger: "blur"
     }
   ],
 
@@ -367,11 +368,19 @@ watch(
 
 watch(
   () => props.pathInfo,
-  newVal => {
-    console.log("pathInfo 有变化:", newVal);
+  async (newVal, oldVal) => {
     pathStringFromTask.value = newVal;
+    // 只有 old 和 new 都存在时才执行
+    if (newVal && newVal.length > 0 && oldVal && oldVal.length > 0) {
+      actionForm.value.action.params.targetWpStr = "";
+      await nextTick();
+      actionFormRef.value?.validateField("action.params.targetWpStr");
+    }
   },
-  { deep: true, immediate: true }
+  {
+    deep: true,
+    immediate: true
+  }
 );
 
 onMounted(() => {

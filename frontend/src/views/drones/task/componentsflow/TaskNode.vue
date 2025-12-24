@@ -153,13 +153,10 @@ const handleChangeRoute = value => {
     dronesRouteLibraryGetSelectOptionPoint(value).then(res => {
       if (res.code === SUCCESS) {
         console.log("res.data", res.data);
-        routePointListOptions.value.push(...res.data);
+        routePointListOptions.value = res.data;
         taskForm.value.routePointListOptions = res.data;
-        console.log(
-          "routePointListOptions.value",
-          taskForm.value.routePointListOptions
-        );
         updateNodeData(props.id, taskForm.value);
+        taskForm.value.pathString = [];
       }
     });
     isCustomeRoute.value = false;
