@@ -534,10 +534,12 @@ watch(
 /* ======================================================
  * 19. 返回
  * ====================================================== */
-const back = () => {
-  console.log("back");
-  useMultiTagsStoreHook().handleTags("splice", "/drones/task/flowApp");
-  router.push({ path: "/drones/task/index" });
+const back = async () => {
+  const multiTagsStore = useMultiTagsStoreHook();
+  await router.replace({ path: "/drones/task/index" });
+  nextTick(() => {
+    multiTagsStore.handleTags("splice", "/drones/task/flow");
+  });
 };
 
 /* ======================================================
