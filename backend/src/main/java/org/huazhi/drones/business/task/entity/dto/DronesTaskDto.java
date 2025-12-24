@@ -12,6 +12,11 @@ public class DronesTaskDto {
     private String taskName;
 
     /**
+     * 设备Id
+     */
+    private Long deviceId;
+
+    /**
      * 任务描述
      */
     private String taskDescription;

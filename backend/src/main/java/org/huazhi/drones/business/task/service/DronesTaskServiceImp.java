@@ -33,6 +33,7 @@ import org.huazhi.drones.business.task.entity.DronesTask;
 import org.huazhi.drones.business.task.entity.dto.DronesTaskDto;
 import org.huazhi.drones.business.task.entity.dto.DronesTaskQueryDto;
 import org.huazhi.drones.business.task.entity.vo.DronesTaskStatusVo;
+import org.huazhi.drones.business.task.entity.vo.DronesTaskVo;
 import org.huazhi.drones.business.task.repository.DronesTaskRepository;
 import org.huazhi.drones.business.workflow.entity.DronesWorkflow;
 import org.huazhi.drones.business.workflow.entity.NodeEntity;
@@ -108,15 +109,17 @@ public class DronesTaskServiceImp implements DronesTaskService {
     }
 
     @Override
-    public PageResult<DronesTask> listPage(DronesTaskQueryDto dto, PageRequest pageRequest) {
-        return repository.selectPage(dto, pageRequest);
+    public PageResult<DronesTaskVo> listPage(DronesTaskQueryDto dto, PageRequest pageRequest) {
+        return repository.selectPageVo(dto, pageRequest);
     }
 
     @Override
     public Long register(DronesTask entity) {
+        DronesDevice device = DronesDevice.findById(entity.getDeviceId());
         entity.setIsDeleted(0);
         entity.setTaskStatus("未开始");
         entity.setCreateTime(LocalDateTime.now());
+        entity.setDevice(device);
         repository.persist(entity);
         return entity.getId();
     }
@@ -208,6 +211,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
     @Transactional
     public void startTask(Long id) {
         DronesWorkflow dronesWorkflow = workflowService.listOne(new DronesWorkflowQueryDto().setTaskId(id));
+        DronesTask taskById = repository.findById(id);
         if (dronesWorkflow != null) {
             String dronesCommand = dronesWorkflow.getCommandJsonString();
             DronesCommandWebsocket commandWebsocket = JsonUtil.fromJson(dronesCommand,
@@ -215,6 +219,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
 
             commandWebsocket = fillDronesCommandRoutePoint(commandWebsocket);
             log.info("发送指令信息：{}", JsonUtil.toJson(commandWebsocket));
+            commandWebsocket.setDeviceId(taskById.getDevice().getDeviceId());
             connectionManager.sendMessageByDeviceId(commandWebsocket.getDeviceId(), commandWebsocket, id);
             // 修改任务状态
             repository.update("taskStatus = ?1 where id = ?2", "进行中", id);

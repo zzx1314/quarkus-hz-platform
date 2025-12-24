@@ -24,6 +24,10 @@ const props = defineProps({
     type: String,
     required: true
   },
+  deviceId: {
+    type: Number,
+    required: true
+  },
   data: {
     type: Object,
     required: true
@@ -71,7 +75,7 @@ const routePointListOptions = ref([]);
 const taskForm = ref({
   taskId: props.data.taskId,
   routeId: null,
-  deviceId: null,
+  deviceId: Number(props.deviceId),
   nodeType: "task",
   taskInfo: {
     fromWp: {
@@ -249,6 +253,7 @@ onBeforeUnmount(() => {
           <el-select
             v-model="taskForm.deviceId"
             clearable
+            :disabled="true"
             placeholder="请选择无人机设备"
             style="width: 200px"
             @change="handleChangeBase"

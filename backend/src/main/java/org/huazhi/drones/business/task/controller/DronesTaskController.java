@@ -6,6 +6,7 @@ import org.huazhi.drones.business.task.entity.DronesTask;
 import org.huazhi.drones.business.task.entity.dto.DronesTaskDto;
 import org.huazhi.drones.business.task.entity.dto.DronesTaskQueryDto;
 import org.huazhi.drones.business.task.entity.vo.DronesTaskStatusVo;
+import org.huazhi.drones.business.task.entity.vo.DronesTaskVo;
 import org.huazhi.drones.business.task.service.DronesTaskService;
 import org.huazhi.oauth.annotation.TokenRequired;
 import org.huazhi.util.PageRequest;
@@ -36,7 +37,7 @@ public class DronesTaskController {
 
     @GET
     @Path("/getPage")
-    public R<PageResult<DronesTask>> getPage(@BeanParam DronesTaskQueryDto dto, @BeanParam PageRequest pageRequest) {
+    public R<PageResult<DronesTaskVo>> getPage(@BeanParam DronesTaskQueryDto dto, @BeanParam PageRequest pageRequest) {
         return R.ok(dronesTaskService.listPage(dto, pageRequest));
     }
 

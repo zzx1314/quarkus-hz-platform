@@ -6,10 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.huazhi.drones.business.device.entity.DronesDevice;
 import org.huazhi.drones.business.task.entity.DronesTask;
 import org.huazhi.drones.business.task.entity.dto.DronesTaskDto;
 import org.huazhi.drones.business.task.entity.dto.DronesTaskQueryDto;
 import org.huazhi.drones.business.task.entity.mapper.DronesTaskMapper;
+import org.huazhi.drones.business.task.entity.vo.DronesTaskVo;
 import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
 import org.huazhi.util.QueryBuilder;
@@ -57,6 +59,38 @@ public class DronesTaskRepository implements PanacheRepository<DronesTask> {
                 pageRequest.getPage(),
                 pageRequest.getSize());
     }
+    public PageResult<DronesTaskVo> selectPageVo(DronesTaskQueryDto dto, PageRequest pageRequest) {
+        QueryBuilder qb = QueryBuilder.create()
+                .alias("t")
+                .equal("isDeleted", 0)
+                .like("taskName", dto.getTaskName())
+                .like("taskDescription", dto.getTaskDescription())
+                .like("taskStatus", dto.getTaskStatus())
+                .between("createTime", dto.getBeginTime(), dto.getEndTime())
+                .orderBy("createTime desc");
+
+        String jpql = """
+                select t
+                from DronesTask t
+                left join fetch t.device d
+                where %s
+                """.formatted(qb.getQuery());
+
+        PanacheQuery<DronesTask> query = find(jpql, qb.getParams())
+                .page(Page.of(pageRequest.getPageIndex(), pageRequest.getSize()));
+        List<DronesTaskVo> list = query.list().stream().map(task -> {
+            DronesTaskVo vo = mapper.toVo(task);
+            if (task.getDevice() != null) {
+                vo.setDeviceIdString(task.getDevice().getDeviceId());
+            }
+            return vo;
+        }).toList();
+        return new PageResult<>(
+                list,
+                query.count(),
+                pageRequest.getPage(),
+                pageRequest.getSize());
+    }
 
     @Transactional
     public void updateById(DronesTask dto) {
@@ -70,6 +104,9 @@ public class DronesTaskRepository implements PanacheRepository<DronesTask> {
         DronesTask entity = this.findById(dto.getId());
         mapper.updateEntityFromDto(dto, entity);
         entity.setUpdateTime(LocalDateTime.now());
+
+        DronesDevice device = DronesDevice.findById(dto.getDeviceId());
+        entity.setDevice(device);
     }
 
     @Transactional

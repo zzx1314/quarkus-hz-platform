@@ -6,6 +6,7 @@ import org.huazhi.drones.business.task.entity.DronesTask;
 import org.huazhi.drones.business.task.entity.dto.DronesTaskDto;
 import org.huazhi.drones.business.task.entity.dto.DronesTaskQueryDto;
 import org.huazhi.drones.business.task.entity.vo.DronesTaskStatusVo;
+import org.huazhi.drones.business.task.entity.vo.DronesTaskVo;
 import org.huazhi.drones.business.workflow.entity.DronesWorkflow;
 import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
@@ -17,7 +18,7 @@ public interface DronesTaskService {
 
    DronesTask listOne(DronesTaskQueryDto dto);
 
-   PageResult<DronesTask> listPage(DronesTaskQueryDto dto, PageRequest pageRequest);
+   PageResult<DronesTaskVo> listPage(DronesTaskQueryDto dto, PageRequest pageRequest);
 
    Long register(DronesTask entity);
 

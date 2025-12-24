@@ -1,5 +1,6 @@
 // form表单
 import type { PlusColumn } from "plus-pro-components";
+import { dronesDeviceGetSelectOptions } from "@/api/dronesDevice";
 
 export function useCollectorBusDevForm() {
   const columnsForm: PlusColumn[] = [
@@ -7,6 +8,16 @@ export function useCollectorBusDevForm() {
       label: "任务名称",
       prop: "taskName",
       valueType: "copy"
+    },
+    {
+      label: "设备信息",
+      prop: "deviceId",
+      valueType: "select",
+      options: async () => {
+        return new Promise(resolve => {
+          resolve(dronesDeviceGetSelectOptions().then(res => res.data));
+        });
+      }
     },
     {
       label: "任务描述",

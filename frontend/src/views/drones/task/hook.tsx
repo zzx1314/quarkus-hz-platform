@@ -41,6 +41,7 @@ export function useDronesTask() {
   // ---------------------------------
   const rules = reactive<FormRules>({
     taskName: [{ required: true, message: "任务名称必填", trigger: "blur" }],
+    deviceId: [{ required: true, message: "设备信息必填", trigger: "blur" }],
     taskDescription: [
       { required: true, message: "任务描述必填", trigger: "blur" }
     ]
@@ -65,6 +66,7 @@ export function useDronesTask() {
       prop: "taskName",
       width: 150
     },
+    { label: "设备ID", prop: "deviceIdString", width: 180 },
     {
       label: "任务描述",
       prop: "taskDescription",
@@ -89,7 +91,6 @@ export function useDronesTask() {
       ),
       width: 100
     },
-    { label: "任务结果", prop: "taskResult", width: 180 },
     { label: "创建时间", prop: "createTime", width: 180 },
     { label: "操作", fixed: "right", minWidth: 180, slot: "operation" }
   ];
@@ -200,6 +201,7 @@ export function useDronesTask() {
   function flowRoute(row) {
     toDetail({
       taskId: row.id,
+      deviceId: row.deviceId,
       taskType: "taskDesign",
       name: row.taskName,
       workflowId: row.workflowUuid ? row.workflowUuid : uuid(5)
