@@ -173,7 +173,7 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
 
     @Override
     public List<SelectOption> getSelectOptions() {
-        List<DronesRouteLibrary> listAll = repository.listAll();
+        List<DronesRouteLibrary> listAll = repository.selectList(null);
         return listAll.stream()
                 .map(item -> new SelectOption(item.getRouteName(), item.getId()))
                 .collect(Collectors.toList());
