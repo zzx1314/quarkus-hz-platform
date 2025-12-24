@@ -80,7 +80,7 @@ export function useDronesTask() {
             row.taskStatus === "成功"
               ? "success"
               : row.taskStatus === "失败"
-                ? "error"
+                ? "danger"
                 : "warning"
           }
         >
