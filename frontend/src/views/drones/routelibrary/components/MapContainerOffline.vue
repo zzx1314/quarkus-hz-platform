@@ -1,5 +1,8 @@
 <template>
   <div class="main">
+    <el-button type="primary" link :icon="useRenderIcon(Back)" @click="back()"
+      >返回</el-button
+    >
     <!-- 顶部选择控件 -->
     <div v-if="type !== 'datadash'" style="margin-top: 10px">
       <el-select
@@ -122,7 +125,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, nextTick } from "vue";
 import {
   dronesRouteLibraryGetRoute,
   dronesRouteLibrarySaveRouteData
@@ -134,6 +137,8 @@ import {
   dronesDeviceStopImage
 } from "@/api/dronesDevice";
 import { dronesCommandIssueCommand } from "@/api/dronesCommand";
+import { useMultiTagsStoreHook } from "@/store/modules/multiTags.js";
+import { router } from "@/store/utils.js";
 
 import { SUCCESS } from "@/api/base";
 import { message } from "@/utils/message";
@@ -145,6 +150,7 @@ import GisLayerPoi from "~icons/gis/layer-poi";
 import LucideDrone from "~icons/lucide/drone";
 import RiRestartFill from "~icons/ri/restart-fill";
 import RiStopCircleLine from "~icons/ri/stop-circle-line";
+import Back from "~icons/ep/back";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks.js";
 
 /* =========================
@@ -626,6 +632,17 @@ function issueCommand(paramsInput) {
     }
   });
 }
+
+/* ======================================================
+ * 返回
+ * ====================================================== */
+const back = async () => {
+  const multiTagsStore = useMultiTagsStoreHook();
+  await router.replace({ path: "/drones/routelibrary/index" });
+  nextTick(() => {
+    multiTagsStore.handleTags("splice", "/drones/routelibrary/planning");
+  });
+};
 
 let timer = null;
 /* =========================
