@@ -111,7 +111,7 @@ public class WebSocketService {
                 }
                 deviceCurrentStream.remove(deviceId);
                 break;
-            case "service":
+            case "server-command":
                 DronesCommandReturn commandReturn = JsonUtil.fromJson(message, DronesCommandReturn.class);
                 String params = commandReturn.getParams().toString();
                 busService.updateCommandReport(commandReturn.getCommandId(), commandReturn.getStatus(), params);
