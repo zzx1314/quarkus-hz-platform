@@ -451,7 +451,10 @@ function issueCommand() {
   const param = {
     taskId: getParameter.taskId,
     type: "server-command",
-    params: rects.value[0]
+    params: {
+      head: "track",
+      data: rects.value[0]
+    }
   };
   dronesCommandIssueCommonCommand(param).then(res => {
     if (res.code === SUCCESS) {
