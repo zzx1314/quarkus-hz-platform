@@ -72,7 +72,7 @@ public class DronesConfigServiceImp implements DronesConfigService {
 
     @Override
     public List<SelectOption> getSelectOptions() {
-        List<DronesConfig> listAll = repository.listAll();
+        List<DronesConfig> listAll = repository.selectList(null);
         return listAll.stream()
                 .map(item -> new SelectOption(item.getConfigName(), item.getId()))
                 .collect(Collectors.toList());

@@ -18,6 +18,7 @@ import org.huazhi.system.sysorg.repository.SysOrgRepository;
 import org.huazhi.util.R;
 import org.huazhi.util.TreeUtil;
 
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Sort;
 import io.quarkus.runtime.util.StringUtil;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -44,7 +45,8 @@ public class SysOrgServiceImp implements SysOrgService {
 
 	@Override
 	public List<SysOrgTreeDto> listOrgTrees(SysOrgQueryDto dto) {
-		List<SysOrg> selectOrgList = sysOrgRepository.listAll(Sort.by("sort asc"));
+		PanacheQuery<SysOrg> panacheQuery = sysOrgRepository.find("isDeleted = ?1", Sort.by("sort asc"), 0);
+		List<SysOrg> selectOrgList = panacheQuery.list();
 		List<SysOrg> resultOrg = new ArrayList<>();
 		if (!selectOrgList.isEmpty()) {
 			// 通过id进行分组

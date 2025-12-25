@@ -89,7 +89,7 @@ public class DronesDeviceServiceImp implements DronesDeviceService {
 
     @Override
     public List<SelectOption> getSelectOptions() {
-        List<DronesDevice> listAll = repository.listAll();
+        List<DronesDevice> listAll = repository.selectList(null);
         return listAll.stream()
                 .map(item -> new SelectOption(item.getDeviceId(), item.getId()))
                 .collect(Collectors.toList());
