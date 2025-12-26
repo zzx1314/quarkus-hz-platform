@@ -15,6 +15,10 @@ const taskId = Array.isArray(route.query.taskId)
   ? route.query.taskId[0]
   : route.query.taskId;
 
+const deviceIdStr = Array.isArray(route.query.deviceId)
+  ? route.query.deviceId[0]
+  : route.query.deviceId;
+
 const modelType = ref(null);
 const routeData = ref(null);
 const modelId = ref(null);
@@ -51,6 +55,7 @@ defineOptions({
       :route-data="routeData"
       :type="type"
       :device-id="deviceId"
+      :device-id-str="deviceIdStr"
       :task-id="taskId"
     />
   </div>

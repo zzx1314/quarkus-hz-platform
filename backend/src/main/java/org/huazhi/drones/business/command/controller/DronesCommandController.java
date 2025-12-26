@@ -68,6 +68,11 @@ public class DronesCommandController {
         return R.ok(dronesCommandService.serverCommand(param));
     }
 
+    /**
+     * 指令下发
+     * @param param
+     * @return
+     */
     @POST
     @Path("/issueCommonCommand")
     @Transactional

@@ -19,15 +19,12 @@ import org.huazhi.drones.business.device.entity.DronesDevice;
 import org.huazhi.drones.business.device.service.DronesDeviceService;
 import org.huazhi.drones.business.services.entity.DronesServices;
 import org.huazhi.drones.business.services.service.DronesServicesService;
-import org.huazhi.drones.business.workflow.entity.DronesWorkflow;
 import org.huazhi.drones.business.workflow.service.DronesWorkflowService;
 import org.huazhi.drones.websocket.service.ConnectionManager;
 import org.huazhi.util.IdUtil;
 import org.huazhi.util.JsonUtil;
 import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 import java.time.LocalDateTime;
 
@@ -182,6 +179,7 @@ public class DronesCommandServiceImp implements DronesCommandService {
 
     /**
      * 下发普通指令
+     *  type: track目标跟踪，deepsort_start，deepsort_stop
      */
     @Override
     public Boolean commonCommand(DronesCommonCommand param) {
@@ -192,9 +190,9 @@ public class DronesCommandServiceImp implements DronesCommandService {
         this.register(command);
         param.setCommandId(command.getId());
 
-        DronesWorkflow dronesWorkflow = workflowService.getWorkflow(param.getTaskId());
+       /*  DronesWorkflow dronesWorkflow = workflowService.getWorkflow(param.getTaskId());
         JsonNode jsonNode = JsonUtil.toJsonObject(dronesWorkflow.getCommandJsonString());
-        param.setDeviceId(jsonNode.path("deviceId").asText());
+        param.setDeviceId(jsonNode.path("deviceId").asText()); */
         connectionManager.sendCommonCommand(param.getDeviceId(), param);
         return true;
     }

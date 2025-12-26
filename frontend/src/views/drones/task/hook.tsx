@@ -241,7 +241,13 @@ export function useDronesTask() {
   }
 
   function datadashBoard(row) {
-    window.open(`/#/datadashboard?type=datadash&taskId=` + row.id, "_blank");
+    window.open(
+      `/#/datadashboard?type=datadash&taskId=` +
+        row.id +
+        `&deviceId=` +
+        row.deviceIdString,
+      "_blank"
+    );
   }
 
   // ---------------------------------

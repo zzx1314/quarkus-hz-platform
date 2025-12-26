@@ -111,6 +111,25 @@
                     :icon="useRenderIcon(RiStopCircleLine)"
                     @click="issueCommand('stop')"
                   />
+                  <el-dropdown @command="handleCommand">
+                    <el-button
+                      link
+                      style="color: #67c23a; font-size: 15px"
+                      type="primary"
+                      :icon="useRenderIcon(DownloadIcon)"
+                      >目标跟踪</el-button
+                    >
+                    <template #dropdown>
+                      <el-dropdown-menu>
+                        <el-dropdown-item command="deepsort_start"
+                          >开启</el-dropdown-item
+                        >
+                        <el-dropdown-item command="deepsort_stop"
+                          >关闭</el-dropdown-item
+                        >
+                      </el-dropdown-menu>
+                    </template>
+                  </el-dropdown>
                 </div>
               </span>
             </div>
@@ -121,6 +140,26 @@
         </el-card>
       </div>
     </div>
+
+    <el-dialog
+      v-model="dialogFormVisibleTreacking"
+      title="目标跟踪"
+      width="500px"
+      @close="cancel"
+    >
+      <div>
+        <el-button
+          type="primary"
+          link
+          :icon="useRenderIcon(Position)"
+          @click="issueCommandServer"
+          >下发跟踪目标</el-button
+        >
+      </div>
+      <div class="img-wrapper">
+        <img ref="videoImgTrack" />
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -137,6 +176,7 @@ import {
   dronesDeviceStopImage
 } from "@/api/dronesDevice";
 import { dronesCommandIssueCommand } from "@/api/dronesCommand";
+import { dronesCommandIssueCommonCommand } from "@/api/dronesCommand";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags.js";
 import { router } from "@/store/utils.js";
 
@@ -151,6 +191,8 @@ import LucideDrone from "~icons/lucide/drone";
 import RiRestartFill from "~icons/ri/restart-fill";
 import RiStopCircleLine from "~icons/ri/stop-circle-line";
 import Back from "~icons/ep/back";
+import Position from "~icons/ep/position";
+import DownloadIcon from "~icons/ep/arrow-down";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks.js";
 
 /* =========================
@@ -160,6 +202,10 @@ const props = defineProps({
   deviceId: {
     type: Number,
     default: null
+  },
+  deviceIdStr: {
+    type: String,
+    default: ""
   },
   taskId: {
     type: String,
@@ -563,6 +609,7 @@ function handlePageClose() {
   if (webSocketImag.value) {
     webSocketImag.value.disconnect();
   }
+  stopWebSocketTrack();
 }
 
 /* =========================
@@ -634,6 +681,106 @@ function issueCommand(paramsInput) {
 }
 
 /* ======================================================
+ * 指令-服务
+ * ====================================================== */
+const dialogFormVisibleTreacking = ref(false);
+function issueCommandServer() {
+  const param = {
+    taskId: props.taskId,
+    deviceId: props.deviceIdStr,
+    type: "server-command",
+    params: {
+      head: "track",
+      data: "1"
+    }
+  };
+  dronesCommandIssueCommonCommand(param).then(res => {
+    if (res.code === SUCCESS) {
+      message("指令下发成功", { type: "success" });
+    } else {
+      message("指令下发失败", { type: "error" });
+    }
+  });
+}
+// 处理服务开启和关闭
+const handleCommand = command => {
+  console.log("handleCommand", command);
+  const param = {
+    taskId: props.taskId,
+    deviceId: props.deviceIdStr,
+    type: "server-command",
+    params: {
+      head: command
+    }
+  };
+  dronesCommandIssueCommonCommand(param).then(res => {
+    if (res.code === SUCCESS) {
+      message("指令下发成功", { type: "success" });
+    } else {
+      message("指令下发失败", { type: "error" });
+    }
+  });
+};
+/* ======================================================
+ * WebSocket--目标跟踪
+ * ====================================================== */
+const videoImgTrack = ref(null);
+const webSocketImagTrack = ref(null);
+let lastObjectUrlTrack = null;
+function startWebSocketTrack() {
+  if (webSocketImagTrack.value) return;
+  webSocketImagTrack.value = new WebSocketClient();
+
+  webSocketImagTrack.value.connect({
+    path: "/api/ws/track",
+    onConnect: () => {
+      console.log("连接成功");
+    },
+    onError: function (error) {
+      console.log("连接失败", error);
+    },
+    onClose: function () {
+      console.log("连接关闭");
+    },
+    onData: function (data) {
+      if (!dialogFormVisibleTreacking.value) {
+        dialogFormVisibleTreacking.value = true;
+      }
+      // 数据处理
+      const blob = new Blob([data], { type: "image/jpeg" });
+      const url = URL.createObjectURL(blob);
+
+      nextTick(() => {
+        if (!videoImgTrack.value) return;
+
+        if (lastObjectUrlTrack) {
+          URL.revokeObjectURL(lastObjectUrlTrack);
+        }
+
+        videoImgTrack.value.src = url;
+        lastObjectUrlTrack = url;
+      });
+    }
+  });
+}
+
+const cancel = () => {
+  dialogFormVisibleTreacking.value = false;
+};
+
+function stopWebSocketTrack() {
+  if (webSocketImagTrack.value) {
+    webSocketImagTrack.value.disconnect();
+    webSocketImagTrack.value = null;
+  }
+
+  if (lastObjectUrlTrack) {
+    URL.revokeObjectURL(lastObjectUrlTrack);
+    lastObjectUrlTrack = null;
+  }
+}
+
+/* ======================================================
  * 返回
  * ====================================================== */
 const back = async () => {
@@ -652,6 +799,7 @@ onMounted(() => {
   startWebscoket();
   renderVideoLoop();
   getModelOptions();
+  startWebSocketTrack();
   startImage();
   window.addEventListener("beforeunload", handlePageClose);
   window.addEventListener("pagehide", handlePageClose);
@@ -676,6 +824,7 @@ onUnmounted(() => {
   window.removeEventListener("beforeunload", handlePageClose);
   window.removeEventListener("pagehide", handlePageClose);
   stopImage();
+  stopWebSocketTrack();
   if (timer) {
     clearInterval(timer);
   }
@@ -778,5 +927,10 @@ canvas {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+}
+
+.img-wrapper {
+  position: relative;
+  display: inline-block;
 }
 </style>
