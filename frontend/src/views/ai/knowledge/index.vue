@@ -126,7 +126,7 @@ const {
             </el-popconfirm>
             <el-dropdown>
               <el-button
-                class="ml-3 mt-[2px]"
+                class="ml-3 mt-0.5"
                 link
                 type="primary"
                 :size="size"
@@ -162,7 +162,7 @@ const {
       :form="{
         columns: columnsForm,
         rules,
-        labelWidth: '100px'
+        labelWidth: '120px'
       }"
       @cancel="cancel"
       @confirm-error="handleSubmitError"

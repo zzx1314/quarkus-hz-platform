@@ -60,12 +60,12 @@ export function useAiKnowledgeBase() {
     {
       label: "知识库名称",
       slot: "content",
-      width: 200
+      width: 150
     },
     {
       label: "知识库类型",
       prop: "knowledgeBaseType",
-      width: 150
+      width: 120
     },
     {
       label: "知识库描述",
@@ -90,12 +90,12 @@ export function useAiKnowledgeBase() {
     {
       label: "创建时间",
       prop: "createTime",
-      width: 180
+      minWidth: 180
     },
     {
       label: "操作",
       fixed: "right",
-      minWidth: 180,
+      width: 180,
       slot: "operation"
     }
   ];

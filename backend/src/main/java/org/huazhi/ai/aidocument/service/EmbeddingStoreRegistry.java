@@ -26,7 +26,7 @@ public class EmbeddingStoreRegistry {
         if (store == null) {
 			store = (EmbeddingStore<T>) PgVectorEmbeddingStore.builder()
 					.host("localhost")
-					.port(5432)
+					.port(5434)
 					.database("knowledge")
 					.user("huzhi")
 					.password("123456")

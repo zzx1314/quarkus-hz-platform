@@ -23,7 +23,7 @@ public class AiDocumentRepository implements PanacheRepository<AiDocument> {
      public List<AiDocument> selectList(AiDocumentQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("knowledgeId", queryDto.getKnowledgeId())
-                .equal("fileName", queryDto.getFileName())
+                .equal("docName", queryDto.getFileName())
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
     }

@@ -25,6 +25,7 @@ import org.huazhi.ai.aiparagraph.entity.dto.AiParagraphQueryDto;
 import org.huazhi.ai.aiparagraph.repository.AiParagraphRepository;
 import org.huazhi.ai.aistatistics.util.DateUtil;
 import org.huazhi.ai.assistant.StreamedAssistant;
+import org.huazhi.config.FileConfig;
 import org.huazhi.util.FileUtil;
 import org.huazhi.util.IdUtil;
 import org.huazhi.util.JsonUtil;
@@ -84,6 +85,9 @@ public class AiDocumentServiceImp implements AiDocumentService {
 
 	@Inject
 	StreamingChatModel streamingChatModel;
+
+	@Inject
+	FileConfig fileConfig;
     @Override
     public List<AiDocument> listEntitys() {
         return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
@@ -188,7 +192,7 @@ public class AiDocumentServiceImp implements AiDocumentService {
 			SplitterStrategy strategy = JsonUtil.fromJson(defaultStrategy, SplitterStrategy.class);
             defaultStrategy = strategy.getStrategy();
 		}
-		Path saveFile = FileUtil.saveFile(file, "/temp");
+		Path saveFile = FileUtil.saveFile(file, fileConfig.basePath() + "/temp");
         Document document = FileSystemDocumentLoader.loadDocument(saveFile);
 
         DocumentSplittingStrategy strategy = documentSplitterFactory.getStrategy(defaultStrategy, null);
@@ -217,7 +221,7 @@ public class AiDocumentServiceImp implements AiDocumentService {
 			// 临时文档
 			File tempFile = new File(storeDto.getTempFilePath());
 			String fileName = "%s%s%s".formatted(IdUtil.simpleUUID(), '_', storeDto.getFileName());
-			FileUtil.saveFile("knowledge/" + aiDocument.getId(), fileName, new FileInputStream(tempFile));
+			FileUtil.saveFile(fileConfig.basePath() + "/knowledge/" + aiDocument.getId(), fileName, new FileInputStream(tempFile));
 
 			EmbeddingStore<Object> knowledgeStore = embeddingStoreRegistry.getStore(aiDocument.getKnowledgeId());
 			// 保存段落

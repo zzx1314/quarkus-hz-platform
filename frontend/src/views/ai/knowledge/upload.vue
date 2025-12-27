@@ -283,8 +283,8 @@ function strategyChange(value) {
             <el-form-item label="分段策略">
               <el-select
                 v-model="formParagraph.splitterStrategy"
-                @change="strategyChange"
                 placeholder="请选择分段策略"
+                @change="strategyChange"
               >
                 <el-option label="长度分段" value="characterSplitter" />
                 <el-option label="标识分段" value="flagSplitter" />

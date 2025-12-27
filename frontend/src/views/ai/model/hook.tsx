@@ -56,7 +56,7 @@ export function useAiModel() {
     {
       label: "模型名称",
       prop: "modelName",
-      width: 100
+      width: 150
     },
     {
       label: "接口地址",
@@ -91,12 +91,12 @@ export function useAiModel() {
     {
       label: "备注",
       prop: "remark",
-      width: 180
+      minWidth: 100
     },
     {
       label: "操作",
       fixed: "right",
-      minWidth: 200,
+      width: 180,
       slot: "operation"
     }
   ];

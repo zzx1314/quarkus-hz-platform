@@ -158,6 +158,7 @@ public class AiDocumentController {
 	 */
     @POST
 	@Path("storeParagraph")
+	@Transactional
 	public R<Object> storeParagraph(List<AiDocumentStoreDto> storeDto) throws Exception {
 		return aiDocumentService.vectorDocument(storeDto);
 	}
