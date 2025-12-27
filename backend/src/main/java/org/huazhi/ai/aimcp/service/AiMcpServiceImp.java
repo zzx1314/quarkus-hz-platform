@@ -45,6 +45,7 @@ import dev.langchain4j.mcp.client.McpClient;
 import dev.langchain4j.mcp.client.transport.McpTransport;
 import dev.langchain4j.mcp.client.transport.stdio.StdioMcpTransport;
 import dev.langchain4j.model.chat.request.json.JsonObjectSchema;
+import dev.langchain4j.service.tool.ToolExecutionResult;
 import io.quarkus.panache.common.Sort;
 import io.quarkus.runtime.util.StringUtil;
 import io.vertx.core.json.JsonObject;
@@ -399,7 +400,8 @@ public class AiMcpServiceImp implements AiMcpService {
 				.name(oneTool.getName())
 				.arguments(arguments)
 				.build();
-		return mcpClient.executeTool(toolExecutionRequest);
+		 ToolExecutionResult executeTool = mcpClient.executeTool(toolExecutionRequest);
+         return executeTool.resultText();
 	}
 
     @Override

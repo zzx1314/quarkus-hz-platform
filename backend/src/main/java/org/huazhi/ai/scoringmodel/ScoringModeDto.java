@@ -3,7 +3,6 @@ package org.huazhi.ai.scoringmodel;
 
 import java.util.List;
 
-import dev.langchain4j.data.segment.TextSegment;
 import lombok.Data;
 
 @Data
@@ -14,7 +13,7 @@ public class ScoringModeDto {
 
     private String answer;
 
-    private List<TextSegment> textSegments;
+    private List<TextSegmentDto> textSegments;
 
 
 }

@@ -49,6 +49,7 @@ import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
 import dev.langchain4j.rag.query.router.LanguageModelQueryRouter;
 import dev.langchain4j.rag.query.router.QueryRouter;
 import dev.langchain4j.service.AiServices;
+import dev.langchain4j.service.TokenStream;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import io.quarkus.panache.common.Sort;
 import io.quarkus.runtime.util.StringUtil;
@@ -58,8 +59,8 @@ import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class AiApplicationServiceImp implements AiApplicationService {
-    @Inject
-    AiApplicationRepository repository;
+	@Inject
+	AiApplicationRepository repository;
 
 	@Inject
 	private AiMcpService aiMcpService;
@@ -93,35 +94,36 @@ public class AiApplicationServiceImp implements AiApplicationService {
 
 	@Inject
 	AiApplicationMapper aiApplicationMapper;
-    @Override
-    public List<AiApplication> listEntitys() {
-        return repository.list("isDeleted = ?1", Sort.by("createTime"),  0);
-    }
 
-    @Override
-    public List<AiApplication> listEntitysByDto(AiApplicationQueryDto sysOrgDto) {
-        return repository.selectList(sysOrgDto);
-    }
+	@Override
+	public List<AiApplication> listEntitys() {
+		return repository.list("isDeleted = ?1", Sort.by("createTime"), 0);
+	}
 
-    @Override
-    public PageResult<AiApplicationVo> listPage(AiApplicationQueryDto queryDto, PageRequest pageRequest) {
+	@Override
+	public List<AiApplication> listEntitysByDto(AiApplicationQueryDto sysOrgDto) {
+		return repository.selectList(sysOrgDto);
+	}
+
+	@Override
+	public PageResult<AiApplicationVo> listPage(AiApplicationQueryDto queryDto, PageRequest pageRequest) {
 		queryDto.setCreateId(securityUtil.getUserId());
 		queryDto.setRoleIdList(securityUtil.getRole());
-        return repository.selectPage(queryDto, pageRequest);
-    }
+		return repository.selectPage(queryDto, pageRequest);
+	}
 
-    @Override
-    public Boolean register(AiApplicationDto aiApplicationDto) {
+	@Override
+	public Boolean register(AiApplicationDto aiApplicationDto) {
 		AiApplication entity = aiApplicationMapper.toEntity(aiApplicationDto);
 		entity.setIsDeleted(0);
-        entity.setCreateTime(LocalDateTime.now());
+		entity.setCreateTime(LocalDateTime.now());
 
 		entity.setCreateId(securityUtil.getUserId());
 		entity.setRoles(aiApplicationDto.getRoleIdList());
 
 		if ("简单应用".equals(aiApplicationDto.getType())) {
 			entity.setKnowledgeIds(String.join(",", aiApplicationDto.getKnowledgeIdList()));
-			if (aiApplicationDto.getMcpIdList() != null && !aiApplicationDto.getMcpIdList().isEmpty()){
+			if (aiApplicationDto.getMcpIdList() != null && !aiApplicationDto.getMcpIdList().isEmpty()) {
 				entity.setMcpIds(String.join(",", aiApplicationDto.getMcpIdList()));
 			}
 
@@ -136,17 +138,17 @@ public class AiApplicationServiceImp implements AiApplicationService {
 			aiProcessService.register(aiProcess);
 		}
 
-        return true;
-    }
+		return true;
+	}
 
-    @Override
-    public List<Long> getApplicationCount() {
-         List<Long> data = new ArrayList<>();
+	@Override
+	public List<Long> getApplicationCount() {
+		List<Long> data = new ArrayList<>();
 		List<Map<String, Object>> applicationCountByDay = repository.getApplicationCountByDay();
 
 		List<String> lastSevenDays = DateUtil.getLastSevenDays();
 
-		if (applicationCountByDay != null  && !applicationCountByDay.isEmpty()) {
+		if (applicationCountByDay != null && !applicationCountByDay.isEmpty()) {
 			// 将数据库统计结果转为 Map<date, count>
 			Map<String, Object> countMap = new HashMap<>();
 			for (Map<String, Object> map : applicationCountByDay) {
@@ -163,16 +165,16 @@ public class AiApplicationServiceImp implements AiApplicationService {
 			}
 		}
 		return data;
-    }
+	}
 
-    @Override
-    public long count() {
-        return repository.count();
-    }
+	@Override
+	public long count() {
+		return repository.count();
+	}
 
-    @Override
-    public List<Long> getApplicationCountBefore() {
-        List<Long> data = new ArrayList<>();
+	@Override
+	public List<Long> getApplicationCountBefore() {
+		List<Long> data = new ArrayList<>();
 		List<Map<String, Object>> applicationCountByDay = repository.getApplicationCountByDay();
 
 		List<String> lastSevenDays = DateUtil.getLast14DaysToLast7Days();
@@ -194,7 +196,7 @@ public class AiApplicationServiceImp implements AiApplicationService {
 			}
 		}
 		return data;
-    }
+	}
 
 	@Override
 	public Multi<String> chat(Long appId, String question, String filepath) {
@@ -205,24 +207,36 @@ public class AiApplicationServiceImp implements AiApplicationService {
 		AiApplication aiApplication = repository.findById(appId);
 		if ("简单应用".equals(aiApplication.getType())) {
 			IntentRecognition intentRecognition = getIntentRecognition(question, chatModel);
-			if (intentRecognition == IntentRecognition.GREETING){
+			if (intentRecognition == IntentRecognition.GREETING) {
 				return Multi.createFrom().items("你好呀，我是clever_copilot智能助手，有什么可以帮你的吗？");
-			} else if (intentRecognition == IntentRecognition.ASK_IDENTITY){
+			} else if (intentRecognition == IntentRecognition.ASK_IDENTITY) {
 				return Multi.createFrom().items("我是clever_copilot智能助手，您可以问我任何问题，我会尽力帮助您。");
 			}
 			assistant = this.simpleAssistant(aiApplication, chatModel, streamingChatModel);
-			return assistant.chatForEachUse(securityUtil.getUserId(), question);
+			return tokenStreamToMulti(
+					assistant.chatForEachUse(securityUtil.getUserId(), question));
 		} else {
-			return this.complexAssistant(aiApplication, chatModel, streamingChatModel, securityUtil.getUserId(), question, filepath);
+			return this.complexAssistant(aiApplication, chatModel, streamingChatModel, securityUtil.getUserId(),
+					question, filepath);
 		}
+	}
+
+	private Multi<String> tokenStreamToMulti(TokenStream tokenStream) {
+		return Multi.createFrom().emitter(emitter -> {
+			tokenStream
+					.onPartialResponse(emitter::emit)
+					.onError(emitter::fail)
+					.onCompleteResponse(r -> emitter.complete())
+					.start();
+		});
 	}
 
 	/**
 	 * 复杂应用
 	 */
 	private Multi<String> complexAssistant(AiApplication aiApplication,
-										  ChatModel chatModel, StreamingChatModel streamingChatModel, Long userId, 
-										  String question, String filepath) {
+			ChatModel chatModel, StreamingChatModel streamingChatModel, Long userId,
+			String question, String filepath) {
 		// 获取流程信息
 		AiProcessNet aiProcessNet = aiProcessService.getAiProcessNet(aiApplication.getId());
 		NodeEntity startNode = aiProcessNet.getStartNode();
@@ -240,26 +254,28 @@ public class AiApplicationServiceImp implements AiApplicationService {
 				.build();
 		// 语义分析
 		IntentRecognition intentRecognition = getIntentRecognition(question, chatModel);
-		if (intentRecognition == IntentRecognition.GREETING){
+		if (intentRecognition == IntentRecognition.GREETING) {
 			return Multi.createFrom().items("你好呀，我是clever_copilot智能助手，有什么可以帮你的吗？");
-		} else if (intentRecognition == IntentRecognition.ASK_IDENTITY){
+		} else if (intentRecognition == IntentRecognition.ASK_IDENTITY) {
 			return Multi.createFrom().items("我是clever_copilot智能助手，您可以问我任何问题，我会尽力帮助您。");
 		}
 		// 执行流程
 		if ("启动".equals(question)) {
-			lastOutput = flowEngine.startProcess(chatModel, edgeMap, nodeMap, currentNodeId, context, lastOutput, filepath);
+			lastOutput = flowEngine.startProcess(chatModel, edgeMap, nodeMap, currentNodeId, context, lastOutput,
+					filepath);
 			// 最后总结输出
 			return Multi.createFrom().items(lastOutput.toString());
 		} else {
 			lastOutput = question;
-			return assistant.chatForEachUse(userId, lastOutput.toString());
+			return tokenStreamToMulti(
+					assistant.chatForEachUse(securityUtil.getUserId(), question));
 		}
 	}
 
 	/**
 	 * 获取意图识别
 	 */
-	private IntentRecognition getIntentRecognition(String question, ChatModel chatModel){
+	private IntentRecognition getIntentRecognition(String question, ChatModel chatModel) {
 		AssistantAnaly assistant = AiServices.create(AssistantAnaly.class, chatModel);
 		IntentRecognition intentRecognition = assistant.analyzeIntention(question);
 		return intentRecognition;
@@ -268,7 +284,8 @@ public class AiApplicationServiceImp implements AiApplicationService {
 	/**
 	 * 简单应用
 	 */
-	private Assistant simpleAssistant(AiApplication aiApplication, ChatModel chatModel, StreamingChatModel streamingChatModel) {
+	private Assistant simpleAssistant(AiApplication aiApplication, ChatModel chatModel,
+			StreamingChatModel streamingChatModel) {
 		Assistant assistant;
 		// 获取知识库信息
 		String knowledgeId = aiApplication.getKnowledgeIds();
@@ -278,8 +295,7 @@ public class AiApplicationServiceImp implements AiApplicationService {
 		Map<Long, String> idToNameMap = aiKnowledgeBases.stream()
 				.collect(Collectors.toMap(
 						AiKnowledgeBase::getId,
-						AiKnowledgeBase::getKnowledgeBaseName
-				));
+						AiKnowledgeBase::getKnowledgeBaseName));
 
 		Map<ContentRetriever, String> retrieverToDescription = new HashMap<>();
 		for (Long oneId : knowledgeIds) {
@@ -299,7 +315,7 @@ public class AiApplicationServiceImp implements AiApplicationService {
 				.queryRouter(queryRouter)
 				.build();
 
-		if (StringUtil.isNullOrEmpty(aiApplication.getMcpIds())) {
+		if (!StringUtil.isNullOrEmpty(aiApplication.getMcpIds())) {
 			McpToolProvider mcpToolProvider = getMcpToolProvider(aiApplication);
 			assistant = AiServices.builder(Assistant.class)
 					.streamingChatModel(streamingChatModel)
@@ -317,17 +333,16 @@ public class AiApplicationServiceImp implements AiApplicationService {
 		return assistant;
 	}
 
-
 	/**
 	 * 获取MCP工具提供者
 	 */
 	private McpToolProvider getMcpToolProvider(AiApplication aiApplication) {
 		McpToolProvider mcpToolProvider;
 		List<Long> mcpIds = Arrays.stream(String.valueOf(aiApplication.getMcpIds()).split(","))
-        .map(String::trim)
-        .filter(s -> !s.isEmpty())
-        .map(Long::parseLong)
-        .collect(Collectors.toList());
+				.map(String::trim)
+				.filter(s -> !s.isEmpty())
+				.map(Long::parseLong)
+				.collect(Collectors.toList());
 
 		List<McpClient> mcpClients = new ArrayList<>();
 		for (Long oneId : mcpIds) {
@@ -338,8 +353,8 @@ public class AiApplicationServiceImp implements AiApplicationService {
 			}
 		}
 		mcpToolProvider = McpToolProvider.builder()
-			   .mcpClients(mcpClients)
-			   .build();
+				.mcpClients(mcpClients)
+				.build();
 		return mcpToolProvider;
 	}
 
@@ -352,9 +367,9 @@ public class AiApplicationServiceImp implements AiApplicationService {
 	public void replaceData(AiApplicationDto aiApplication) {
 		if ("简单应用".equals(aiApplication.getType())) {
 			repository.updateByDto(aiApplication);
-		} else { 
+		} else {
 			// 复杂应用的修改
-		    repository.updateByDto(aiApplication);
+			repository.updateByDto(aiApplication);
 			AiProcessQueryDto dto = new AiProcessQueryDto().setAppId(aiApplication.getId());
 			AiProcess onepRrocess = aiProcessService.listOne(dto);
 			onepRrocess.setNodes(aiApplication.getNodes());

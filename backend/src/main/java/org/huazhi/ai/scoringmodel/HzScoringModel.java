@@ -1,6 +1,5 @@
 package org.huazhi.ai.scoringmodel;
 
-
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.output.Response;
 import dev.langchain4j.model.scoring.ScoringModel;
@@ -32,7 +31,15 @@ public class HzScoringModel implements ScoringModel {
     public Response<List<Double>> scoreAll(List<TextSegment> list, String query) {
         ScoringModeDto dto = new ScoringModeDto();
         dto.setQuestion(query);
-        dto.setTextSegments(list);
+        List<TextSegmentDto> segments = list.stream()
+                .map(segment -> {
+                    TextSegmentDto d = new TextSegmentDto();
+                    d.setText(segment.text());
+                    d.setMetadata(segment.metadata().toMap());
+                    return d;
+                })
+                .toList();
+        dto.setTextSegments(segments);
         List<Double> scores = scoringModeClient.getScoreAll(dto);
         if (scores != null) {
             return Response.from(scores);
