@@ -7,6 +7,7 @@ import dev.langchain4j.model.scoring.ScoringModel;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -33,6 +34,10 @@ public class HzScoringModel implements ScoringModel {
         dto.setQuestion(query);
         dto.setTextSegments(list);
         List<Double> scores = scoringModeClient.getScoreAll(dto);
-        return Response.from(scores);
+        if (scores != null) {
+            return Response.from(scores);
+        } else {
+            return Response.from(new ArrayList<>());
+        }
     }
 }

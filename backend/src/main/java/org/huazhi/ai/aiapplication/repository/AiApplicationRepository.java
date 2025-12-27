@@ -71,6 +71,7 @@ public class AiApplicationRepository implements PanacheRepository<AiApplication>
         nativeQuery.setFirstResult(pageRequest.getPageIndex() * pageRequest.getSize());
         nativeQuery.setMaxResults(pageRequest.getSize());
 
+        @SuppressWarnings("unchecked")
         List<AiApplication> list = nativeQuery.getResultList();
 
         List<AiApplicationVo> result = new ArrayList<>();
