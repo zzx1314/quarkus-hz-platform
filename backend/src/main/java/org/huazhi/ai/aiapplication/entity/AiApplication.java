@@ -53,7 +53,7 @@ public class AiApplication  extends PanacheEntityBase {
 
 	private Integer mixHistory;
 
-	@Column(columnDefinition = "INT DEFAULT 0")
+	@Column(columnDefinition = "INT DEFAULT 0", insertable = false)
 	private Integer isDeleted;
 
 	private String mcpIds;

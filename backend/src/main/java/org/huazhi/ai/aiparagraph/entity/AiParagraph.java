@@ -42,7 +42,7 @@ public class AiParagraph extends PanacheEntityBase {
 
 	private LocalDateTime updateTime;
 
-	@Column(columnDefinition = "INT DEFAULT 0")
+	@Column(columnDefinition = "INT DEFAULT 0", insertable = false)
 	private Integer isDeleted;
 
 	private String vectorId;
