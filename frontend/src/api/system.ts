@@ -47,7 +47,7 @@ const roleUrls = {
   save: "/api/sysRole",
   update: "/api/sysRole",
   deleteById: "/api/sysRole/",
-  listNoLog: `/api/sysRole/listNoLog`
+  getSelectOption: `/api/sysRole/getSelectOption`
 };
 
 const menuUrls = {
@@ -360,7 +360,7 @@ export const listAllRole = () => {
 
 /** 获取所有角色下拉菜单 */
 export const getRoleSelectList = () => {
-  return http.axiosGetRequest<Result>(roleUrls.listNoLog, {});
+  return http.axiosGetRequest<Result>(roleUrls.getSelectOption, {});
 };
 
 /** 菜单页面 */
