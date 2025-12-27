@@ -365,7 +365,7 @@ async function fetchStreamWithFetch() {
   question = question.replace(/\n+$/, "");
   if (props.chatType === "知识库") {
     response = await fetch(
-      "/api/upms/aiDocument/hitTest?message=" +
+      "/api/aiDocument/hitTest?message=" +
         question +
         "&knowledgeBaseId=" +
         props.knowledgeId,
@@ -378,7 +378,7 @@ async function fetchStreamWithFetch() {
     );
   } else {
     response = await fetch(
-      "/api/upms/aiApplication/chat?message=" +
+      "/api/aiApplication/chat?message=" +
         question +
         "&appId=" +
         props.applicationId,
@@ -439,7 +439,7 @@ async function fetchStreamWithFile(param: any) {
   queryInfos.value.messages.push({ role: "assistant", content: "" });
   const token = getToken().accessToken;
   let response = null;
-  response = await fetch("/api/upms/aiApplication/chatFile", {
+  response = await fetch("/api/aiApplication/chatFile", {
     method: "POST",
     body: param,
     headers: {

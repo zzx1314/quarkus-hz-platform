@@ -110,6 +110,8 @@ public class AiModelServiceImp implements AiModelService {
 				.baseUrl(mode.getBaseUrl())
 				.apiKey(mode.getApiKey())
 				.modelName(mode.getModelName())
+                .logRequests(true)
+                .logResponses(true)
 				.build();
     }
 

@@ -34,7 +34,7 @@ public class AiModelRepository implements PanacheRepository<AiModel> {
     public AiModel selectOne(AiModelQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
                 .equal("id", queryDto.getId())
-                .equal("modeType", queryDto.getModelType())
+                .equal("modelType", queryDto.getModelType())
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).singleResult();
     }
