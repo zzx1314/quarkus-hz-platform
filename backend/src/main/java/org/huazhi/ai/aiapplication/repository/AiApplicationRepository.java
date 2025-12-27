@@ -20,21 +20,17 @@ import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
 import org.huazhi.util.QueryBuilder;
 
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.panache.common.Page;
 import io.quarkus.runtime.util.StringUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
 
 @ApplicationScoped
 public class AiApplicationRepository implements PanacheRepository<AiApplication> {
     @Inject
     AiApplicationMapper mapper;
-
-    @PersistenceContext
-    EntityManager em;
 
     public List<AiApplication> selectList(AiApplicationQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
@@ -43,49 +39,63 @@ public class AiApplicationRepository implements PanacheRepository<AiApplication>
         return find(qb.getQuery(), qb.getParams()).list();
     }
 
-    public PageResult<AiApplicationVo> selectPage(AiApplicationQueryDto dto, PageRequest pageRequest) {
+    public PageResult<AiApplicationVo> selectPage(
+            AiApplicationQueryDto dto,
+            PageRequest pageRequest) {
 
-        QueryBuilder qb = QueryBuilder.create()
-                .equal("isDeleted", 0)
-                .arrayOverlap("roles", dto.getRoleIdList())
-                .equal("createId", dto.getCreateId())
-                .between("createTime", dto.getBeginTime(), dto.getEndTime())
-                .orderBy("createTime desc");
+        StringBuilder jpql = new StringBuilder();
+        Map<String, Object> params = new HashMap<>();
 
-        String whereSql = qb.getQuery()
-                .replace("isDeleted =", "is_deleted =")
-                .replace("createId =", "create_id =")
-                .replace("createTime", "create_time");
+        jpql.append("isDeleted = 0 ");
 
-        String sql = """
-                SELECT *
-                FROM ai_application
-                WHERE %s
-                """.formatted(whereSql);
+        // createId
+        if (dto.getCreateId() != null) {
+            jpql.append("and createId = :createId ");
+            params.put("createId", dto.getCreateId());
+        }
 
-        Query nativeQuery = em.createNativeQuery(sql, AiApplication.class);
+        // roles（等价于 roles && roleIdList）
+        if (dto.getRoleIdList() != null && !dto.getRoleIdList().isEmpty()) {
+            jpql.append("and (");
+            for (int i = 0; i < dto.getRoleIdList().size(); i++) {
+                String key = "role" + i;
+                if (i > 0) {
+                    jpql.append(" or ");
+                }
+                jpql.append(":").append(key).append(" member of roles");
+                params.put(key, dto.getRoleIdList().get(i));
+            }
+            jpql.append(") ");
+        }
 
-        // 参数名与 SQL 中完全一致（:isDeleted / :createId / :roles_arr）
-        qb.getParams().forEach(nativeQuery::setParameter);
+        // 时间范围
+        if (dto.getBeginTime() != null && dto.getEndTime() != null) {
+            jpql.append("and createTime between :beginTime and :endTime ");
+            params.put("beginTime", dto.getBeginTime());
+            params.put("endTime", dto.getEndTime());
+        }
 
-        nativeQuery.setFirstResult(pageRequest.getPageIndex() * pageRequest.getSize());
-        nativeQuery.setMaxResults(pageRequest.getSize());
+        jpql.append("order by createTime desc");
 
-        @SuppressWarnings("unchecked")
-        List<AiApplication> list = nativeQuery.getResultList();
+        PanacheQuery<AiApplication> query = AiApplication.find(jpql.toString(), params);
 
+        // 分页
+        query.page(Page.of(pageRequest.getPageIndex(), pageRequest.getSize()));
+
+        List<AiApplication> list = query.list();
+        long total = query.count();
+
+        // ===== VO 转换 =====
         List<AiApplicationVo> result = new ArrayList<>();
         for (AiApplication aiApplication : list) {
 
             AiApplicationVo vo = mapper.toVo(aiApplication);
             vo.setCreateUsername(aiApplication.getSysUser().getUsername());
 
-            // 修复 isNullOrEmpty 反逻辑问题
             if (!StringUtil.isNullOrEmpty(aiApplication.getKnowledgeIds())) {
                 String[] kArray = aiApplication.getKnowledgeIds().split(",");
-                vo.setKnowledgeIdList(Arrays.stream(kArray)
-                        .map(Integer::parseInt)
-                        .toList());
+                vo.setKnowledgeIdList(
+                        Arrays.stream(kArray).map(Integer::parseInt).toList());
                 vo.setKnowledgeCount(kArray.length);
             } else {
                 vo.setKnowledgeCount(0);
@@ -93,38 +103,19 @@ public class AiApplicationRepository implements PanacheRepository<AiApplication>
 
             if (!StringUtil.isNullOrEmpty(aiApplication.getMcpIds())) {
                 String[] mArray = aiApplication.getMcpIds().split(",");
-                vo.setMcpIdList(Arrays.stream(mArray)
-                        .map(Integer::parseInt)
-                        .toList());
+                vo.setMcpIdList(
+                        Arrays.stream(mArray).map(Integer::parseInt).toList());
                 vo.setMcpCount(mArray.length);
             } else {
                 vo.setMcpCount(0);
             }
 
-            if (aiApplication.getRoles() != null && !aiApplication.getRoles().isEmpty()) {
+            if (aiApplication.getRoles() != null) {
                 vo.setRoleIdList(aiApplication.getRoles());
             }
 
             result.add(vo);
         }
-
-        /**
-         * ===== COUNT SQL =====
-         */
-        String countSql = """
-                SELECT COUNT(*)
-                FROM ai_application
-                WHERE %s
-                """.formatted(
-                // 去掉 order by
-                whereSql.replaceAll("order by[\\s\\S]*$", ""));
-
-        Query countQuery = em.createNativeQuery(countSql);
-
-        //  复用同一套参数
-        qb.getParams().forEach(countQuery::setParameter);
-
-        long total = ((Number) countQuery.getSingleResult()).longValue();
 
         return new PageResult<>(
                 result,

@@ -86,15 +86,6 @@ public class QueryBuilder {
         return this;
     }
 
-    public QueryBuilder arrayOverlap(String field, Collection<? extends Number> values) {
-        if (values != null && !values.isEmpty()) {
-            String paramName = field + "_arr";
-            query.add(getFieldWithAlias(field) + " && :" + paramName);
-            params.put(paramName, values.toArray(new Number[0]));
-        }
-        return this;
-    }
-
     public QueryBuilder orderBy(String orderByClause) {
         if (orderByClause != null && !orderByClause.trim().isEmpty()) {
             this.orderByClause = " order by " + (alias.isEmpty() ? "" : alias + ".") + orderByClause;

@@ -8,7 +8,9 @@ import org.huazhi.system.sysuser.entity.SysUser;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -65,8 +67,13 @@ public class AiApplication  extends PanacheEntityBase {
 
 	private Boolean isSetup;
 
-	@Column(columnDefinition = "bigint[]")
-    private List<Long> roles;
+	@ElementCollection
+    @CollectionTable(
+            name = "ai_application_roles",
+            joinColumns = @JoinColumn(name = "application_id")
+    )
+    @Column(name = "role_id")
+    public List<Long> roles;
 
 	private Long createId;
 
