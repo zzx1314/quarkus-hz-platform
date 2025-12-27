@@ -78,7 +78,7 @@ export function useAiDocument() {
     {
       label: "文件名称",
       slot: "content",
-      width: 250
+      minWidth: 200
     },
     {
       label: "字符数",
@@ -144,7 +144,7 @@ export function useAiDocument() {
     {
       label: "操作",
       fixed: "right",
-      minWidth: 180,
+      minWidth: 150,
       slot: "operation"
     }
   ];

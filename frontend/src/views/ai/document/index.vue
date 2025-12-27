@@ -230,7 +230,7 @@ onMounted(() => {
 <template>
   <div class="main">
     <el-row :gutter="6">
-      <el-col :span="4">
+      <el-col :span="3">
         <el-card shadow="never">
           <div :style="{ height: `calc(100vh - ${offsetHeight}px)` }">
             <div class="mb-2">
@@ -276,7 +276,7 @@ onMounted(() => {
           </div>
         </el-card>
       </el-col>
-      <el-col :span="20">
+      <el-col :span="21">
         <div v-if="selectLabel === '文档'">
           <el-card class="my-card">
             <PlusSearch
