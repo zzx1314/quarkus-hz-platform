@@ -37,15 +37,5 @@ export default [
       showLink: false,
       rank: 103
     }
-  },
-  {
-    path: "/datadashboard",
-    name: "datadashboardIndex",
-    component: () => import("@/views/drones/datadashboard/index.vue"),
-    meta: {
-      title: "无人机数据看板",
-      showLink: false,
-      rank: 104
-    }
   }
 ] satisfies Array<RouteConfigsTable>;
