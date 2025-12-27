@@ -1,0 +1,87 @@
+package org.huazhi.ai.aimodel.controller;
+
+import java.util.List;
+
+import org.huazhi.ai.aimodel.entity.AiModel;
+import org.huazhi.ai.aimodel.entity.dto.AiModelDto;
+import org.huazhi.ai.aimodel.entity.dto.AiModelQueryDto;
+import org.huazhi.ai.aimodel.service.AiModelService;
+import org.huazhi.util.PageRequest;
+import org.huazhi.util.PageResult;
+import org.huazhi.util.R;
+
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.BeanParam;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+
+@Path("/aiModel")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class AiModelController {
+    @Inject
+    AiModelService aiModelService;
+
+
+    @GET
+    @Path("/getPage")
+    public R<PageResult<AiModel>> getPage(@BeanParam AiModelQueryDto dto, @BeanParam PageRequest pageRequest) {
+        return R.ok(aiModelService.listPage(dto, pageRequest));
+    }
+
+    @GET
+    @Path("/getByDto")
+    public R<List<AiModel>> getByDto(@BeanParam AiModelQueryDto dto) {
+        return R.ok(aiModelService.listEntitysByDto(dto));
+    }
+
+    @GET
+    @Path("/getAll")
+    public R<List<AiModel>> getAll() {
+        return R.ok(aiModelService.listEntitys());
+    }
+
+    @POST
+    @Path("/create")
+    @Transactional
+    public R<Boolean> create(AiModel entity) {
+        return R.ok(aiModelService.register(entity));
+    }
+
+    @PUT
+    @Path("/update")
+    public R<Object> update(AiModelDto dto) {
+        aiModelService.replaceByDto(dto);
+        return R.ok("success");
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @Transactional
+    public R<Void> delete(@PathParam("id") Long id) {
+        AiModel entity = AiModel.findById(id);
+        if (entity == null) {
+            throw new NotFoundException();
+        }
+        entity.setIsDeleted(1);
+        entity.persist();
+        return R.ok();
+    }
+
+    @GET
+    @Path("allSelectOption")
+	public R<Object> findAllBySelectOption() {
+		return R.ok(aiModelService.findAllBySelectOption());
+	}
+
+
+}
