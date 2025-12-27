@@ -298,6 +298,7 @@ public class AiDocumentServiceImp implements AiDocumentService {
 		aiDocument.setSplitterFlag(storeDto.getFlag());
 		aiDocument.setSplitterLength(storeDto.getLength());
 		aiDocument.setSplitterStrategy(storeDto.getStrategy());
+		aiDocument.setIsDeleted(0);
 		if (aiDocument.getId() == null){
 			repository.persist(aiDocument);
 		} else {

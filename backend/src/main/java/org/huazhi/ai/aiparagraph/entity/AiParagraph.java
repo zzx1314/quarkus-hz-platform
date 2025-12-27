@@ -29,6 +29,7 @@ public class AiParagraph extends PanacheEntityBase {
 	@GeneratedValue
 	private Long id;
 
+	@Column(columnDefinition = "TEXT")
 	private String content;
 
 	private Integer characterNumber;
@@ -46,6 +47,7 @@ public class AiParagraph extends PanacheEntityBase {
 
 	private String vectorId;
 
+	@Column(columnDefinition = "TEXT")
 	private String metadata;
 
 
