@@ -3,19 +3,19 @@ import { useDark, useECharts } from "@pureadmin/utils";
 import { type PropType, ref, computed, watch, nextTick } from "vue";
 
 const props = defineProps({
-  deviceData: {
+  mcpData: {
     type: Array as PropType<Array<number>>,
     default: () => []
   },
-  modelData: {
+  applicationData: {
     type: Array as PropType<Array<number>>,
     default: () => []
   },
-  routeData: {
+  documentData: {
     type: Array as PropType<Array<number>>,
     default: () => []
   },
-  taskData: {
+  aiKnowledgeBaseData: {
     type: Array as PropType<Array<number>>,
     default: () => []
   }
@@ -49,7 +49,7 @@ watch(
         right: 0
       },
       legend: {
-        data: ["设备数量", "模型数量", "航线数量", "任务数量"],
+        data: ["知识库数量", "应用数量", "MCP数量", "文档数量"],
         textStyle: {
           color: "#606266",
           fontSize: "0.875rem"
@@ -82,44 +82,44 @@ watch(
       ],
       series: [
         {
-          name: "设备数量",
+          name: "知识库数量",
           type: "bar",
           barWidth: 10,
           itemStyle: {
             color: "#41b6ff",
             borderRadius: [10, 10, 0, 0]
           },
-          data: props.deviceData
+          data: props.aiKnowledgeBaseData
         },
         {
-          name: "模型数量",
+          name: "应用数量",
           type: "bar",
           barWidth: 10,
           itemStyle: {
             color: "#e86033ce",
             borderRadius: [10, 10, 0, 0]
           },
-          data: props.modelData
+          data: props.applicationData
         },
         {
-          name: "航线数量",
+          name: "MCP数量",
           type: "bar",
           barWidth: 10,
           itemStyle: {
             color: "#5BECABFF",
             borderRadius: [10, 10, 0, 0]
           },
-          data: props.routeData
+          data: props.mcpData
         },
         {
-          name: "任务数量",
+          name: "文档数量",
           type: "bar",
           barWidth: 10,
           itemStyle: {
             color: "#BA53FFFF",
             borderRadius: [10, 10, 0, 0]
           },
-          data: props.taskData
+          data: props.documentData
         }
       ]
     });

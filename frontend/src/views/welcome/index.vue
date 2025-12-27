@@ -9,7 +9,7 @@ import {
   statisticsAll,
   statisticsAllType,
   statisticsDocNumber
-} from "@/api/dronesStatistics";
+} from "@/api/aiStatistics";
 import RiBloggerLine from "~icons/ri/blogger-line";
 import Tools from "~icons/ep/tools";
 import Box from "~icons/ep/box";
@@ -23,16 +23,16 @@ defineOptions({
 const chartData = ref([]);
 const barChartData = ref([
   {
-    deviceCount: [],
-    modelCount: [],
-    routeCount: [],
-    taskCount: []
+    knowledgeBaseCount: [],
+    documentCount: [],
+    applicationCount: [],
+    mcpCount: []
   },
   {
-    deviceCount: [],
-    modelCount: [],
-    routeCount: [],
-    taskCount: []
+    knowledgeBaseCount: [],
+    documentCount: [],
+    applicationCount: [],
+    mcpCount: []
   }
 ]);
 const docChatData = ref({
@@ -86,7 +86,7 @@ const optionsBasis: Array<OptionsType> = [
         v-for="(item, index) in chartData"
         :key="index"
         v-motion
-        class="mb-[18px]"
+        class="mb-4.5"
         :value="6"
         :md="12"
         :sm="12"
@@ -145,7 +145,7 @@ const optionsBasis: Array<OptionsType> = [
 
       <re-col
         v-motion
-        class="mb-[18px]"
+        class="mb-4.5"
         :value="12"
         :xs="24"
         :initial="{
@@ -167,10 +167,10 @@ const optionsBasis: Array<OptionsType> = [
           </div>
           <div class="flex justify-between items-start mt-3">
             <ChartBar
-              :device-data="barChartData[curWeek].deviceCount"
-              :model-data="barChartData[curWeek].modelCount"
-              :route-data="barChartData[curWeek].routeCount"
-              :task-data="barChartData[curWeek].taskCount"
+              :ai-knowledge-base-data="barChartData[curWeek].knowledgeBaseCount"
+              :document-data="barChartData[curWeek].documentCount"
+              :application-data="barChartData[curWeek].applicationCount"
+              :mcp-data="barChartData[curWeek].mcpCount"
             />
           </div>
         </el-card>
@@ -178,7 +178,7 @@ const optionsBasis: Array<OptionsType> = [
 
       <re-col
         v-motion
-        class="mb-[18px]"
+        class="mb-4.5"
         :value="12"
         :xs="24"
         :initial="{
@@ -195,7 +195,7 @@ const optionsBasis: Array<OptionsType> = [
       >
         <el-card shadow="never">
           <div class="flex justify-between">
-            <span class="text-md font-medium">设备统计</span>
+            <span class="text-md font-medium">文档统计</span>
           </div>
           <div class="flex justify-between items-start mt-4">
             <DocNumBer

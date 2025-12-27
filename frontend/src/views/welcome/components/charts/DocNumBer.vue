@@ -44,7 +44,7 @@ watch(
         legend: {
           //@ts-expect-error
           right: true,
-          data: ["设备数量"]
+          data: ["文档数量"]
         },
         xAxis: [
           {
@@ -67,7 +67,7 @@ watch(
         ],
         series: [
           {
-            name: "设备数量",
+            name: "文档数量",
             type: "bar",
             barWidth: "5%",
             itemStyle: {
