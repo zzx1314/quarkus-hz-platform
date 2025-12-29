@@ -17,6 +17,37 @@ export function useCollectorBusDevForm() {
 
   const columnsQueryForm: PlusColumn[] = [
     {
+      label: "模型名称",
+      prop: "modelName",
+      valueType: "copy",
+      colProps: {
+        span: 5
+      }
+    },
+    {
+      label: "模型类型",
+      prop: "modelType",
+      valueType: "select",
+      options: [
+        {
+          label: "地图",
+          value: "地图"
+        },
+        {
+          label: "视觉",
+          value: "视觉"
+        }
+      ],
+      colProps: {
+        span: 5
+      },
+      formItemProps: {
+        style: {
+          width: "90%"
+        }
+      }
+    },
+    {
       label: "文件名称",
       prop: "fileName",
       valueType: "copy",

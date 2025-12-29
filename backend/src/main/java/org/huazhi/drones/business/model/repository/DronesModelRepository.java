@@ -44,6 +44,7 @@ public class DronesModelRepository implements PanacheRepository<DronesModel> {
                 .equal("isDeleted", 0)
                 .like("modelName", dto.getModelName())
                 .like("modelType", dto.getModelType())
+                .like("fileName", dto.getFileName())
                 .between("createTime", dto.getBeginTime(), dto.getEndTime())
                 .orderBy("createTime desc");
 

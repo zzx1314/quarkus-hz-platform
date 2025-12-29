@@ -27,4 +27,7 @@ public class DronesModelQueryDto {
      */
     @QueryParam("modelType")
     private String modelType;
+
+    @QueryParam("fileName")
+    private String fileName;
 }
