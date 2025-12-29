@@ -66,7 +66,7 @@ export function useDronesRouteLibrary() {
       width: 150
     },
     {
-      label: "路线类型",
+      label: "航线类型",
       prop: "routeType",
       width: 100,
       cellRenderer: ({ row, props }) => (
@@ -79,7 +79,7 @@ export function useDronesRouteLibrary() {
       )
     },
     {
-      label: "路线状态",
+      label: "航线状态",
       prop: "isEnable",
       width: 100,
       cellRenderer: scope => (
@@ -97,7 +97,7 @@ export function useDronesRouteLibrary() {
       )
     },
     {
-      label: "路线描述",
+      label: "航线描述",
       prop: "routeDescription",
       minWidth: 100
     },

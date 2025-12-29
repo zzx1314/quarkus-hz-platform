@@ -40,6 +40,52 @@ export function useCollectorBusDevForm() {
       }
     },
     {
+      label: "航线类型",
+      prop: "routeType",
+      valueType: "select",
+      options: [
+        {
+          label: "离线地图",
+          value: "离线地图"
+        },
+        {
+          label: "在线地图",
+          value: "在线地图"
+        }
+      ],
+      colProps: {
+        span: 5
+      },
+      formItemProps: {
+        style: {
+          width: "90%"
+        }
+      }
+    },
+    {
+      label: "航线状态",
+      prop: "routeStatus",
+      valueType: "select",
+      options: [
+        {
+          label: "启用",
+          value: "启用"
+        },
+        {
+          label: "停用",
+          value: "停用"
+        }
+      ],
+      colProps: {
+        span: 5
+      },
+      formItemProps: {
+        style: {
+          width: "90%"
+        }
+      }
+    },
+    {
       label: "开始时间",
       prop: "beginTime",
       valueType: "date-picker",
