@@ -297,7 +297,7 @@ const actionListOptions = ref([
     value: "HOVER"
   },
   {
-    label: "航点动作",
+    label: "GOTO动作",
     value: "GOTO"
   },
   {
@@ -308,10 +308,10 @@ const actionListOptions = ref([
     label: "启动YOLO",
     value: "SERVICE_START_YOLO"
   },
-  {
+  /* {
     label: "启动DEEPSORT",
     value: "SERVICE_START_DEEPSORT"
-  },
+  }, */
   {
     label: "启动RTSP",
     value: "SERVICE_START_RTSP"
@@ -320,10 +320,10 @@ const actionListOptions = ref([
     label: "停止YOLO",
     value: "SERVICE_STOP_YOLO"
   },
-  {
+  /* {
     label: "停止DEEPSORT",
     value: "SERVICE_STOP_DEEPSORT"
-  },
+  }, */
   {
     label: "停止RTSP",
     value: "SERVICE_STOP_RTSP"
@@ -472,7 +472,7 @@ onBeforeUnmount(() => {
             actionForm.action.type === 'GOTO' &&
             !props.isShowCustomPoint
           "
-          label="航点动作"
+          label="GOTO动作"
           required
           prop="action.params.targetWpStr"
         >
