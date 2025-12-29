@@ -36,6 +36,41 @@ export function useCollectorBusDevForm() {
       }
     },
     {
+      label: "设备ID",
+      prop: "deviceIdString",
+      valueType: "copy",
+      colProps: {
+        span: 5
+      }
+    },
+    {
+      label: "任务状态",
+      prop: "taskStatus",
+      valueType: "select",
+      options: [
+        {
+          label: "未开始",
+          value: "未开始"
+        },
+        {
+          label: "进行中",
+          value: "进行中"
+        },
+        {
+          label: "已完成",
+          value: "已完成"
+        }
+      ],
+      colProps: {
+        span: 5
+      },
+      formItemProps: {
+        style: {
+          width: "90%"
+        }
+      }
+    },
+    {
       label: "开始时间",
       prop: "beginTime",
       valueType: "date-picker",

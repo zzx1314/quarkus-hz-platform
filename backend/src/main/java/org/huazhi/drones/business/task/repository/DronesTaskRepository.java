@@ -63,6 +63,7 @@ public class DronesTaskRepository implements PanacheRepository<DronesTask> {
         QueryBuilder qb = QueryBuilder.create()
                 .alias("t")
                 .equal("isDeleted", 0)
+                .like("device.deviceId", dto.getDeviceIdString())
                 .like("taskName", dto.getTaskName())
                 .like("taskDescription", dto.getTaskDescription())
                 .like("taskStatus", dto.getTaskStatus())

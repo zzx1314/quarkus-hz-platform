@@ -34,4 +34,11 @@ public class DronesTaskQueryDto {
     @QueryParam("taskStatus")
     private String taskStatus;
 
+
+    /**
+     * 设备ID
+     */
+    @QueryParam("deviceIdString")
+    private String deviceIdString;
+
 }

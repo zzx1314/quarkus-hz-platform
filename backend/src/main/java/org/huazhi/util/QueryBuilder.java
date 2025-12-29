@@ -29,8 +29,9 @@ public class QueryBuilder {
 
     public QueryBuilder like(String field, String value) {
         if (value != null && !value.trim().isEmpty()) {
-            query.add(getFieldWithAlias(field) + " like :" + field);
-            params.put(field, "%" + value.trim() + "%");
+            String param = field.replace(".", "_");
+            query.add(getFieldWithAlias(field) + " like :" + param);
+            params.put(param, "%" + value.trim() + "%");
         }
         return this;
     }
