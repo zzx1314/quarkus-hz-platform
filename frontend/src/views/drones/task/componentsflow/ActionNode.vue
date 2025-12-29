@@ -385,6 +385,7 @@ watch(
 
 onMounted(() => {
   registerNodeRef?.(props.id, { validate });
+  updateNodeData(props.id, actionForm.value);
 });
 onBeforeUnmount(() => {
   unregisterNodeRef?.(props.id);

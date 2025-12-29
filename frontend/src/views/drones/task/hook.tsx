@@ -79,7 +79,7 @@ export function useDronesTask() {
         <el-tag
           size={props.size}
           type={
-            row.taskStatus === "成功"
+            row.taskStatus === "已完成"
               ? "success"
               : row.taskStatus === "失败"
                 ? "danger"
