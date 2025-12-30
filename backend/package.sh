@@ -113,6 +113,52 @@ else
   echo "2. 跳过 Docker 镜像构建"
 fi
 
+
+# =========================================================
+# Docker 镜像导出 & 传输 & 远程加载 & 重启
+# =========================================================
+if [ "$BUILD_BACKEND" = true ] && [ "$BUILD_IMAGE" = true ]; then
+  IMAGE_TAR="hz-server.tar"
+  REMOTE_USER="root"
+  REMOTE_HOST="192.168.41.225"
+  REMOTE_PATH="/root/dockerimages"
+
+  echo "3. 导出 Docker 镜像到 $IMAGE_TAR..."
+  $SUDO docker save -o "$IMAGE_TAR" "$IMAGE_NAME"
+  echo "✅ 镜像导出完成: $IMAGE_TAR"
+
+  echo "4. 使用 scp 传输到远程服务器 $REMOTE_HOST:$REMOTE_PATH ..."
+  $SUDO scp "$IMAGE_TAR" "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}"
+  echo "✅ 镜像已传输完成"
+
+  echo "5. 删除本地镜像文件 $IMAGE_TAR ..."
+  rm -rf "$IMAGE_TAR"
+
+  echo "6. 在远程服务器加载镜像并重启服务..."
+  ssh "${REMOTE_USER}@${REMOTE_HOST}" bash -c "'
+    set -e
+    cd ${REMOTE_PATH}
+
+    echo \"1. 加载 Docker 镜像 ${IMAGE_TAR}...\"
+    docker load -i ${IMAGE_TAR}
+
+    echo \"2. 查看 dangling 镜像...\"
+    docker images -f dangling=true
+
+    echo \"3. 清理 dangling 镜像...\"
+    docker image prune -f
+
+    echo \"4. 重启 Docker Compose 服务...\"
+    cd /root/dockercompose/drones
+    docker-compose down
+    docker-compose up -d
+
+    echo \"✅ 远程服务器操作完成\"
+  '"
+else
+  echo "3. 跳过 Docker 镜像导出、传输及远程操作"
+fi
+
 # =========================================================
 # Docker Compose
 # =========================================================
