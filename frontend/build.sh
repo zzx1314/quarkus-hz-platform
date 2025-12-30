@@ -44,6 +44,24 @@ if [ -d "$TARGET_DIR/dist" ]; then
   fi
 fi
 
+# ----远程部署---
+REMOTE_USER="root"
+REMOTE_HOST="192.168.41.225"
+REMOTE_DIR="/home/root/dockerdata/nginx/html"
+
+info "开始部署到远程服务器 $REMOTE_HOST ..."
+
+# 1. 删除远程旧的 dist 目录
+info "删除远程服务器上的旧 dist 目录..."
+ssh ${REMOTE_USER}@${REMOTE_HOST} "rm -rf ${REMOTE_DIR}/dist" && success "远程旧 dist 已删除" || { error "远程删除 dist 失败"; exit 1; }
+
+# 2. 使用 scp 拷贝新的 dist 目录
+info "上传新的 dist 目录到远程服务器..."
+scp -r dist ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/ && success "dist 上传成功" || { error "dist 上传失败"; exit 1; }
+
+success "远程部署完成！"
+
+
 info "移动新的 dist 目录到目标位置..."
 # 移动新的 dist 目录
 if sudo mv dist "$TARGET_DIR/"; then
