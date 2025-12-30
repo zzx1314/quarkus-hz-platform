@@ -10,16 +10,6 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 
 # -----------------------------
-# root / sudo 处理
-# -----------------------------
-if [[ $EUID -eq 0 ]]; then
-  echo "⚠️ 不建议以 root 用户运行此脚本"
-  SUDO=""
-else
-  SUDO="sudo"
-fi
-
-# -----------------------------
 # 默认选项
 # -----------------------------
 BUILD_BACKEND=true
@@ -107,7 +97,7 @@ if [ "$BUILD_BACKEND" = true ] && [ "$BUILD_IMAGE" = true ]; then
     DOCKERFILE="src/main/docker/Dockerfile.jvm"
   fi
 
-  $SUDO docker build -f "$DOCKERFILE" -t "$IMAGE_NAME" .
+  docker build -f "$DOCKERFILE" -t "$IMAGE_NAME" .
   echo "✅ Docker 镜像构建完成: $IMAGE_NAME"
 else
   echo "2. 跳过 Docker 镜像构建"
@@ -124,11 +114,11 @@ if [ "$BUILD_BACKEND" = true ] && [ "$BUILD_IMAGE" = true ]; then
   REMOTE_PATH="/root/dockerimages"
 
   echo "3. 导出 Docker 镜像到 $IMAGE_TAR..."
-  $SUDO docker save -o "$IMAGE_TAR" "$IMAGE_NAME"
+  docker save -o "$IMAGE_TAR" "$IMAGE_NAME"
   echo "✅ 镜像导出完成: $IMAGE_TAR"
 
   echo "4. 使用 scp 传输到远程服务器 $REMOTE_HOST:$REMOTE_PATH ..."
-  $SUDO scp "$IMAGE_TAR" "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}"
+  scp "$IMAGE_TAR" "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}"
   echo "✅ 镜像已传输完成"
 
   echo "5. 删除本地镜像文件 $IMAGE_TAR ..."
@@ -168,8 +158,8 @@ if [ "$BUILD_BACKEND" = true ] && [ "$RESTART_SERVICES" = true ]; then
   COMPOSE_FILE="src/main/docker/dockercompose/docker-compose.yml"
 
   if [ -f "$COMPOSE_FILE" ]; then
-    $SUDO docker compose -f "$COMPOSE_FILE" down
-    $SUDO docker compose -f "$COMPOSE_FILE" up -d
+    docker compose -f "$COMPOSE_FILE" down
+    docker compose -f "$COMPOSE_FILE" up -d
     echo "✅ 服务重启完成"
   else
     echo "⚠️ Docker Compose 文件不存在: $COMPOSE_FILE"
