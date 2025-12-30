@@ -15,6 +15,7 @@ services:
       - "5433:5432"
     volumes:
       - /home/root/dockerdata/postgres-drones/data:/var/lib/postgresql/data
+    restart: always
   redis:
     image: redis:8
     container_name: quarkus-redis
@@ -23,6 +24,7 @@ services:
       - "6378:6379"
     volumes:
       - /home/root/dockerdata/redis-drones:/data
+    restart: always
   nginx:
     image: nginx:latest
     container_name: quarkus-nginx
@@ -50,6 +52,7 @@ services:
       JAVA_OPTS: -Duser.timezone=Asia/Shanghai
     volumes:
       - /home/root/dockerdata/drones:/data
+    restart: always
     depends_on:
       - postgres
       - redis
