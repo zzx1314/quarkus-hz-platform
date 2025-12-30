@@ -104,9 +104,10 @@ public class WebSocketService {
 
             case "file_end":
                 streamId = (String) messageJson.get("streamId");
+                String targetIds = (String) messageJson.get("targetIds");
                 ByteArrayOutputStream out = streamBuffers.remove(streamId);
                 if (out != null) {
-                    saveFile(out.toByteArray(), deviceId, streamId);
+                    saveFile(out.toByteArray(), deviceId, streamId, targetIds);
                     log.info("Device {} finished file stream {}", deviceId, streamId);
                 }
                 deviceCurrentStream.remove(deviceId);
@@ -151,7 +152,7 @@ public class WebSocketService {
         log.info("Received {} bytes for device {} stream {}", data.length, deviceId, streamId);
     }
 
-    private void saveFile(byte[] bytes, String deviceId, String streamId) {
+    private void saveFile(byte[] bytes, String deviceId, String streamId, String targetIds) {
         try {
             Path dirPath = Paths.get(fileConfig.basePath() + "/image");
             if (!Files.exists(dirPath)) {
@@ -162,7 +163,7 @@ public class WebSocketService {
             Files.write(filePath, bytes, StandardOpenOption.CREATE);
 
             // 可选：实时广播给其他客户端
-            TrackWebSocket.broadcast(bytes);
+            TrackWebSocket.broadcast(bytes, targetIds);
             log.info("Saved file: {}", filePath.toString());
         } catch (IOException e) {
             log.error("Failed to save file for device {} stream {}", deviceId, streamId, e);

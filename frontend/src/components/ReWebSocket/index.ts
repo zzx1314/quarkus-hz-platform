@@ -21,7 +21,7 @@ class WebSocketClient {
   connect(params: {
     path?: string; // 可选，自定义WebSocket路径
     onConnect: () => void;
-    onData: (data: ArrayBuffer) => void;
+    onData: (data: ArrayBuffer, tag?: string) => void;
     onClose: () => void;
     onError: (error: string) => void;
   }): void {
@@ -40,7 +40,8 @@ class WebSocketClient {
 
     this._connection.onmessage = evt => {
       if (evt.data instanceof ArrayBuffer) {
-        params.onData(evt.data);
+        const { tag, payload } = this.decodeBinaryFrame(evt.data);
+        params.onData(payload, tag);
       } else {
         console.warn("收到非二进制消息:", evt.data);
       }
@@ -85,6 +86,27 @@ class WebSocketClient {
       this._connection.close();
       this._connection = null;
     }
+  }
+
+  private decodeBinaryFrame(buffer: ArrayBuffer): {
+    tag?: string;
+    payload: ArrayBuffer;
+  } {
+    const view = new DataView(buffer);
+
+    // 新协议：magic byte
+    if (buffer.byteLength >= 5 && view.getUint8(0) === 0x01) {
+      const tagLen = view.getInt32(1);
+
+      if (tagLen > 0 && 5 + tagLen < buffer.byteLength) {
+        const tagBytes = buffer.slice(5, 5 + tagLen);
+        const tag = new TextDecoder().decode(tagBytes);
+        const payload = buffer.slice(5 + tagLen);
+        return { tag, payload };
+      }
+    }
+    // 旧协议
+    return { payload: buffer };
   }
 }
 

@@ -1,5 +1,7 @@
 package org.huazhi.drones.websocket.endpoint;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -31,23 +33,33 @@ public class TrackWebSocket {
         for (WebSocketConnection conn : sessions) {
             if (conn.isOpen()) {
                 conn.sendText(base64)
-                .subscribe().with(
-                    v -> {},
-                    err -> err.printStackTrace()
-                );
+                        .subscribe().with(
+                                v -> {
+                                },
+                                err -> err.printStackTrace());
             }
         }
     }
 
-     public static void broadcast(byte[] jpeg) {
-        for (WebSocketConnection conn : sessions) {
-            if (!conn.isOpen()) continue;
+    public static void broadcast(byte[] jpeg, String tag) {
+        byte[] tagBytes = tag != null ? tag.getBytes(StandardCharsets.UTF_8) : new byte[0];
 
-            conn.sendBinary(Buffer.buffer(jpeg))
-                .subscribe().with(
-                    v -> {},
-                    Throwable::printStackTrace
-                );
+        ByteBuffer buffer = ByteBuffer.allocate(1 + 4 + tagBytes.length + jpeg.length);
+        buffer.put((byte) 0x01);      // 协议标识
+        buffer.putInt(tagBytes.length); // 字符串长度
+        buffer.put(tagBytes); // 字符串
+        buffer.put(jpeg); // 二进制数据
+        buffer.flip();
+
+        for (WebSocketConnection conn : sessions) {
+            if (!conn.isOpen())
+                continue;
+
+            conn.sendBinary(Buffer.buffer(buffer.array()))
+                    .subscribe().with(
+                            v -> {
+                            },
+                            Throwable::printStackTrace);
         }
     }
 }

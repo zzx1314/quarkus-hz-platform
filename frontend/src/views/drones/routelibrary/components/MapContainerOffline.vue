@@ -148,6 +148,19 @@
       @close="cancel"
     >
       <div>
+        <el-select
+          v-model="trackTarget"
+          placeholder="选择目标"
+          clearable
+          style="
+            margin-left: 10px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            width: 200px;
+          "
+        >
+          <el-option v-for="option in trackTargetOptions" :key="option.value" />
+        </el-select>
         <el-button
           type="primary"
           link
@@ -194,6 +207,7 @@ import Back from "~icons/ep/back";
 import Position from "~icons/ep/position";
 import DownloadIcon from "~icons/ep/arrow-down";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks.js";
+import { tr } from "element-plus/es/locale/index.mjs";
 
 /* =========================
  *  props & 常量
@@ -691,7 +705,7 @@ function issueCommandServer() {
     type: "server-command",
     params: {
       head: "track",
-      data: "1"
+      data: trackTarget.value
     }
   };
   dronesCommandIssueCommonCommand(param).then(res => {
@@ -727,6 +741,8 @@ const handleCommand = command => {
 const videoImgTrack = ref(null);
 const webSocketImagTrack = ref(null);
 let lastObjectUrlTrack = null;
+const trackTargetOptions = ref([]);
+const trackTarget = ref(null);
 function startWebSocketTrack() {
   if (webSocketImagTrack.value) return;
   webSocketImagTrack.value = new WebSocketClient();
@@ -742,7 +758,8 @@ function startWebSocketTrack() {
     onClose: function () {
       console.log("连接关闭");
     },
-    onData: function (data) {
+    onData: function (data, tag) {
+      console.log("track tag:", tag); // 0,1,2,
       if (!dialogFormVisibleTreacking.value) {
         dialogFormVisibleTreacking.value = true;
       }
@@ -756,7 +773,14 @@ function startWebSocketTrack() {
         if (lastObjectUrlTrack) {
           URL.revokeObjectURL(lastObjectUrlTrack);
         }
-
+        if (tag) {
+          // 逗号分割字符串
+          const ids = tag.split(",");
+          trackTargetOptions.value = ids.map(id => ({
+            value: id,
+            label: `目标${id}`
+          }));
+        }
         videoImgTrack.value.src = url;
         lastObjectUrlTrack = url;
       });
