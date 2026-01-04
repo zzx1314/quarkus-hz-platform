@@ -144,7 +144,7 @@
     <el-dialog
       v-model="dialogFormVisibleTreacking"
       title="目标跟踪"
-      width="1000px"
+      width="800px"
       @close="cancel"
     >
       <div>
