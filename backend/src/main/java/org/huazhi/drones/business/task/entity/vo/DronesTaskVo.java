@@ -36,6 +36,11 @@ public class DronesTaskVo {
      */
     private String taskStatus;
 
+    /*
+     * 工作流UUID
+     */
+    private String workflowUuid;
+
 
     /**
      * 创建时间
