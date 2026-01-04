@@ -25,8 +25,12 @@ const props = defineProps({
     required: true
   },
   deviceId: {
-    type: Number,
+    type: String,
     required: true
+  },
+  routeId: {
+    type: String,
+    default: null
   },
   data: {
     type: Object,
@@ -74,7 +78,7 @@ const routePointListOptions = ref([]);
 
 const taskForm = ref({
   taskId: props.data.taskId,
-  routeId: null,
+  routeId: Number(props.routeId),
   deviceId: Number(props.deviceId),
   nodeType: "task",
   taskInfo: {

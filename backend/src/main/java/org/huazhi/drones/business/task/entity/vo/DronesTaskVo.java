@@ -41,6 +41,17 @@ public class DronesTaskVo {
      */
     private String workflowUuid;
 
+    /**
+     * 路线ID
+     */
+    private Long routeId;
+
+
+    /**
+     * 航线名称
+     */
+    private String routeName;
+
 
     /**
      * 创建时间

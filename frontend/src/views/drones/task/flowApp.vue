@@ -648,6 +648,7 @@ onBeforeUnmount(() => {
           :status="nodeStatus(props.id)"
           :get-node-data-by-id="getNodeDataById"
           :device-id="getParameter.deviceId"
+          :route-id="getParameter.routeId"
           @select="handleSelect"
           @show-custom-point="handleShowCustomPoint"
           @update-route="updateRoute"

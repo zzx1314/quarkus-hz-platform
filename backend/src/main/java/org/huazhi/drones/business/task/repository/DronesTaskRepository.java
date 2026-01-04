@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.huazhi.drones.business.device.entity.DronesDevice;
+import org.huazhi.drones.business.routelibrary.entity.DronesRouteLibrary;
 import org.huazhi.drones.business.task.entity.DronesTask;
 import org.huazhi.drones.business.task.entity.dto.DronesTaskDto;
 import org.huazhi.drones.business.task.entity.dto.DronesTaskQueryDto;
@@ -64,6 +65,7 @@ public class DronesTaskRepository implements PanacheRepository<DronesTask> {
                 .alias("t")
                 .equal("isDeleted", 0)
                 .like("device.deviceId", dto.getDeviceIdString())
+                .like("route.routeName", dto.getRouteName())
                 .like("taskName", dto.getTaskName())
                 .like("taskDescription", dto.getTaskDescription())
                 .like("taskStatus", dto.getTaskStatus())
@@ -74,6 +76,7 @@ public class DronesTaskRepository implements PanacheRepository<DronesTask> {
                 select t
                 from DronesTask t
                 left join fetch t.device d
+                left join fetch t.route r
                 where %s
                 """.formatted(qb.getQuery());
 
@@ -83,6 +86,9 @@ public class DronesTaskRepository implements PanacheRepository<DronesTask> {
             DronesTaskVo vo = mapper.toVo(task);
             if (task.getDevice() != null) {
                 vo.setDeviceIdString(task.getDevice().getDeviceId());
+            }
+            if (task.getRoute() != null) {
+                vo.setRouteName(task.getRoute().getRouteName());
             }
             return vo;
         }).toList();
@@ -108,6 +114,9 @@ public class DronesTaskRepository implements PanacheRepository<DronesTask> {
 
         DronesDevice device = DronesDevice.findById(dto.getDeviceId());
         entity.setDevice(device);
+
+        DronesRouteLibrary route = DronesRouteLibrary.findById(dto.getRouteId());
+        entity.setRoute(route);
     }
 
     @Transactional

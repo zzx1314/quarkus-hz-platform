@@ -65,7 +65,10 @@ export const dronesRouteLibraryGetSelectOption = () => {
     {}
   );
 };
-export const dronesRouteLibraryGetSelectOptionPoint = (param?: object) => {
+/**
+ * 航点下拉数据
+ */
+export const dronesRouteLibraryGetSelectOptionPoint = (param?: any) => {
   return http.axiosGetRequest<Result>(
     dronesRouteLibraryUrls.getSelectOptionPoint + param,
     {}

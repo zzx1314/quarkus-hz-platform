@@ -22,6 +22,7 @@ import org.huazhi.drones.business.config.service.DronesConfigService;
 import org.huazhi.drones.business.device.entity.DronesDevice;
 import org.huazhi.drones.business.device.service.DronesDeviceService;
 import org.huazhi.drones.business.model.service.DronesModelService;
+import org.huazhi.drones.business.routelibrary.entity.DronesRouteLibrary;
 import org.huazhi.drones.business.routelibrary.routeitem.entity.DronesRouteItem;
 import org.huazhi.drones.business.routelibrary.routeitem.entity.dto.DronesRouteItemQueryDto;
 import org.huazhi.drones.business.routelibrary.routeitem.service.DronesRouteItemService;
@@ -120,6 +121,8 @@ public class DronesTaskServiceImp implements DronesTaskService {
         entity.setTaskStatus("未开始");
         entity.setCreateTime(LocalDateTime.now());
         entity.setDevice(device);
+        DronesRouteLibrary route = DronesRouteLibrary.findById(entity.getRouteId());
+        entity.setRoute(route);
         repository.persist(entity);
         return entity.getId();
     }

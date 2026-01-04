@@ -41,4 +41,10 @@ public class DronesTaskQueryDto {
     @QueryParam("deviceIdString")
     private String deviceIdString;
 
+    /**
+     * 航线名称
+     */
+    @QueryParam("routeName")
+    private String routeName;
+
 }

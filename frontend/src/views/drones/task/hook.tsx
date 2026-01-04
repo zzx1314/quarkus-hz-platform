@@ -44,7 +44,8 @@ export function useDronesTask() {
     deviceId: [{ required: true, message: "设备信息必填", trigger: "blur" }],
     taskDescription: [
       { required: true, message: "任务描述必填", trigger: "blur" }
-    ]
+    ],
+    routeId: [{ required: true, message: "航线必填", trigger: "blur" }]
   });
 
   const columns: TableColumnList = [
@@ -67,6 +68,7 @@ export function useDronesTask() {
       width: 150
     },
     { label: "设备ID", prop: "deviceIdString", width: 180 },
+    { label: "航线", prop: "routeName", width: 100 },
     {
       label: "任务描述",
       prop: "taskDescription",
@@ -111,7 +113,7 @@ export function useDronesTask() {
   // ---------------------------------
   function handleUpdate(row, formEl) {
     addForm.value = JSON.parse(JSON.stringify(row));
-    openDia("修改配置", formEl);
+    openDia("修改任务", formEl);
   }
 
   function handleDelete(row) {
@@ -204,6 +206,7 @@ export function useDronesTask() {
       deviceId: row.deviceId,
       taskType: "taskDesign",
       name: row.taskName,
+      routeId: row.routeId,
       workflowId: row.workflowUuid ? row.workflowUuid : uuid(5)
     });
   }

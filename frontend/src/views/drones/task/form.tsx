@@ -1,6 +1,7 @@
 // form表单
 import type { PlusColumn } from "plus-pro-components";
 import { dronesDeviceGetSelectOptions } from "@/api/dronesDevice";
+import { dronesRouteLibraryGetSelectOption } from "@/api/dronesRouteLibrary";
 
 export function useCollectorBusDevForm() {
   const columnsForm: PlusColumn[] = [
@@ -20,6 +21,16 @@ export function useCollectorBusDevForm() {
       }
     },
     {
+      label: "航线信息",
+      prop: "routeId",
+      valueType: "select",
+      options: async () => {
+        return new Promise(resolve => {
+          resolve(dronesRouteLibraryGetSelectOption().then(res => res.data));
+        });
+      }
+    },
+    {
       label: "任务描述",
       prop: "taskDescription",
       valueType: "textarea"
@@ -32,12 +43,30 @@ export function useCollectorBusDevForm() {
       prop: "taskName",
       valueType: "copy",
       colProps: {
-        span: 5
+        span: 4
+      },
+      formItemProps: {
+        style: {
+          width: "100%"
+        }
       }
     },
     {
       label: "设备ID",
       prop: "deviceIdString",
+      valueType: "copy",
+      colProps: {
+        span: 4
+      },
+      formItemProps: {
+        style: {
+          width: "100%"
+        }
+      }
+    },
+    {
+      label: "航线名称",
+      prop: "routeName",
       valueType: "copy",
       colProps: {
         span: 5
@@ -66,7 +95,7 @@ export function useCollectorBusDevForm() {
       },
       formItemProps: {
         style: {
-          width: "90%"
+          width: "230px"
         }
       }
     },

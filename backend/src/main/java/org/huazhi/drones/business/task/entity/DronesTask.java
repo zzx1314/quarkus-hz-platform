@@ -3,6 +3,7 @@ package org.huazhi.drones.business.task.entity;
 import java.time.LocalDateTime;
 
 import org.huazhi.drones.business.device.entity.DronesDevice;
+import org.huazhi.drones.business.routelibrary.entity.DronesRouteLibrary;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -66,6 +67,19 @@ public class DronesTask extends PanacheEntityBase {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "device_id", referencedColumnName = "id")
     private DronesDevice device;
+
+
+
+    @Column(name = "route_id", insertable = false, updatable = false)
+    private Long routeId;
+
+
+    /**
+     * 路线
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "route_id", referencedColumnName = "id")
+    private DronesRouteLibrary route;
 
     /**
      * 创建时间
