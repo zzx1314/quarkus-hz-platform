@@ -30,7 +30,7 @@
     </dependencyManagement>
 
     <dependencies>
-         <dependency>
+        <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-rest</artifactId>
         </dependency>
@@ -53,6 +53,12 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-websockets-next</artifactId>
+        </dependency>
+        <!--日志-->
+        <dependency>
+            <groupId>de.danielbechler</groupId>
+            <artifactId>java-object-diff</artifactId>
+            <version>0.95</version>
         </dependency>
         <!--数据库-->
         <dependency>

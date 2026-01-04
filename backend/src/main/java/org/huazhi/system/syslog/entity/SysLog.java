@@ -1,6 +1,11 @@
 package org.huazhi.system.syslog.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
+import org.huazhi.system.syslog.common.beans.CodeVariableType;
+import org.huazhi.system.syslog.common.beans.LogRecord;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
