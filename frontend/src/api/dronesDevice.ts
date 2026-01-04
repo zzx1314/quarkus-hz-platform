@@ -59,7 +59,7 @@ export const dronesDeviceStartImage = (query?: object) => {
 };
 // 停止图像获取
 export const dronesDeviceStopImage = (query?: object) => {
-  return http.axiosGetRequest<ResultPage>(
+  return http.axiosPostRequest<Result>(
     dronesDeviceUrls.stopImageReceiver,
     query
   );

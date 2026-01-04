@@ -144,7 +144,7 @@
     <el-dialog
       v-model="dialogFormVisibleTreacking"
       title="目标跟踪"
-      width="500px"
+      width="1000px"
       @close="cancel"
     >
       <div>
@@ -159,7 +159,12 @@
             width: 200px;
           "
         >
-          <el-option v-for="option in trackTargetOptions" :key="option.value" />
+          <el-option
+            v-for="option in trackTargetOptions"
+            :key="option.value"
+            :value="option.value"
+            :label="option.label"
+          />
         </el-select>
         <el-button
           type="primary"
@@ -775,10 +780,13 @@ function startWebSocketTrack() {
         }
         if (tag) {
           // 逗号分割字符串
-          const ids = tag.split(",");
+          const ids = tag
+            .split(",")
+            .map(id => id.trim())
+            .filter(id => id !== "");
           trackTargetOptions.value = ids.map(id => ({
             value: id,
-            label: `目标${id}`
+            label: `目标-${id}`
           }));
         }
         videoImgTrack.value.src = url;

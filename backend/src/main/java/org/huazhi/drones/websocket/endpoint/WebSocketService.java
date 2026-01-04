@@ -162,7 +162,7 @@ public class WebSocketService {
             Path filePath = dirPath.resolve(deviceId + "_" + streamId + ".jpg");
             Files.write(filePath, bytes, StandardOpenOption.CREATE);
 
-            // 可选：实时广播给其他客户端
+            // 实时广播给其他客户端
             TrackWebSocket.broadcast(bytes, targetIds);
             log.info("Saved file: {}", filePath.toString());
         } catch (IOException e) {
