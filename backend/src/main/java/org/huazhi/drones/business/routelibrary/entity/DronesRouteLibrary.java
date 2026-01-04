@@ -62,7 +62,7 @@ public class DronesRouteLibrary extends PanacheEntityBase {
     /**
      * 是否删除
      */
-    @Column(columnDefinition = "INT DEFAULT 0")
+    @Column(columnDefinition = "INT DEFAULT 0",  insertable = false)
     private Integer isDeleted;
 
     /**

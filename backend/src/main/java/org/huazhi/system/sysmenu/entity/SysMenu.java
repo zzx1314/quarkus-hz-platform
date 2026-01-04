@@ -96,7 +96,7 @@ public class SysMenu extends PanacheEntityBase {
 	/**
 	 * 1 表示删除，0 表示未删除
 	 */
-	@Column(columnDefinition = "INT DEFAULT 0")
+	@Column(columnDefinition = "INT DEFAULT 0",  insertable = false)
 	private Integer isDeleted;
 
 	/**

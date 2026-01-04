@@ -59,7 +59,7 @@ public class DronesWorkflow extends PanacheEntityBase {
 	/**
 	 * 逻辑删除
 	 */
-	@Column(columnDefinition = "INT DEFAULT 0")
+	@Column(columnDefinition = "INT DEFAULT 0",  insertable = false)
 	private Integer isDeleted;
 
 	/**
