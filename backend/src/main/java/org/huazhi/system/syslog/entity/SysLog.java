@@ -1,11 +1,6 @@
 package org.huazhi.system.syslog.entity;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-
-import org.huazhi.system.syslog.common.beans.CodeVariableType;
-import org.huazhi.system.syslog.common.beans.LogRecord;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
@@ -79,7 +74,7 @@ public class SysLog extends PanacheEntityBase {
 
 	private String ip;
 
-	@Column(columnDefinition = "INT DEFAULT 0")
+	@Column(columnDefinition = "INT DEFAULT 0", insertable = false)
 	private Integer isDeleted;
 
 }

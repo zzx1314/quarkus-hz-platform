@@ -60,6 +60,7 @@ public interface SysLogMapper {
         if (codeVariableJson == null || codeVariableJson.isEmpty()) return null;
         try {
             // 注意 MapKey 类型要转换成 CodeVariableType
+            @SuppressWarnings("unchecked")
             Map<String, Object> map = OBJECT_MAPPER.readValue(codeVariableJson, Map.class);
             Map<CodeVariableType, Object> result = new java.util.HashMap<>();
             map.forEach((k, v) -> result.put(CodeVariableType.valueOf(k), v));
