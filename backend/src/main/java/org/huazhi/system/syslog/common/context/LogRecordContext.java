@@ -5,10 +5,6 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author muzhantong
- *         create on 2021/2/9 2:22 下午
- */
 public class LogRecordContext {
 
     private static final InheritableThreadLocal<Deque<Map<String, Object>>> VARIABLE_MAP_STACK = new InheritableThreadLocal<>();

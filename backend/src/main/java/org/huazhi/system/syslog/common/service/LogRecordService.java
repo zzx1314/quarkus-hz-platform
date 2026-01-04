@@ -27,8 +27,7 @@ public class LogRecordService {
     /**
      * 方法执行前上下文准备
      */
-    public void beforeExecute(Collection<LogRecordOps> ops,
-                              InvocationContext ctx) {
+    public void beforeExecute(Collection<LogRecordOps> ops, InvocationContext ctx) {
         // 初始化方法上下文 span
         LogRecordContext.putEmptySpan();
 

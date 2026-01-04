@@ -13,9 +13,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
-/**
- * @author wulang
- **/
+
 public class ArrayItemAccessor implements TypeAwareAccessor, Accessor {
 
     private final Object referenceItem;
@@ -74,7 +72,6 @@ public class ArrayItemAccessor implements TypeAwareAccessor, Accessor {
         targetCollection.add(value);
     }
 
-    @SuppressWarnings("unchecked")
     private static Collection<Object> objectAsCollection(final Object object) {
         if (object == null) {
             return null;
