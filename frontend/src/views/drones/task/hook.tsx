@@ -248,7 +248,9 @@ export function useDronesTask() {
       `/#/datadashboard?type=datadash&taskId=` +
         row.id +
         `&deviceId=` +
-        row.deviceIdString,
+        row.deviceIdString +
+        `&deviceIdNum=` +
+        row.deviceId,
       "_blank"
     );
   }

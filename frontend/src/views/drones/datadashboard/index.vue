@@ -23,7 +23,11 @@ const modelType = ref(null);
 const routeData = ref(null);
 const modelId = ref(null);
 const routeId = ref(null);
-const deviceId = ref(null);
+const deviceId = Number(
+  Array.isArray(route.query.deviceIdNum)
+    ? route.query.deviceIdNum[0]
+    : route.query.deviceIdNum
+);
 
 onMounted(() => {
   console.log("taskId", taskId);
@@ -34,7 +38,6 @@ onMounted(() => {
       modelType.value = res.data[0].routeType;
       routeId.value = res.data[0].id;
       modelId.value = res.data[0].modelId;
-      deviceId.value = res.data[0].deviceId;
       console.log("modelId", modelType.value);
     }
   });

@@ -176,10 +176,12 @@ public class BusService {
         if (returnNode.path("missionId") != null) {
             // 更新任务状态
             DronesCommand command = dronesCommandService.listById(id);
-            DronesTaskDto dronesTaskDto = new DronesTaskDto();
-            dronesTaskDto.setId(command.getTaskId());
-            dronesTaskDto.setTaskStatus(getTaskStatus(returnNode) ? "已完成" : "失败");
-            dronesTaskService.replaceByDto(dronesTaskDto);
+            if (command.getTaskId() != null) {
+                 DronesTaskDto dronesTaskDto = new DronesTaskDto();
+                dronesTaskDto.setId(command.getTaskId());
+                dronesTaskDto.setTaskStatus(getTaskStatus(returnNode) ? "已完成" : "失败");
+                dronesTaskService.replaceByDto(dronesTaskDto);
+            }
         }
     }
 
