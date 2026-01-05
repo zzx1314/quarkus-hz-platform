@@ -74,7 +74,7 @@ public class SysLog extends PanacheEntityBase {
 
 	private String ip;
 
-	@Column(columnDefinition = "INT DEFAULT 0")
+	@Column(columnDefinition = "INT DEFAULT 0", insertable = false)
 	private Integer isDeleted;
 
 }

@@ -2,6 +2,7 @@ package org.huazhi.system.syslog.service;
 
 import java.util.List;
 
+import org.huazhi.system.syslog.common.beans.LogRecord;
 import org.huazhi.system.syslog.entity.SysLog;
 import org.huazhi.system.syslog.entity.dto.SysLogQueryDto;
 import org.huazhi.util.PageRequest;
@@ -15,4 +16,8 @@ public interface SysLogService {
    PageResult<SysLog> listPage(SysLogQueryDto dto, PageRequest pageRequest);
 
    Long register(SysLog entity);
+
+   Long registerByLogRecord(LogRecord logRecord);
+
+   List<SysLog> queryByBizNoAndType(String bizNo, String type);
 }
