@@ -14,6 +14,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.huazhi.system.syslog.common.annotation.LogRecord;
 import org.huazhi.system.syslog.common.beans.LogRecordOps;
 
+import jakarta.enterprise.context.ApplicationScoped;
+
+@ApplicationScoped
 
 public class LogRecordOperationSource {
 

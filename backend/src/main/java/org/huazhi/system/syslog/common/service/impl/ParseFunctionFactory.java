@@ -1,29 +1,31 @@
 package org.huazhi.system.syslog.common.service.impl;
 
-
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.huazhi.system.syslog.common.service.IParseFunction;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
-
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class ParseFunctionFactory {
-    private Map<String, IParseFunction> allFunctionMap;
 
-    public ParseFunctionFactory(List<IParseFunction> parseFunctions) {
-        if (parseFunctions == null || parseFunctions.isEmpty()) {
-            return;
-        }
-        allFunctionMap = new HashMap<>();
+    private final Map<String, IParseFunction> allFunctionMap = new HashMap<>();
+
+    @Inject
+    Instance<IParseFunction> parseFunctions;
+
+    @PostConstruct
+    void init() {
         for (IParseFunction parseFunction : parseFunctions) {
-            if (parseFunction.functionName() == null || parseFunction.functionName().isEmpty()) {
+            String functionName = parseFunction.functionName();
+            if (functionName == null || functionName.isEmpty()) {
                 continue;
             }
-            allFunctionMap.put(parseFunction.functionName(), parseFunction);
+            allFunctionMap.put(functionName, parseFunction);
         }
     }
 
@@ -32,6 +34,7 @@ public class ParseFunctionFactory {
     }
 
     public boolean isBeforeFunction(String functionName) {
-        return allFunctionMap.get(functionName) != null && allFunctionMap.get(functionName).executeBefore();
+        IParseFunction function = allFunctionMap.get(functionName);
+        return function != null && function.executeBefore();
     }
 }
