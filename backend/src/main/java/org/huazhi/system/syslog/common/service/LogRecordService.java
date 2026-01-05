@@ -30,18 +30,39 @@ public class LogRecordService {
      * 方法执行前上下文准备
      */
     public void beforeExecute(Collection<LogRecordOps> ops, InvocationContext ctx) {
-        // 初始化方法上下文 span
-        LogRecordContext.putEmptySpan();
+    LogRecordContext.putEmptySpan();
 
-        // 保存方法参数到上下文，方便模板引用
-        Object[] args = ctx.getParameters();
-        for (int i = 0; i < args.length; i++) {
-            LogRecordContext.putVariable("arg" + i, args[i]);
-        }
-
-        // 可选：保存操作人全局变量
-        LogRecordContext.putGlobalVariable("operator", operatorGetService.getUser());
+    Object[] args = ctx.getParameters();
+    for (int i = 0; i < args.length; i++) {
+        LogRecordContext.putVariable("arg" + i, args[i]);
+        LogRecordContext.putVariable(ctx.getMethod().getParameters()[i].getName(), args[i]);
     }
+
+    LogRecordContext.putGlobalVariable("operator", operatorGetService.getUser());
+
+    // === 新增：方法执行前函数解析 ===
+    if (ops != null && !ops.isEmpty()) {
+        for (LogRecordOps op : ops) {
+            List<String> templates = Arrays.asList(
+                    op.getSuccessLogTemplate(),
+                    op.getFailLogTemplate(),
+                    op.getBizNo(),
+                    op.getExtra(),
+                    op.getType(),
+                    op.getSubType()
+            );
+            Map<String, String> beforeFunctionResults =
+                    logRecordValueParser.processBeforeExecuteFunctionTemplate(
+                            templates, ctx.getTarget().getClass(), ctx.getMethod(), args
+                    );
+            // 将结果写入上下文
+            if (beforeFunctionResults != null) {
+                beforeFunctionResults.forEach((k, v) -> LogRecordContext.putVariable(k, v));
+            }
+        }
+    }
+}
+
 
     /**
      * 方法执行成功后记录日志

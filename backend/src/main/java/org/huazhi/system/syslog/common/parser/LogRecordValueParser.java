@@ -31,7 +31,8 @@ public class LogRecordValueParser {
     }
 
     public String parse(String template, InvocationContext ctx, Object value) {
-        if (template == null) return null;
+        if (template == null)
+            return null;
 
         Map<String, Object> context = buildContext(ctx, value);
 
@@ -92,17 +93,20 @@ public class LogRecordValueParser {
     private Object evaluateExpression(String expression, Map<String, Object> context) {
         String[] parts = expression.split("\\.");
         Object current = context.get(parts[0]);
-        if (current == null) return null;
+        if (current == null)
+            return null;
 
         for (int i = 1; i < parts.length; i++) {
             current = getProperty(current, parts[i]);
-            if (current == null) return null;
+            if (current == null)
+                return null;
         }
         return current;
     }
 
     private Object getProperty(Object target, String name) {
-        if (target == null || name == null) return null;
+        if (target == null || name == null)
+            return null;
 
         try {
             String getter = "get" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
@@ -118,8 +122,65 @@ public class LogRecordValueParser {
         } catch (Exception ignored) {
         }
 
-        if ("toString".equals(name)) return target.toString();
+        if ("toString".equals(name))
+            return target.toString();
 
         return null;
     }
+
+    public Map<String, String> processBeforeExecuteFunctionTemplate(
+            Collection<String> templates,
+            Class<?> targetClass,
+            Method method,
+            Object[] args) {
+
+        Map<String, String> functionNameAndReturnValueMap = new HashMap<>();
+
+        // 构建上下文（这里没有 _ret 和 _errorMsg，因为方法还没执行）
+        Map<String, Object> context = new HashMap<>();
+        java.lang.reflect.Parameter[] parameters = method.getParameters();
+        for (int i = 0; i < args.length; i++) {
+            context.put("arg" + i, args[i]);
+            context.put(parameters[i].getName(), args[i]);
+        }
+
+        // 遍历模板
+        for (String template : templates) {
+            if (template == null || !template.contains("{{#"))
+                continue;
+
+            Matcher matcher = FUNCTION_PATTERN.matcher(template);
+            while (matcher.find()) {
+                String expr = matcher.group(1).trim();
+
+                String functionName = null;
+                String paramExpr = expr;
+
+                // 判断是否函数调用形式 funcName(...)
+                int parenIndex = expr.indexOf('(');
+                if (parenIndex > 0 && expr.endsWith(")")) {
+                    functionName = expr.substring(0, parenIndex).trim();
+                    paramExpr = expr.substring(parenIndex + 1, expr.length() - 1).trim();
+                }
+
+                // 跳过非执行前函数
+                if (functionName != null && !logFunctionParser.beforeFunction(functionName))
+                    continue;
+
+                // 获取参数值
+                Object paramValue = evaluateExpression(paramExpr, context);
+
+                // 执行函数
+                String functionReturnValue = logFunctionParser.getFunctionReturnValue(
+                        null, paramValue, paramExpr, functionName);
+
+                // 缓存到 Map
+                String functionCallKey = logFunctionParser.getFunctionCallInstanceKey(functionName, paramExpr);
+                functionNameAndReturnValueMap.put(functionCallKey, functionReturnValue);
+            }
+        }
+
+        return functionNameAndReturnValueMap;
+    }
+
 }
