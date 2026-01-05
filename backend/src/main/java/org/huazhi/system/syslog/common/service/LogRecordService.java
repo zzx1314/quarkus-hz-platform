@@ -209,17 +209,31 @@ public class LogRecordService {
 
     private Map<String, Object> buildContext(InvocationContext ctx, Object value) {
         Map<String, Object> context = new HashMap<>();
+        Method method = ctx.getMethod();
         Object[] args = ctx.getParameters();
+        java.lang.reflect.Parameter[] parameters = method.getParameters();
+
         for (int i = 0; i < args.length; i++) {
+            // 兼容 arg0 / arg1
             context.put("arg" + i, args[i]);
+            // 支持参数名（sysAuthDto / roleName）
+            String paramName = parameters[i].getName();
+            context.put(paramName, args[i]);
         }
+
+        // 返回值
         context.put("_ret", value);
+
+        // 异常
         if (value instanceof Throwable) {
             context.put("_errorMsg", ((Throwable) value).getMessage());
             context.put("exception", value);
         }
+
+        // 操作人
         context.put("operator", operatorGetService.getUser());
-        // 额外从 LogRecordContext 读取
+
+        // LogRecordContext 中的变量（优先级最高）
         context.putAll(LogRecordContext.getVariables());
         return context;
     }
