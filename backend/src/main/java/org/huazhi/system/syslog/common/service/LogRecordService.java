@@ -1,7 +1,10 @@
 package org.huazhi.system.syslog.common.service;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.huazhi.system.syslog.common.beans.LogRecord;
 import org.huazhi.system.syslog.common.beans.LogRecordOps;
@@ -14,6 +17,7 @@ import jakarta.interceptor.InvocationContext;
 
 @ApplicationScoped
 public class LogRecordService {
+    private static final Pattern TEMPLATE_PATTERN = Pattern.compile("\\{([^{}]+)}");
 
     @Inject
     IOperatorGetService operatorGetService; // 获取操作人
@@ -32,7 +36,7 @@ public class LogRecordService {
         LogRecordContext.putEmptySpan();
 
         // 保存方法参数到上下文，方便模板引用
-        Method method = ctx.getMethod();
+        // Method method = ctx.getMethod();
         Object[] args = ctx.getParameters();
         for (int i = 0; i < args.length; i++) {
             LogRecordContext.putVariable("arg" + i, args[i]);
@@ -46,8 +50,8 @@ public class LogRecordService {
      * 方法执行成功后记录日志
      */
     public void onSuccess(Collection<LogRecordOps> ops,
-                          InvocationContext ctx,
-                          Object result) {
+            InvocationContext ctx,
+            Object result) {
 
         for (LogRecordOps op : ops) {
             if (!isConditionPassed(op, ctx, result, null)) {
@@ -58,9 +62,7 @@ public class LogRecordService {
 
             // 支持 isSuccess 条件模板
             if (op.getIsSuccess() != null && !op.getIsSuccess().isEmpty()) {
-                boolean isSuccess = Boolean.parseBoolean(
-                        parseTemplate(op.getIsSuccess(), ctx, result)
-                );
+                boolean isSuccess = Boolean.parseBoolean(parseTemplate(op.getIsSuccess(), ctx, result));
                 if (!isSuccess && op.getFailLogTemplate() != null && !op.getFailLogTemplate().isEmpty()) {
                     actionTemplate = op.getFailLogTemplate();
                 }
@@ -85,8 +87,8 @@ public class LogRecordService {
      * 方法执行失败后记录日志
      */
     public void onFail(Collection<LogRecordOps> ops,
-                       InvocationContext ctx,
-                       Throwable ex) {
+            InvocationContext ctx,
+            Throwable ex) {
 
         for (LogRecordOps op : ops) {
             if (!isConditionPassed(op, ctx, null, ex)) {
@@ -113,9 +115,9 @@ public class LogRecordService {
      * 条件判断
      */
     private boolean isConditionPassed(LogRecordOps op,
-                                      InvocationContext ctx,
-                                      Object result,
-                                      Throwable ex) {
+            InvocationContext ctx,
+            Object result,
+            Throwable ex) {
         // 判断 condition 表达式
         if (op.getCondition() != null && !op.getCondition().isEmpty()) {
             String conditionValue = parseTemplate(op.getCondition(), ctx, result != null ? result : ex);
@@ -124,7 +126,8 @@ public class LogRecordService {
             }
         }
         // 判断 successCondition（仅方法成功时）
-        if (result != null && op.getSuccessLogTemplate() != null && op.getSuccessLogTemplate().contains("successCondition")) {
+        if (result != null && op.getSuccessLogTemplate() != null
+                && op.getSuccessLogTemplate().contains("successCondition")) {
             String successValue = parseTemplate(op.getSuccessLogTemplate(), ctx, result);
             if ("false".equalsIgnoreCase(successValue)) {
                 return false;
@@ -137,10 +140,10 @@ public class LogRecordService {
      * 构建最终日志对象
      */
     private LogRecord buildLogRecord(LogRecordOps op,
-                                     InvocationContext ctx,
-                                     Object result,
-                                     boolean fail,
-                                     String action) {
+            InvocationContext ctx,
+            Object result,
+            boolean fail,
+            String action) {
         String operatorId = op.getOperatorId();
         if (operatorId == null || operatorId.isEmpty()) {
             operatorId = operatorGetService.getUser().getOperatorId();
@@ -151,7 +154,7 @@ public class LogRecordService {
             action = diffParseFunction.diff(result);
         }
 
-        Method method = ctx.getMethod();
+        // Method method = ctx.getMethod();
 
         return LogRecord.builder()
                 .tenant("defaultTenant") // 可改成动态租户
@@ -170,26 +173,76 @@ public class LogRecordService {
      * 模板解析方法（支持方法参数、异常信息、差异函数等）
      */
     private String parseTemplate(String template, InvocationContext ctx, Object value) {
-        if (template == null) return null;
+        if (template == null)
+            return null;
 
-        // 支持 #_DIFF() 差异函数占位
-        if (template.contains("_DIFF")) {
-            template = diffParseFunction.diff(value);
+        Map<String, Object> context = buildContext(ctx, value);
+
+        Matcher matcher = TEMPLATE_PATTERN.matcher(template);
+        StringBuffer sb = new StringBuffer();
+
+        while (matcher.find()) {
+            String expr = matcher.group(1);
+            Object result = evaluateExpression(expr, context);
+            matcher.appendReplacement(sb,
+                    Matcher.quoteReplacement(result == null ? "" : result.toString()));
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+
+    private Map<String, Object> buildContext(InvocationContext ctx, Object value) {
+        Map<String, Object> context = new HashMap<>();
+
+        Object[] args = ctx.getParameters();
+        for (int i = 0; i < args.length; i++) {
+            context.put("arg" + i, args[i]);
         }
 
-        // 支持 arg0、arg1 等参数占位
-        for (int i = 0; i < ctx.getParameters().length; i++) {
-            String placeholder = "#arg" + i;
-            if (template.contains(placeholder)) {
-                template = template.replace(placeholder, String.valueOf(ctx.getParameters()[i]));
+        context.put("_ret", value);
+
+        if (value instanceof Throwable) {
+            context.put("exception", value);
+        }
+
+        context.put("operator", operatorGetService.getUser());
+        return context;
+    }
+
+    private Object evaluateExpression(String expression, Map<String, Object> context) {
+        String[] parts = expression.split("\\.");
+
+        Object current = context.get(parts[0]);
+        if (current == null) {
+            return null;
+        }
+
+        for (int i = 1; i < parts.length; i++) {
+            current = getProperty(current, parts[i]);
+            if (current == null) {
+                return null;
             }
         }
+        return current;
+    }
 
-        // 支持异常占位 #exception
-        if (value instanceof Throwable) {
-            template = template.replace("#exception", ((Throwable) value).getMessage());
+    private Object getProperty(Object target, String name) {
+        try {
+            // 优先 getter
+            String getter = "get" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
+            Method method = target.getClass().getMethod(getter);
+            return method.invoke(target);
+        } catch (Exception ignored) {
         }
 
-        return template;
+        try {
+            Field field = target.getClass().getDeclaredField(name);
+            field.setAccessible(true);
+            return field.get(target);
+        } catch (Exception ignored) {
+        }
+
+        return null;
     }
+
 }
