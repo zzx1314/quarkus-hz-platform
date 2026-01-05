@@ -17,7 +17,8 @@ import jakarta.interceptor.InvocationContext;
 
 @ApplicationScoped
 public class LogRecordService {
-    private static final Pattern TEMPLATE_PATTERN = Pattern.compile("\\{([^{}]+)}");
+    private static final Pattern DOUBLE_BRACE_PATTERN = Pattern.compile("\\{\\{#(.*?)}}");
+    private static final Pattern RESULT_PATTERN = Pattern.compile("\\{RESULT\\{#_ret}}");
 
     @Inject
     IOperatorGetService operatorGetService; // 获取操作人
@@ -178,57 +179,76 @@ public class LogRecordService {
 
         Map<String, Object> context = buildContext(ctx, value);
 
-        Matcher matcher = TEMPLATE_PATTERN.matcher(template);
+        // 解析 {{#...}} 模板
+        Matcher matcher = DOUBLE_BRACE_PATTERN.matcher(template);
         StringBuffer sb = new StringBuffer();
-
         while (matcher.find()) {
-            String expr = matcher.group(1);
+            String expr = matcher.group(1).trim();
             Object result = evaluateExpression(expr, context);
-            matcher.appendReplacement(sb,
-                    Matcher.quoteReplacement(result == null ? "" : result.toString()));
+            matcher.appendReplacement(sb, Matcher.quoteReplacement(result == null ? "" : result.toString()));
         }
         matcher.appendTail(sb);
-        return sb.toString();
+        template = sb.toString();
+
+        // 解析 {RESULT{#_ret}}
+        matcher = RESULT_PATTERN.matcher(template);
+        sb = new StringBuffer();
+        while (matcher.find()) {
+            matcher.appendReplacement(sb, Matcher.quoteReplacement(value == null ? "" : value.toString()));
+        }
+        matcher.appendTail(sb);
+        template = sb.toString();
+
+        // 支持 _DIFF 占位
+        if (template.contains("_DIFF")) {
+            template = diffParseFunction.diff(value);
+        }
+
+        return template;
     }
 
     private Map<String, Object> buildContext(InvocationContext ctx, Object value) {
         Map<String, Object> context = new HashMap<>();
-
         Object[] args = ctx.getParameters();
         for (int i = 0; i < args.length; i++) {
             context.put("arg" + i, args[i]);
         }
-
         context.put("_ret", value);
-
         if (value instanceof Throwable) {
+            context.put("_errorMsg", ((Throwable) value).getMessage());
             context.put("exception", value);
         }
-
         context.put("operator", operatorGetService.getUser());
+        // 额外从 LogRecordContext 读取
+        context.putAll(LogRecordContext.getVariables());
         return context;
     }
 
     private Object evaluateExpression(String expression, Map<String, Object> context) {
-        String[] parts = expression.split("\\.");
-
-        Object current = context.get(parts[0]);
-        if (current == null) {
-            return null;
+        // 去掉尾部可能的括号：toString() -> toString
+        if (expression.endsWith("()")) {
+            expression = expression.substring(0, expression.length() - 2);
         }
+
+        String[] parts = expression.split("\\.");
+        Object current = context.get(parts[0]);
+        if (current == null)
+            return null;
 
         for (int i = 1; i < parts.length; i++) {
             current = getProperty(current, parts[i]);
-            if (current == null) {
+            if (current == null)
                 return null;
-            }
         }
         return current;
     }
 
     private Object getProperty(Object target, String name) {
+        if (target == null || name == null)
+            return null;
+
         try {
-            // 优先 getter
+            // 尝试 getter 方法
             String getter = "get" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
             Method method = target.getClass().getMethod(getter);
             return method.invoke(target);
@@ -236,11 +256,16 @@ public class LogRecordService {
         }
 
         try {
+            // 尝试字段访问
             Field field = target.getClass().getDeclaredField(name);
             field.setAccessible(true);
             return field.get(target);
         } catch (Exception ignored) {
         }
+
+        // 尝试直接调用 toString
+        if ("toString".equals(name))
+            return target.toString();
 
         return null;
     }
