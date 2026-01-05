@@ -1,4 +1,4 @@
-package org.huazhi.system.syslog.common.service.impl;
+package org.huazhi.system.syslog.common.parser;
 
 import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.comparison.ComparisonService;
