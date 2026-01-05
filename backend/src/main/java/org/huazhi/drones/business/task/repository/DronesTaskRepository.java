@@ -111,12 +111,14 @@ public class DronesTaskRepository implements PanacheRepository<DronesTask> {
         DronesTask entity = this.findById(dto.getId());
         mapper.updateEntityFromDto(dto, entity);
         entity.setUpdateTime(LocalDateTime.now());
-
-        DronesDevice device = DronesDevice.findById(dto.getDeviceId());
-        entity.setDevice(device);
-
-        DronesRouteLibrary route = DronesRouteLibrary.findById(dto.getRouteId());
-        entity.setRoute(route);
+        if (dto.getDeviceId() != null) {
+            DronesDevice device = DronesDevice.findById(dto.getDeviceId());
+            entity.setDevice(device);
+        }
+        if (dto.getRouteId() != null) {
+            DronesRouteLibrary route = DronesRouteLibrary.findById(dto.getRouteId());
+            entity.setRoute(route);
+        }
     }
 
     @Transactional
