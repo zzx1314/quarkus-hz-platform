@@ -1,6 +1,6 @@
 package org.huazhi.drones.business.command.entity.webscoketdto.action;
 
-import org.huazhi.drones.business.command.entity.webscoketdto.DronesRoute;
+import org.huazhi.drones.business.command.entity.webscoketdto.route.DronesRoute;
 
 import lombok.Data;
 
