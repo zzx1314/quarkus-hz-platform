@@ -81,6 +81,7 @@ public class DefaultDiffItemsToLogContentService implements IDiffItemsToLogConte
         markNodeProcessed(node, processedNodes);
     }
 
+    @SuppressWarnings("unchecked")
     private void markNodeProcessed(DiffNode node, Set<DiffNode> processedNodes) {
         processedNodes.add(node);
         if (node.hasChildren()) {
