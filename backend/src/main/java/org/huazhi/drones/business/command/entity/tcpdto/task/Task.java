@@ -1,6 +1,7 @@
 package org.huazhi.drones.business.command.entity.tcpdto.task;
 
-import org.huazhi.drones.business.command.entity.tcpdto.enumdata.TaskType;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.Data;
 
@@ -8,10 +9,7 @@ import lombok.Data;
 public class Task {
 
     /** 任务类型 */
-    private TaskType taskType;
-
-    /** 业务任务 ID（文件ID / 任务ID） */
-    private String taskId;
+    private String taskType;
 
     /**
      * 任务元数据
@@ -20,7 +18,11 @@ public class Task {
      *
      * 这里允许灵活扩展
      */
-    private Object taskMeta;
+    private JsonNode taskMeta;
+
+
+    /** 任务状态 */
+    private String status;
 
 }
 

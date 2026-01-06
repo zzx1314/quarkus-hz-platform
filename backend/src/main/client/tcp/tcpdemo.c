@@ -56,6 +56,14 @@ int send_frame(int sockfd, FrameType type, const uint8_t *body, uint32_t body_le
     return 0;
 }
 
+uint64_t get_file_length(FILE *fp) {
+    fseek(fp, 0, SEEK_END);
+    long size = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+    return (uint64_t) size;
+}
+
+
 int main() {
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) { perror("socket"); return -1; }
@@ -74,13 +82,17 @@ int main() {
     uint64_t seq = 1;
 
     // 1 发送 INIT Frame
-    const char *init_json = "{\"taskType\":\"FILE_UPLOAD\",\"taskId\":\"123456\",\"taskMeta\":{\"fileName\":\"test.txt\",\"fileSize\":1024}}";
+    const char *init_json = "{\"commandId\": 123,\"task\":{\"taskType\":\"FILE_MAP_MODEL_UPLOAD\"}}";
+
     send_frame(sockfd, FRAME_INIT, (uint8_t*)init_json, strlen(init_json), seq++);
     printf("INIT sent.\n");
 
-    // 2 发送 FILE_DATA Frame（示例文件，写死几个字节）
-    FILE *fp = fopen("test.txt", "rb");
+    // 2 发送 FILE_DATA Frame, 模型文件上传zip格式
+    FILE *fp = fopen("/home/zhangzexin/model.zip", "rb");
     if (!fp) { perror("fopen"); return -1; }
+
+    uint64_t file_length = get_file_length(fp);
+    printf("File length: %lu bytes\n", file_length);
 
     uint8_t buffer[1024];
     size_t n;
@@ -91,7 +103,15 @@ int main() {
     fclose(fp);
 
     // 3 发送 FINISH Frame
-    const char *finish_json = "{\"success\":true,\"bytesTransferred\":1024}";
+    char finish_json[512];
+    
+    snprintf(
+        finish_json,
+        sizeof(finish_json),
+        "{\"commandId\":123,\"task\":{\"taskType\":\"FILE_MAP_MODEL_UPLOAD\",\"taskMeta\":{\"fileLength\":%lu}, \"status\":\"SUCCESS\"}}",
+        file_length
+    );
+
     send_frame(sockfd, FRAME_FINISH, (uint8_t*)finish_json, strlen(finish_json), seq++);
     printf("FINISH sent.\n");
 
