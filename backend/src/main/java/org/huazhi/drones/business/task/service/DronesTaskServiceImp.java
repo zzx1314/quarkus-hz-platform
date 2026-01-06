@@ -14,8 +14,8 @@ import org.huazhi.drones.business.command.commanditem.service.DronesCommandResul
 import org.huazhi.drones.business.command.entity.DronesCommand;
 import org.huazhi.drones.business.command.entity.dto.DronesCommandQueryDto;
 import org.huazhi.drones.business.command.entity.webscoketdto.DronesCommandWebsocket;
-import org.huazhi.drones.business.command.entity.webscoketdto.DronesRoute;
 import org.huazhi.drones.business.command.entity.webscoketdto.action.DronesAction;
+import org.huazhi.drones.business.command.entity.webscoketdto.route.DronesRoute;
 import org.huazhi.drones.business.command.entity.webscoketdto.task.DronesTaskWebScoket;
 import org.huazhi.drones.business.command.service.DronesCommandService;
 import org.huazhi.drones.business.config.service.DronesConfigService;
