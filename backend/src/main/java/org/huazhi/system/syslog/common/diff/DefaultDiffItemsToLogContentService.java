@@ -165,10 +165,20 @@ public class DefaultDiffItemsToLogContentService implements IDiffItemsToLogConte
 
     private Collection<Object> getListValue(DiffNode node, Object object) {
         Object fieldValue = node.canonicalGet(object);
-        if (fieldValue != null && fieldValue.getClass().isArray()) {
+
+        if (fieldValue == null) {
+            return new ArrayList<>();
+        }
+
+        if (fieldValue.getClass().isArray()) {
             return new ArrayList<>(Arrays.asList((Object[]) fieldValue));
         }
-        return fieldValue == null ? new ArrayList<>() : (Collection<Object>) fieldValue;
+
+        if (fieldValue instanceof Collection<?> collection) {
+            return new ArrayList<>(collection);
+        }
+
+        return new ArrayList<>();
     }
 
     private Collection<Object> listSubtract(Collection<Object> minuend, Collection<Object> subtrahend) {
