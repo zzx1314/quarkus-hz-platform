@@ -10,6 +10,7 @@ import {
 import { SUCCESS } from "@/api/base";
 import { message } from "@/utils/message";
 import type { FieldValues } from "plus-pro-components";
+import { dronesCommandIssueCommonCommand } from "@/api/dronesCommand";
 
 export function useDronesDevice() {
   /**
@@ -156,12 +157,37 @@ export function useDronesDevice() {
   }
 
   // ===== 表单行为 =====
-
   function handleUpdate(row, formEl) {
     console.log(row);
     const data = JSON.stringify(row);
     addForm.value = JSON.parse(data);
     openDia("修改配置", formEl);
+  }
+
+  /**
+   * 命令
+   */
+  function handleCommand(row) {
+    console.log(row);
+    const param = {
+      deviceId: row.deviceId,
+      type: "toros",
+      params: {
+        head: "FILE_MAP_MODEL_UPLOAD",
+        token: "adfadfs",
+        data: {
+          host: "192.168.41.227",
+          port: "9000"
+        }
+      }
+    };
+    dronesCommandIssueCommonCommand(param).then(res => {
+      if (res.code === SUCCESS) {
+        message("指令下发成功！", { type: "success" });
+      } else {
+        message(res.msg, { type: "error" });
+      }
+    });
   }
 
   function handleDelete(row) {
@@ -303,6 +329,7 @@ export function useDronesDevice() {
     handleSelectionChange,
     handleSubmit,
     handleSubmitError,
+    handleCommand,
     resetForm,
     restartForm,
     cancel,

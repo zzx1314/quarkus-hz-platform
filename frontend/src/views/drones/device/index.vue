@@ -36,8 +36,8 @@ const {
   handleSelectionChange,
   handleSubmitError,
   handleSubmit,
-  cancel,
-  openDia
+  handleCommand,
+  cancel
 } = useDronesDevice();
 </script>
 <template>
@@ -83,9 +83,9 @@ const {
               type="primary"
               :size="size"
               :icon="useRenderIcon(EditPen)"
-              @click="handleUpdate(row, addFormRef)"
+              @click="handleCommand(row)"
             >
-              修改
+              地图探索
             </el-button>
             <el-popconfirm title="是否确认删除?" @confirm="handleDelete(row)">
               <template #reference>
