@@ -97,20 +97,23 @@
                   无人机视频监控
                 </div>
                 <div class="right">
-                  <el-button
-                    link
-                    style="color: #67c23a; font-size: 25px"
-                    type="primary"
-                    :icon="useRenderIcon(RiRestartFill)"
-                    @click="issueCommand('start')"
-                  />
-                  <el-button
-                    link
-                    style="color: red; font-size: 25px"
-                    type="primary"
-                    :icon="useRenderIcon(RiStopCircleLine)"
-                    @click="issueCommand('stop')"
-                  />
+                  <el-dropdown @command="handleCommandCheck">
+                    <el-button
+                      link
+                      style="color: #409eff; font-size: 15px"
+                      type="primary"
+                      :icon="useRenderIcon(DownloadIcon)"
+                      >目标检测</el-button
+                    >
+                    <template #dropdown>
+                      <el-dropdown-menu>
+                        <el-dropdown-item command="start"
+                          >开启</el-dropdown-item
+                        >
+                        <el-dropdown-item command="stop">关闭</el-dropdown-item>
+                      </el-dropdown-menu>
+                    </template>
+                  </el-dropdown>
                   <el-dropdown @command="handleCommand">
                     <el-button
                       link
@@ -739,6 +742,11 @@ const handleCommand = command => {
       message("指令下发失败", { type: "error" });
     }
   });
+};
+// 检测服务
+const handleCommandCheck = command => {
+  console.log("handleCommandCheck", command);
+  issueCommand(command);
 };
 /* ======================================================
  * WebSocket--目标跟踪
