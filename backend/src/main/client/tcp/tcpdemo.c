@@ -19,7 +19,7 @@ typedef enum {
     FRAME_ERROR = 4
 } FrameType;
 
-// 简单写一个 Header 打包函数（大端）
+// 简单写一个 Header 打包函数
 void pack_header(uint8_t *header, FrameType type, uint32_t body_len, uint64_t sequence) {
     uint32_t magic = htonl(MAGIC);
     uint32_t length = htonl(body_len);
