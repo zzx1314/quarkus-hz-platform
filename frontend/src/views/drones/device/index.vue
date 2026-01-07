@@ -3,7 +3,7 @@ import { ref } from "vue";
 import { FormInstance } from "element-plus";
 import { useDronesDevice } from "./hook";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import EditPen from "~icons/ep/edit-pen";
+import Map from "~icons/ri/road-map-line";
 import Delete from "~icons/ep/delete";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { useCollectorBusDevForm } from "./form";
@@ -82,7 +82,7 @@ const {
               link
               type="primary"
               :size="size"
-              :icon="useRenderIcon(EditPen)"
+              :icon="useRenderIcon(Map)"
               @click="handleCommand(row)"
             >
               地图探索
