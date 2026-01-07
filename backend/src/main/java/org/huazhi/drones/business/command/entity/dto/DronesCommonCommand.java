@@ -1,5 +1,7 @@
 package org.huazhi.drones.business.command.entity.dto;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import lombok.Data;
 
 @Data
@@ -12,5 +14,5 @@ public class DronesCommonCommand {
 
     private String type;
 
-    private Object params;
+    private JsonNode params;
 }

@@ -82,7 +82,7 @@ int main() {
     uint64_t seq = 1;
 
     // 1 发送 INIT Frame
-    const char *init_json = "{\"commandId\": 123,\"task\":{\"taskType\":\"FILE_MAP_MODEL_UPLOAD\"}}";
+    const char *init_json = "{ \"commandId\": 123, \"type\": \"toros\", \"params\": { \"head\": \"FILE_MAP_MODEL_UPLOAD\", \"token\": \"sdfssdf\" } }";
 
     send_frame(sockfd, FRAME_INIT, (uint8_t*)init_json, strlen(init_json), seq++);
     printf("INIT sent.\n");
@@ -108,7 +108,7 @@ int main() {
     snprintf(
         finish_json,
         sizeof(finish_json),
-        "{\"commandId\":123,\"task\":{\"taskType\":\"FILE_MAP_MODEL_UPLOAD\",\"taskMeta\":{\"fileLength\":%lu}, \"status\":\"SUCCESS\"}}",
+        "{ \"commandId\": 123, \"type\": \"toros\", \"params\": { \"head\": \"FILE_MAP_MODEL_UPLOAD\", \"token\": \"sdfssdf\", \"data\": { \"host\": \"192.168.1.100\", \"port\": 9000, \"meta\": { \"fileName\": \"model_v1.zip\", \"fileLength\": %lu, \"fileHash\": \"a1b2c3d4e5f6g7h8i9j0\" }, \"status\": \"SUCCESS\" } } }",
         file_length
     );
 
