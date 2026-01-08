@@ -44,12 +44,11 @@ public class DeviceAuthController {
     @GET
     @Path("clientAuth/{clientId}")
     public R<String> clientAuth(@PathParam("clientId") String clientId) {
-        log.info("clientId:{}, clientAuth==", clientId);
         redisUtil.del(clientId);
         UUID uuid = UUID.randomUUID();
         String uuidStr = uuid.toString().replace("-", "");
         redisUtil.set(uuidStr, clientId, 60 * 10);
-        log.info("clientId:{}, clientAuth=={}", clientId, uuidStr);
+        log.info("clientId:{}, tokenInfo=={}", clientId, uuidStr);
         return R.ok(uuidStr, "success");
     }
 
