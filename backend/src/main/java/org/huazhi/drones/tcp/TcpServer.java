@@ -12,12 +12,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.huazhi.config.FileConfig;
 import org.huazhi.drones.business.command.entity.dto.DronesCommonCommand;
 import org.huazhi.drones.business.model.entity.DronesModel;
+import org.huazhi.drones.business.model.entity.dto.DronesModelQueryDto;
 import org.huazhi.drones.business.model.service.DronesModelService;
 import org.huazhi.util.JsonUtil;
 
@@ -38,7 +40,6 @@ public class TcpServer {
     public void start(@Observes StartupEvent ev) {
         executor.submit(() -> {
             try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-                log.info("TCP Server started on port " + PORT);
                 while (true) {
                     Socket clientSocket = serverSocket.accept();
                     executor.submit(() -> handleClient(clientSocket));
@@ -128,14 +129,17 @@ public class TcpServer {
     }
 
     private void handleUplodModeFile(DronesCommonCommand tcpConnectCommand){
-        if (tcpConnectCommand.getParams().asText("head").equals("FILE_MAP_MODEL_UPLOAD")
-         && tcpConnectCommand.getParams().path("data").asText("status").equals("SUCCESS")) {
-            String mcpFilePath = fileConfig.basePath() + "/model/command" + tcpConnectCommand.getCommandId();
+        if (tcpConnectCommand.getParams().path("head").asText().equals("FILE_MAP_MODEL_UPLOAD")
+         && tcpConnectCommand.getParams().path("data").path("status").asText().equals("SUCCESS")) {
+            String modelFilePath = fileConfig.basePath() + "/model/command" + tcpConnectCommand.getCommandId();
+            // 数据库检查目录是否存在，不存在则创建
+            List<DronesModel> existingModels = dronesModelService.listEntitysByDto(new DronesModelQueryDto().setFilePath(modelFilePath));
+
             DronesModel dronesModel = new DronesModel();
             dronesModel.setModelName("雷达扫描模型");
             dronesModel.setModelType("map");
             dronesModel.setFileName("model.zip");
-            dronesModel.setFilePath(mcpFilePath + "/" + "model.zip");
+            dronesModel.setFilePath(modelFilePath + "/" + "model.zip");
             dronesModel.setFileFormat("zip");
             dronesModel.setRemarks("无人机上传");
 
@@ -151,7 +155,12 @@ public class TcpServer {
                 Files.move(tempFile, targetFile, StandardCopyOption.REPLACE_EXISTING);
                 log.info("Temp file moved to: " + targetFile);
                 dronesModel.setFileSize(size);
-                dronesModelService.register(dronesModel);
+
+                if (existingModels.isEmpty() && existingModels.size() == 0) {
+                    dronesModelService.register(dronesModel);
+                } else {
+                    dronesModelService.replaceById(dronesModel);
+                }
             } catch (IOException e) {
                 log.error("Failed to move temp file to target path", e);
             }

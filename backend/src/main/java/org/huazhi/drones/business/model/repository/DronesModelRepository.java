@@ -28,6 +28,9 @@ public class DronesModelRepository implements PanacheRepository<DronesModel> {
 
     public List<DronesModel> selectList(DronesModelQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
+                .like("modelName", queryDto.getModelName())
+                .equal("modelType", queryDto.getModelType())
+                .equal("filePath", queryDto.getFilePath())
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
     }

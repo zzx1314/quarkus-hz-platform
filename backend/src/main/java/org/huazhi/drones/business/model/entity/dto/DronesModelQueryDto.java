@@ -30,4 +30,7 @@ public class DronesModelQueryDto {
 
     @QueryParam("fileName")
     private String fileName;
+
+    @QueryParam("filePath")
+    private String filePath;
 }
