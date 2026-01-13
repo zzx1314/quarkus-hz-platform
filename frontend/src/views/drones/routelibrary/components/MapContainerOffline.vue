@@ -200,6 +200,7 @@ import { dronesCommandIssueCommand } from "@/api/dronesCommand";
 import { dronesCommandIssueCommonCommand } from "@/api/dronesCommand";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags.js";
 import { router } from "@/store/utils.js";
+import { ElMessageBox, ElSwitch } from "element-plus";
 
 import { SUCCESS } from "@/api/base";
 import { message } from "@/utils/message";
@@ -749,6 +750,7 @@ const issueCommandServer = () => {
       dronesCommandIssueCommonCommand(param).then(res => {
         if (res.code === SUCCESS) {
           message("指令下发成功", { type: "success" });
+          dialogFormVisibleTreacking.value = false;
         } else {
           message("指令下发失败", { type: "error" });
         }
@@ -760,6 +762,7 @@ const issueCommandServer = () => {
 };
 // 处理服务开启和关闭
 const handleCommand = command => {
+  // 目标跟踪--发送跟踪指令
   console.log("handleCommand", command);
   const param = {
     taskId: props.taskId,
@@ -772,7 +775,6 @@ const handleCommand = command => {
   dronesCommandIssueCommonCommand(param).then(res => {
     if (res.code === SUCCESS) {
       message("指令下发成功", { type: "success" });
-      dialogFormVisibleTreacking.value = false;
     } else {
       message("指令下发失败", { type: "error" });
     }
