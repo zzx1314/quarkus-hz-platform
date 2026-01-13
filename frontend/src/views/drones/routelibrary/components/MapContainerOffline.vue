@@ -750,10 +750,11 @@ const issueCommandServer = () => {
       dronesCommandIssueCommonCommand(param).then(res => {
         if (res.code === SUCCESS) {
           message("指令下发成功", { type: "success" });
-          dialogFormVisibleTreacking.value = false;
         } else {
           message("指令下发失败", { type: "error" });
         }
+        dialogFormVisibleTreacking.value = false;
+        trackTarget.value = null;
       });
     })
     .catch(() => {
