@@ -185,7 +185,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick } from "vue";
+import { ref, onMounted, onUnmounted, nextTick, h } from "vue";
 import {
   dronesRouteLibraryGetRoute,
   dronesRouteLibrarySaveRouteData
@@ -706,24 +706,58 @@ function issueCommand(paramsInput) {
  * 指令-服务
  * ====================================================== */
 const dialogFormVisibleTreacking = ref(false);
-function issueCommandServer() {
-  const param = {
-    taskId: props.taskId,
-    deviceId: props.deviceIdStr,
-    type: "server-command",
-    params: {
-      head: "track",
-      data: trackTarget.value
-    }
-  };
-  dronesCommandIssueCommonCommand(param).then(res => {
-    if (res.code === SUCCESS) {
-      message("指令下发成功", { type: "success" });
-    } else {
-      message("指令下发失败", { type: "error" });
-    }
-  });
-}
+const issueCommandServer = () => {
+  const checked = ref(false);
+
+  ElMessageBox({
+    title: "下发跟踪目标",
+    showCancelButton: true,
+    message: () =>
+      h(
+        "div",
+        {
+          style: {
+            display: "flex",
+            alignItems: "center",
+            gap: "12px"
+          }
+        },
+        [
+          h("span", "是否下发跟踪目标"),
+          h(ElSwitch, {
+            modelValue: checked.value,
+            "onUpdate:modelValue": val => {
+              checked.value = val;
+            }
+          })
+        ]
+      )
+  })
+    .then(() => {
+      // 用户点了「确定」才执行
+      const param = {
+        taskId: props.taskId,
+        deviceId: props.deviceIdStr,
+        type: "server-command",
+        params: {
+          head: "track",
+          data: trackTarget.value,
+          isfollow: checked.value ? "true" : "false"
+        }
+      };
+
+      dronesCommandIssueCommonCommand(param).then(res => {
+        if (res.code === SUCCESS) {
+          message("指令下发成功", { type: "success" });
+        } else {
+          message("指令下发失败", { type: "error" });
+        }
+      });
+    })
+    .catch(() => {
+      // 用户点取消
+    });
+};
 // 处理服务开启和关闭
 const handleCommand = command => {
   console.log("handleCommand", command);
@@ -738,6 +772,7 @@ const handleCommand = command => {
   dronesCommandIssueCommonCommand(param).then(res => {
     if (res.code === SUCCESS) {
       message("指令下发成功", { type: "success" });
+      dialogFormVisibleTreacking.value = false;
     } else {
       message("指令下发失败", { type: "error" });
     }
