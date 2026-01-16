@@ -200,7 +200,7 @@ import { dronesCommandIssueCommand } from "@/api/dronesCommand";
 import { dronesCommandIssueCommonCommand } from "@/api/dronesCommand";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags.js";
 import { router } from "@/store/utils.js";
-import { ElMessageBox, ElSwitch } from "element-plus";
+import { ElMessageBox, ElSwitch, ElRadioGroup, ElRadio } from "element-plus";
 
 import { SUCCESS } from "@/api/base";
 import { message } from "@/utils/message";
@@ -724,7 +724,7 @@ const issueCommandServer = () => {
           }
         },
         [
-          h("span", "是否下发跟踪目标"),
+          h("span", "是否跟随目标"),
           h(ElSwitch, {
             modelValue: checked.value,
             "onUpdate:modelValue": val => {
@@ -773,6 +773,84 @@ const handleCommand = command => {
       head: command
     }
   };
+  if (command === "deepsort_stop") {
+    // 关闭跟踪 / 关闭跟随
+    const trackMode = ref("closeTrack");
+
+    ElMessageBox({
+      title: "关闭目标跟踪",
+      showCancelButton: true,
+      message: () =>
+        h(
+          "div",
+          {
+            style: {
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px"
+            }
+          },
+          [
+            h(
+              ElRadioGroup,
+              {
+                modelValue: trackMode.value,
+                "onUpdate:modelValue": val => {
+                  trackMode.value = val;
+                }
+              },
+              () => [
+                h(ElRadio, { label: "closeTrack" }, () => "关闭跟踪"),
+                h(ElRadio, { label: "closeFollow" }, () => "关闭跟随")
+              ]
+            )
+          ]
+        )
+    })
+      .then(() => {
+        // 根据选择决定 isfollow 的值
+        if (trackMode.value === "closeFollow") {
+          // 关闭跟随
+          closeFollow();
+        } else {
+          // 关闭跟踪
+          dronesCommandIssueCommonCommand(param).then(res => {
+            if (res.code === SUCCESS) {
+              // 关闭跟踪成功后，再关闭跟随
+              closeFollow();
+            } else {
+              message("指令下发失败", { type: "error" });
+            }
+          });
+        }
+      })
+      .catch(() => {
+        // 用户点取消
+      });
+  } else {
+    // 启动跟踪
+    dronesCommandIssueCommonCommand(param).then(res => {
+      if (res.code === SUCCESS) {
+        message("指令下发成功", { type: "success" });
+      } else {
+        message("指令下发失败", { type: "error" });
+      }
+    });
+  }
+};
+
+const closeFollow = () => {
+  const param = {
+    taskId: props.taskId,
+    deviceId: props.deviceIdStr,
+    type: "server-command",
+    params: {
+      head: "track",
+      data: "99",
+      isfollow: "false"
+    }
+  };
+
   dronesCommandIssueCommonCommand(param).then(res => {
     if (res.code === SUCCESS) {
       message("指令下发成功", { type: "success" });
