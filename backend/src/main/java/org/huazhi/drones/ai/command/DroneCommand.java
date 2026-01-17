@@ -1,5 +1,7 @@
 package org.huazhi.drones.ai.command;
 
+import java.util.Map;
+
 import org.huazhi.drones.ai.tool.DroneCommandType;
 
 import lombok.Data;
@@ -13,4 +15,7 @@ public class DroneCommand {
     public Double distance;
     public Double height;
     public Integer duration;
+
+
+    public Map<String, Object> params;
 }

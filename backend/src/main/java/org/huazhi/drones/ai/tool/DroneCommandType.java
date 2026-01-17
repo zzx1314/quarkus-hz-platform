@@ -9,5 +9,8 @@ public enum DroneCommandType {
     MOVE_RIGHT,
     ASCEND,
     DESCEND,
-    LAND
+    LAND,
+
+    START_RTSP,
+    START_YOLO
 }

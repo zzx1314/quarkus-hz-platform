@@ -118,4 +118,17 @@ public class ConnectionManager {
             log.warn("Connection for deviceId {} is not available.", deviceId);
         }
     }
+
+    /**
+     * 直接发送json指令
+     */
+    public void sendMessageByDeviceId(String deviceId, String message) {
+        WebSocketConnection conn = connections.get(deviceId);
+        if (conn != null && conn.isOpen()) {
+            log.info("Sending message to deviceId {}: {}", deviceId, message);
+            conn.sendTextAndAwait(message);
+        } else {
+            log.warn("Connection for deviceId {} is not available.", deviceId);
+        }
+    }
 }

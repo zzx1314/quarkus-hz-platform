@@ -28,7 +28,7 @@ public class AiModelTest {
         .chatModel(openAiChatModel)
         .tools(commandTool)
         .build();
-        Result<String> result = assistant.chat("先起飞，向前飞行5米，悬停1分钟");
+        Result<String> result = assistant.chat("先起飞，向前飞行5米，悬停1分钟，然后启动YOLO目标检测，最后降落。");
         System.out.println("AI Response: " + result.toolExecutions());
     }
 }

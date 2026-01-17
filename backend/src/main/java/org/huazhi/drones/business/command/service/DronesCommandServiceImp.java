@@ -150,7 +150,7 @@ public class DronesCommandServiceImp implements DronesCommandService {
 
         commandWebsocket.setTasks(tasks);
         log.info("下发服务命令：{}", JsonUtil.toJson(commandWebsocket));
-        // 任务id为空，零时命令不需要修改任务信息
+        // 任务id为空，临时命令不需要修改任务信息
         connectionManager.sendMessageByDeviceId(commandWebsocket.getDeviceId(),
          commandWebsocket, null, "SERVER");
         return true;
