@@ -220,6 +220,14 @@ onMounted(() => {
       routeListOptions.value = res.data;
     }
   });
+  // 获取航点
+  if (props.routeId && Number(props.routeId) !== 0) {
+    dronesRouteLibraryGetSelectOptionPoint(props.routeId).then(res => {
+      if (res.code === SUCCESS) {
+        routePointListOptions.value = res.data;
+      }
+    });
+  }
 });
 
 onBeforeUnmount(() => {
