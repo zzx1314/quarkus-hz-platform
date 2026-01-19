@@ -815,12 +815,7 @@ const handleCommand = command => {
         } else {
           // 关闭跟踪
           dronesCommandIssueCommonCommand(param).then(res => {
-            if (res.code === SUCCESS) {
-              // 关闭跟踪成功后，再关闭跟随
-              closeFollow();
-            } else {
-              message("指令下发失败", { type: "error" });
-            }
+            message("指令下发失败", { type: "error" });
           });
         }
       })
