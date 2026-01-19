@@ -43,7 +43,7 @@ public class CommandTool {
         websocket.setType("toros");
 
         DronesTaskWebScoket task = new DronesTaskWebScoket();
-        task.setTaskId("ai_task_" + IdUtil.simpleUUID());
+        task.setTaskId("ai_task_" + IdUtil.randomCode(4));
         task.setEvent("init_task");
 
         List<DronesAction> actions = new ArrayList<>();
@@ -59,8 +59,9 @@ public class CommandTool {
 
         task.setActions(actions);
         websocket.setTasks(List.of(task));
+        log.info("语音下发服务命令：{}", JsonUtil.toJson(websocket));
 
-        connectionManager.sendMessageByDeviceId(websocket.getDeviceId(), JsonUtil.toJson(websocket));
+        // connectionManager.sendMessageByDeviceId(websocket.getDeviceId(), JsonUtil.toJson(websocket));
         return "已接收指令批次";
     }
 
@@ -70,7 +71,7 @@ public class CommandTool {
 
     private DronesAction buildAction(DroneCommand cmd, String afterId) {
 
-        String actionId = "action_" + IdUtil.simpleUUID();
+        String actionId = "action_" + IdUtil.randomCode(4);
 
         return switch (cmd.command) {
             case TAKEOFF -> buildTakeoff(actionId, afterId);
