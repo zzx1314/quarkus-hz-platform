@@ -13,6 +13,7 @@ import org.huazhi.drones.business.command.entity.webscoketdto.route.DronesRoute;
 import org.huazhi.drones.business.command.entity.webscoketdto.task.DronesTaskWebScoket;
 import org.huazhi.drones.websocket.service.ConnectionManager;
 import org.huazhi.util.IdUtil;
+import org.huazhi.util.JsonUtil;
 
 import dev.langchain4j.agent.tool.ReturnBehavior;
 import dev.langchain4j.agent.tool.Tool;
@@ -30,212 +31,158 @@ public class CommandTool {
     @Tool(value = "发送无人机控制指令", returnBehavior = ReturnBehavior.IMMEDIATE)
     public String getCommandString(DroneCommand command) {
         log.info("发送无人机控制指令: {}", command.command);
-        log.info("发送无人机控制指令--distance: {}", command.distance);
-        log.info("发送无人机控制指令--height: {}", command.height);
-        log.info("发送无人机控制指令--duration: {}", command.duration);
+        log.info("distance: {}", command.distance);
+        log.info("height: {}", command.height);
+        log.info("duration: {}", command.duration);
         return command.command.toString();
     }
 
     @Tool(value = "发送一组无人机控制指令，必须按顺序执行", returnBehavior = ReturnBehavior.IMMEDIATE)
     public String sendCommandBatch(DroneCommandBatch batch) {
-        DronesCommandWebsocket commandWebsocket = new DronesCommandWebsocket();
-        commandWebsocket.setType("toros");
-        List<DronesTaskWebScoket> tasks = new ArrayList<>();
+        DronesCommandWebsocket websocket = new DronesCommandWebsocket();
+        websocket.setType("toros");
+
         DronesTaskWebScoket task = new DronesTaskWebScoket();
-        task.setTaskId("ai_task_001");
+        task.setTaskId("ai_task_" + IdUtil.simpleUUID());
         task.setEvent("init_task");
-        
+
         List<DronesAction> actions = new ArrayList<>();
-
-
         String beforeId = "init_task";
-        for (int i = 0; i < batch.commands.size(); i++) {
-            String currentId = "action_" + IdUtil.simpleUUID();
-            DroneCommand cmd = batch.commands.get(i);
-            switch (cmd.command) {
-                case TAKEOFF -> {
-                    log.info("起飞指令: {}", cmd.command);
-                    DronesAction action = new DronesAction();
-                    action.setActionId("action_takeoff_001");
-                    action.setType("TAKEOFF");
-                    action.setAfter(beforeId);
-                    action.setTimeoutSec(100);
 
-                    DronesActionParam param = new DronesActionParam();
-                    param.setTargetAlt(0.5);
-                    DronesActionParamEvent event = new DronesActionParamEvent();
-                    event.setOnComplete(currentId);
-                    event.setOnFail("node_lfql6sga");
-                    param.setEvent(event);
-
-                    action.setParams(param);
-                    actions.add(action);
-                }
-                case HOVER -> {
-                    log.info("悬停指令: {}", cmd.command);
-                    DronesAction action = new DronesAction();
-                    action.setActionId("action_hover_001");
-                    action.setType("HOVER");
-                    action.setAfter(beforeId);
-                    action.setTimeoutSec(100);
-
-                    DronesActionParam param = new DronesActionParam();
-                    param.setTimeSec(cmd.duration);
-                    DronesActionParamEvent event = new DronesActionParamEvent();
-                    event.setOnComplete(currentId);
-                    event.setOnFail("node_lfql6sga");
-                    param.setEvent(event);
-
-                    action.setParams(param);
-                    actions.add(action);
-                }
-                case LAND -> {
-                    log.info("降落指令: {}", cmd.command);
-                    DronesAction action = new DronesAction();
-                    action.setActionId("action_land_001");
-                    action.setType("LAND");
-                    action.setAfter(beforeId);
-                    action.setTimeoutSec(100);
-
-                    DronesActionParam param = new DronesActionParam();
-                    DronesActionParamEvent event = new DronesActionParamEvent();
-                    event.setOnComplete(currentId);
-                    event.setOnFail("node_lfql6sga");
-                    param.setEvent(event);
-
-                    action.setParams(param);
-                    actions.add(action);
-                }
-                case MOVE_FORWARD -> {
-                    log.info("前进指令: {}，距离: {}", cmd.command, cmd.distance);
-                    DronesAction action = new DronesAction();
-                    action.setActionId("action_move_forward_001");
-                    action.setType("GOTO");
-                    action.setAfter(beforeId);
-                    action.setTimeoutSec(100);
-
-                    DronesActionParam param = new DronesActionParam();
-                    DronesRoute targetWp = new DronesRoute();
-                    targetWp.setWpId(1);
-                    targetWp.setLat(cmd.distance);
-                    targetWp.setLon(0.0);
-                    targetWp.setAlt(0.5);
-                    param.setTargetWp(targetWp);
-
-                    DronesActionParamEvent event = new DronesActionParamEvent();
-                    event.setOnComplete(currentId);
-                    event.setOnFail("node_lfql6sga");
-                    param.setEvent(event);
-                }
-                case MOVE_BACKWARD -> {
-                    log.info("后退指令: {}，距离: {}", cmd.command, cmd.distance);
-                    DronesAction action = new DronesAction();
-                    action.setActionId("action_move_backward_001");
-                    action.setType("GOTO");
-                    action.setAfter(beforeId);
-                    action.setTimeoutSec(100);
-
-                    DronesActionParam param = new DronesActionParam();
-                    DronesRoute targetWp = new DronesRoute();
-                    targetWp.setWpId(1);
-                    targetWp.setLat(-cmd.distance);
-                    targetWp.setLon(0.0);
-                    targetWp.setAlt(0.5);
-                    param.setTargetWp(targetWp);
-
-                    DronesActionParamEvent event = new DronesActionParamEvent();
-                    event.setOnComplete(currentId);
-                    event.setOnFail("node_lfql6sga");
-                    param.setEvent(event);
-                }
-                case MOVE_LEFT -> {
-                    log.info("左移指令: {}，距离: {}", cmd.command, cmd.distance);
-                    DronesAction action = new DronesAction();
-                    action.setActionId("action_move_left_001");
-                    action.setType("GOTO");
-                    action.setAfter(beforeId);
-                    action.setTimeoutSec(100);
-
-                    DronesActionParam param = new DronesActionParam();
-                    DronesRoute targetWp = new DronesRoute();
-                    targetWp.setWpId(1);
-                    targetWp.setLat(0.0);
-                    targetWp.setLon(cmd.distance);
-                    targetWp.setAlt(0.5);
-                    param.setTargetWp(targetWp);
-
-                    DronesActionParamEvent event = new DronesActionParamEvent();
-                    event.setOnComplete(currentId);
-                    event.setOnFail("node_lfql6sga");
-                    param.setEvent(event);
-                }
-                case MOVE_RIGHT -> {
-                    log.info("右移指令: {}，距离: {}", cmd.command, cmd.distance);
-                    DronesAction action = new DronesAction();
-                    action.setActionId("action_move_right_001");
-                    action.setType("GOTO");
-                    action.setAfter(beforeId);
-                    action.setTimeoutSec(100);
-
-                    DronesActionParam param = new DronesActionParam();
-                    DronesRoute targetWp = new DronesRoute();
-                    targetWp.setWpId(1);
-                    targetWp.setLat(0.0);
-                    targetWp.setLon(-cmd.distance);
-                    targetWp.setAlt(0.5);
-                    param.setTargetWp(targetWp);
-
-                    DronesActionParamEvent event = new DronesActionParamEvent();
-                    event.setOnComplete(currentId);
-                    event.setOnFail("node_lfql6sga");
-                    param.setEvent(event);
-                }
-                case ASCEND -> {
-                    log.info("上升指令: {}，高度: {}", cmd.command, cmd.height);
-                }   
-                case START_RTSP -> {
-                    log.info("启动 RTSP 服务");
-                    DronesAction action = new DronesAction();
-                    action.setActionId("action_rtsp_001");
-                    action.setType("SERVICE_START_RTSP");
-                    action.setAfter(beforeId);
-                    action.setTimeoutSec(100);
-
-                    DronesActionParam param = new DronesActionParam();
-                    param.setType("RTSP");
-
-                    DronesActionParamEvent event = new DronesActionParamEvent();
-                    event.setOnComplete(currentId);
-                    event.setOnFail("node_lfql6sga");
-                    event.setOnStart("rtsp_start");
-                    param.setEvent(event);
-                }
-                case START_YOLO -> {
-                    log.info("启动 YOLO 服务");
-                    DronesAction action = new DronesAction();
-                    action.setActionId("action_yolo_001");
-                    action.setType("SERVICE_START_YOLO");
-                    action.setAfter(beforeId);
-                    action.setTimeoutSec(100);
-
-                    DronesActionParam param = new DronesActionParam();
-                    param.setType("YOLO");
-
-                    DronesActionParamEvent event = new DronesActionParamEvent();
-                    event.setOnComplete(currentId);
-                    event.setOnFail("node_lfql6sga");
-                    event.setOnStart("yolo_start");
-                    param.setEvent(event);
-                }
-                default -> log.warn("未知指令: {}", cmd.command);
+        for (DroneCommand cmd : batch.commands) {
+            DronesAction action = buildAction(cmd, beforeId);
+            if (action != null) {
+                actions.add(action);
+                beforeId = action.getActionId();
             }
-
-            beforeId = currentId;
         }
 
         task.setActions(actions);
-        tasks.add(task);
+        websocket.setTasks(List.of(task));
+
+        connectionManager.sendMessageByDeviceId(websocket.getDeviceId(), JsonUtil.toJson(websocket));
         return "已接收指令批次";
     }
 
+    // =========================
+    // Action Builder Dispatcher
+    // =========================
+
+    private DronesAction buildAction(DroneCommand cmd, String afterId) {
+
+        String actionId = "action_" + IdUtil.simpleUUID();
+
+        return switch (cmd.command) {
+            case TAKEOFF -> buildTakeoff(actionId, afterId);
+            case HOVER -> buildHover(actionId, afterId, cmd.duration);
+            case LAND -> buildLand(actionId, afterId);
+            case MOVE_FORWARD -> buildMove(actionId, afterId, cmd.distance, 0);
+            case MOVE_BACKWARD -> buildMove(actionId, afterId, -cmd.distance, 0);
+            case MOVE_LEFT -> buildMove(actionId, afterId, 0, cmd.distance);
+            case MOVE_RIGHT -> buildMove(actionId, afterId, 0, -cmd.distance);
+            case START_RTSP -> buildService(actionId, afterId, "SERVICE_START_RTSP", "RTSP");
+            case START_YOLO -> buildService(actionId, afterId, "SERVICE_START_YOLO", "YOLO");
+            default -> {
+                log.warn("未知指令: {}", cmd.command);
+                yield null;
+            }
+        };
+    }
+
+    // =========================
+    // Common Builders
+    // =========================
+
+    private DronesAction baseAction(String actionId, String type, String afterId) {
+        DronesAction action = new DronesAction();
+        action.setActionId(actionId);
+        action.setType(type);
+        action.setAfter(afterId);
+        action.setTimeoutSec(100);
+        return action;
+    }
+
+    private DronesActionParamEvent buildEvent(String onComplete) {
+        DronesActionParamEvent event = new DronesActionParamEvent();
+        event.setOnComplete(onComplete);
+        event.setOnFail("node_fail");
+        return event;
+    }
+
+    // =========================
+    // Specific Action Builders
+    // =========================
+
+    private DronesAction buildTakeoff(String id, String after) {
+        log.info("起飞指令");
+
+        DronesAction action = baseAction(id, "TAKEOFF", after);
+
+        DronesActionParam param = new DronesActionParam();
+        param.setTargetAlt(0.5);
+        param.setEvent(buildEvent(id));
+
+        action.setParams(param);
+        return action;
+    }
+
+    private DronesAction buildHover(String id, String after, Integer duration) {
+        log.info("悬停指令，duration={}", duration);
+
+        DronesAction action = baseAction(id, "HOVER", after);
+
+        DronesActionParam param = new DronesActionParam();
+        param.setTimeSec(duration);
+        param.setEvent(buildEvent(id));
+
+        action.setParams(param);
+        return action;
+    }
+
+    private DronesAction buildLand(String id, String after) {
+        log.info("降落指令");
+
+        DronesAction action = baseAction(id, "LAND", after);
+
+        DronesActionParam param = new DronesActionParam();
+        param.setEvent(buildEvent(id));
+
+        action.setParams(param);
+        return action;
+    }
+
+    private DronesAction buildMove(String id, String after, double lat, double lon) {
+        log.info("移动指令 lat={}, lon={}", lat, lon);
+
+        DronesAction action = baseAction(id, "GOTO", after);
+
+        DronesRoute wp = new DronesRoute();
+        wp.setWpId(1);
+        wp.setLat(lat);
+        wp.setLon(lon);
+        wp.setAlt(0.5);
+
+        DronesActionParam param = new DronesActionParam();
+        param.setTargetWp(wp);
+        param.setEvent(buildEvent(id));
+
+        action.setParams(param);
+        return action;
+    }
+
+    private DronesAction buildService(String id, String after, String type, String serviceType) {
+        log.info("启动服务: {}", serviceType);
+
+        DronesAction action = baseAction(id, type, after);
+
+        DronesActionParam param = new DronesActionParam();
+        param.setType(serviceType);
+
+        DronesActionParamEvent event = buildEvent(id);
+        event.setOnStart(serviceType.toLowerCase() + "_start");
+
+        param.setEvent(event);
+        action.setParams(param);
+        return action;
+    }
 }
