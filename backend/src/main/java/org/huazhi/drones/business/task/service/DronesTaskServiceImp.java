@@ -400,7 +400,6 @@ public class DronesTaskServiceImp implements DronesTaskService {
         actEvent.setOnStop(event.path("onStop").asText());
         actEvent.setOnLost(event.path("onLost").asText());
         actEvent.setOnTracked(event.path("onTracked").asText());
-        actEvent.setOnComplete(event.path(completeFrom).asText());
     }
 
     /*
