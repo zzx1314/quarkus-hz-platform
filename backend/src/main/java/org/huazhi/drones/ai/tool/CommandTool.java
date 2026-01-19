@@ -197,21 +197,17 @@ public class CommandTool {
                     log.info("启动 RTSP 服务");
                     DronesAction action = new DronesAction();
                     action.setActionId("action_rtsp_001");
-                    action.setType("GOTO");
+                    action.setType("SERVICE_START_RTSP");
                     action.setAfter(beforeId);
                     action.setTimeoutSec(100);
 
                     DronesActionParam param = new DronesActionParam();
-                    DronesRoute targetWp = new DronesRoute();
-                    targetWp.setWpId(1);
-                    targetWp.setLat(0.0);
-                    targetWp.setLon(-cmd.distance);
-                    targetWp.setAlt(0.5);
-                    param.setTargetWp(targetWp);
+                    param.setType("RTSP");
 
                     DronesActionParamEvent event = new DronesActionParamEvent();
                     event.setOnComplete(currentId);
                     event.setOnFail("node_lfql6sga");
+                    event.setOnStart("rtsp_start");
                     param.setEvent(event);
                 }
                 case START_YOLO -> {
@@ -228,6 +224,7 @@ public class CommandTool {
                     DronesActionParamEvent event = new DronesActionParamEvent();
                     event.setOnComplete(currentId);
                     event.setOnFail("node_lfql6sga");
+                    event.setOnStart("yolo_start");
                     param.setEvent(event);
                 }
                 default -> log.warn("未知指令: {}", cmd.command);
