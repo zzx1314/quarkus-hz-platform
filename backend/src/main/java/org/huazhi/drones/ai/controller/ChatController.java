@@ -1,0 +1,39 @@
+package org.huazhi.drones.ai.controller;
+
+
+import org.huazhi.drones.ai.assistant.Assistant;
+import org.huazhi.drones.ai.tool.CommandTool;
+
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.service.AiServices;
+import dev.langchain4j.service.Result;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.MediaType;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Path("/chat")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class ChatController {
+    @Inject
+    ChatModel openAiChatModel;
+
+    @GET
+    @Path("/chatCommands")
+    public void chatCommands(@QueryParam("commands") String commands) {
+        CommandTool commandTool = new CommandTool();
+        Assistant assistant = AiServices.builder(Assistant.class)
+        .chatModel(openAiChatModel)
+        .tools(commandTool)
+        .build();
+        Result<String> result = assistant.chat(commands);
+        log.info("AI Response: {}", result.toolExecutions());
+    }
+
+}
