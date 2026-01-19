@@ -120,7 +120,7 @@ class PureHttp {
         if (config.skipAuthRefresh) {
           return Promise.reject(error);
         }
-        const needRefresh = response.status === 401 && !response.data?.msg;
+        const needRefresh = response.status === 401 && !config._retry;
 
         if (needRefresh && !config._retry) {
           config._retry = true;
