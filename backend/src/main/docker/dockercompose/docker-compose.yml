@@ -41,6 +41,7 @@ services:
   hz-serve:
     container_name: hz-serve-drones
     image: quarkus/hz_server-jvm
+    user: "${UID}:${GID}"
     ports:
       - "8080:8080"
     environment:
