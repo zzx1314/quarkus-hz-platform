@@ -66,41 +66,70 @@ def run_inference_sync(audio_float32):
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     print(f"客户端已连接: {websocket.client}")
-    
-    # 字节缓冲区
+
     buffer = bytearray()
-    # 计算触发阈值 (字节数 = 采样率 * 4字节(float32) * 秒数)
     bytes_threshold = int(SERVER_SAMPLE_RATE * 4 * PROCESS_INTERVAL)
-    
+
     try:
         while True:
-            # 接收客户端发来的二进制音频数据
-            data = await websocket.receive_bytes()
-            buffer.extend(data)
-            
-            # 如果缓冲区满了，就开始处理
-            if len(buffer) >= bytes_threshold:
-                # 1. 将字节流转为 numpy float32
-                audio_chunk = np.frombuffer(buffer, dtype=np.float32)
-                
-                # 2. 清空缓冲区 (简单切分模式)
-                buffer = bytearray()
-                
-                # 3. [核心] 静音检测 (RMS能量检测)
-                # 如果全是底噪，直接跳过，防止模型输出 "그" 或幻觉
-                rms = np.sqrt(np.mean(audio_chunk**2))
-                if rms < SILENCE_THRESHOLD:
-                    print(f"静音跳过 (RMS: {rms:.4f})")
-                    continue
-                
-                # 4. 在线程池中运行推理 (防止阻塞 WebSocket 心跳)
-                loop = asyncio.get_event_loop()
-                text = await loop.run_in_executor(None, run_inference_sync, audio_chunk)
-                
-                # 5. 如果有结果，发送回客户端
-                if text and text.strip():
-                    response = {"text": text}
-                    await websocket.send_text(json.dumps(response))
+            #  必须用 receive()
+            msg = await websocket.receive()
+
+            # ===============================
+            #  接收二进制音频
+            # ===============================
+            if msg.get("bytes") is not None:
+                data = msg["bytes"]
+                buffer.extend(data)
+
+                # 达到处理阈值
+                if len(buffer) >= bytes_threshold:
+                    audio_chunk = np.frombuffer(buffer, dtype=np.float32)
+                    buffer = bytearray()
+
+                    # 静音检测
+                    rms = np.sqrt(np.mean(audio_chunk ** 2))
+                    if rms < SILENCE_THRESHOLD:
+                        print(f"静音跳过 (RMS: {rms:.4f})")
+                        continue
+
+                    # 在线程池跑模型
+                    loop = asyncio.get_event_loop()
+                    text = await loop.run_in_executor(
+                        None, run_inference_sync, audio_chunk
+                    )
+
+                    if text and text.strip():
+                        await websocket.send_text(
+                            json.dumps({"text": text})
+                        )
+
+            # ===============================
+            # 接收文本控制指令
+            # ===============================
+            elif msg.get("text") is not None:
+                text = msg["text"]
+
+                if text == "EOF":
+                    print("收到 EOF，结束识别")
+
+                    # EOF 前如果还有残余音频，处理一次
+                    if buffer:
+                        audio_chunk = np.frombuffer(buffer, dtype=np.float32)
+                        buffer = bytearray()
+
+                        rms = np.sqrt(np.mean(audio_chunk ** 2))
+                        if rms >= SILENCE_THRESHOLD:
+                            loop = asyncio.get_event_loop()
+                            final_text = await loop.run_in_executor(
+                                None, run_inference_sync, audio_chunk
+                            )
+                            if final_text:
+                                await websocket.send_text(
+                                    json.dumps({"text": final_text})
+                                )
+
+                    break  # 退出 while，结束会话
 
     except WebSocketDisconnect:
         print("客户端断开连接")

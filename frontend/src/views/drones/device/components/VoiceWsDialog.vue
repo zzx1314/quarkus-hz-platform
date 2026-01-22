@@ -31,142 +31,149 @@
     </div>
 
     <template #footer>
-      <el-button @click="visible = false">关闭</el-button>
+      <el-button @click="handleClose">关闭</el-button>
     </template>
   </el-dialog>
 </template>
 
-<script setup lang="ts">
-import { ref, onUnmounted } from "vue";
+<script setup>
+import { ref } from "vue";
 
+const visible = ref(false);
 const recording = ref(false);
 const status = ref("未开始");
 const result = ref("");
-const visible = defineModel<boolean>("visible", { required: true });
 
 const SERVER_IP = "192.168.41.227";
 const SERVER_PORT = 8000;
 const WS_URL = `ws://${SERVER_IP}:${SERVER_PORT}/ws`;
 const TARGET_SAMPLE_RATE = 16000;
 
-let audioContext: AudioContext | null = null;
-let mediaStream: MediaStream | null = null;
-let sourceNode: MediaStreamAudioSourceNode | null = null;
-let workletNode: AudioWorkletNode | null = null;
-let ws: WebSocket | null = null;
-let audioChunks: Float32Array[] = [];
+let audioContext;
+let mediaStream;
+let sourceNode;
+let processorNode;
+let ws;
+let audioChunks = [];
 
-const cleanup = () => {
-  sourceNode?.disconnect();
-  workletNode?.disconnect();
-  mediaStream?.getTracks().forEach(t => t.stop());
-  audioContext?.close();
-  if (ws?.readyState === WebSocket.OPEN) {
-    ws.close();
-  }
-  ws = null;
-  audioContext = null;
-  mediaStream = null;
-  sourceNode = null;
-  workletNode = null;
-  audioChunks = [];
-  recording.value = false;
-};
-
-const handleClose = () => {
-  cleanup();
-  status.value = "未开始";
-  result.value = "";
-  visible.value = false;
-};
-
-const handleError = (msg: string) => {
-  status.value = msg;
-  recording.value = false;
-};
-
+// 用户点击按钮触发录音
 const startRecording = async () => {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    alert("浏览器不支持麦克风访问，请使用 Chrome/Edge/Firefox 最新版本");
+    return;
+  }
+
   result.value = "";
   audioChunks = [];
-  status.value = "连接服务器...";
+  status.value = "获取麦克风...";
 
+  // 用户手势触发 getUserMedia
   try {
-    ws = new WebSocket(WS_URL);
-    ws.binaryType = "arraybuffer";
+    mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  } catch (err) {
+    console.error("获取麦克风失败:", err);
+    alert("获取麦克风失败，请允许浏览器访问麦克风");
+    status.value = "未开始";
+    return;
+  }
 
-    ws.onerror = () => handleError("连接失败");
-    ws.onclose = () => {
-      if (status.value !== "识别完成") {
-        handleError("连接已关闭");
+  // 连接 WebSocket
+  ws = new WebSocket(WS_URL);
+  ws.binaryType = "arraybuffer";
+
+  ws.onmessage = e => {
+    try {
+      const data = JSON.parse(e.data);
+      if (data.text && data.text.trim() !== "") {
+        result.value = data.text;
+        status.value = "识别完成";
       }
-    };
+    } catch (err) {
+      console.error("解析返回数据失败:", err);
+    }
+  };
 
-    await new Promise<void>((resolve, reject) => {
-      ws!.onopen = () => resolve();
-      ws!.onerror = reject;
-    });
-
+  ws.onopen = () => {
     status.value = "录音中...";
     recording.value = true;
 
+    // 创建 AudioContext
     audioContext = new AudioContext({ sampleRate: TARGET_SAMPLE_RATE });
-    await audioContext.audioWorklet.addModule("/audio-processor.js");
-
-    mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
     sourceNode = audioContext.createMediaStreamSource(mediaStream);
 
-    workletNode = new AudioWorkletNode(audioContext, "audio-processor");
-    workletNode.port.onmessage = e => {
-      audioChunks.push(e.data);
+    // ScriptProcessorNode 收集音频
+    processorNode = audioContext.createScriptProcessor(4096, 1, 1);
+    processorNode.onaudioprocess = e => {
+      const inputBuffer = e.inputBuffer.getChannelData(0);
+      audioChunks.push(new Float32Array(inputBuffer));
     };
 
-    sourceNode.connect(workletNode);
-    workletNode.connect(audioContext.destination);
-  } catch {
-    handleError("初始化失败");
-  }
+    sourceNode.connect(processorNode);
+    processorNode.connect(audioContext.destination);
+  };
 };
 
 const stopRecording = () => {
   if (!recording.value) return;
+
   recording.value = false;
   status.value = "发送音频中...";
 
+  // 停止音频流
   sourceNode?.disconnect();
-  workletNode?.disconnect();
+  processorNode?.disconnect();
   mediaStream?.getTracks().forEach(t => t.stop());
-  sourceNode = null;
-  workletNode = null;
-  mediaStream = null;
 
-  if (!ws || ws.readyState !== WebSocket.OPEN) {
-    handleError("连接已断开");
-    return;
-  }
-
+  // 合并所有 chunk
   const totalLength = audioChunks.reduce((s, a) => s + a.length, 0);
   const audioData = new Float32Array(totalLength);
-
   let offset = 0;
   for (const chunk of audioChunks) {
     audioData.set(chunk, offset);
     offset += chunk.length;
   }
 
+  // 发送音频
   ws.send(audioData.buffer);
-  ws.send("EOF");
 
-  ws.onmessage = e => {
-    try {
-      const data = JSON.parse(e.data);
-      result.value = data.text || data.result || "";
-      status.value = "识别完成";
-    } catch {
-      result.value = "解析失败";
-      status.value = "识别失败";
+  // 延迟发送 EOF，确保音频先到后端
+  setTimeout(() => {
+    ws.send("EOF");
+  }, 50);
+
+  // 超时兜底，防止后端没返回 text
+  setTimeout(() => {
+    if (status.value === "发送音频中...") {
+      status.value = "识别完成（未检测到语音）";
     }
-  };
+  }, 3000);
 };
 
-onUnmounted(cleanup);
+const handleClose = () => {
+  recording.value = false;
+  status.value = "未开始";
+  audioChunks = [];
+  if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+  processorNode?.disconnect();
+  sourceNode?.disconnect();
+  ws?.close();
+  visible.value = false;
+};
 </script>
+
+<style scoped>
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.status {
+  font-size: 14px;
+}
+</style>
