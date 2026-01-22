@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<title>MediaMTX WebRTC Player</title>
+
+<style>
+  body {
+    background: #111;
+    color: #eee;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    padding-top: 30px;
+  }
+  video {
+    width: 80%;
+    max-width: 900px;
+    background: #000;
+    margin-top: 20px;
+  }
+  button {
+    padding: 8px 20px;
+    margin: 10px;
+    cursor: pointer;
+  }
+  pre {
+    text-align: left;
+    max-width: 900px;
+    margin: 20px auto;
+    color: #0f0;
+    background: #222;
+    padding: 10px;
+    border-radius: 6px;
+    height: 260px;
+    overflow-y: auto;
+  }
+</style>
+</head>
+
+<body>
+
+<h2>MediaMTX WebRTC 播放</h2>
+
+<button id="playBtn">播放 / 重新拉流</button>
+<button id="stopBtn">停止</button>
+
+<!-- muted 是 WebRTC 自动播放的关键 -->
+<video id="video" autoplay playsinline muted controls></video>
+
+<pre id="log"></pre>
+
+<script>
+const WHEP_URL = "http://192.168.41.227:8889/live/mystream/whep";
+
+const video = document.getElementById("video");
+const logEl = document.getElementById("log");
+
+function log(...args) {
+  logEl.textContent += args.join(" ") + "\n";
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+let pc = null;
+
+/* =========================
+   停止并清理 WebRTC
+   ========================= */
+function stopPlay() {
+  if (!pc) return;
+
+  log("停止 WebRTC 播放");
+
+  pc.ontrack = null;
+  pc.oniceconnectionstatechange = null;
+  pc.onconnectionstatechange = null;
+
+  pc.close();
+  pc = null;
+
+  video.pause();
+  video.srcObject = null;
+}
+
+/* =========================
+   启动 WebRTC 播放
+   ========================= */
+async function startPlay() {
+  log("开始 WebRTC 播放 (MediaMTX)");
+
+  pc = new RTCPeerConnection();
+
+  pc.ontrack = async (e) => {
+    log("收到视频流");
+    if (!video.srcObject) {
+      video.srcObject = e.streams[0];
+      try {
+        await video.play();
+        log("video.play() 成功");
+      } catch (err) {
+        log("video.play() 失败:", err);
+      }
+    }
+  };
+
+  pc.oniceconnectionstatechange = () => {
+    log("ICE 状态:", pc.iceConnectionState);
+  };
+
+  pc.onconnectionstatechange = () => {
+    log("连接状态:", pc.connectionState);
+
+    // 如果断开，可以在这里自动重连
+    if (pc.connectionState === "failed") {
+      log("连接失败，自动重连中...");
+      stopPlay();
+      startPlay();
+    }
+  };
+
+  pc.addTransceiver("video", { direction: "recvonly" });
+
+  const offer = await pc.createOffer();
+  await pc.setLocalDescription(offer);
+
+  log("发送 SDP Offer → MediaMTX");
+
+  const res = await fetch(WHEP_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/sdp"
+    },
+    body: offer.sdp
+  });
+
+  if (!res.ok) {
+    throw new Error("WHEP 请求失败: " + res.status);
+  }
+
+  const answerSDP = await res.text();
+
+  await pc.setRemoteDescription({
+    type: "answer",
+    sdp: answerSDP
+  });
+
+  log("WebRTC 播放中 🎉");
+}
+
+/* =========================
+   按钮绑定
+   ========================= */
+document.getElementById("playBtn").onclick = async () => {
+  stopPlay();
+  try {
+    await startPlay();
+  } catch (err) {
+    log("播放失败:", err);
+    stopPlay();
+  }
+};
+
+document.getElementById("stopBtn").onclick = () => {
+  stopPlay();
+};
+</script>
+
+</body>
+</html>
