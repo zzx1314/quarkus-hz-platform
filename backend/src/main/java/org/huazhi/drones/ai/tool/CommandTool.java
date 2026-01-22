@@ -17,6 +17,7 @@ import org.huazhi.util.JsonUtil;
 
 import dev.langchain4j.agent.tool.ReturnBehavior;
 import dev.langchain4j.agent.tool.Tool;
+import dev.langchain4j.invocation.InvocationParameters;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,7 @@ public class CommandTool {
     ConnectionManager connectionManager;
 
     @Tool(value = "发送无人机控制指令", returnBehavior = ReturnBehavior.IMMEDIATE)
-    public String getCommandString(DroneCommand command) {
+    public String getCommandString(DroneCommand command, InvocationParameters parameters) {
         log.info("发送无人机控制指令: {}", command.command);
         log.info("distance: {}", command.distance);
         log.info("height: {}", command.height);
@@ -38,7 +39,8 @@ public class CommandTool {
     }
 
     @Tool(value = "发送一组无人机控制指令，必须按顺序执行", returnBehavior = ReturnBehavior.IMMEDIATE)
-    public String sendCommandBatch(DroneCommandBatch batch) {
+    public String sendCommandBatch(DroneCommandBatch batch, InvocationParameters parameters) {
+        String deviceId = parameters.get("deviceId");
         DronesCommandWebsocket websocket = new DronesCommandWebsocket();
         websocket.setType("toros");
 

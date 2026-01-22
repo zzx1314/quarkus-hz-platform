@@ -1,6 +1,7 @@
 package org.huazhi.drones.ai.assistant;
 
 
+import dev.langchain4j.invocation.InvocationParameters;
 import dev.langchain4j.service.Result;
 import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
@@ -22,6 +23,6 @@ public interface Assistant {
         - 数值单位：距离米，时间秒
         - 不要输出解释性文本
         """)
-    Result<String> chat(@UserMessage String userMessage);
+    Result<String> chat(@UserMessage String userMessage, InvocationParameters parameters);
 
 }

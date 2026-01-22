@@ -1,5 +1,7 @@
 package org.huazhi.ai;
 
+import java.util.Map;
+
 import org.huazhi.drones.ai.assistant.Assistant;
 import org.huazhi.drones.ai.tool.CommandTool;
 import org.junit.jupiter.api.MethodOrderer;
@@ -7,6 +9,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
+import dev.langchain4j.invocation.InvocationParameters;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.Result;
@@ -28,7 +31,9 @@ public class AiModelTest {
         .chatModel(openAiChatModel)
         .tools(commandTool)
         .build();
-        Result<String> result = assistant.chat("先起飞，向前飞行5米，悬停1分钟，然后启动YOLO目标检测，最后降落。");
+        InvocationParameters parameters = InvocationParameters.from(Map.of("deviceId", "12345"));
+
+        Result<String> result = assistant.chat("先起飞，向前飞行5米，悬停1分钟，然后启动YOLO目标检测，最后降落。", parameters);
         System.out.println("AI Response: " + result.toolExecutions());
     }
 }

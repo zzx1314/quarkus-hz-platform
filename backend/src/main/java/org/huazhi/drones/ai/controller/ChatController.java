@@ -1,9 +1,12 @@
 package org.huazhi.drones.ai.controller;
 
 
+import java.util.Map;
+
 import org.huazhi.drones.ai.assistant.Assistant;
 import org.huazhi.drones.ai.tool.CommandTool;
 
+import dev.langchain4j.invocation.InvocationParameters;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.Result;
@@ -26,13 +29,15 @@ public class ChatController {
 
     @GET
     @Path("/chatCommands")
-    public void chatCommands(@QueryParam("commands") String commands) {
+    public void chatCommands(@QueryParam("commands") String commands, @QueryParam("deviceId") String deviceId) {
         CommandTool commandTool = new CommandTool();
         Assistant assistant = AiServices.builder(Assistant.class)
         .chatModel(openAiChatModel)
         .tools(commandTool)
         .build();
-        Result<String> result = assistant.chat(commands);
+
+        InvocationParameters parameters = InvocationParameters.from(Map.of("deviceId", deviceId));
+        Result<String> result = assistant.chat(commands, parameters);
         log.info("AI Response: {}", result.toolExecutions());
     }
 
