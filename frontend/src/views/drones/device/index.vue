@@ -1,27 +1,32 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { FormInstance } from "element-plus";
-import { useDronesDevice } from "./hook";
-import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import Map from "~icons/ri/road-map-line";
-import Delete from "~icons/ep/delete";
+import { ref, computed } from "vue";
+import type { FormInstance } from "element-plus";
 import { PureTableBar } from "@/components/RePureTableBar";
-import { useCollectorBusDevForm } from "./form";
 import PureTable from "@pureadmin/table";
 import { PlusDialogForm, PlusSearch } from "plus-pro-components";
+import { useDronesDevice } from "./hook";
+import { useCollectorBusDevForm } from "./form";
+import { useRenderIcon } from "@/components/ReIcon/src/hooks";
+import VoiceWsDialog from "./components/VoiceWsDialog.vue";
+
+import Map from "~icons/ri/road-map-line";
+import Delete from "~icons/ep/delete";
 import AddFill from "~icons/ri/add-circle-line";
 import More from "~icons/ep/more-filled";
-import RiUserVoiceLine from "~icons/ri/user-voice-line";
-import VoiceWsDialog from "./components/VoiceWsDialog.vue";
+import UserVoiceLine from "~icons/ri/user-voice-line";
 
 defineOptions({
   name: "DronesDevice"
 });
 
 const addFormRef = ref<FormInstance>();
-const { columnsForm, columnsQueryForm } = useCollectorBusDevForm();
 const show = ref(false);
+const mapIcon = computed(() => useRenderIcon(Map));
+const deleteIcon = computed(() => useRenderIcon(Delete));
+const moreIcon = computed(() => useRenderIcon(More));
+const voiceIcon = computed(() => useRenderIcon(UserVoiceLine));
 
+const { columnsForm, columnsQueryForm } = useCollectorBusDevForm();
 const {
   queryForm,
   dataList,
@@ -86,7 +91,7 @@ const {
               link
               type="primary"
               :size="size"
-              :icon="useRenderIcon(Map)"
+              :icon="mapIcon"
               @click="handleCommand(row)"
             >
               地图探索
@@ -98,20 +103,19 @@ const {
                   link
                   type="primary"
                   :size="size"
-                  :icon="useRenderIcon(Delete)"
+                  :icon="deleteIcon"
                 >
                   删除
                 </el-button>
               </template>
             </el-popconfirm>
-
-            <el-dropdown class="ml-2" trigger="click" :hide-on-click="false">
+            <el-dropdown trigger="click" :hide-on-click="false">
               <el-button
-                class="ml-4 mt-0.5"
+                class="ml-2 mt-0.5"
                 link
                 type="primary"
                 :size="size"
-                :icon="useRenderIcon(More)"
+                :icon="moreIcon"
               />
               <template #dropdown>
                 <el-dropdown-menu>
@@ -120,7 +124,7 @@ const {
                       link
                       type="primary"
                       :size="size"
-                      :icon="useRenderIcon(RiUserVoiceLine)"
+                      :icon="voiceIcon"
                       @click="show = true"
                     >
                       语音交互
