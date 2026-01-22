@@ -10,6 +10,9 @@ import { useCollectorBusDevForm } from "./form";
 import PureTable from "@pureadmin/table";
 import { PlusDialogForm, PlusSearch } from "plus-pro-components";
 import AddFill from "~icons/ri/add-circle-line";
+import More from "~icons/ep/more-filled";
+import RiUserVoiceLine from "~icons/ri/user-voice-line";
+import VoiceWsDialog from "./components/VoiceWsDialog.vue";
 
 defineOptions({
   name: "DronesDevice"
@@ -17,6 +20,7 @@ defineOptions({
 
 const addFormRef = ref<FormInstance>();
 const { columnsForm, columnsQueryForm } = useCollectorBusDevForm();
+const show = ref(false);
 
 const {
   queryForm,
@@ -100,10 +104,37 @@ const {
                 </el-button>
               </template>
             </el-popconfirm>
+
+            <el-dropdown class="ml-2" trigger="click" :hide-on-click="false">
+              <el-button
+                class="ml-4 mt-0.5"
+                link
+                type="primary"
+                :size="size"
+                :icon="useRenderIcon(More)"
+              />
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item>
+                    <el-button
+                      link
+                      type="primary"
+                      :size="size"
+                      :icon="useRenderIcon(RiUserVoiceLine)"
+                      @click="show = true"
+                    >
+                      语音交互
+                    </el-button>
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </template>
         </pure-table>
       </template>
     </PureTableBar>
+
+    <VoiceWsDialog v-model="show" />
 
     <PlusDialogForm
       ref="addFormRef"
