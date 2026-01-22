@@ -134,7 +134,7 @@ const {
       </template>
     </PureTableBar>
 
-    <VoiceWsDialog v-model="show" />
+    <VoiceWsDialog v-model:visible="show" />
 
     <PlusDialogForm
       ref="addFormRef"
