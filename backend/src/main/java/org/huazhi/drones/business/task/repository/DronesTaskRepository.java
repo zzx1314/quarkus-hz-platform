@@ -31,6 +31,7 @@ public class DronesTaskRepository implements PanacheRepository<DronesTask> {
 
     public List<DronesTask> selectList(DronesTaskQueryDto queryDto) {
         QueryBuilder qb = QueryBuilder.create()
+                .equal("routeId", queryDto.getRouteId())
                 .equal("isDeleted", 0);
         return find(qb.getQuery(), qb.getParams()).list();
     }

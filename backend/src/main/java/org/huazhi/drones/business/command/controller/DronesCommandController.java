@@ -59,6 +59,9 @@ public class DronesCommandController {
         return R.ok(dronesCommandService.register(entity));
     }
 
+    /**
+     * 服务指令下发
+     */
     @POST
     @Path("/issueCommand")
     @Transactional
@@ -67,9 +70,7 @@ public class DronesCommandController {
     }
 
     /**
-     * 指令下发
-     * @param param
-     * @return
+     * 普通指令下发
      */
     @POST
     @Path("/issueCommonCommand")

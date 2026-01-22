@@ -49,6 +49,7 @@ import RiBloggerLine from "~icons/ri/blogger-line?raw";
 import TdesignLockOn from "~icons/tdesign/lock-on?raw";
 import RiSendPlane2Line from "~icons/ri/send-plane-2-line?raw";
 import RiClapperboardAiLine from "~icons/ri/clapperboard-ai-line?raw";
+import DeviconPlainGithubcopilot from "~icons/devicon-plain/githubcopilot?raw";
 
 const icons = [
   // Element Plus Icon: https://github.com/element-plus/element-plus-icons
@@ -96,7 +97,8 @@ const icons = [
   ["ri/blogger-line", RiBloggerLine],
   ["tdesign/lock-on", TdesignLockOn],
   ["ri/send-plane-2-line", RiSendPlane2Line],
-  ["ri/clapperboard-ai-line", RiClapperboardAiLine]
+  ["ri/clapperboard-ai-line", RiClapperboardAiLine],
+  ["devicon/githubcopilot", DeviconPlainGithubcopilot]
 ];
 
 // 本地菜单图标，后端在路由的 icon 中返回对应的图标字符串并且前端在此处使用 addIcon 添加即可渲染菜单图标

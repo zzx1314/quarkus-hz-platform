@@ -17,6 +17,8 @@ import org.huazhi.drones.business.routelibrary.repository.DronesRouteLibraryRepo
 import org.huazhi.drones.business.routelibrary.routeitem.entity.DronesRouteItem;
 import org.huazhi.drones.business.routelibrary.routeitem.entity.dto.DronesRouteItemQueryDto;
 import org.huazhi.drones.business.routelibrary.routeitem.service.DronesRouteItemService;
+import org.huazhi.drones.business.task.entity.dto.DronesTaskQueryDto;
+import org.huazhi.drones.business.task.service.DronesTaskService;
 import org.huazhi.drones.common.SelectOption;
 import org.huazhi.drones.util.DateUtil;
 import org.huazhi.util.FileUtil;
@@ -53,6 +55,9 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
 
     @Inject
     FileConfig fileConfig;
+
+    @Inject
+    DronesTaskService taskService;
 
     @Override
     public List<DronesRouteLibrary> listEntitys() {
@@ -104,6 +109,13 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
             dto.setRouteData(JsonUtil.toJson(item));
         }
         repository.updateByDto(dto);
+        // 修改任务的状态
+        // 1、查询带有当前航线的任务
+        DronesTaskQueryDto taskQueryDto = new DronesTaskQueryDto().setRouteId(dto.getId());
+        taskService.listEntitysByDto(taskQueryDto).forEach(task -> {
+            task.setTaskStatus("航线变更");
+            taskService.replaceById(task);
+        });
     }
 
     @Override

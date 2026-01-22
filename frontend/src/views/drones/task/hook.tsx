@@ -221,6 +221,11 @@ export function useDronesTask() {
   }
 
   function startTask(row) {
+    // 判断任务状态
+    if (row.taskStatus === "航线变更") {
+      message("航线发生变化，请修改航点，重新保存", { type: "warning" });
+      return;
+    }
     ElMessageBox.confirm(
       `确定要<strong>启动</strong><strong style='color:var(--el-color-primary)'>${row.taskName}</strong>任务吗?`,
       "系统提示",

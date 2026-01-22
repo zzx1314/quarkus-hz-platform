@@ -47,4 +47,11 @@ public class DronesTaskQueryDto {
     @QueryParam("routeName")
     private String routeName;
 
+
+    /**
+     * 航线ID
+     */
+    @QueryParam("routeId")
+    private Long routeId;
+
 }

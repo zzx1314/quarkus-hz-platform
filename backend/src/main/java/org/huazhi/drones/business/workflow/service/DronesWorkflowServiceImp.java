@@ -15,6 +15,7 @@ import org.huazhi.drones.business.routelibrary.entity.mapper.DronesRouteLibraryM
 import org.huazhi.drones.business.routelibrary.entity.vo.DronesRouteLibraryVo;
 import org.huazhi.drones.business.routelibrary.service.DronesRouteLibraryService;
 import org.huazhi.drones.business.task.entity.DronesTask;
+import org.huazhi.drones.business.task.entity.dto.DronesTaskDto;
 import org.huazhi.drones.business.task.service.DronesTaskService;
 import org.huazhi.drones.business.workflow.entity.DronesWorkflow;
 import org.huazhi.drones.business.workflow.entity.EdgeEntity;
@@ -82,6 +83,11 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
             entity.setCommandJsonString(commandJsonString);
             log.info("修改json："+ commandJsonString);
             this.replaceById(entity);
+            // 修改任务的状态是未开始
+            DronesTaskDto taskQueryDto = new DronesTaskDto();
+            taskQueryDto.setId(entity.getTaskId());
+            taskQueryDto.setTaskStatus("未开始");
+            taskService.replaceByDto(taskQueryDto);
             return oneFlow.getId();
         } else {
             // 新增
