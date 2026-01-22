@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket 语音识别 Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+        }
+        button {
+            font-size: 16px;
+            padding: 10px 20px;
+            margin-right: 10px;
+        }
+        #status {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+<h2>🎙️ WebSocket 语音识别</h2>
+
+<button id="start">开始录音</button>
+<button id="stop" disabled>停止并发送</button>
+
+<div id="status">状态：未连接</div>
+<pre id="result"></pre>
+
+<script>
+/* ==========================
+   配置
+========================== */
+const SERVER_IP = "192.168.41.227";
+const SERVER_PORT = 8000;
+const WS_URL = `ws://${SERVER_IP}:${SERVER_PORT}/ws`;
+const TARGET_SAMPLE_RATE = 16000;
+
+/* ==========================
+   全局变量
+========================== */
+let audioContext;
+let mediaStream;
+let sourceNode;
+let processorNode;
+let ws;
+let audioChunks = [];
+
+/* ==========================
+   UI 元素
+========================== */
+const startBtn = document.getElementById("start");
+const stopBtn = document.getElementById("stop");
+const statusEl = document.getElementById("status");
+const resultEl = document.getElementById("result");
+
+/* ==========================
+   事件绑定
+========================== */
+startBtn.onclick = startRecording;
+stopBtn.onclick = stopRecording;
+
+/* ==========================
+   开始录音
+========================== */
+async function startRecording() {
+    resultEl.textContent = "";
+    audioChunks = [];
+
+    statusEl.textContent = "状态：连接 WebSocket...";
+    ws = new WebSocket(WS_URL);
+    ws.binaryType = "arraybuffer";
+
+    ws.onopen = async () => {
+        statusEl.textContent = "状态：录音中...";
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+
+        audioContext = new AudioContext({ sampleRate: TARGET_SAMPLE_RATE });
+        mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+        sourceNode = audioContext.createMediaStreamSource(mediaStream);
+
+        processorNode = audioContext.createScriptProcessor(4096, 1, 1);
+        processorNode.onaudioprocess = e => {
+            const inputData = e.inputBuffer.getChannelData(0);
+            audioChunks.push(new Float32Array(inputData));
+        };
+
+        sourceNode.connect(processorNode);
+        processorNode.connect(audioContext.destination);
+    };
+
+    ws.onerror = () => {
+        statusEl.textContent = "状态：WebSocket 连接失败";
+    };
+}
+
+/* ==========================
+   停止录音并发送
+========================== */
+function stopRecording() {
+    statusEl.textContent = "状态：处理音频并发送...";
+
+    processorNode.disconnect();
+    sourceNode.disconnect();
+    mediaStream.getTracks().forEach(t => t.stop());
+
+    // 合并 Float32Array
+    let totalLength = audioChunks.reduce((sum, arr) => sum + arr.length, 0);
+    let audioData = new Float32Array(totalLength);
+    let offset = 0;
+
+    for (let chunk of audioChunks) {
+        audioData.set(chunk, offset);
+        offset += chunk.length;
+    }
+
+    // 发送音频数据
+    ws.send(audioData.buffer);
+
+    // 发送 EOF
+    ws.send("EOF");
+
+    ws.onmessage = e => {
+        const data = JSON.parse(e.data);
+        resultEl.textContent = "识别结果：\n" + data.text;
+        statusEl.textContent = "状态：识别完成";
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+    };
+
+    ws.onclose = () => {
+        statusEl.textContent = "状态：连接已关闭";
+    };
+}
+</script>
+
+</body>
+</html>
