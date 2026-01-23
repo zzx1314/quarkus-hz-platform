@@ -62,7 +62,7 @@ def run_inference_sync(audio_float32):
 # -------------------------------
 # 4. WebSocket 接口
 # -------------------------------
-@app.websocket("/ws")
+@app.websocket("/api/wssound")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     print(f"客户端已连接: {websocket.client}")

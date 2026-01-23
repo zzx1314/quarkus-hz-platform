@@ -45,8 +45,8 @@ const status = ref("未开始");
 const result = ref("");
 
 const SERVER_IP = "192.168.41.227";
-const SERVER_PORT = 8000;
-const WS_URL = `ws://${SERVER_IP}:${SERVER_PORT}/ws`;
+const SERVER_PORT = 4433;
+const WS_URL = `wss://${SERVER_IP}:${SERVER_PORT}/api/wssound`;
 const TARGET_SAMPLE_RATE = 16000;
 
 let audioContext;
