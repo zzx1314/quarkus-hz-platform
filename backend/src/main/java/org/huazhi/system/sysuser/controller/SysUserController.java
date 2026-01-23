@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.huazhi.oauth.annotation.TokenRequired;
+import org.huazhi.system.syslog.common.annotation.LogRecord;
+import org.huazhi.system.syslog.common.context.LogRecordContext;
+import org.huazhi.system.syslog.common.parser.DiffParseFunction;
 import org.huazhi.system.sysmenu.entity.SysMenu;
 import org.huazhi.system.sysrole.entity.SysRole;
 import org.huazhi.system.sysuser.entity.SysUser;
@@ -90,6 +93,7 @@ public class SysUserController {
     @Path("/create")
     @Transactional
     @TokenRequired
+    @LogRecord(success = "创建用户: {{sysUser.username}}", fail = "创建用户失败: {{sysUser.username}}", type = "用户管理", subType = "创建用户")
     public R<Void> createUser(SysUserDto sysUser) {
         return userService.registerUser(sysUser);
     }
@@ -98,7 +102,13 @@ public class SysUserController {
     @Path("/update")
     @Transactional
     @TokenRequired
+    @LogRecord(success = "更新用户: {{sysUserDto.username}} {{_DIFF}}", fail = "更新用户失败: {{sysUserDto.username}}", type = "用户管理", subType = "更新用户", bizNo = "{{sysUserDto.id}}")
     public R<Void> update(SysUserDto sysUserDto) {
+        // 设置旧对象用于差异比较
+        SysUser oldUser = SysUser.findById(sysUserDto.getId());
+        if (oldUser != null) {
+            LogRecordContext.putGlobalVariable(DiffParseFunction.OLD_OBJECT, oldUser);
+        }
         return userService.updateUser(sysUserDto);
     }
 
@@ -106,13 +116,16 @@ public class SysUserController {
     @Path("/{id}")
     @Transactional
     @TokenRequired
+    @LogRecord(success = "删除用户: {{entity.username}}", fail = "删除用户失败: ID {{id}}", type = "用户管理", subType = "删除用户")
     public R<Void> delete(@PathParam("id") Long id) {
         SysUser entity = SysUser.findById(id);
         if (entity == null) {
             throw new NotFoundException();
         }
+        // 设置实体到上下文以供日志模板使用
+        LogRecordContext.putGlobalVariable("entity", entity);
         entity.setIsDeleted(1);
-        entity.getRoles().clear(); 
+        entity.getRoles().clear();
         entity.persist();
         return R.ok();
     }
