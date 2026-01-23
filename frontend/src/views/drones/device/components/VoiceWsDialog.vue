@@ -167,17 +167,18 @@ const cleanupResources = () => {
 const startRecording = async () => {
   if (!navigator.mediaDevices?.getUserMedia) {
     ElMessage.error(
-      "浏览器不支持麦克风访问，请使用 Chrome/Edge/Firefox 最新版本"
+      "浏览器不支持麦克风访问，请使用 Chrome / Edge / Firefox 最新版本"
     );
     return;
   }
 
   result.value = "";
   audioChunks = [];
-  status.value = "获取麦克风...";
+  status.value = "获取麦克风";
   loading.value = true;
 
   try {
+    // 获取麦克风
     mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
   } catch (err) {
     console.error("获取麦克风失败:", err);
@@ -187,29 +188,48 @@ const startRecording = async () => {
     return;
   }
 
-  loading.value = false;
-  ws = new WebSocket(WS_URL);
-  ws.binaryType = "arraybuffer";
-
   try {
+    // 初始化 AudioContext + AudioWorklet
     const blob = new Blob([audioProcessorCode], {
       type: "application/javascript"
     });
     const moduleUrl = URL.createObjectURL(blob);
+
     audioContext = new AudioContext({ sampleRate: TARGET_SAMPLE_RATE });
     await audioContext.audioWorklet.addModule(moduleUrl);
     URL.revokeObjectURL(moduleUrl);
 
-    // 确保 AudioContext 处于 running 状态
     if (audioContext.state === "suspended") {
       await audioContext.resume();
     }
+
+    // 建立音频处理链路
+    sourceNode = audioContext.createMediaStreamSource(mediaStream);
+    audioWorkletNode = new AudioWorkletNode(audioContext, "audio-processor");
+
+    audioWorkletNode.port.onmessage = e => {
+      audioChunks.push(new Float32Array(e.data));
+    };
+
+    sourceNode.connect(audioWorkletNode);
+    audioWorkletNode.connect(audioContext.destination);
   } catch (err) {
-    console.error("AudioWorklet 初始化失败:", err);
+    console.error("音频初始化失败:", err);
     ElMessage.error("音频处理初始化失败");
     cleanupResources();
     return;
+  } finally {
+    loading.value = false;
   }
+
+  // 所有音频资源就绪后，再连接 WebSocket
+  ws = new WebSocket(WS_URL);
+  ws.binaryType = "arraybuffer";
+
+  ws.onopen = () => {
+    recording.value = true;
+    status.value = "录音中";
+  };
 
   ws.onmessage = e => {
     try {
@@ -232,37 +252,6 @@ const startRecording = async () => {
     if (recording.value) {
       ElMessage.warning("WebSocket 连接已关闭");
     }
-  };
-
-  ws.onopen = () => {
-    console.log("WebSocket onopen 触发", {
-      audioContextExists: !!audioContext,
-      mediaStreamExists: !!mediaStream,
-      recording: recording.value
-    });
-    if (!audioContext || !mediaStream) {
-      console.log("资源已被清理，关闭 WebSocket");
-      ws?.close();
-      return;
-    }
-    status.value = "录音中...";
-    recording.value = true;
-
-    sourceNode = audioContext!.createMediaStreamSource(mediaStream);
-    audioWorkletNode = new AudioWorkletNode(audioContext!, "audio-processor");
-
-    if (!audioWorkletNode) {
-      sourceNode?.disconnect();
-      sourceNode = null;
-      return;
-    }
-
-    audioWorkletNode.port.onmessage = e => {
-      audioChunks.push(new Float32Array(e.data));
-    };
-
-    sourceNode.connect(audioWorkletNode);
-    audioWorkletNode.connect(audioContext!.destination);
   };
 };
 
