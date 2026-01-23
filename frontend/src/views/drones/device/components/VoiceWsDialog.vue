@@ -80,14 +80,6 @@ onUnmounted(() => {
   cleanupResources();
 });
 
-watch(dialogVisible, val => {
-  if (!val && recording.value) {
-    cleanupResources();
-    status.value = "未开始";
-    result.value = "";
-  }
-});
-
 const recording = ref(false);
 const loading = ref(false);
 const status = ref("未开始");
@@ -207,6 +199,11 @@ const startRecording = async () => {
     audioContext = new AudioContext({ sampleRate: TARGET_SAMPLE_RATE });
     await audioContext.audioWorklet.addModule(moduleUrl);
     URL.revokeObjectURL(moduleUrl);
+
+    // 确保 AudioContext 处于 running 状态
+    if (audioContext.state === "suspended") {
+      await audioContext.resume();
+    }
   } catch (err) {
     console.error("AudioWorklet 初始化失败:", err);
     ElMessage.error("音频处理初始化失败");
@@ -238,11 +235,27 @@ const startRecording = async () => {
   };
 
   ws.onopen = () => {
+    console.log("WebSocket onopen 触发", {
+      audioContextExists: !!audioContext,
+      mediaStreamExists: !!mediaStream,
+      recording: recording.value
+    });
+    if (!audioContext || !mediaStream) {
+      console.log("资源已被清理，关闭 WebSocket");
+      ws?.close();
+      return;
+    }
     status.value = "录音中...";
     recording.value = true;
 
     sourceNode = audioContext!.createMediaStreamSource(mediaStream);
     audioWorkletNode = new AudioWorkletNode(audioContext!, "audio-processor");
+
+    if (!audioWorkletNode) {
+      sourceNode?.disconnect();
+      sourceNode = null;
+      return;
+    }
 
     audioWorkletNode.port.onmessage = e => {
       audioChunks.push(new Float32Array(e.data));
