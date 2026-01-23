@@ -23,7 +23,8 @@ const dronesDeviceUrls = {
   getSelectOption: "/api/dronesDevice/getSelectOption",
   getStatus: "/api/dronesDevice/getStatus/",
   startImageReceiver: "/api/imageReceiver/start",
-  stopImageReceiver: "/api/imageReceiver/stop"
+  stopImageReceiver: "/api/imageReceiver/stop",
+  chatCommands: "/api/chat/chatCommands"
 };
 
 // 分页
@@ -63,4 +64,13 @@ export const dronesDeviceStopImage = (query?: object) => {
     dronesDeviceUrls.stopImageReceiver,
     query
   );
+};
+export const dronesDeviceChatCommands = (
+  commands: string,
+  deviceId: string
+) => {
+  return http.axiosGetRequest<Result>(dronesDeviceUrls.chatCommands, {
+    commands,
+    deviceId
+  });
 };

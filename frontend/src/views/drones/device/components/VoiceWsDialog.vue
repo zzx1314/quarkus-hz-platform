@@ -7,6 +7,14 @@
     :close-on-press-escape="false"
     @close="handleClose"
   >
+    <template #header>
+      <div class="dialog-header">
+        <span>语音识别</span>
+        <el-tag v-if="props.deviceId" size="small" type="info">{{
+          props.deviceId
+        }}</el-tag>
+      </div>
+    </template>
     <div class="content">
       <div class="buttons">
         <el-button
@@ -48,12 +56,17 @@
 import { ref, computed, watch, onUnmounted, onMounted } from "vue";
 import { ElMessage } from "element-plus";
 import type { TagProps } from "element-plus";
+import { dronesDeviceChatCommands } from "@/api/dronesDevice";
+import { SUCCESS } from "@/api/base";
 
 interface Props {
   modelValue: boolean;
+  deviceId?: string;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  deviceId: ""
+});
 const emit = defineEmits<{
   (e: "update:modelValue", value: boolean): void;
 }>();
@@ -237,6 +250,22 @@ const startRecording = async () => {
       if (data.text?.trim()) {
         result.value = data.text;
         status.value = "识别完成";
+
+        // 调用语音命令API
+        if (props.deviceId) {
+          dronesDeviceChatCommands(data.text, props.deviceId)
+            .then(res => {
+              if (res.code === SUCCESS) {
+                ElMessage.success("语音命令发送成功");
+              } else {
+                ElMessage.warning(res.msg || "语音命令发送失败");
+              }
+            })
+            .catch(err => {
+              console.error("语音命令API调用失败:", err);
+              ElMessage.error("语音命令发送失败");
+            });
+        }
       }
     } catch (err) {
       console.error("解析返回数据失败:", err);
@@ -295,6 +324,14 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang="scss">
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
 .content {
   display: flex;
   flex-direction: column;

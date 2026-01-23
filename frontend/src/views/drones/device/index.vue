@@ -21,6 +21,7 @@ defineOptions({
 
 const addFormRef = ref<FormInstance>();
 const show = ref(false);
+const currentDeviceId = ref<string>("");
 const mapIcon = computed(() => useRenderIcon(Map));
 const deleteIcon = computed(() => useRenderIcon(Delete));
 const moreIcon = computed(() => useRenderIcon(More));
@@ -48,6 +49,11 @@ const {
   handleCommand,
   cancel
 } = useDronesDevice();
+
+const handleVoiceInteraction = (row: any) => {
+  currentDeviceId.value = row.deviceId;
+  show.value = true;
+};
 </script>
 <template>
   <div class="main">
@@ -125,7 +131,7 @@ const {
                       type="primary"
                       :size="size"
                       :icon="voiceIcon"
-                      @click="show = true"
+                      @click="handleVoiceInteraction(row)"
                     >
                       语音交互
                     </el-button>
@@ -138,7 +144,7 @@ const {
       </template>
     </PureTableBar>
 
-    <VoiceWsDialog v-model="show" />
+    <VoiceWsDialog v-model="show" :device-id="currentDeviceId" />
 
     <PlusDialogForm
       ref="addFormRef"

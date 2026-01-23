@@ -139,7 +139,7 @@ export function useDept() {
   // 确认删除
   const confirmEvent = row => {
     console.log("confirm!", row);
-    let childList: any = [];
+    const childList: any = [];
     findOrgChildren(row.children, childList);
     childList.push(row.id);
     console.log(childList);
