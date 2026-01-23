@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onUnmounted } from "vue";
+import { ref, computed, watch, onUnmounted, onMounted } from "vue";
 import { ElMessage } from "element-plus";
 import type { TagProps } from "element-plus";
 
@@ -61,6 +61,31 @@ const emit = defineEmits<{
 const dialogVisible = computed({
   get: () => props.modelValue,
   set: val => emit("update:modelValue", val)
+});
+
+watch(dialogVisible, val => {
+  if (!val && recording.value) {
+    cleanupResources();
+    status.value = "未开始";
+    result.value = "";
+  }
+});
+
+onMounted(() => {
+  window.addEventListener("beforeunload", cleanupResources);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("beforeunload", cleanupResources);
+  cleanupResources();
+});
+
+watch(dialogVisible, val => {
+  if (!val && recording.value) {
+    cleanupResources();
+    status.value = "未开始";
+    result.value = "";
+  }
 });
 
 const recording = ref(false);
@@ -119,8 +144,10 @@ const cleanupResources = () => {
   loading.value = false;
 
   if (mediaStream) {
-    mediaStream.getTracks().forEach(t => t.stop());
-    mediaStream = null;
+    mediaStream.getTracks().forEach(t => {
+      t.stop();
+      mediaStream = null;
+    });
   }
 
   if (sourceNode) {
@@ -130,15 +157,16 @@ const cleanupResources = () => {
 
   if (audioWorkletNode) {
     audioWorkletNode.disconnect();
+    audioWorkletNode.port.close();
     audioWorkletNode = null;
   }
 
-  if (audioContext) {
+  if (audioContext && audioContext.state !== "closed") {
     audioContext.close();
     audioContext = null;
   }
 
-  if (ws) {
+  if (ws && ws.readyState === WebSocket.OPEN) {
     ws.close();
     ws = null;
   }
