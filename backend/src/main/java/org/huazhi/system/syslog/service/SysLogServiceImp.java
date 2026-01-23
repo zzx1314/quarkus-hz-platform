@@ -54,6 +54,6 @@ public class SysLogServiceImp implements SysLogService {
 
     @Override
     public List<SysLog> queryByBizNoAndType(String bizNo, String type) {
-        return sysLogRepository.list("bizNo = ?1 and type = ?2", bizNo, type);
+        return sysLogRepository.list("bizNo = ?1 and type = ?2 and isDeleted = ?3", bizNo, type, 0);
     }
 }
