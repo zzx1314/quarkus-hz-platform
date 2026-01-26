@@ -59,8 +59,4 @@ public class IpUtils {
 
         return ip;
     }
-
-    private IpUtils() {
-        // 私有化构造
-    }
 }
