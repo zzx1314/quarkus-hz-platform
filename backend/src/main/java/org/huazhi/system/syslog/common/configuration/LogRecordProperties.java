@@ -1,13 +1,11 @@
 package org.huazhi.system.syslog.common.configuration;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import lombok.Data;
 
 /**
  * @author muzhantong
  * create on 2022/1/6 3:26 下午
  */
-@Data
 @ApplicationScoped
 public class LogRecordProperties {
 
@@ -132,6 +130,102 @@ public class LogRecordProperties {
     }
     return "";
 }
+
+    public String getFIELD_PLACEHOLDER() {
+        return FIELD_PLACEHOLDER;
+    }
+
+    public String getSOURCE_VALUE_PLACEHOLDER() {
+        return SOURCE_VALUE_PLACEHOLDER;
+    }
+
+    public String getTARGET_VALUE_PLACEHOLDER() {
+        return TARGET_VALUE_PLACEHOLDER;
+    }
+
+    public String getLIST_ADD_VALUE_PLACEHOLDER() {
+        return LIST_ADD_VALUE_PLACEHOLDER;
+    }
+
+    public String getLIST_DEL_VALUE_PLACEHOLDER() {
+        return LIST_DEL_VALUE_PLACEHOLDER;
+    }
+
+    public String getAddTemplate() {
+        return addTemplate;
+    }
+
+    public String getAddTemplateForList() {
+        return addTemplateForList;
+    }
+
+    public void setAddTemplateForList(String addTemplateForList) {
+        this.addTemplateForList = addTemplateForList;
+    }
+
+    public String getDeleteTemplateForList() {
+        return deleteTemplateForList;
+    }
+
+    public void setDeleteTemplateForList(String deleteTemplateForList) {
+        this.deleteTemplateForList = deleteTemplateForList;
+    }
+
+    public String getUpdateTemplateForList() {
+        return updateTemplateForList;
+    }
+
+    public void setUpdateTemplateForList(String updateTemplateForList) {
+        this.updateTemplateForList = updateTemplateForList;
+    }
+
+    public String getUpdateTemplate() {
+        return updateTemplate;
+    }
+
+    public String getDeleteTemplate() {
+        return deleteTemplate;
+    }
+
+    public String getFieldSeparator() {
+        return fieldSeparator;
+    }
+
+    public void setFieldSeparator(String fieldSeparator) {
+        this.fieldSeparator = fieldSeparator;
+    }
+
+    public String getListItemSeparator() {
+        return listItemSeparator;
+    }
+
+    public void setListItemSeparator(String listItemSeparator) {
+        this.listItemSeparator = listItemSeparator;
+    }
+
+    public String getOfWord() {
+        return ofWord;
+    }
+
+    public void setOfWord(String ofWord) {
+        this.ofWord = ofWord;
+    }
+
+    public Boolean getDiffLog() {
+        return diffLog;
+    }
+
+    public void setDiffLog(Boolean diffLog) {
+        this.diffLog = diffLog;
+    }
+
+    public String getUseEqualsMethod() {
+        return useEqualsMethod;
+    }
+
+    public void setUseEqualsMethod(String useEqualsMethod) {
+        this.useEqualsMethod = useEqualsMethod;
+    }
 
 
 }

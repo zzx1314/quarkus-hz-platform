@@ -56,11 +56,11 @@ import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import lombok.extern.slf4j.Slf4j;
+import org.jboss.logging.Logger;
 
-@Slf4j
 @ApplicationScoped
 public class DronesTaskServiceImp implements DronesTaskService {
+    private static final Logger log = Logger.getLogger(DronesTaskServiceImp.class);
     @Inject
     DronesTaskRepository repository;
 
@@ -213,7 +213,9 @@ public class DronesTaskServiceImp implements DronesTaskService {
     @Override
     @Transactional
     public void startTask(Long id) {
-        DronesWorkflow dronesWorkflow = workflowService.listOne(new DronesWorkflowQueryDto().setTaskId(id));
+        DronesWorkflowQueryDto workflowQueryDto = new DronesWorkflowQueryDto();
+        workflowQueryDto.setTaskId(id);
+        DronesWorkflow dronesWorkflow = workflowService.listOne(workflowQueryDto);
         DronesTask taskById = repository.findById(id);
         if (dronesWorkflow != null) {
             String dronesCommand = dronesWorkflow.getCommandJsonString();
@@ -221,7 +223,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
                     DronesCommandWebsocket.class);
 
             commandWebsocket = fillDronesCommandRoutePoint(commandWebsocket);
-            log.info("发送指令信息：{}", JsonUtil.toJson(commandWebsocket));
+            log.infof("发送指令信息：%s", JsonUtil.toJson(commandWebsocket));
             commandWebsocket.setDeviceId(taskById.getDevice().getDeviceId());
             connectionManager.sendMessageByDeviceId(commandWebsocket.getDeviceId(), commandWebsocket, id);
             // 修改任务状态
@@ -236,17 +238,22 @@ public class DronesTaskServiceImp implements DronesTaskService {
         List<DronesRoute> routeItemList = dronesCommandWebsocket.getRoute();
         for (DronesRoute routeItem : routeItemList) {
              Long routeItemId = routeItem.getWpId();
-             DronesRouteItem routeItemEntity = routeItemService.listOne(new DronesRouteItemQueryDto().setId(routeItemId));
+             DronesRouteItemQueryDto queryDto = new DronesRouteItemQueryDto();
+             queryDto.setId(routeItemId);
+             DronesRouteItem routeItemEntity = routeItemService.listOne(queryDto);
              String routeValue = routeItemEntity.getRouteValue();
              routeItem.setLat(Double.valueOf(routeValue.split(",")[0]));
              routeItem.setLon(Double.valueOf(routeValue.split(",")[1]));
         }
         List<DronesTaskWebScoket> tasks = dronesCommandWebsocket.getTasks();
         for (DronesTaskWebScoket task : tasks) { 
-            DronesRouteItem listOne = routeItemService.listOne(new DronesRouteItemQueryDto().setId(task.getFromWp().getWpId()));
+            DronesRouteItemQueryDto queryDto = new DronesRouteItemQueryDto();
+            queryDto.setId(task.getFromWp().getWpId());
+            DronesRouteItem listOne = routeItemService.listOne(queryDto);
             task.getFromWp().setLat(Double.valueOf(listOne.getRouteValue().split(",")[0]));
             task.getFromWp().setLon(Double.valueOf(listOne.getRouteValue().split(",")[1]));
-            listOne = routeItemService.listOne(new DronesRouteItemQueryDto().setId(task.getToWp().getWpId()));
+            queryDto.setId(task.getToWp().getWpId());
+            listOne = routeItemService.listOne(queryDto);
             task.getToWp().setLat(Double.valueOf(listOne.getRouteValue().split(",")[0]));
             task.getToWp().setLon(Double.valueOf(listOne.getRouteValue().split(",")[1]));
             // 补充actions的坐标
@@ -255,7 +262,9 @@ public class DronesTaskServiceImp implements DronesTaskService {
                     break;
                 }
                 long wpId = action.getParams().getTargetWp().getWpId();
-                DronesRouteItem actionRouteItem = routeItemService.listOne(new DronesRouteItemQueryDto().setId(wpId));
+                DronesRouteItemQueryDto queryDto2 = new DronesRouteItemQueryDto();
+                queryDto2.setId(wpId);
+                DronesRouteItem actionRouteItem = routeItemService.listOne(queryDto2);
                 action.getParams().getTargetWp().setLat(Double.valueOf(actionRouteItem.getRouteValue().split(",")[0]));
                 action.getParams().getTargetWp().setLon(Double.valueOf(actionRouteItem.getRouteValue().split(",")[1]));
             }
@@ -273,7 +282,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
             commandWebsocket = fillDronesCommandRoutePoint(commandWebsocket);
             return JsonUtil.toJson(commandWebsocket);
         } catch (Exception e) {
-            log.error("getCommandJsonString error: {}", e.getMessage());
+            log.errorf("getCommandJsonString error: %s", e.getMessage());
             return "";
         }
     }
@@ -284,7 +293,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
             DronesCommandWebsocket commandWebsocket = getCommandWebsocket(entity);
             return JsonUtil.toJson(commandWebsocket);
         } catch (Exception e) {
-            log.error("getCommandJsonString error: {}", e.getMessage());
+            log.errorf("getCommandJsonString error: %s", e.getMessage());
             return "";
         }
     }
@@ -298,7 +307,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
     private DronesCommandWebsocket getCommandWebsocket(Long id) {
         // 获取任务流程图
         DronesWorkflowVo workflowGraph = workflowService.getWorkflowGraph(id);
-        log.info("任务流程图：{}", JsonUtil.toJson(workflowGraph));
+        log.infof("任务流程图：%s", JsonUtil.toJson(workflowGraph));
         DronesCommandWebsocket commandWebsocket = getCommandWebsocketCommon(workflowGraph);
         return commandWebsocket;
     }
@@ -306,7 +315,7 @@ public class DronesTaskServiceImp implements DronesTaskService {
     private DronesCommandWebsocket getCommandWebsocket(DronesWorkflow fromWorkflow) {
         // 获取任务流程图
         DronesWorkflowVo workflowGraph = workflowService.getWorkflowGraph(fromWorkflow);
-        log.info("任务流程图：{}", JsonUtil.toJson(workflowGraph));
+        log.infof("任务流程图：%s", JsonUtil.toJson(workflowGraph));
 
         DronesCommandWebsocket commandWebsocket = getCommandWebsocketCommon(workflowGraph);
         return commandWebsocket;
@@ -498,8 +507,10 @@ public class DronesTaskServiceImp implements DronesTaskService {
      */
     private List<DronesRoute> getRoutesById(long routeId) {
         List<DronesRoute> routes = new ArrayList<>();
+        DronesRouteItemQueryDto queryDto = new DronesRouteItemQueryDto();
+        queryDto.setRouteLibraryId(routeId);
         List<DronesRouteItem> listEntitysByDto = routeItemService
-                .listEntitysByDto(new DronesRouteItemQueryDto().setRouteLibraryId(routeId));
+                .listEntitysByDto(queryDto);
         for (DronesRouteItem item : listEntitysByDto) {
             DronesRoute route = new DronesRoute();
             route.setWpId(item.getId());
@@ -680,14 +691,16 @@ public class DronesTaskServiceImp implements DronesTaskService {
         Set<String> failIds = new HashSet<>();
         Map<String, String> errorInfoMap = new HashMap<>();
         // 获取下发的任务
-        List<DronesCommand> listEntitysByDto = commandService
-                .listEntitysByDto(new DronesCommandQueryDto().setTaskId(id));
+        DronesCommandQueryDto queryDto = new DronesCommandQueryDto();
+        queryDto.setTaskId(id);
+        List<DronesCommand> listEntitysByDto = commandService.listEntitysByDto(queryDto);
         if (!listEntitysByDto.isEmpty()) {
             DronesCommand dronesCommand = listEntitysByDto.get(0);
-            log.info("任务状态：{}", dronesCommand.getStatus());
+            log.infof("任务状态：%s", dronesCommand.getStatus());
             // 获取任务结果项
-            List<DronesCommandResultItem> resultItem = commandResultItemService
-                    .listEntitysByDto(new DronesCommandResultItemQueryDto().setCommandId(dronesCommand.getId()));
+            DronesCommandResultItemQueryDto commandResultItemQueryDto = new DronesCommandResultItemQueryDto();
+            commandResultItemQueryDto.setCommandId(dronesCommand.getId());
+            List<DronesCommandResultItem> resultItem = commandResultItemService.listEntitysByDto(commandResultItemQueryDto);
             if (!resultItem.isEmpty()) {
                 for (DronesCommandResultItem item : resultItem) {
                     JsonNode commandResult = JsonUtil.toJsonObject(item.getCommandResult());

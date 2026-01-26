@@ -3,7 +3,6 @@ package org.huazhi.drones.tcp;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import lombok.Data;
 
 /**
  * TCP 数据帧头
@@ -13,7 +12,6 @@ import lombok.Data;
  * - 大端序 (Big Endian)
  * - 用于客户端与服务端之间 Frame 数据的解析
  */
-@Data
 public class FrameHeader {
 
     /** Header 总长度 */
@@ -100,4 +98,67 @@ public class FrameHeader {
 
         return buffer.array();
     }
+
+    public static int getHeaderLength() {
+        return HEADER_LENGTH;
+    }
+
+
+    public int getMagic() {
+        return magic;
+    }
+
+    public void setMagic(int magic) {
+        this.magic = magic;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public byte getFrameType() {
+        return frameType;
+    }
+
+    public void setFrameType(byte frameType) {
+        this.frameType = frameType;
+    }
+
+    public byte getFlags() {
+        return flags;
+    }
+
+    public void setFlags(byte flags) {
+        this.flags = flags;
+    }
+
+    public byte getReserved() {
+        return reserved;
+    }
+
+    public void setReserved(byte reserved) {
+        this.reserved = reserved;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
+
+    public long getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(long sequence) {
+        this.sequence = sequence;
+    }
+
+    
 }

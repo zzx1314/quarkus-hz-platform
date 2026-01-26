@@ -1,16 +1,20 @@
 package org.huazhi.system.syslog.common.beans;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * @author muzhantong
  * create on 2020/4/29 5:39 下午
  */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Operator {
     private String operatorId;
+
+    public String getOperatorId() {
+        return operatorId;
+    }
+
+    public void setOperatorId(String operatorId) {
+        this.operatorId = operatorId;
+    }
+
+    
 }

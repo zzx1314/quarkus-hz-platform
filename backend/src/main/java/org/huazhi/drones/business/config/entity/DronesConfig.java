@@ -10,14 +10,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 
 import jakarta.persistence.Id;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
-@Data
 @Entity
-@Accessors(chain = true)
-@EqualsAndHashCode(callSuper = false)
 public class DronesConfig extends PanacheEntityBase {
     @Id
     @GeneratedValue
@@ -55,4 +49,60 @@ public class DronesConfig extends PanacheEntityBase {
      */
     @Column(columnDefinition = "INT DEFAULT 0",  insertable = false)
     private Integer isDeleted;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getConfigName() {
+        return configName;
+    }
+
+    public void setConfigName(String configName) {
+        this.configName = configName;
+    }
+
+    public String getConfigValue() {
+        return configValue;
+    }
+
+    public void setConfigValue(String configValue) {
+        this.configValue = configValue;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDateTime getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(LocalDateTime createTime) {
+        this.createTime = createTime;
+    }
+
+    public LocalDateTime getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(LocalDateTime updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public Integer getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Integer isDeleted) {
+        this.isDeleted = isDeleted;
+    }
 }

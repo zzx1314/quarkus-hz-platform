@@ -1,11 +1,10 @@
 package org.huazhi.system.sysauth.vo;
 
-import lombok.Data;
 
 import java.util.List;
 import java.util.Set;
 
-@Data
+
 public class SysAuthMenuVo {
 
 	/**
@@ -32,5 +31,47 @@ public class SysAuthMenuVo {
 	 * 已使用的权限
 	 */
 	private Set<Long> useAuthList;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public Boolean getIsCheckAll() {
+		return isCheckAll;
+	}
+
+	public void setIsCheckAll(Boolean isCheckAll) {
+		this.isCheckAll = isCheckAll;
+	}
+
+	public List<SysAuthTitleVo> getAuthList() {
+		return authList;
+	}
+
+	public void setAuthList(List<SysAuthTitleVo> authList) {
+		this.authList = authList;
+	}
+
+	public Set<Long> getUseAuthList() {
+		return useAuthList;
+	}
+
+	public void setUseAuthList(Set<Long> useAuthList) {
+		this.useAuthList = useAuthList;
+	}
+
+	
 
 }

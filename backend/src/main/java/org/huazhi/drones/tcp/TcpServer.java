@@ -1,9 +1,10 @@
 package org.huazhi.drones.tcp;
 
+import org.jboss.logging.Logger;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -25,9 +26,10 @@ import org.huazhi.util.JsonUtil;
 
 import io.quarkus.runtime.StartupEvent;
 
-@Slf4j
 @ApplicationScoped
 public class TcpServer {
+    private static final Logger log = Logger.getLogger(TcpServer.class);
+    
     @Inject
     DronesModelService dronesModelService;
 
@@ -133,7 +135,9 @@ public class TcpServer {
          && tcpConnectCommand.getParams().path("data").path("status").asText().equals("SUCCESS")) {
             String modelFilePath = fileConfig.basePath() + "/model/command" + tcpConnectCommand.getCommandId();
             // 数据库检查目录是否存在，不存在则创建
-            List<DronesModel> existingModels = dronesModelService.listEntitysByDto(new DronesModelQueryDto().setFilePath(modelFilePath));
+            DronesModelQueryDto queryDto = new DronesModelQueryDto();
+            queryDto.setFilePath(modelFilePath);
+            List<DronesModel> existingModels = dronesModelService.listEntitysByDto(queryDto);
 
             DronesModel dronesModel = new DronesModel();
             dronesModel.setModelName("雷达扫描模型");

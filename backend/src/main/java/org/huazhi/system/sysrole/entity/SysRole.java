@@ -1,11 +1,9 @@
 package org.huazhi.system.sysrole.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.huazhi.system.sysmenu.entity.SysMenu;
 import org.huazhi.system.sysuser.entity.SysUser;
@@ -24,10 +22,8 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
-@Data
 @Entity
 @Table(name = "p_sys_role")
-@EqualsAndHashCode(callSuper = false)
 public class SysRole extends PanacheEntityBase {
 
 	/**
@@ -96,5 +92,139 @@ public class SysRole extends PanacheEntityBase {
 	@ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
 	@JsonIgnore
 	public List<SysUser> users = new ArrayList<>();
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public LocalDateTime getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(LocalDateTime createTime) {
+		this.createTime = createTime;
+	}
+
+	public LocalDateTime getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(LocalDateTime updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public Integer getIsDeleted() {
+		return isDeleted;
+	}
+
+	public void setIsDeleted(Integer isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
+	public Boolean getIsEdit() {
+		return isEdit;
+	}
+
+	public void setIsEdit(Boolean isEdit) {
+		this.isEdit = isEdit;
+	}
+
+	public Integer getDsType() {
+		return dsType;
+	}
+
+	public void setDsType(Integer dsType) {
+		this.dsType = dsType;
+	}
+
+	public String getDsScope() {
+		return dsScope;
+	}
+
+	public void setDsScope(String dsScope) {
+		this.dsScope = dsScope;
+	}
+
+	public List<SysMenu> getMenus() {
+		return menus;
+	}
+
+	public void setMenus(List<SysMenu> menus) {
+		this.menus = menus;
+	}
+
+	public List<SysUser> getUsers() {
+		return users;
+	}
+
+	public void setUsers(List<SysUser> users) {
+		this.users = users;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		SysRole sysRole = (SysRole) o;
+		return Objects.equals(id, sysRole.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public String toString() {
+		return "SysRole{" +
+				"id=" + id +
+				", name='" + name + '\'' +
+				", code='" + code + '\'' +
+				", description='" + description + '\'' +
+				", createTime=" + createTime +
+				", updateTime=" + updateTime +
+				", isDeleted=" + isDeleted +
+				", remarks='" + remarks + '\'' +
+				", isEdit=" + isEdit +
+				", dsType=" + dsType +
+				", dsScope='" + dsScope + '\'' +
+				'}';
+	}
 
 }

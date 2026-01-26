@@ -108,7 +108,7 @@ import jakarta.persistence.*;
 
 ### Entity Design
 
-- Use `@Data`, `@EqualsAndHashCode(callSuper = false)` with Lombok
+- Use ``, `@EqualsAndHashCode(callSuper = false)` with Lombok
 - Extend `PanacheEntityBase` for Panache entities
 - Use `@Table(name = "lowercase_with_underscores")` for table mapping
 - Always include `isDeleted = 0` in queries for soft deletes
@@ -116,7 +116,7 @@ import jakarta.persistence.*;
 - Use descriptive field comments (Chinese comments acceptable)
 
 ```java
-@Data
+
 @Entity
 @Table(name = "p_sys_user")
 @EqualsAndHashCode(callSuper = false)

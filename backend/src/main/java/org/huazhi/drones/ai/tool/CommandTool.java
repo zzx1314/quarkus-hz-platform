@@ -1,5 +1,7 @@
 package org.huazhi.drones.ai.tool;
 
+import org.jboss.logging.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,21 +22,20 @@ import dev.langchain4j.agent.tool.Tool;
 import dev.langchain4j.invocation.InvocationParameters;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @ApplicationScoped
 public class CommandTool {
+    private static final Logger log = Logger.getLogger(CommandTool.class);
 
     @Inject
     ConnectionManager connectionManager;
 
     @Tool(value = "发送无人机控制指令", returnBehavior = ReturnBehavior.IMMEDIATE)
     public String getCommandString(DroneCommand command, InvocationParameters parameters) {
-        log.info("发送无人机控制指令: {}", command.command);
-        log.info("distance: {}", command.distance);
-        log.info("height: {}", command.height);
-        log.info("duration: {}", command.duration);
+        log.info("发送无人机控制指令: " + command.command);
+        log.info("distance: " + command.distance);
+        log.info("height: " + command.height);
+        log.info("duration: " + command.duration);
         return command.command.toString();
     }
 
@@ -61,7 +62,7 @@ public class CommandTool {
 
         task.setActions(actions);
         websocket.setTasks(List.of(task));
-        log.info("语音下发服务命令：{}", JsonUtil.toJson(websocket));
+        log.info("语音下发服务命令：" + JsonUtil.toJson(websocket));
 
         // connectionManager.sendMessageByDeviceId(websocket.getDeviceId(), JsonUtil.toJson(websocket));
         return "已接收指令批次";
@@ -86,7 +87,7 @@ public class CommandTool {
             case START_RTSP -> buildService(actionId, afterId, "SERVICE_START_RTSP", "RTSP");
             case START_YOLO -> buildService(actionId, afterId, "SERVICE_START_YOLO", "YOLO");
             default -> {
-                log.warn("未知指令: {}", cmd.command);
+                log.warn("未知指令: " + cmd.command);
                 yield null;
             }
         };
@@ -130,7 +131,7 @@ public class CommandTool {
     }
 
     private DronesAction buildHover(String id, String after, Integer duration) {
-        log.info("悬停指令，duration={}", duration);
+        log.info("悬停指令，duration=" + duration);
 
         DronesAction action = baseAction(id, "HOVER", after);
 
@@ -155,7 +156,7 @@ public class CommandTool {
     }
 
     private DronesAction buildMove(String id, String after, double lat, double lon) {
-        log.info("移动指令 lat={}, lon={}", lat, lon);
+        log.info("移动指令 lat=" + lat + ", lon=" + lon);
 
         DronesAction action = baseAction(id, "GOTO", after);
 
@@ -174,7 +175,7 @@ public class CommandTool {
     }
 
     private DronesAction buildService(String id, String after, String type, String serviceType) {
-        log.info("启动服务: {}", serviceType);
+        log.infof("启动服务: %s", serviceType);
 
         DronesAction action = baseAction(id, type, after);
 

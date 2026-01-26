@@ -17,6 +17,7 @@ import org.huazhi.drones.websocket.service.BusService;
 import org.huazhi.drones.websocket.service.ConnectionManager;
 import org.huazhi.exception.BusinessException;
 import org.huazhi.util.JsonUtil;
+import org.jboss.logging.Logger;
 
 import io.quarkus.websockets.next.OnBinaryMessage;
 import io.quarkus.websockets.next.OnClose;
@@ -26,14 +27,13 @@ import io.quarkus.websockets.next.PathParam;
 import io.quarkus.websockets.next.WebSocket;
 import io.quarkus.websockets.next.WebSocketConnection;
 import jakarta.inject.Inject;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * websocket服务
  */
-@Slf4j
 @WebSocket(path = "/notice/{deviceId}/{accessToken}")
 public class WebSocketService {
+    private static final Logger log = Logger.getLogger(WebSocketService.class);
 
     @Inject
     ConnectionManager connectionManager;
@@ -52,7 +52,7 @@ public class WebSocketService {
     @OnOpen(broadcast = true)
     public void onOpen(WebSocketConnection connection, @PathParam("deviceId") String deviceId,
                        @PathParam("accessToken") String accessToken) {
-        log.info("WebSocket opened for deviceId: {}, accessToken: {}", deviceId, accessToken);
+        log.infof("WebSocket opened for deviceId: %s, accessToken: %s", deviceId, accessToken);
         if (!busService.checkClientId(deviceId)) {
             throw new BusinessException("客户端" + deviceId + "客户端未注册");
         }
@@ -65,7 +65,7 @@ public class WebSocketService {
 
     @OnClose
     public void onClose(@PathParam("deviceId") String deviceId) {
-        log.info("WebSocket closed for deviceId: {}", deviceId);
+        log.infof("WebSocket closed for deviceId: %s", deviceId);
         connectionManager.removeConnection(deviceId);
         busService.closeConnect(deviceId);
         // 清理该设备的活跃流
@@ -78,7 +78,7 @@ public class WebSocketService {
     @OnTextMessage(broadcast = true)
     public void onMessage(String message, @PathParam("deviceId") String deviceId,
                           WebSocketConnection connection) {
-        log.info("Received message from deviceId {}: {}", deviceId, message);
+        log.infof("Received message from deviceId %s: %s", deviceId, message);
         Map<String, Object> messageJson = JsonUtil.fromJsonToMap(message);
 
         String type = (String) messageJson.get("type");
@@ -91,7 +91,7 @@ public class WebSocketService {
                     MessageInfo info = busService.reportStatus(heartbeat);
                     connectionManager.sendHeartBeatReturn(deviceId, info);
                 } else {
-                    log.info("Device {} disconnected.", deviceId);
+                    log.infof("Device %s disconnected.", deviceId);
                 }
                 break;
 
@@ -99,7 +99,7 @@ public class WebSocketService {
                 String streamId = (String) messageJson.get("streamId");
                 deviceCurrentStream.put(deviceId, streamId);
                 streamBuffers.put(streamId, new ByteArrayOutputStream());
-                log.info("Device {} started file stream {}", deviceId, streamId);
+                log.infof("Device %s started file stream %s", deviceId, streamId);
                 break;
 
             case "file_end":
@@ -108,7 +108,7 @@ public class WebSocketService {
                 ByteArrayOutputStream out = streamBuffers.remove(streamId);
                 if (out != null) {
                     saveFile(out.toByteArray(), deviceId, streamId, targetIds);
-                    log.info("Device {} finished file stream {}", deviceId, streamId);
+                    log.infof("Device %s finished file stream %s", deviceId, streamId);
                 }
                 deviceCurrentStream.remove(deviceId);
                 break;
@@ -123,12 +123,12 @@ public class WebSocketService {
                 break;
 
             case "torosReport":
-                log.info("处理torosReport {}: {}", deviceId, message);
+                log.infof("处理torosReport %s: %s", deviceId, message);
                 busService.saveCommandReport(Long.valueOf(messageJson.get("missionId").toString()), message);
                 break;
 
             default:
-                log.warn("Unknown text message type: {}", type);
+                log.warnf("Unknown text message type: %s", type);
         }
     }
 
@@ -137,7 +137,7 @@ public class WebSocketService {
                                 WebSocketConnection connection) {
         String streamId = deviceCurrentStream.get(deviceId);
         if (streamId == null) {
-            log.warn("No active stream for device {}, discard data", deviceId);
+            log.warnf("No active stream for device %s, discard data", deviceId);
             return;
         }
 
@@ -149,7 +149,7 @@ public class WebSocketService {
                 log.error("Failed to append data to stream {}", streamId, e);
             }
         }
-        log.info("Received {} bytes for device {} stream {}", data.length, deviceId, streamId);
+        log.infof("Received %d bytes for device %s stream %s", data.length, deviceId, streamId);
     }
 
     private void saveFile(byte[] bytes, String deviceId, String streamId, String targetIds) {
@@ -164,9 +164,9 @@ public class WebSocketService {
 
             // 实时广播给其他客户端
             TrackWebSocket.broadcast(bytes, targetIds);
-            log.info("Saved file: {}", filePath.toString());
+            log.infof("Saved file: %s", filePath.toString());
         } catch (IOException e) {
-            log.error("Failed to save file for device {} stream {}", deviceId, streamId, e);
+            log.errorf("Failed to save file for device %s stream %s", deviceId, streamId, e);
         }
     }
 

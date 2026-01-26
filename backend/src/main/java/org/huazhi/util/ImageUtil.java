@@ -7,11 +7,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.imageio.ImageIO;
+import org.jboss.logging.Logger;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class ImageUtil {
+    private static final Logger log = Logger.getLogger(ImageUtil.class);
 
     private static String readNextLine(InputStream in) throws IOException {
         StringBuilder sb = new StringBuilder();
@@ -87,7 +86,7 @@ public class ImageUtil {
             ImageIO.write(image, "png", new File(pngFilePath));
             System.out.println("转换完成！输出文件: " + pngFilePath);
         } catch (IOException e) {
-            log.error("转换 PGM 文件失败: {}", e.getMessage());
+            log.error("转换 PGM 文件失败: " + e.getMessage(), e);
         }
     }
 
@@ -102,7 +101,7 @@ public class ImageUtil {
             File pngFile = new File(pngFilePath);
             BufferedImage image = ImageIO.read(pngFile);
             if (image == null) {
-                log.error("无法读取 PNG 文件，可能格式不受支持: {}", pngFilePath);
+                log.error("无法读取 PNG 文件，可能格式不受支持: " + pngFilePath);
                 return null;
             }
             java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
@@ -112,7 +111,7 @@ public class ImageUtil {
             String base64Str = "data:image/png;base64," + base64String;
             return base64Str;
         } catch (IOException e) {
-            log.error("读取 PNG 文件失败: {}", e.getMessage());
+            log.error("读取 PNG 文件失败: " + e.getMessage(), e);
             return null;
         }
     }

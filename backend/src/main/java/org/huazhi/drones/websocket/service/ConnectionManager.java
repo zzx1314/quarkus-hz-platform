@@ -3,7 +3,6 @@ package org.huazhi.drones.websocket.service;
 import io.quarkus.websockets.next.WebSocketConnection;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,10 +11,11 @@ import org.huazhi.drones.business.command.entity.dto.DronesCommonCommand;
 import org.huazhi.drones.business.command.entity.webscoketdto.DronesCommandWebsocket;
 import org.huazhi.drones.websocket.entity.MessageInfo;
 import org.huazhi.util.JsonUtil;
+import org.jboss.logging.Logger;
 
-@Slf4j
 @ApplicationScoped
 public class ConnectionManager {
+    private static final Logger log = Logger.getLogger(ConnectionManager.class);
     @Inject
     BusService busService;
     // deviceId -> WebSocketConnection
@@ -61,10 +61,10 @@ public class ConnectionManager {
         WebSocketConnection conn = connections.get(deviceId);
         if (conn != null && conn.isOpen()) {
             String jsonString = JsonUtil.toJson(message);
-            log.info("Sending heartbeat response to deviceId {}: {}", deviceId, jsonString);
+            log.infof("Sending heartbeat response to deviceId %s: %s", deviceId, jsonString);
             conn.sendTextAndAwait(jsonString);
         } else {
-            log.warn("Connection for deviceId {} is not available.", deviceId);
+            log.warnf("Connection for deviceId %s is not available.", deviceId);
         }
     }
 
@@ -76,10 +76,10 @@ public class ConnectionManager {
         WebSocketConnection conn = connections.get(deviceId);
         if (conn != null && conn.isOpen()) {
             String jsonString = JsonUtil.toJson(message);
-            log.info("Sending common command to deviceId {}: {}", deviceId, jsonString);
+            log.infof("Sending common command to deviceId %s: %s", deviceId, jsonString);
             conn.sendTextAndAwait(jsonString);
         } else {
-            log.warn("Connection for deviceId {} is not available.", deviceId);
+            log.warnf("Connection for deviceId %s is not available.", deviceId);
         }
     }
 
@@ -94,10 +94,10 @@ public class ConnectionManager {
             Long id = busService.saveCommand(message, deviceId, taskId);
             message.setMissionId(id + "");
             String jsonString = JsonUtil.toJson(message);
-            log.info("Sending message to deviceId {}: {}", deviceId, jsonString);
+            log.infof("Sending message to deviceId %s: %s", deviceId, jsonString);
             conn.sendTextAndAwait(jsonString);
         } else {
-            log.warn("Connection for deviceId {} is not available.", deviceId);
+            log.warnf("Connection for deviceId %s is not available.", deviceId);
         }
     }
 
@@ -112,10 +112,10 @@ public class ConnectionManager {
             Long id = busService.saveCommand(message, deviceId, taskId, commandType);
             message.setMissionId(id + "");
             String jsonString = JsonUtil.toJson(message);
-            log.info("Sending message to deviceId {}: {}", deviceId, jsonString);
+            log.infof("Sending message to deviceId %s: %s", deviceId, jsonString);
             conn.sendTextAndAwait(jsonString);
         } else {
-            log.warn("Connection for deviceId {} is not available.", deviceId);
+            log.warnf("Connection for deviceId %s is not available.", deviceId);
         }
     }
 
@@ -125,10 +125,10 @@ public class ConnectionManager {
     public void sendMessageByDeviceId(String deviceId, String message) {
         WebSocketConnection conn = connections.get(deviceId);
         if (conn != null && conn.isOpen()) {
-            log.info("Sending message to deviceId {}: {}", deviceId, message);
+            log.infof("Sending message to deviceId %s: %s", deviceId, message);
             conn.sendTextAndAwait(message);
         } else {
-            log.warn("Connection for deviceId {} is not available.", deviceId);
+            log.warnf("Connection for deviceId %s is not available.", deviceId);
         }
     }
 }

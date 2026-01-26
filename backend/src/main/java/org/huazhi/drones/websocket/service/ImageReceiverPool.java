@@ -1,14 +1,15 @@
 package org.huazhi.drones.websocket.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.jboss.logging.Logger;
+
 @ApplicationScoped
-@Slf4j
 public class ImageReceiverPool {
+     private static final Logger log = Logger.getLogger(ImageReceiverPool.class);
 
     // key = host:port
     private final Map<String, ImageReceiver> receivers = new ConcurrentHashMap<>();
@@ -18,7 +19,7 @@ public class ImageReceiverPool {
         String key = host + ":" + port;
 
         if (receivers.containsKey(key)) {
-            log.warn("[ReceiverPool] Receiver already running: {}", key);
+            log.warnf("[ReceiverPool] Receiver already running: %s", key);
             return;
         }
 
@@ -26,7 +27,7 @@ public class ImageReceiverPool {
         receiver.start();
 
         receivers.put(key, receiver);
-        log.info("[ReceiverPool] Started receiver {}", key);
+        log.infof("[ReceiverPool] Started receiver %s", key);
     }
 
     public synchronized void stop(String host, int port) {
@@ -34,12 +35,12 @@ public class ImageReceiverPool {
 
         ImageReceiver receiver = receivers.remove(key);
         if (receiver == null) {
-            log.warn("[ReceiverPool] Receiver not found: {}", key);
+            log.warnf("[ReceiverPool] Receiver not found: %s", key);
             return;
         }
 
         receiver.stop();
-        log.info("[ReceiverPool] Stopped receiver {}", key);
+        log.infof("[ReceiverPool] Stopped receiver %s", key);
     }
 
     public synchronized void stopAll() {

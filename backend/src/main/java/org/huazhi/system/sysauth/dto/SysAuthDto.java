@@ -1,10 +1,9 @@
 package org.huazhi.system.sysauth.dto;
 
-import lombok.Data;
 
 import java.util.List;
 
-@Data
+
 public class SysAuthDto {
 
 	/**
@@ -16,5 +15,21 @@ public class SysAuthDto {
 	 * 角色权限
 	 */
 	private List<Long> authList;
+
+	public String getRoleCode() {
+		return roleCode;
+	}
+
+	public void setRoleCode(String roleCode) {
+		this.roleCode = roleCode;
+	}
+
+	public List<Long> getAuthList() {
+		return authList;
+	}
+
+	public void setAuthList(List<Long> authList) {
+		this.authList = authList;
+	}
 
 }

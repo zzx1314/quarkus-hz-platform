@@ -5,11 +5,11 @@ import de.danielbechler.diff.comparison.ComparisonService;
 import de.danielbechler.diff.node.DiffNode;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import lombok.extern.slf4j.Slf4j;
 
 import org.huazhi.system.syslog.common.context.LogRecordContext;
 import org.huazhi.system.syslog.common.diff.ArrayDiffer;
 import org.huazhi.system.syslog.common.diff.IDiffItemsToLogContentService;
+import org.jboss.logging.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
@@ -20,9 +20,9 @@ import java.util.Set;
 /**
  * Quarkus/CDI 版本的 DiffParseFunction
  */
-@Slf4j
 @ApplicationScoped
 public class DiffParseFunction {
+    private static final Logger log = Logger.getLogger(DiffParseFunction.class);
 
     public static final String DIFF_FUNCTION_NAME = "_DIFF";
     public static final String OLD_OBJECT = "_oldObj";
@@ -56,7 +56,7 @@ public class DiffParseFunction {
         }
 
         if (!Objects.equals(source.getClass(), target.getClass())) {
-            log.error("diff的两个对象类型不同, source.class={}, target.class={}", source.getClass(), target.getClass());
+            log.errorf("diff的两个对象类型不同, source.class=%s, target.class=%s", source.getClass(), target.getClass());
             return "";
         }
 
@@ -88,7 +88,7 @@ public class DiffParseFunction {
                     Class<?> clazz = Class.forName(clazzName);
                     comparisonSet.add(clazz);
                 } catch (ClassNotFoundException e) {
-                    log.warn("无效的比对类型, className={}", clazzName);
+                    log.warnf("无效的比对类型, className=%s", clazzName);
                 }
             }
         }

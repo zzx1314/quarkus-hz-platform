@@ -1,8 +1,6 @@
 package org.huazhi.drones.business.media.entity.dto;
 
-import lombok.Data;
 
-@Data
 public class DronesMediaDto {
     private Long id;
 
@@ -30,4 +28,54 @@ public class DronesMediaDto {
      * 媒体文件描述
      */
     private String remarks;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getMediaName() {
+        return mediaName;
+    }
+
+    public void setMediaName(String mediaName) {
+        this.mediaName = mediaName;
+    }
+
+    public String getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(String mediaType) {
+        this.mediaType = mediaType;
+    }
+
+    public String getMediaPath() {
+        return mediaPath;
+    }
+
+    public void setMediaPath(String mediaPath) {
+        this.mediaPath = mediaPath;
+    }
+
+    public Long getMediaSize() {
+        return mediaSize;
+    }
+
+    public void setMediaSize(Long mediaSize) {
+        this.mediaSize = mediaSize;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+
+    
 }

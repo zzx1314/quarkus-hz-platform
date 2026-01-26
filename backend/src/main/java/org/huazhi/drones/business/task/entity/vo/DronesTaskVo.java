@@ -4,9 +4,7 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import lombok.Data;
 
-@Data
 public class DronesTaskVo {
     private Long id;
 
@@ -59,4 +57,105 @@ public class DronesTaskVo {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private LocalDateTime createTime;
 
+
+    public Long getId() {
+        return id;
+    }
+
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
+
+
+    public Long getDeviceId() {
+        return deviceId;
+    }
+
+
+    public void setDeviceId(Long deviceId) {
+        this.deviceId = deviceId;
+    }
+
+
+    public String getDeviceIdString() {
+        return deviceIdString;
+    }
+
+
+    public void setDeviceIdString(String deviceIdString) {
+        this.deviceIdString = deviceIdString;
+    }
+
+
+    public String getTaskDescription() {
+        return taskDescription;
+    }
+
+
+    public void setTaskDescription(String taskDescription) {
+        this.taskDescription = taskDescription;
+    }
+
+
+    public String getTaskStatus() {
+        return taskStatus;
+    }
+
+
+    public void setTaskStatus(String taskStatus) {
+        this.taskStatus = taskStatus;
+    }
+
+
+    public String getWorkflowUuid() {
+        return workflowUuid;
+    }
+
+
+    public void setWorkflowUuid(String workflowUuid) {
+        this.workflowUuid = workflowUuid;
+    }
+
+
+    public Long getRouteId() {
+        return routeId;
+    }
+
+
+    public void setRouteId(Long routeId) {
+        this.routeId = routeId;
+    }
+
+
+    public String getRouteName() {
+        return routeName;
+    }
+
+
+    public void setRouteName(String routeName) {
+        this.routeName = routeName;
+    }
+
+
+    public LocalDateTime getCreateTime() {
+        return createTime;
+    }
+
+
+    public void setCreateTime(LocalDateTime createTime) {
+        this.createTime = createTime;
+    }
+
+    
 }

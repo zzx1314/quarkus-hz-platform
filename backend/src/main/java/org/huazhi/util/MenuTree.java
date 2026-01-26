@@ -2,11 +2,6 @@ package org.huazhi.util;
 
 import org.huazhi.system.sysmenu.entity.vo.MenuVo;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
-@Data
-@EqualsAndHashCode(callSuper = true)
 public class MenuTree extends TreeNode {
 
 	private String path;
@@ -43,5 +38,31 @@ public class MenuTree extends TreeNode {
 		// this.redirect = menuVo.getRedirect();
 		this.meta = menuVo.getMeta();
 	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public MenuMeta getMeta() {
+		return meta;
+	}
+
+	public void setMeta(MenuMeta meta) {
+		this.meta = meta;
+	}
+
+	
 
 }

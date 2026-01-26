@@ -1,11 +1,7 @@
 package org.huazhi.drones.business.command.commanditem.entity.dto;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
 import jakarta.ws.rs.QueryParam;
 
-@Data
-@Accessors(chain = true)
 public class DronesCommandResultItemQueryDto {
     @QueryParam("id")
     private Long id;
@@ -18,4 +14,38 @@ public class DronesCommandResultItemQueryDto {
 
     @QueryParam("commandId")
     private Long commandId;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getBeginTime() {
+        return beginTime;
+    }
+
+    public void setBeginTime(String beginTime) {
+        this.beginTime = beginTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    public Long getCommandId() {
+        return commandId;
+    }
+
+    public void setCommandId(Long commandId) {
+        this.commandId = commandId;
+    }
+
+    
 }

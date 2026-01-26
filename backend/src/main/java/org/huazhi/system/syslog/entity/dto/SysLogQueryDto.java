@@ -1,11 +1,8 @@
 package org.huazhi.system.syslog.entity.dto;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
 import jakarta.ws.rs.QueryParam;
 
-@Data
-@Accessors(chain = true)
+
 public class SysLogQueryDto {
     @QueryParam("id")
     private Long id;
@@ -15,4 +12,30 @@ public class SysLogQueryDto {
 
     @QueryParam("endTime")
     private String endTime;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getBeginTime() {
+        return beginTime;
+    }
+
+    public void setBeginTime(String beginTime) {
+        this.beginTime = beginTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    
 }

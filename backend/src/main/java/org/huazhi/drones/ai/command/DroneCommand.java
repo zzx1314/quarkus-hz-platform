@@ -4,9 +4,7 @@ import java.util.Map;
 
 import org.huazhi.drones.ai.tool.DroneCommandType;
 
-import lombok.Data;
 
-@Data
 public class DroneCommand {
 
     public DroneCommandType command;
