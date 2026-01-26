@@ -1,8 +1,6 @@
 package org.huazhi.drones.business.command.entity.dto;
 
-import lombok.Data;
 
-@Data
 public class LocationInfo {
     /**
      * 经度
@@ -13,4 +11,22 @@ public class LocationInfo {
      * 纬度
      */
     private String latitude;
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    
 }

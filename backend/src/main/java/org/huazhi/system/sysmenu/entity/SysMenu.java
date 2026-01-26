@@ -1,11 +1,9 @@
 package org.huazhi.system.sysmenu.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.huazhi.system.sysrole.entity.SysRole;
 
@@ -21,10 +19,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
-@Data
 @Entity
 @Table(name = "p_sys_menu")
-@EqualsAndHashCode(callSuper = false)
 public class SysMenu extends PanacheEntityBase {
 	/**
 	 * 主键
@@ -124,5 +120,203 @@ public class SysMenu extends PanacheEntityBase {
 	@ManyToMany(mappedBy = "menus", fetch = FetchType.LAZY)
 	@JsonIgnore
 	public List<SysRole> roles = new ArrayList<>();
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getPermission() {
+		return permission;
+	}
+
+	public void setPermission(String permission) {
+		this.permission = permission;
+	}
+
+	public String getPathUrl() {
+		return pathUrl;
+	}
+
+	public void setPathUrl(String pathUrl) {
+		this.pathUrl = pathUrl;
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
+	}
+
+	public Long getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(Long parentId) {
+		this.parentId = parentId;
+	}
+
+	public String getComponent() {
+		return component;
+	}
+
+	public void setComponent(String component) {
+		this.component = component;
+	}
+
+	public Integer getSort() {
+		return sort;
+	}
+
+	public void setSort(Integer sort) {
+		this.sort = sort;
+	}
+
+	public Integer getKeepAlive() {
+		return keepAlive;
+	}
+
+	public void setKeepAlive(Integer keepAlive) {
+		this.keepAlive = keepAlive;
+	}
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
+	public LocalDateTime getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(LocalDateTime createTime) {
+		this.createTime = createTime;
+	}
+
+	public LocalDateTime getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(LocalDateTime updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public Integer getIsDeleted() {
+		return isDeleted;
+	}
+
+	public void setIsDeleted(Integer isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
+	public Boolean getLeaf() {
+		return leaf;
+	}
+
+	public void setLeaf(Boolean leaf) {
+		this.leaf = leaf;
+	}
+
+	public String getRoleCode() {
+		return roleCode;
+	}
+
+	public void setRoleCode(String roleCode) {
+		this.roleCode = roleCode;
+	}
+
+	public Boolean getDisabled() {
+		return disabled;
+	}
+
+	public void setDisabled(Boolean disabled) {
+		this.disabled = disabled;
+	}
+
+	public Integer getFindAuthId() {
+		return findAuthId;
+	}
+
+	public void setFindAuthId(Integer findAuthId) {
+		this.findAuthId = findAuthId;
+	}
+
+	public List<SysRole> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<SysRole> roles) {
+		this.roles = roles;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		SysMenu sysMenu = (SysMenu) o;
+		return Objects.equals(id, sysMenu.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public String toString() {
+		return "SysMenu{" +
+				"id=" + id +
+				", name='" + name + '\'' +
+				", code='" + code + '\'' +
+				", permission='" + permission + '\'' +
+				", pathUrl='" + pathUrl + '\'' +
+				", icon='" + icon + '\'' +
+				", parentId=" + parentId +
+				", component='" + component + '\'' +
+				", sort=" + sort +
+				", keepAlive=" + keepAlive +
+				", type=" + type +
+				", createTime=" + createTime +
+				", updateTime=" + updateTime +
+				", isDeleted=" + isDeleted +
+				", remarks='" + remarks + '\'' +
+				", leaf=" + leaf +
+				", roleCode='" + roleCode + '\'' +
+				", disabled=" + disabled +
+				", findAuthId=" + findAuthId +
+				'}';
+	}
 
 }

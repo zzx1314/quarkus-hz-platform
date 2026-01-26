@@ -1,5 +1,7 @@
 package org.huazhi.drones.business.model.service;
 
+import org.jboss.logging.Logger;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,11 +27,11 @@ import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import lombok.extern.slf4j.Slf4j;
 
 @ApplicationScoped
-@Slf4j
 public class DronesModelServiceImp implements DronesModelService {
+    private static final Logger log = Logger.getLogger(DronesModelServiceImp.class);
+    
     @Inject
     DronesModelRepository repository;
 
@@ -90,7 +92,7 @@ public class DronesModelServiceImp implements DronesModelService {
 
     @Override
     public R<Object> uploadFile(FileUpload file, DronesModelDto modelDto) {
-        log.info("Uploading file: {}", file.fileName());
+        log.info("Uploading file: " + file.fileName());
         // Save the file to a designated path
         String mcpFilePath = fileConfig.basePath() + "/model/" + securityUtil.getUserId();
         FileUtil.saveFile(file, mcpFilePath);

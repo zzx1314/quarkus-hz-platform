@@ -10,14 +10,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 
 import jakarta.persistence.Id;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
-@Data
 @Entity
-@Accessors(chain = true)
-@EqualsAndHashCode(callSuper = false)
+
 public class DronesRouteLibrary extends PanacheEntityBase {
     @Id
     @GeneratedValue
@@ -69,4 +64,84 @@ public class DronesRouteLibrary extends PanacheEntityBase {
      * 路线数据
      */
     private String routeData;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getRouteName() {
+        return routeName;
+    }
+
+    public void setRouteName(String routeName) {
+        this.routeName = routeName;
+    }
+
+    public String getRouteType() {
+        return routeType;
+    }
+
+    public void setRouteType(String routeType) {
+        this.routeType = routeType;
+    }
+
+    public String getRouteStatus() {
+        return routeStatus;
+    }
+
+    public void setRouteStatus(String routeStatus) {
+        this.routeStatus = routeStatus;
+    }
+
+    public String getRouteDescription() {
+        return routeDescription;
+    }
+
+    public void setRouteDescription(String routeDescription) {
+        this.routeDescription = routeDescription;
+    }
+
+    public long getModelId() {
+        return modelId;
+    }
+
+    public void setModelId(long modelId) {
+        this.modelId = modelId;
+    }
+
+    public LocalDateTime getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(LocalDateTime createTime) {
+        this.createTime = createTime;
+    }
+
+    public LocalDateTime getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(LocalDateTime updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public Integer getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Integer isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public String getRouteData() {
+        return routeData;
+    }
+
+    public void setRouteData(String routeData) {
+        this.routeData = routeData;
+    }
 }

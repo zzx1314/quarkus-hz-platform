@@ -1,8 +1,6 @@
 package org.huazhi.drones.business.task.service;
 
-import lombok.Data;
 
-@Data
 public class ServiceConfig {
     String serviceType;
     String completeEventFrom;

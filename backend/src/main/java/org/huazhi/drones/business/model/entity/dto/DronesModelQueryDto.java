@@ -1,11 +1,8 @@
 package org.huazhi.drones.business.model.entity.dto;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
 import jakarta.ws.rs.QueryParam;
 
-@Data
-@Accessors(chain = true)
+
 public class DronesModelQueryDto {
     @QueryParam("id")
     private Long id;
@@ -33,4 +30,62 @@ public class DronesModelQueryDto {
 
     @QueryParam("filePath")
     private String filePath;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getBeginTime() {
+        return beginTime;
+    }
+
+    public void setBeginTime(String beginTime) {
+        this.beginTime = beginTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getModelName() {
+        return modelName;
+    }
+
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
+
+    public String getModelType() {
+        return modelType;
+    }
+
+    public void setModelType(String modelType) {
+        this.modelType = modelType;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    
 }

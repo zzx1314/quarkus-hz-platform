@@ -1,12 +1,7 @@
 package org.huazhi.system.syslog.common.beans;
-import lombok.Getter;
 
 import java.lang.reflect.Method;
 
-/**
- * @author wulang
- **/
-@Getter
 public class MethodExecuteResult {
     private boolean success;
     private Throwable throwable;
@@ -35,7 +30,37 @@ public class MethodExecuteResult {
         this.errorMsg = errorMsg;
     }
 
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public Throwable getThrowable() {
+        return throwable;
+    }
+
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public Object getResult() {
+        return result;
+    }
+
+    public Method getMethod() {
+        return method;
+    }
+
+    public Object[] getArgs() {
+        return args;
+    }
+
+    public Class<?> getTargetClass() {
+        return targetClass;
+    }
+
     public void setResult(Object result) {
         this.result = result;
     }
+
+    
 }

@@ -1,5 +1,7 @@
 package org.huazhi.drones.business.media.service;
 
+import org.jboss.logging.Logger;
+
 import java.util.List;
 import java.time.LocalDateTime;
 
@@ -19,11 +21,11 @@ import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @ApplicationScoped
 public class DronesMediaServiceImp implements DronesMediaService {
+    private static final Logger log = Logger.getLogger(DronesMediaServiceImp.class);
+    
     @Inject
     DronesMediaRepository repository;
 
@@ -84,14 +86,14 @@ public class DronesMediaServiceImp implements DronesMediaService {
 
     @Override
     public R<Long> uploadFile(FileUpload file, DronesMediaDto mediaDto) {
-        log.info("Uploading file: {}", file.fileName());
+        log.info("Uploading file: " + file.fileName());
         // Save the file to a designated path
         String mcpFilePath = fileConfig.basePath() + "/media/" + securityUtil.getUserId();
         FileUtil.saveFile(file, mcpFilePath);
         if (mediaDto.getId() != null) {
             // Update existing record
             this.replaceByDto(mediaDto);
-            log.info("Updating media record: {}", mediaDto.getId());
+            log.info("Updating media record: " + mediaDto.getId());
             return R.ok(mediaDto.getId());
         } else {
             // Create new record
@@ -102,7 +104,7 @@ public class DronesMediaServiceImp implements DronesMediaService {
             dronesMedia.setMediaSize(file.size());
             dronesMedia.setRemarks(mediaDto.getRemarks());
             this.register(dronesMedia);
-            log.info("Creating new media record: {}", dronesMedia.getId());
+            log.info("Creating new media record: " + dronesMedia.getId());
             return R.ok(dronesMedia.getId());
         }
     }

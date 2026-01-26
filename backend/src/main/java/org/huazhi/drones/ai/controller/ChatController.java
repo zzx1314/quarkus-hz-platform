@@ -1,5 +1,7 @@
 package org.huazhi.drones.ai.controller;
 
+import org.jboss.logging.Logger;
+
 
 import java.util.Map;
 
@@ -17,13 +19,13 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Path("/chat")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ChatController {
+    private static final Logger log = Logger.getLogger(ChatController.class);
+    
     @Inject
     ChatModel openAiChatModel;
 
@@ -38,7 +40,7 @@ public class ChatController {
 
         InvocationParameters parameters = InvocationParameters.from(Map.of("deviceId", deviceId));
         Result<String> result = assistant.chat(commands, parameters);
-        log.info("AI Response: {}", result.toolExecutions());
+        log.info("AI Response: " + result.toolExecutions());
     }
 
 }

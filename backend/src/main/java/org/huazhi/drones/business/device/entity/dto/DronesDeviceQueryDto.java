@@ -1,11 +1,8 @@
 package org.huazhi.drones.business.device.entity.dto;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
 import jakarta.ws.rs.QueryParam;
 
-@Data
-@Accessors(chain = true)
+
 public class DronesDeviceQueryDto {
     @QueryParam("id")
     private Long id;
@@ -29,4 +26,41 @@ public class DronesDeviceQueryDto {
      */
     @QueryParam("status")
     private String status;
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public String getBeginTime() {
+        return beginTime;
+    }
+    public void setBeginTime(String beginTime) {
+        this.beginTime = beginTime;
+    }
+    public String getEndTime() {
+        return endTime;
+    }
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+    public String getDeviceId() {
+        return deviceId;
+    }
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
+    public String getDeviceType() {
+        return deviceType;
+    }
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
+    }
+    public String getStatus() {
+        return status;
+    }
+    public void setStatus(String status) {
+        this.status = status;
+    }
+    
 }

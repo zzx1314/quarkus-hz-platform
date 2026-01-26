@@ -1,7 +1,5 @@
 package org.huazhi.system.sysorg.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
@@ -13,10 +11,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-@Data
+
 @Entity
 @Table(name = "p_sys_org")
-@EqualsAndHashCode(callSuper = false)
 public class SysOrg extends PanacheEntityBase {
 
 	/**
@@ -83,5 +80,109 @@ public class SysOrg extends PanacheEntityBase {
 	 * 备注
 	 */
 	private String remarks;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Integer getSort() {
+		return sort;
+	}
+
+	public void setSort(Integer sort) {
+		this.sort = sort;
+	}
+
+	public Long getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(Long parentId) {
+		this.parentId = parentId;
+	}
+
+	public String getParentName() {
+		return parentName;
+	}
+
+	public void setParentName(String parentName) {
+		this.parentName = parentName;
+	}
+
+	public String getOrgDuty() {
+		return orgDuty;
+	}
+
+	public void setOrgDuty(String orgDuty) {
+		this.orgDuty = orgDuty;
+	}
+
+	public String getDesrc() {
+		return desrc;
+	}
+
+	public void setDesrc(String desrc) {
+		this.desrc = desrc;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public Boolean getIsOut() {
+		return isOut;
+	}
+
+	public void setIsOut(Boolean isOut) {
+		this.isOut = isOut;
+	}
+
+	public LocalDateTime getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(LocalDateTime createTime) {
+		this.createTime = createTime;
+	}
+
+	public LocalDateTime getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(LocalDateTime updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public Integer getIsDeleted() {
+		return isDeleted;
+	}
+
+	public void setIsDeleted(Integer isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
 
 }

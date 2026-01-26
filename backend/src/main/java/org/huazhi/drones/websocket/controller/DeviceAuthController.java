@@ -10,6 +10,7 @@ import org.huazhi.drones.business.device.service.DronesDeviceService;
 import org.huazhi.drones.util.CheckClientTokenUtil;
 import org.huazhi.util.R;
 import org.huazhi.util.RedisUtil;
+import org.jboss.logging.Logger;
 
 import io.quarkus.runtime.util.StringUtil;
 import jakarta.inject.Inject;
@@ -21,13 +22,12 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Path("/client")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class DeviceAuthController {
+    private static final Logger log = Logger.getLogger(DeviceAuthController.class);
 
     @Inject
     RedisUtil redisUtil;
@@ -48,7 +48,7 @@ public class DeviceAuthController {
         UUID uuid = UUID.randomUUID();
         String uuidStr = uuid.toString().replace("-", "");
         redisUtil.set(uuidStr, clientId, 60 * 10);
-        log.info("clientId:{}, tokenInfo=={}", clientId, uuidStr);
+        log.infof("clientId: %s, tokenInfo==%s", clientId, uuidStr);
         return R.ok(uuidStr, "success");
     }
 
@@ -62,7 +62,7 @@ public class DeviceAuthController {
     @POST
     @Path("register")
     public R<String> register(DronesDeviceDto deviceDto, @HeaderParam("Authorization") String authToken) {
-        log.info("device register:{}, {}", deviceDto, authToken);
+        log.infof("device register:%s, %s", deviceDto, authToken);
         // 设备是否通过认证，如果认证通过可以进行
         boolean checkRes = checkClientTokenUtil.checkToken(deviceDto.getDeviceId(), authToken);
         if (!checkRes) {

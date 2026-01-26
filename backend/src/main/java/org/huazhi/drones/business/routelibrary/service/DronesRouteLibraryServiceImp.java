@@ -111,7 +111,8 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
         repository.updateByDto(dto);
         // 修改任务的状态
         // 1、查询带有当前航线的任务
-        DronesTaskQueryDto taskQueryDto = new DronesTaskQueryDto().setRouteId(dto.getId());
+        DronesTaskQueryDto taskQueryDto = new DronesTaskQueryDto();
+        taskQueryDto.setRouteId(dto.getId());
         taskService.listEntitysByDto(taskQueryDto).forEach(task -> {
             task.setTaskStatus("航线变更");
             taskService.replaceById(task);
@@ -131,7 +132,9 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
     @Override
     public R<Object> getRoute(Long modelId) {
         // Get route from modelId
-        DronesModel model = modelService.listOne(new DronesModelQueryDto().setId(modelId));
+        DronesModelQueryDto modelQueryDto = new DronesModelQueryDto();
+        modelQueryDto.setId(modelId);
+        DronesModel model = modelService.listOne(modelQueryDto);
         // Unzip the model file, convert the format, and return a base64-encoded string.
         String modelFilePath = model.getFilePath();
         String unZipPath = fileConfig.basePath() + "/temp/unzipped_model_" + modelId;
@@ -314,7 +317,9 @@ public class DronesRouteLibraryServiceImp implements DronesRouteLibraryService {
     public List<SelectOption> getRouteOption(Long id) {
         // 获取所有航点
         List<SelectOption> routePoints = new ArrayList<>();
-        List<DronesRouteItem> items = routeItemService.listEntitysByDto(new DronesRouteItemQueryDto().setRouteLibraryId(id));
+        DronesRouteItemQueryDto queryDto = new DronesRouteItemQueryDto();
+        queryDto.setRouteLibraryId(id);
+        List<DronesRouteItem> items = routeItemService.listEntitysByDto(queryDto);
         for (DronesRouteItem item : items) {
             routePoints.add(new SelectOption(item.getRouteItemName(), item.getId()));
         }

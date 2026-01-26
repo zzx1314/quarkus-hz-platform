@@ -14,17 +14,17 @@ import org.huazhi.drones.common.SelectOption;
 import org.huazhi.drones.util.DateUtil;
 import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
+import org.jboss.logging.Logger;
 
 import java.time.LocalDateTime;
 
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @ApplicationScoped
 public class DronesDeviceServiceImp implements DronesDeviceService {
+    private static final Logger log = Logger.getLogger(DronesDeviceServiceImp.class);
     @Inject
     DronesDeviceRepository repository;
 
@@ -53,7 +53,7 @@ public class DronesDeviceServiceImp implements DronesDeviceService {
         entity.setCreateTime(LocalDateTime.now());
         entity.setIsDeleted(0);
         repository.persist(entity);
-        log.info("新增设备：{}", entity.getId());
+        log.infof("新增设备：%s", entity.getId());
         return entity.getId();
     }
 

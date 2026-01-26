@@ -8,7 +8,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
@@ -17,12 +16,13 @@ import org.huazhi.drones.business.device.entity.DronesDevice;
 import org.huazhi.drones.business.device.service.DronesDeviceService;
 import org.huazhi.drones.websocket.service.ImageReceiverPool;
 import org.huazhi.util.R;
+import org.jboss.logging.Logger;
 
 @Path("/imageReceiver")
-@Slf4j
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ImageReceiverController {
+     private static final Logger log = Logger.getLogger(ImageReceiverController.class);
 
     @Inject
     ImageReceiverPool pool;

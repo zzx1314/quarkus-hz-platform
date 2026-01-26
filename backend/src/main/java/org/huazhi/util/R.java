@@ -1,7 +1,5 @@
 package org.huazhi.util;
 
-import lombok.*;
-import lombok.experimental.Accessors;
 import java.io.Serializable;
 
 /**
@@ -10,24 +8,15 @@ import java.io.Serializable;
  * @param <T>
  * @author lengleng
  */
-@ToString
-@NoArgsConstructor
-@AllArgsConstructor
-@Accessors(chain = true)
+
 public class R<T> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Getter
-	@Setter
 	private int code;
 
-	@Getter
-	@Setter
 	private String msg;
 
-	@Getter
-	@Setter
 	private T data;
 
 	public static R<Object> getInstance() {
@@ -68,6 +57,34 @@ public class R<T> implements Serializable {
 		apiResult.setData(data);
 		apiResult.setMsg(msg);
 		return apiResult;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public int getCode() {
+		return code;
+	}
+
+	public void setCode(int code) {
+		this.code = code;
+	}
+
+	public String getMsg() {
+		return msg;
+	}
+
+	public void setMsg(String msg) {
+		this.msg = msg;
+	}
+
+	public T getData() {
+		return data;
+	}
+
+	public void setData(T data) {
+		this.data = data;
 	}
 
 }

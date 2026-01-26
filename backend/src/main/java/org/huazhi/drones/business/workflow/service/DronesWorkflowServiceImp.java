@@ -27,17 +27,17 @@ import org.huazhi.drones.business.workflow.vo.DronesWorkflowVo;
 import org.huazhi.util.JsonUtil;
 import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
+import org.jboss.logging.Logger;
 
 import java.time.LocalDateTime;
 
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @ApplicationScoped
 public class DronesWorkflowServiceImp implements DronesWorkflowService {
+    private static final Logger log = Logger.getLogger(DronesWorkflowServiceImp.class);
     @Inject
     DronesWorkflowRepository repository;
 
@@ -75,13 +75,15 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
 
     @Override
     public Long register(DronesWorkflow entity) {
-        DronesWorkflow oneFlow = this.listOne(new DronesWorkflowQueryDto().setUuid(entity.getUuid()));
+        DronesWorkflowQueryDto queryDto = new DronesWorkflowQueryDto();
+        queryDto.setUuid(entity.getUuid());
+        DronesWorkflow oneFlow = this.listOne(queryDto);
         if (oneFlow != null) {
             // 修改
             String commandJsonString = taskService.getCommandJsonString(entity);
             entity.setId(oneFlow.getId());
             entity.setCommandJsonString(commandJsonString);
-            log.info("修改json："+ commandJsonString);
+            log.infof("修改json：%s", commandJsonString);
             this.replaceById(entity);
             // 修改任务的状态是未开始
             DronesTaskDto taskQueryDto = new DronesTaskDto();
@@ -130,7 +132,7 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
 
     @Override
     public DronesWorkflowVo getWorkflowGraph(Long taskId) {
-        DronesWorkflowQueryDto queryDto = new DronesWorkflowQueryDto().setTaskId(taskId);
+        DronesWorkflowQueryDto queryDto = new DronesWorkflowQueryDto();
         DronesWorkflow dronesWorkflow = repository.selectOne(queryDto);
         return getWorkflowGraphItem(dronesWorkflow);
     }
@@ -183,7 +185,8 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
 
     @Override
     public DronesWorkflow getWorkflow(Long taskId) {
-        DronesWorkflowQueryDto queryDto = new DronesWorkflowQueryDto().setTaskId(taskId);
+        DronesWorkflowQueryDto queryDto = new DronesWorkflowQueryDto();
+        queryDto.setTaskId(taskId);
         return repository.selectOne(queryDto);
     }
 
@@ -205,8 +208,10 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
                 if ("task".equals(nodeEntity.getType())) {
                     Long routeId = nodeEntity.getData().getRouteId();
                     DronesDevice deviceInfo = deviceService.listById(nodeEntity.getData().getDeviceId());
-                    DronesRouteLibrary route = routeLibraryService
-                            .listOne(new DronesRouteLibraryQueryDto().setId(routeId));
+
+                    DronesRouteLibraryQueryDto routeQueryDto = new DronesRouteLibraryQueryDto();
+                    routeQueryDto.setId(routeId);
+                    DronesRouteLibrary route = routeLibraryService.listOne(routeQueryDto);
                     if (null != route) {
                         DronesRouteLibraryVo routeVo = new DronesRouteLibraryVo();
                         mapper.toVo(route, routeVo);
@@ -221,7 +226,8 @@ public class DronesWorkflowServiceImp implements DronesWorkflowService {
 
     @Override
     public String getCommandJsonString(Long taskId) {
-        DronesWorkflowQueryDto queryDto = new DronesWorkflowQueryDto().setTaskId(taskId);
+        DronesWorkflowQueryDto queryDto = new DronesWorkflowQueryDto();
+        queryDto.setTaskId(taskId);
         DronesWorkflow dronesWorkflow = repository.selectOne(queryDto);
         if (dronesWorkflow != null) {
             return dronesWorkflow.getCommandJsonString();

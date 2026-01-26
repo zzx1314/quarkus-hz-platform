@@ -1,6 +1,5 @@
 package org.huazhi.drones.websocket.service;
 
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.InputStream;
 import java.net.InetSocketAddress;
@@ -9,9 +8,10 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import org.huazhi.drones.websocket.endpoint.ImageWebSocket;
+import org.jboss.logging.Logger;
 
-@Slf4j
 public class ImageReceiver implements Runnable {
+     private static final Logger log = Logger.getLogger(ImageReceiver.class);
 
     private final String host;
     private final int port;
@@ -47,7 +47,7 @@ public class ImageReceiver implements Runnable {
                 this.socket = s;
                 s.connect(new InetSocketAddress(host, port), 5000);
 
-                log.info("[ImageReceiver] Connected to {}:{}", host, port);
+                log.infof("[ImageReceiver] Connected to %s:%d", host, port);
 
                 InputStream in = s.getInputStream();
                 byte[] header = new byte[4];
@@ -75,13 +75,13 @@ public class ImageReceiver implements Runnable {
 
             } catch (Exception e) {
                 if (running) {
-                    log.error("[ImageReceiver] {}:{} error: {}", host, port, e.getMessage());
+                    log.errorf("[ImageReceiver] %s:%d error: %s", host, port, e.getMessage());
                 }
                 try { Thread.sleep(2000); } catch (Exception ignore) {}
             }
         }
 
-        log.info("[ImageReceiver] Stopped for {}:{}", host, port);
+        log.infof("[ImageReceiver] Stopped for %s:%d", host, port);
     }
 
     private void readFully(InputStream in, byte[] buffer) throws Exception {

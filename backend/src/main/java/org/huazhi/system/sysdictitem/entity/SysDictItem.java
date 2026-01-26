@@ -1,9 +1,7 @@
 package org.huazhi.system.sysdictitem.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import org.huazhi.system.sysdict.entity.SysDict;
 
@@ -18,10 +16,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-@Data
 @Entity
 @Table(name = "p_sys_dict_item")
-@EqualsAndHashCode(callSuper = false)
 public class SysDictItem extends PanacheEntityBase {
 
 	/**
@@ -90,5 +86,112 @@ public class SysDictItem extends PanacheEntityBase {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "dict_id")
 	private SysDict sysDict;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getDictType() {
+		return dictType;
+	}
+
+	public void setDictType(String dictType) {
+		this.dictType = dictType;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	public Integer getSort() {
+		return sort;
+	}
+
+	public void setSort(Integer sort) {
+		this.sort = sort;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public LocalDateTime getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(LocalDateTime createTime) {
+		this.createTime = createTime;
+	}
+
+	public LocalDateTime getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(LocalDateTime updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public Integer getIsDeleted() {
+		return isDeleted;
+	}
+
+	public void setIsDeleted(Integer isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
+	public Boolean getAllowDeletion() {
+		return allowDeletion;
+	}
+
+	public void setAllowDeletion(Boolean allowDeletion) {
+		this.allowDeletion = allowDeletion;
+	}
+
+	public SysDict getSysDict() {
+		return sysDict;
+	}
+
+	public void setSysDict(SysDict sysDict) {
+		this.sysDict = sysDict;
+	}
+
+
+	
 
 }

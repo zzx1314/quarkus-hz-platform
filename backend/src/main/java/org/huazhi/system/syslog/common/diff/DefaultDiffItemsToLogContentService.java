@@ -2,9 +2,6 @@ package  org.huazhi.system.syslog.common.diff;
 
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.selector.ElementSelector;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -16,15 +13,14 @@ import org.huazhi.system.syslog.common.annotation.DiffLogAllFields;
 import org.huazhi.system.syslog.common.annotation.DiffLogField;
 import org.huazhi.system.syslog.common.configuration.LogRecordProperties;
 import org.huazhi.system.syslog.common.service.IFunctionService;
+import org.jboss.logging.Logger;
 
 /**
  * Quarkus/CDI 版本的差异日志生成服务
  */
-@Slf4j
-@Getter
-@Setter
 @ApplicationScoped
 public class DefaultDiffItemsToLogContentService implements IDiffItemsToLogContentService {
+    private static final Logger log = Logger.getLogger(DefaultDiffItemsToLogContentService.class);
 
     @Inject
     IFunctionService functionService;
@@ -159,7 +155,7 @@ public class DefaultDiffItemsToLogContentService implements IDiffItemsToLogConte
             case REMOVED:
                 return logRecordProperties.formatDeleted(fieldLogName, getFunctionValue(node.canonicalGet(sourceObject), functionName));
             default:
-                log.warn("diff log not support state: {}", node.getState());
+                log.warnf("diff log not support state: %s", node.getState());
                 return "";
         }
     }

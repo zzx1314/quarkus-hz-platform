@@ -5,9 +5,7 @@ import java.util.Map;
 
 import org.huazhi.drones.business.workflow.entity.NodeEntity;
 
-import lombok.Data;
 
-@Data
 public class DronesWorkflowVo {
 
 	/**
@@ -27,5 +25,40 @@ public class DronesWorkflowVo {
 
 	// 建立 targetId -> List<sourceId> 的映射
 	Map<String, List<String>> reverseEdgeMap;
+
+    public NodeEntity getStartNode() {
+        return startNode;
+    }
+
+    public void setStartNode(NodeEntity startNode) {
+        this.startNode = startNode;
+    }
+
+    public Map<String, List<String>> getEdgeMap() {
+        return edgeMap;
+    }
+
+    public void setEdgeMap(Map<String, List<String>> edgeMap) {
+        this.edgeMap = edgeMap;
+    }
+
+    public Map<String, NodeEntity> getNodeMap() {
+        return nodeMap;
+    }
+
+    public void setNodeMap(Map<String, NodeEntity> nodeMap) {
+        this.nodeMap = nodeMap;
+    }
+
+    public Map<String, List<String>> getReverseEdgeMap() {
+        return reverseEdgeMap;
+    }
+
+    public void setReverseEdgeMap(Map<String, List<String>> reverseEdgeMap) {
+        this.reverseEdgeMap = reverseEdgeMap;
+    }
+
+
+	
 
 }

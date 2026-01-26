@@ -25,6 +25,7 @@ import org.huazhi.util.IdUtil;
 import org.huazhi.util.JsonUtil;
 import org.huazhi.util.PageRequest;
 import org.huazhi.util.PageResult;
+import org.jboss.logging.Logger;
 
 import java.time.LocalDateTime;
 
@@ -32,11 +33,11 @@ import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @ApplicationScoped
 public class DronesCommandServiceImp implements DronesCommandService {
+    private static final Logger log = Logger.getLogger(DronesCommandServiceImp.class);
+
     @Inject
     DronesCommandRepository repository;
 
@@ -149,7 +150,7 @@ public class DronesCommandServiceImp implements DronesCommandService {
         tasks.add(taskInfo);
 
         commandWebsocket.setTasks(tasks);
-        log.info("下发服务命令：{}", JsonUtil.toJson(commandWebsocket));
+        log.infof("下发服务命令：%s", JsonUtil.toJson(commandWebsocket));
         // 任务id为空，临时命令不需要修改任务信息
         connectionManager.sendMessageByDeviceId(commandWebsocket.getDeviceId(),
          commandWebsocket, null, "SERVER");

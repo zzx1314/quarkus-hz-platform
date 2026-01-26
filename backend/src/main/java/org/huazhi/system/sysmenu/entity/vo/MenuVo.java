@@ -1,6 +1,5 @@
 package org.huazhi.system.sysmenu.entity.vo;
 
-import lombok.Data;
 
 import java.io.Serializable;
 import java.util.List;
@@ -14,7 +13,6 @@ import org.huazhi.util.MenuMeta;
  * @Date 2022-02-19 11:54
  * @Version 1.0
  */
-@Data
 public class MenuVo implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -108,5 +106,118 @@ public class MenuVo implements Serializable {
 		}
 		return super.equals(obj);
 	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getPermission() {
+		return permission;
+	}
+
+	public void setPermission(String permission) {
+		this.permission = permission;
+	}
+
+	public Long getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(Long parentId) {
+		this.parentId = parentId;
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
+	}
+
+	public String getPathUrl() {
+		return pathUrl;
+	}
+
+	public void setPathUrl(String pathUrl) {
+		this.pathUrl = pathUrl;
+	}
+
+	public String getComponent() {
+		return component;
+	}
+
+	public void setComponent(String component) {
+		this.component = component;
+	}
+
+	public Integer getSort() {
+		return sort;
+	}
+
+	public void setSort(Integer sort) {
+		this.sort = sort;
+	}
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
+	public Boolean getLeaf() {
+		return leaf;
+	}
+
+	public void setLeaf(Boolean leaf) {
+		this.leaf = leaf;
+	}
+
+	public String getRedirect() {
+		return redirect;
+	}
+
+	public void setRedirect(String redirect) {
+		this.redirect = redirect;
+	}
+
+	public MenuMeta getMeta() {
+		return meta;
+	}
+
+	public void setMeta(MenuMeta meta) {
+		this.meta = meta;
+	}
+
+	public List<String> getAuths() {
+		return auths;
+	}
+
+	public void setAuths(List<String> auths) {
+		this.auths = auths;
+	}
+	
 
 }

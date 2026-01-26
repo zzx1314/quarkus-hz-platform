@@ -1,8 +1,7 @@
 package org.huazhi.system.sysauth.vo;
 
-import lombok.Data;
 
-@Data
+
 public class SysAuthRoleVo {
 
 	/**

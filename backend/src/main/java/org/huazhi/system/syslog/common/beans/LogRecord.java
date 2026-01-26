@@ -1,17 +1,10 @@
 package org.huazhi.system.syslog.common.beans;
 
-import lombok.*;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 
-@Setter
-@Getter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
 public class LogRecord {
     /**
      * id
@@ -73,4 +66,222 @@ public class LogRecord {
      * CodeVariableType 日志记录的ClassName、MethodName
      */
     private Map<CodeVariableType, Object> codeVariable;
+    
+    public LogRecord() {
+    }
+    
+    public LogRecord(Serializable id, String tenant, String type, String subType, String bizNo, String operator, String action, boolean fail, Date createTime, String extra, String ip, Map<CodeVariableType, Object> codeVariable) {
+        this.id = id;
+        this.tenant = tenant;
+        this.type = type;
+        this.subType = subType;
+        this.bizNo = bizNo;
+        this.operator = operator;
+        this.action = action;
+        this.fail = fail;
+        this.createTime = createTime;
+        this.extra = extra;
+        this.ip = ip;
+        this.codeVariable = codeVariable;
+    }
+    
+    public static LogRecordBuilder builder() {
+        return new LogRecordBuilder();
+    }
+
+    public Serializable getId() {
+        return id;
+    }
+
+    public void setId(Serializable id) {
+        this.id = id;
+    }
+
+    public String getTenant() {
+        return tenant;
+    }
+
+    public void setTenant(String tenant) {
+        this.tenant = tenant;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getSubType() {
+        return subType;
+    }
+
+    public void setSubType(String subType) {
+        this.subType = subType;
+    }
+
+    public String getBizNo() {
+        return bizNo;
+    }
+
+    public void setBizNo(String bizNo) {
+        this.bizNo = bizNo;
+    }
+
+    public String getOperator() {
+        return operator;
+    }
+
+    public void setOperator(String operator) {
+        this.operator = operator;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public boolean isFail() {
+        return fail;
+    }
+
+    public void setFail(boolean fail) {
+        this.fail = fail;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getExtra() {
+        return extra;
+    }
+
+    public void setExtra(String extra) {
+        this.extra = extra;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public Map<CodeVariableType, Object> getCodeVariable() {
+        return codeVariable;
+    }
+
+    public void setCodeVariable(Map<CodeVariableType, Object> codeVariable) {
+        this.codeVariable = codeVariable;
+    }
+
+    @Override
+    public String toString() {
+        return "LogRecord{" +
+                "id=" + id +
+                ", tenant='" + tenant + '\'' +
+                ", type='" + type + '\'' +
+                ", subType='" + subType + '\'' +
+                ", bizNo='" + bizNo + '\'' +
+                ", operator='" + operator + '\'' +
+                ", action='" + action + '\'' +
+                ", fail=" + fail +
+                ", createTime=" + createTime +
+                ", extra='" + extra + '\'' +
+                ", ip='" + ip + '\'' +
+                ", codeVariable=" + codeVariable +
+                '}';
+    }
+
+    public static class LogRecordBuilder {
+        private Serializable id;
+        private String tenant;
+        private String type;
+        private String subType;
+        private String bizNo;
+        private String operator;
+        private String action;
+        private boolean fail;
+        private Date createTime;
+        private String extra;
+        private String ip;
+        private Map<CodeVariableType, Object> codeVariable;
+
+        public LogRecordBuilder() {
+        }
+
+        public LogRecordBuilder id(Serializable id) {
+            this.id = id;
+            return this;
+        }
+
+        public LogRecordBuilder tenant(String tenant) {
+            this.tenant = tenant;
+            return this;
+        }
+
+        public LogRecordBuilder type(String type) {
+            this.type = type;
+            return this;
+        }
+
+        public LogRecordBuilder subType(String subType) {
+            this.subType = subType;
+            return this;
+        }
+
+        public LogRecordBuilder bizNo(String bizNo) {
+            this.bizNo = bizNo;
+            return this;
+        }
+
+        public LogRecordBuilder operator(String operator) {
+            this.operator = operator;
+            return this;
+        }
+
+        public LogRecordBuilder action(String action) {
+            this.action = action;
+            return this;
+        }
+
+        public LogRecordBuilder fail(boolean fail) {
+            this.fail = fail;
+            return this;
+        }
+
+        public LogRecordBuilder createTime(Date createTime) {
+            this.createTime = createTime;
+            return this;
+        }
+
+        public LogRecordBuilder extra(String extra) {
+            this.extra = extra;
+            return this;
+        }
+
+        public LogRecordBuilder ip(String ip) {
+            this.ip = ip;
+            return this;
+        }
+
+        public LogRecordBuilder codeVariable(Map<CodeVariableType, Object> codeVariable) {
+            this.codeVariable = codeVariable;
+            return this;
+        }
+
+        public LogRecord build() {
+            return new LogRecord(id, tenant, type, subType, bizNo, operator, action, fail, createTime, extra, ip, codeVariable);
+        }
+    }
 }

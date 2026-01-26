@@ -1,8 +1,7 @@
 package org.huazhi.drones.common;
 
-import lombok.Data;
 
-@Data
+
 public class SelectOption {
 
 	private String label;

@@ -7,9 +7,7 @@ import org.huazhi.drones.business.command.entity.webscoketdto.route.DronesRoute;
 import org.huazhi.drones.business.command.entity.webscoketdto.task.DronesTaskWebScoket;
 import org.huazhi.drones.business.services.entity.vo.DronesServicesVo;
 
-import lombok.Data;
 
-@Data
 public class DronesCommandWebsocket {
 
     /*
@@ -24,6 +22,62 @@ public class DronesCommandWebsocket {
      * 指令id
      */
     private String missionId;
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getMissionId() {
+        return missionId;
+    }
+
+    public void setMissionId(String missionId) {
+        this.missionId = missionId;
+    }
+
+    public List<DronesRoute> getRoute() {
+        return route;
+    }
+
+    public void setRoute(List<DronesRoute> route) {
+        this.route = route;
+    }
+
+    public List<DronesServicesVo> getServices() {
+        return services;
+    }
+
+    public void setServices(List<DronesServicesVo> services) {
+        this.services = services;
+    }
+
+    public List<DronesAction> getOnErrorActions() {
+        return onErrorActions;
+    }
+
+    public void setOnErrorActions(List<DronesAction> onErrorActions) {
+        this.onErrorActions = onErrorActions;
+    }
+
+    public List<DronesTaskWebScoket> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<DronesTaskWebScoket> tasks) {
+        this.tasks = tasks;
+    }
 
     /**
      * 路线

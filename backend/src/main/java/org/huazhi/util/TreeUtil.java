@@ -1,6 +1,5 @@
 package org.huazhi.util;
 
-import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-@UtilityClass
 public class TreeUtil {
 	private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -26,7 +24,7 @@ public class TreeUtil {
 	 * @date 2020-02-19 15:14
 	 * @return: java.util.List<T>
 	 **/
-	public <T extends TreeNode> List<T> buildByLoop(List<T> treeNodes, Object root) {
+	public static <T extends TreeNode> List<T> buildByLoop(List<T> treeNodes, Object root) {
 		List<T> trees = new ArrayList<>();
 		for (T treeNode : treeNodes) {
 			if (treeNode == null) continue;
@@ -138,7 +136,7 @@ public class TreeUtil {
 	 * @param menus:
 	 * @param root:
 	 **/
-	public List<MenuTree> buildTree(List<SysMenu> menus, int root) {
+	public static List<MenuTree> buildTree(List<SysMenu> menus, int root) {
 		List<MenuTree> trees = new ArrayList<>();
 		MenuTree node;
 		for (SysMenu menu : menus) {
