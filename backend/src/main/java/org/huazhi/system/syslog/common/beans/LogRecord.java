@@ -3,7 +3,6 @@ package org.huazhi.system.syslog.common.beans;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
-import java.util.Objects;
 
 public class LogRecord {
     /**

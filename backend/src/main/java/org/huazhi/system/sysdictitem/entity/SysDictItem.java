@@ -1,7 +1,6 @@
 package org.huazhi.system.sysdictitem.entity;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 import org.huazhi.system.sysdict.entity.SysDict;
 
