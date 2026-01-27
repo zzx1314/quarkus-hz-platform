@@ -13,10 +13,15 @@ import de.danielbechler.util.Assert;
 
 import java.util.*;
 
+
 /**
- * @author wulang
- **/
-public class ArrayDiffer implements Differ {
+ * Differ implementation for Java arrays.
+ * This differ is responsible for comparing two array instances and producing a
+ * hierarchical DiffNode structure that reflects added, removed, or modified elements.
+ * It delegates per-element comparison to a DifferDispatcher and supports identity
+ * and comparison strategies to determine element equality.
+ */
+ public class ArrayDiffer implements Differ {
     private final DifferDispatcher differDispatcher;
     private final ComparisonStrategyResolver comparisonStrategyResolver;
     private final IdentityStrategyResolver identityStrategyResolver;
@@ -30,13 +35,22 @@ public class ArrayDiffer implements Differ {
         this.identityStrategyResolver = identityStrategyResolver;
     }
 
-    @Override
-    public boolean accepts(final Class<?> type) {
+    /**
+     * Determines whether this differ can handle the given type.
+     * This differ accepts non-primitive array types.
+     */
+     @Override
+     public boolean accepts(final Class<?> type) {
         return !type.isPrimitive() && type.isArray();
     }
 
-    @Override
-    public final DiffNode compare(final DiffNode parentNode, final Instances collectionInstances) {
+    /**
+     * Compare an array instance represented by collectionInstances against its base.
+     * Builds a DiffNode for the collection and delegates per-element comparison to
+     * the dispatcher or applies appropriate strategies when necessary.
+     */
+     @Override
+     public final DiffNode compare(final DiffNode parentNode, final Instances collectionInstances) {
         final DiffNode collectionNode = newNode(parentNode, collectionInstances);
         final IdentityStrategy identityStrategy = identityStrategyResolver.resolveIdentityStrategy(collectionNode);
         if (identityStrategy != null) {
@@ -63,18 +77,28 @@ public class ArrayDiffer implements Differ {
         return collectionNode;
     }
 
-    private Collection<?> findCollection(Object source) {
+    /**
+     * Convert a possibly null array source to a Collection for iteration.
+     * If source is null, returns an empty list.
+     */
+     private Collection<?> findCollection(Object source) {
         return source == null ? new ArrayList<>() : new LinkedList<>(Arrays.asList((Object[]) source));
     }
 
-    private static DiffNode newNode(final DiffNode parentNode,
+    /**
+     * Create a new DiffNode for the array under the given parent node.
+     */
+     private static DiffNode newNode(final DiffNode parentNode,
                                     final Instances collectionInstances) {
         final Accessor accessor = collectionInstances.getSourceAccessor();
         final Class<?> type = collectionInstances.getType();
         return new DiffNode(parentNode, accessor, type);
     }
 
-    private void compareItems(final DiffNode collectionNode,
+    /**
+     * Compare or dispatch comparison for each item in the provided collection.
+     */
+     private void compareItems(final DiffNode collectionNode,
                               final Instances collectionInstances,
                               final Iterable<?> items,
                               final IdentityStrategy identityStrategy) {
@@ -84,7 +108,11 @@ public class ArrayDiffer implements Differ {
         }
     }
 
-    private void compareInternally(final DiffNode collectionNode,
+    /**
+     * Fallback internal comparison for arrays when no explicit strategy is provided.
+     * Compares added, removed and unchanged elements by applying identity rules.
+     */
+     private void compareInternally(final DiffNode collectionNode,
                                    final Instances collectionInstances,
                                    final IdentityStrategy identityStrategy) {
         final Collection<?> working = Arrays.asList((Object[]) collectionInstances.getWorking());
@@ -104,7 +132,10 @@ public class ArrayDiffer implements Differ {
         compareItems(collectionNode, collectionInstances, known, identityStrategy);
     }
 
-    private static void compareUsingComparisonStrategy(final DiffNode collectionNode,
+    /**
+     * Use a provided ComparisonStrategy to compare two array contents.
+     */
+     private static void compareUsingComparisonStrategy(final DiffNode collectionNode,
                                                        final Instances collectionInstances,
                                                        final ComparisonStrategy comparisonStrategy) {
         comparisonStrategy.compare(collectionNode,
@@ -113,7 +144,11 @@ public class ArrayDiffer implements Differ {
                 collectionInstances.getBase(Collection.class));
     }
 
-    private void remove(final Iterable<?> from, final Iterable<?> these, final IdentityStrategy identityStrategy) {
+    /**
+     * Remove elements from one collection that have a matching element in another
+     * collection according to the given identity strategy.
+     */
+     private void remove(final Iterable<?> from, final Iterable<?> these, final IdentityStrategy identityStrategy) {
         final Iterator<?> iterator = from.iterator();
         while (iterator.hasNext()) {
             final Object item = iterator.next();
@@ -123,7 +158,11 @@ public class ArrayDiffer implements Differ {
         }
     }
 
-    private boolean contains(final Iterable<?> haystack, final Object needle, final IdentityStrategy identityStrategy) {
+    /**
+     * Determine if the haystack contains an element equal to the needle using
+     * the provided identity strategy.
+     */
+     private boolean contains(final Iterable<?> haystack, final Object needle, final IdentityStrategy identityStrategy) {
         for (final Object item : haystack) {
             if (identityStrategy.equals(needle, item)) {
                 return true;
