@@ -1,7 +1,6 @@
-package  org.huazhi.system.syslog.common.diff;
+package org.huazhi.system.syslog.common.diff;
 
 
-import de.danielbechler.diff.access.Accessor;
 import de.danielbechler.diff.access.TypeAwareAccessor;
 import de.danielbechler.diff.identity.EqualsIdentityStrategy;
 import de.danielbechler.diff.identity.IdentityStrategy;
@@ -13,8 +12,18 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
-
-public class ArrayItemAccessor implements TypeAwareAccessor, Accessor {
+/**
+ * 数组/集合元素访问器
+ *
+ * 用于在对象比较（diff）过程中访问和操作集合中的特定元素
+ * 通过身份策略（IdentityStrategy）来匹配和识别目标元素
+ *
+ * 实现了TypeAwareAccessor接口（该接口已继承Accessor），
+ * 提供对集合元素的类型感知访问能力
+ *
+ * @author system
+ */
+public class ArrayItemAccessor implements TypeAwareAccessor {
 
     private final Object referenceItem;
     private final IdentityStrategy identityStrategy;
@@ -47,7 +56,7 @@ public class ArrayItemAccessor implements TypeAwareAccessor, Accessor {
 
     @Override
     public Object get(final Object target) {
-        final Collection targetCollection = objectAsCollection(target);
+        final Collection<?> targetCollection = objectAsCollection(target);
         if (targetCollection == null) {
             return null;
         }

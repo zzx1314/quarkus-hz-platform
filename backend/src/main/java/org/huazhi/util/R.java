@@ -17,7 +17,7 @@ public class R<T> implements Serializable {
 
 	private String msg;
 
-	private T data;
+	private T data = null;
 
 	public static R<Object> getInstance() {
 		return new R<>();
