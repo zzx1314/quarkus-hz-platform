@@ -64,7 +64,7 @@ public class CommandTool {
         websocket.setTasks(List.of(task));
         log.info("语音下发服务命令：" + JsonUtil.toJson(websocket));
 
-        // connectionManager.sendMessageByDeviceId(websocket.getDeviceId(), JsonUtil.toJson(websocket));
+        connectionManager.sendMessageByDeviceId(deviceId, JsonUtil.toJson(websocket));
         return "已接收指令批次";
     }
 
