@@ -1,4 +1,4 @@
-package  org.huazhi.system.syslog.common.diff;
+package org.huazhi.system.syslog.common.diff;
 
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.selector.ElementSelector;
@@ -36,9 +36,9 @@ public class DefaultDiffItemsToLogContentService implements IDiffItemsToLogConte
      *
      * 规则：如果 diffNode 没有变化，返回空字符串；否则遍历节点，基于 DiffLogAllFields 注解/字段注解输出日志。
      *
-     * @param diffNode      当前差异节点
-     * @param sourceObject  源对象（用于获取字段名/注解信息）
-     * @param targetObject  目标对象（用于对比结果）
+     * @param diffNode     当前差异节点
+     * @param sourceObject 源对象（用于获取字段名/注解信息）
+     * @param targetObject 目标对象（用于对比结果）
      * @return 组成的日志内容字符串
      */
     @Override
@@ -49,7 +49,8 @@ public class DefaultDiffItemsToLogContentService implements IDiffItemsToLogConte
         DiffLogAllFields annotation = sourceObject.getClass().getAnnotation(DiffLogAllFields.class);
         StringBuilder stringBuilder = new StringBuilder();
         Set<DiffNode> processedNodes = new HashSet<>();
-        diffNode.visit((node, visit) -> generateAllFieldLog(sourceObject, targetObject, stringBuilder, node, annotation, processedNodes));
+        diffNode.visit((node, visit) -> generateAllFieldLog(sourceObject, targetObject, stringBuilder, node, annotation,
+                processedNodes));
         processedNodes.clear();
         return stringBuilder.toString().replaceAll(logRecordProperties.getFieldSeparator().concat("$"), "");
     }
@@ -58,8 +59,9 @@ public class DefaultDiffItemsToLogContentService implements IDiffItemsToLogConte
      * 递归生成所有字段的日志信息。
      * 通过检查字段注解、DiffLogAllFields 注解以及 DIffLogIgnore 等元数据，决定哪些字段需要输出日志，以及日志的名称和格式。
      */
-    private void generateAllFieldLog(Object sourceObject, Object targetObject, StringBuilder stringBuilder, DiffNode node,
-                                     DiffLogAllFields annotation, Set<DiffNode> processedNodes) {
+    private void generateAllFieldLog(Object sourceObject, Object targetObject, StringBuilder stringBuilder,
+            DiffNode node,
+            DiffLogAllFields annotation, Set<DiffNode> processedNodes) {
 
         if (node.isRootNode() || node.getValueTypeInfo() != null || processedNodes.contains(node)) {
             return;
@@ -71,18 +73,31 @@ public class DefaultDiffItemsToLogContentService implements IDiffItemsToLogConte
             return;
         }
 
+        @SuppressWarnings("unused")
         DiffLogField diffLogFieldAnnotation = node.getFieldAnnotation(DiffLogField.class);
         if (annotation == null && diffLogFieldAnnotation == null) {
             return;
         }
 
-        String fieldLogName = getFieldLogName(node, diffLogFieldAnnotation, annotation != null);
+        String fieldLogName;
+        String functionName;
+
+        if (diffLogFieldAnnotation != null) {
+            fieldLogName = getFieldLogName(node, diffLogFieldAnnotation, annotation != null);
+            functionName = diffLogFieldAnnotation.function();
+        } else {
+            fieldLogName = node.getPropertyName();
+            if (node.getParentNode() != null) {
+                fieldLogName = getParentFieldName(node, false) + fieldLogName;
+            }
+            functionName = "";
+        }
+
         if (fieldLogName == null || fieldLogName.isEmpty()) {
             return;
         }
 
         boolean valueIsContainer = valueIsContainer(node, sourceObject, targetObject);
-        String functionName = diffLogFieldAnnotation != null ? diffLogFieldAnnotation.function() : "";
         String logContent = valueIsContainer
                 ? getCollectionDiffLogContent(fieldLogName, node, sourceObject, targetObject, functionName)
                 : getDiffLogContent(fieldLogName, node, sourceObject, targetObject, functionName);
@@ -136,7 +151,8 @@ public class DefaultDiffItemsToLogContentService implements IDiffItemsToLogConte
             if (sourceValue == null) {
                 if (targetObject != null) {
                     Object targetValue = node.canonicalGet(targetObject);
-                    return targetValue instanceof Collection || (targetValue != null && targetValue.getClass().isArray());
+                    return targetValue instanceof Collection
+                            || (targetValue != null && targetValue.getClass().isArray());
                 }
             } else {
                 return sourceValue instanceof Collection || sourceValue.getClass().isArray();
@@ -168,27 +184,32 @@ public class DefaultDiffItemsToLogContentService implements IDiffItemsToLogConte
     /**
      * 处理集合字段的日志输出，包括增量/删除项的日志内容构造。
      */
-    private String getCollectionDiffLogContent(String fieldLogName, DiffNode node, Object sourceObject, Object targetObject, String functionName) {
+    private String getCollectionDiffLogContent(String fieldLogName, DiffNode node, Object sourceObject,
+            Object targetObject, String functionName) {
         Collection<Object> sourceList = getListValue(node, sourceObject);
         Collection<Object> targetList = getListValue(node, targetObject);
         Collection<Object> addedItems = listSubtract(targetList, sourceList);
         Collection<Object> deletedItems = listSubtract(sourceList, targetList);
-        return logRecordProperties.formatList(fieldLogName, listToContent(functionName, addedItems), listToContent(functionName, deletedItems));
+        return logRecordProperties.formatList(fieldLogName, listToContent(functionName, addedItems),
+                listToContent(functionName, deletedItems));
     }
 
     /**
      * 根据 DiffNode 的状态输出对应的日志内容（已添加/修改/删除）。
      */
-    private String getDiffLogContent(String fieldLogName, DiffNode node, Object sourceObject, Object targetObject, String functionName) {
+    private String getDiffLogContent(String fieldLogName, DiffNode node, Object sourceObject, Object targetObject,
+            String functionName) {
         switch (node.getState()) {
             case ADDED:
-                return logRecordProperties.formatAdd(fieldLogName, getFunctionValue(node.canonicalGet(targetObject), functionName));
+                return logRecordProperties.formatAdd(fieldLogName,
+                        getFunctionValue(node.canonicalGet(targetObject), functionName));
             case CHANGED:
                 return logRecordProperties.formatUpdate(fieldLogName,
                         getFunctionValue(node.canonicalGet(sourceObject), functionName),
                         getFunctionValue(node.canonicalGet(targetObject), functionName));
             case REMOVED:
-                return logRecordProperties.formatDeleted(fieldLogName, getFunctionValue(node.canonicalGet(sourceObject), functionName));
+                return logRecordProperties.formatDeleted(fieldLogName,
+                        getFunctionValue(node.canonicalGet(sourceObject), functionName));
             default:
                 log.warnf("diff log not support state: %s", node.getState());
                 return "";
@@ -229,7 +250,8 @@ public class DefaultDiffItemsToLogContentService implements IDiffItemsToLogConte
      * 将集合中的项格式化为日志内容字符串，用于输出日志列表。
      */
     private String listToContent(String functionName, Collection<Object> items) {
-        if (items == null || items.isEmpty()) return "";
+        if (items == null || items.isEmpty())
+            return "";
         StringBuilder content = new StringBuilder();
         for (Object item : items) {
             content.append(getFunctionValue(item, functionName)).append(logRecordProperties.getListItemSeparator());
@@ -241,7 +263,8 @@ public class DefaultDiffItemsToLogContentService implements IDiffItemsToLogConte
      * 根据 functionName 对值进行加工处理，若未提供 functionName，直接返回字符串形式。
      */
     private String getFunctionValue(Object value, String functionName) {
-        if (value == null) return "";
+        if (value == null)
+            return "";
         if (functionName == null || functionName.isEmpty()) {
             return value.toString();
         }

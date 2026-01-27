@@ -1,12 +1,10 @@
 package org.huazhi.util;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * 响应信息主体
- *
- * @param <T>
- * @author lengleng
  */
 
 public class R<T> implements Serializable {
@@ -17,11 +15,11 @@ public class R<T> implements Serializable {
 
 	private String msg;
 
-	private T data = null;
+	private T data;
 
-	public static R<Object> getInstance() {
-		return new R<>();
-	}
+	public R(T data) {
+        this.data = Objects.requireNonNull(data);  // 保证非空
+    }
 
 	public static <T> R<Void> ok() {
 		return restResult(null, CommonConstants.SUCCESS, null);
@@ -52,15 +50,11 @@ public class R<T> implements Serializable {
 	}
 
 	public static <T> R<T> restResult(T data, int code, String msg) {
-		R<T> apiResult = new R<>();
+		R<T> apiResult = new R<>(data);
 		apiResult.setCode(code);
 		apiResult.setData(data);
 		apiResult.setMsg(msg);
 		return apiResult;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
 	}
 
 	public int getCode() {

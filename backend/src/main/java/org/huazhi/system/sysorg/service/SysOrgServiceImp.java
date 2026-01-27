@@ -272,7 +272,7 @@ public class SysOrgServiceImp implements SysOrgService {
 	}
 
 	public R<Object> checkOrgBeforeUpdate(SysOrgTreeDto sysOrg) {
-		R<Object> r = R.getInstance();
+		R<Object> r = new R<>("");
 		String name = sysOrgRepository.findById(sysOrg.getId()).getName();
 		// 如果名称不同需要进行校验
 		if (!sysOrg.getName().equals(name)) {

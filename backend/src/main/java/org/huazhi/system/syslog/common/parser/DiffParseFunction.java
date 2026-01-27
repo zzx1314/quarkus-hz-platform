@@ -11,10 +11,8 @@ import org.huazhi.system.syslog.common.diff.ArrayDiffer;
 import org.huazhi.system.syslog.common.diff.IDiffItemsToLogContentService;
 import org.jboss.logging.Logger;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -36,34 +34,47 @@ public class DiffParseFunction {
         return DIFF_FUNCTION_NAME;
     }
 
-    /**
-     * 对比两个对象并生成日志内容
-     */
     public String diff(Object source, Object target) {
         if (source == null && target == null) {
             return "";
         }
 
         if (source == null || target == null) {
-            try {
-                Class<?> clazz = source == null ? target.getClass() : source.getClass();
-                source = source == null ? clazz.getDeclaredConstructor().newInstance() : source;
-                target = target == null ? clazz.getDeclaredConstructor().newInstance() : target;
-            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
-                     InvocationTargetException e) {
-                throw new RuntimeException(e);
-            }
+            return diffWithEmpty(source, target);
         }
 
-        if (!Objects.equals(source.getClass(), target.getClass())) {
-            log.errorf("diff的两个对象类型不同, source.class=%s, target.class=%s", source.getClass(), target.getClass());
+        return doDiff(source, target);
+    }
+
+    private String diffWithEmpty(Object source, Object target) {
+        Object nonNull = source != null ? source : target;
+        Object empty = newEmptyInstance(nonNull.getClass());
+
+        return source == null
+                ? doDiff(empty, target)
+                : doDiff(source, empty);
+    }
+
+    private Object newEmptyInstance(Class<?> clazz) {
+        try {
+            return clazz.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String doDiff(Object source, Object target) {
+        if (!source.getClass().equals(target.getClass())) {
+            log.errorf("diff的两个对象类型不同, source.class=%s, target.class=%s",
+                    source.getClass(), target.getClass());
             return "";
         }
 
-        ObjectDifferBuilder objectDifferBuilder = ObjectDifferBuilder.startBuilding();
-        ObjectDifferBuilder register = objectDifferBuilder
-                .differs().register((differDispatcher, nodeQueryService) ->
-                        new ArrayDiffer(differDispatcher, (ComparisonService) objectDifferBuilder.comparison(), objectDifferBuilder.identity()));
+        ObjectDifferBuilder builder = ObjectDifferBuilder.startBuilding();
+        ObjectDifferBuilder register = builder.differs().register(
+                (differDispatcher, nodeQueryService) -> new ArrayDiffer(differDispatcher,
+                        (ComparisonService) builder.comparison(),
+                        builder.identity()));
 
         for (Class<?> clazz : comparisonSet) {
             register.comparison().ofType(clazz).toUseEqualsMethod();
